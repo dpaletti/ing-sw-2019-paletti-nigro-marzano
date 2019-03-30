@@ -1,4 +1,4 @@
-package it.polimi.se2019;
+package it.polimi.se2019.model;
 
 import it.polimi.se2019.model.Action;
 import it.polimi.se2019.model.Pair;
