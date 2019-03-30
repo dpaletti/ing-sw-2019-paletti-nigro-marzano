@@ -1,4 +1,15 @@
 package it.polimi.se2019.model;
 
-public class TargetingScope {
+import java.util.List;
+
+public class TargetingScope extends PowerUp {
+    @Override
+    protected Set<Figure> generateTargetSet(List<Map<Figure, List<Action>>> storedMoves) {
+        return null;
+    }
+
+    @Override
+    public Pair<List<Map<Figure, List<Action>>>, List<Ammo>> effect(Figure figure, List<Map<Figure, List<Action>>> storedMoves) {
+        return null;
+    }
 }

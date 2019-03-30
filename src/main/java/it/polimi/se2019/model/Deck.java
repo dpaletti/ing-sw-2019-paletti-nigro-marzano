@@ -1,4 +1,5 @@
 package it.polimi.se2019.model;
 
-public class Deck {
+public interface Deck{
+    void shuffle();
 }
