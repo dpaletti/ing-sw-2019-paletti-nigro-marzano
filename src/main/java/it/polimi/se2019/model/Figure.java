@@ -6,13 +6,7 @@ import java.util.Set;
 public class Figure {
     private Point position;
     private FigureColour colour;
-
-    public Set<Figure> getVisibilitySet();
-    public void damage(Set<Figure> targets);
-    public void mark (Set<Figure> targets);
-    public void move (Set<Figure> targets, Direction direction);
-    public void move (Direction direction);
-    public void dominationDamage (Set<SpawnTile> targets);
+    private Player player;
 
     public FigureColour getColour() {
         return colour;
@@ -29,4 +23,32 @@ public class Figure {
     public void setPosition(Point position) {
         this.position = position;
     }
+
+    private void damage(Set<Figure> targets);
+
+    private void mark(Set<Figure> targets);
+
+    public void move(Direction direction);
+
+    private void move(Set<Figure> targets, Direction direction);
+
+    private void dominationDamage(Set<SpawnTile> targets);
+
+    public void grab();
+
+    private Set<Figure> generateTargetSet(Set<Figure> figures);
+
+    private Set<Figure> getVisibleTargetSet(Set<Figure> figures);
+
+    private Set<Figure> getDifferentTargetSet(Set<Figure> attackedFigures);
+
+    private Set<Figure> getZoneTargets(Set<Tile>);
+
+    private Set<Figure> getRadiusBetweenTargets(Integer innerRadius, Integer outerRadius);
+
+    public void reload(Weapon weapon);
+
+
+
+
 }

@@ -1,6 +1,11 @@
 package it.polimi.se2019.model;
 
-public class Player {
+import it.polimi.se2019.utility.Observable;
+import org.graalvm.compiler.virtual.phases.ea.EffectList;
+
+import java.util.Set;
+
+public class Player extends Observable<Action> {
     private Figure figure;
     private Tear hp;
     private PlayerDamage healthState;
@@ -110,6 +115,16 @@ public class Player {
         this.thirdPowerUp = thirdPowerUp;
     }
 
-    private void updateGameHistory(Action action, Boolean lastAction);
+    public Set<Effect> showWeapon(Weapon weapon);
+
+    public void useWeapon(Weapon weapon, Set<Effect> effects);
+
+    public void moveFigure(Direction direction);
+
+    public void grabStuff();
+
+    public void endTurn();
+
+    public void reload(Weapon weapon);
 
 }
