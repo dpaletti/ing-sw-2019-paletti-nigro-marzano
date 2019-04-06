@@ -110,4 +110,6 @@ public class Player {
         this.thirdPowerUp = thirdPowerUp;
     }
 
+    private void updateGameHistory(Action action, Boolean lastAction);
+
 }

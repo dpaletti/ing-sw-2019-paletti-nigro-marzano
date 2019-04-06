@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface PlayerDamage {
 
-    public List<List<Action>> moveSet (List<Action>);
+    List<List<Action>> moveSet (List<Action> elapsedMoves);
 }

@@ -9,14 +9,22 @@ public abstract class Weapon {
     private Set<Ammo> price;
     private List<Pair<Integer, Ammo>> optionalPrice;
     private Boolean loaded;
+    private Node<Pair<List<List<Action>>, List<Ammo>>> storedActions;
 
     public abstract
-    Pair <List<Map<Figure, List<Action>>>,List<Ammo>>
-    effect (Figure figure, List <Map<Figure, List<Action>>> storedMoves);
+    Node<Pair<Map<Player, List<Action>>, List<Ammo>>>
+    effect (Player player);
 
     protected abstract
-    Set<Figure>
-    generateTargetSet (List <Map<Figure, List<Action>>> storedMoves);
+    Set<Player>
+    generateTargetSet (Player player);
+
+    protected abstract Set<Player> getVisibleTargets(Player player);
+    protected abstract Set<Player> getDifferentTargets(Set<Player> attackedPlayers);
+    protected abstract Set<Player> getZoneTargets(Set<Tile> Zone);
+    protected abstract Set<Player> getRadiusGreaterThanTargets(Integer radius);
+    protected abstract Set<Player> getRadiusEqualsTargets(Integer radius);
+
 
     public Ammo getCardColour() {
         return cardColour;

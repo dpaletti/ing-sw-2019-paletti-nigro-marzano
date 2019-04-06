@@ -2,6 +2,6 @@ package it.polimi.se2019.model;
 
 public enum Action {
 
-    MOVE, SHOOT, GRAB, RELOAD;
+    MOVE, DAMAGE, GRAB, RELOAD;
     private Direction direction;
 }

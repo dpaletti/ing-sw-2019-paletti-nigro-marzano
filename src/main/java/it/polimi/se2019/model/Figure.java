@@ -12,7 +12,7 @@ public class Figure {
     public void mark (Set<Figure> targets);
     public void move (Set<Figure> targets, Direction direction);
     public void move (Direction direction);
-    public void damage (Set<SpawnTile> targets);
+    public void dominationDamage (Set<SpawnTile> targets);
 
     public FigureColour getColour() {
         return colour;

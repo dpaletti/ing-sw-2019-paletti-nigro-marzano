@@ -1,6 +1,7 @@
 package it.polimi.se2019.model;
 
 import java.util.Map;
+import java.util.Set;
 
 public abstract class Tile {
     private RoomColour colour;
