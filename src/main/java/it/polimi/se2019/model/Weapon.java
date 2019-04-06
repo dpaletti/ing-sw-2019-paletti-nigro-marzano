@@ -15,17 +15,6 @@ public abstract class Weapon {
     TreeNode<Pair<Map<Player, List<Action>>, List<Ammo>>>
     effect (Player player);
 
-    protected abstract
-    Set<Player>
-    generateTargetSet (Player player);
-
-    protected abstract Set<Player> getVisibleTargets(Player player);
-    protected abstract Set<Player> getDifferentTargets(Set<Player> attackedPlayers);
-    protected abstract Set<Player> getZoneTargets(Set<Tile> Zone);
-    protected abstract Set<Player> getRadiusGreaterThanTargets(Integer radius);
-    protected abstract Set<Player> getRadiusEqualsTargets(Integer radius);
-
-
     public Ammo getCardColour() {
         return cardColour;
     }

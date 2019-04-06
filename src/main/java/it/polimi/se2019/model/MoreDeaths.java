@@ -4,7 +4,6 @@ public class MoreDeaths implements PlayerValue {
 
     @Override
     public Integer getMaxValue() {
-
-
+        return null;
     }
 }

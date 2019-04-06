@@ -8,8 +8,6 @@ public abstract class Tile {
     private Map<Direction, Boolean> doors;
     private Set<Figure> figures;
 
-    public Object grab();
-
     public void setColour(RoomColour colour) {
         this.colour = colour;
     }

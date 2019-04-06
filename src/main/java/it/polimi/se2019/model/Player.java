@@ -115,16 +115,16 @@ public class Player extends Observable<Action> {
         this.thirdPowerUp = thirdPowerUp;
     }
 
-    public Set<Effect> showWeapon(Weapon weapon);
+    public Set<Effect> showWeapon(Weapon weapon){return null;}
 
-    public void useWeapon(Weapon weapon, Set<Effect> effects);
+    public void useWeapon(Weapon weapon, Set<Effect> effects){}
 
-    public void moveFigure(Direction direction);
+    public void moveFigure(Direction direction){}
 
-    public void grabStuff();
+    public void grabStuff(){}
 
-    public void endTurn();
+    public void endTurn(){}
 
-    public void reload(Weapon weapon);
+    public void reload(Weapon weapon){}
 
 }
