@@ -1,6 +1,9 @@
 package it.polimi.se2019.model;
 
-public class Adrenaline {
+import it.polimi.se2019.utility.Observable;
+import it.polimi.se2019.utility.Observer;
+
+public class Adrenaline extends Observable<Adrenaline> implements Observer<Action> {
     private GameHistory gameHistory;
     private GameMap gameMap;
     private KillshotTrack killshotTrack;
@@ -8,6 +11,15 @@ public class Adrenaline {
     private Deck powerUpDeck;
     private Deck ammoDeck;
     private static Adrenaline instance;
+
+    public void startGame(){};
+    public void endTurn(){};
+    public void endGame(){};
+
+    @Override
+    public void update(Action message) {
+
+    }
 
     public static Adrenaline getInstance() {
         return instance;
