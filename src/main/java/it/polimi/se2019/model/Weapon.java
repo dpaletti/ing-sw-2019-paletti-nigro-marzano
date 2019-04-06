@@ -9,10 +9,10 @@ public abstract class Weapon {
     private Set<Ammo> price;
     private List<Pair<Integer, Ammo>> optionalPrice;
     private Boolean loaded;
-    private Node<Pair<List<List<Action>>, List<Ammo>>> storedActions;
+    private TreeNode<Pair<List<List<Action>>, List<Ammo>>> storedActions;
 
     public abstract
-    Node<Pair<Map<Player, List<Action>>, List<Ammo>>>
+    TreeNode<Pair<Map<Player, List<Action>>, List<Ammo>>>
     effect (Player player);
 
     protected abstract
