@@ -1,7 +1,6 @@
 package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Observable;
-import org.graalvm.compiler.virtual.phases.ea.EffectList;
 
 import java.util.Set;
 

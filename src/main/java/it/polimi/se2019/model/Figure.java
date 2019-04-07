@@ -1,6 +1,5 @@
 package it.polimi.se2019.model;
 
-import java.awt.*;
 import java.util.Set;
 
 public class Figure {
@@ -47,8 +46,4 @@ public class Figure {
     private Set<Figure> getRadiusBetweenTargets(Integer innerRadius, Integer outerRadius){return null;}
 
     public void reload(Weapon weapon){}
-
-
-
-
 }
