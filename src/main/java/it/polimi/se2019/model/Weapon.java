@@ -9,10 +9,9 @@ public abstract class Weapon {
     private Set<Ammo> price;
     private List<Pair<Integer, Ammo>> optionalPrice;
     private Boolean loaded;
-    private TreeNode<Pair<List<List<Action>>, List<Ammo>>> storedActions;
+    private GraphNode<Pair<List<List<Action>>, List<Ammo>>> storedActions;
 
-    public abstract
-    TreeNode<Pair<Map<Player, List<Action>>, List<Ammo>>>
+    public abstract GraphNode<Pair<Map<Player, List<Action>>, List<Ammo>>>
     effect (Player player);
 
     public Ammo getCardColour() {

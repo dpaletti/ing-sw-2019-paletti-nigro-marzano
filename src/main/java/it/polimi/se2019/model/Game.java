@@ -3,14 +3,14 @@ package it.polimi.se2019.model;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Observer;
 
-public class Adrenaline extends Observable<Adrenaline> implements Observer<Action> {
+public class Game extends Observable<Game> implements Observer<Action> {
     private GameHistory gameHistory;
     private GameMap gameMap;
     private KillshotTrack killshotTrack;
     private Deck weaponDeck;
     private Deck powerUpDeck;
     private Deck ammoDeck;
-    private static Adrenaline instance;
+    private static Game instance;
 
     public void startGame(){};
     public void endTurn(){};
@@ -21,7 +21,7 @@ public class Adrenaline extends Observable<Adrenaline> implements Observer<Actio
 
     }
 
-    public static Adrenaline getInstance() {
+    public static Game getInstance() {
         return instance;
     }
 

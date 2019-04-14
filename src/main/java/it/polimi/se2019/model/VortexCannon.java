@@ -6,7 +6,7 @@ import java.util.Map;
 public class VortexCannon extends Weapon {
 
     @Override
-    public TreeNode<Pair<Map<Player, List<Action>>, List<Ammo>>> effect(Player player) {
+    public GraphNode<Pair<Map<Player, List<Action>>, List<Ammo>>> effect(Player player) {
         return null;
     }
 }
