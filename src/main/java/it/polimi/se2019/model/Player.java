@@ -2,14 +2,15 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Observable;
 
+import java.util.List;
 import java.util.Set;
 
 public class Player extends Observable<Action> {
     private Figure figure;
-    private Tear hp;
+    private List<Tear> hp;
     private PlayerDamage healthState;
     private PlayerValue deathState;
-    private Tear marks;
+    private Set<Tear> marks;
     private Weapon firstWeapon;
     private Weapon secondWeapon;
     private Weapon thirdWeapon;
@@ -17,6 +18,8 @@ public class Player extends Observable<Action> {
     private PowerUp secondPowerUp;
     private PowerUp thirdPowerUp;
     private Integer points;
+    private Set<Ammo> usableAmmo;
+    private Set<Ammo> unusableAmmo;
 
     public Weapon getThirdWeapon() {
         return thirdWeapon;
@@ -58,13 +61,15 @@ public class Player extends Observable<Action> {
         return thirdPowerUp;
     }
 
-    public Tear getHp() {
-        return hp;
-    }
+    public List<Tear> getHp() {}
 
-    public Tear getMarks() {
+    public Set<Tear> getMarks() {
         return marks;
     }
+
+    public Set<Ammo> getUnusableAmmo() { return unusableAmmo; }
+
+    public Set<Ammo> getUsableAmmo() { return usableAmmo; }
 
     public void setThirdWeapon(Weapon thirdWeapon) {
         this.thirdWeapon = thirdWeapon;
@@ -94,13 +99,9 @@ public class Player extends Observable<Action> {
         this.healthState = healthState;
     }
 
-    public void setHp(Tear hp) {
-        this.hp = hp;
-    }
+    public void setHp(List<Tear> hp) { this.hp = hp; }
 
-    public void setMarks(Tear marks) {
-        this.marks = marks;
-    }
+    public void setMarks(Set<Tear> marks) { this.marks = marks; }
 
     public void setPoints(Integer points) {
         this.points = points;
@@ -114,9 +115,13 @@ public class Player extends Observable<Action> {
         this.thirdPowerUp = thirdPowerUp;
     }
 
-    public Set<Effect> showWeapon(Weapon weapon){return null;}
+    public void setUnusableAmmo(Set<Ammo> unusableAmmo) { this.unusableAmmo = unusableAmmo; }
 
-    public void useWeapon(Weapon weapon, Set<Effect> effects){}
+    public void setUsableAmmo(Set<Ammo> usableAmmo) { this.usableAmmo = usableAmmo; }
+
+    public GraphNode<Effect> showWeapon(Weapon weapon){return null;}
+
+    public void useWeapon(Weapon weapon){}
 
     public void moveFigure(Direction direction){}
 
@@ -125,5 +130,9 @@ public class Player extends Observable<Action> {
     public void endTurn(){}
 
     public void reload(Weapon weapon){}
+
+    public void usePowerUp (PowerUp powerUp){}
+
+    public void sellPowerUp (PowerUp powerUp){}
 
 }

@@ -3,23 +3,20 @@ package it.polimi.se2019.model;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Observer;
 
+import java.util.List;
+
 public class Game extends Observable<Game> implements Observer<Action> {
-    private GameHistory gameHistory;
     private GameMap gameMap;
     private KillshotTrack killshotTrack;
     private Deck weaponDeck;
     private Deck powerUpDeck;
     private Deck ammoDeck;
     private static Game instance;
-
-    public void startGame(){};
-    public void endTurn(){};
-    public void endGame(){};
+    private List<Player> players;
+    private Turn turn;
 
     @Override
-    public void update(Action message) {
-
-    }
+    public void update(Action message) {}
 
     public static Game getInstance() {
         return instance;
@@ -37,10 +34,6 @@ public class Game extends Observable<Game> implements Observer<Action> {
         return weaponDeck;
     }
 
-    public GameHistory getGameHistory() {
-        return gameHistory;
-    }
-
     public GameMap getGameMap() {
         return gameMap;
     }
@@ -49,12 +42,12 @@ public class Game extends Observable<Game> implements Observer<Action> {
         return killshotTrack;
     }
 
+    public List<Player> getPlayers() { return players; }
+
+    public Turn getTurn() { return turn; }
+
     public void setAmmoDeck(Deck ammoDeck) {
         this.ammoDeck = ammoDeck;
-    }
-
-    public void setGameHistory(GameHistory gameHistory) {
-        this.gameHistory = gameHistory;
     }
 
     public void setGameMap(GameMap gameMap) {
@@ -73,4 +66,9 @@ public class Game extends Observable<Game> implements Observer<Action> {
         this.weaponDeck = weaponDeck;
     }
 
+    public static void setInstance(Game instance) { Game.instance = instance; }
+
+    public void setPlayers(List<Player> players) { this.players = players; }
+
+    public void setTurn(Turn turn) { this.turn = turn; }
 }

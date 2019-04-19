@@ -1,6 +1,6 @@
 package it.polimi.se2019.model;
 
-public class Point {
+public class Point { //da eliminare
     int x;
     int y;
 

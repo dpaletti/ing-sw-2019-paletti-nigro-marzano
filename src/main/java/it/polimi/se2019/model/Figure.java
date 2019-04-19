@@ -1,5 +1,7 @@
 package it.polimi.se2019.model;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Figure {
@@ -23,27 +25,25 @@ public class Figure {
         this.position = position;
     }
 
-    private void damage(Set<Figure> targets){}
+    public Player getPlayer() { return player; }
 
-    private void mark(Set<Figure> targets){}
+    public void setPlayer(Player player) { this.player = player; }
+
+    private void damage(Figure target){}
+
+    private void mark(Figure target){}
 
     public void move(Direction direction){}
 
-    private void move(Set<Figure> targets, Direction direction){}
-
-    private void dominationDamage(Set<SpawnTile> targets){}
+    private void move(Figure target, Direction direction){}
 
     public void grab(){}
 
-    private Set<Figure> generateTargetSet(Set<Figure> figures){return null;}
+    private Set<Figure> generateTargetSet(GraphNode<Effect> node){return null;}
 
-    private Set<Figure> getVisibleTargetSet(Set<Figure> figures){return null;}
-
-    private Set<Figure> getDifferentTargetSet(Set<Figure> attackedFigures){return null;}
-
-    private Set<Figure> getZoneTargets(Set<Tile> tiles){return null;}
-
-    private Set<Figure> getRadiusBetweenTargets(Integer innerRadius, Integer outerRadius){return null;}
+    public Map<Figure, List<Effect>> generateWeaponEffect(GraphNode<Effect> node){return null;}
 
     public void reload(Weapon weapon){}
+
+    private void damage (SpawnTile target){}
 }

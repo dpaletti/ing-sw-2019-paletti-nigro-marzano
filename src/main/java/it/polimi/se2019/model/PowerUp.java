@@ -6,18 +6,17 @@ import java.util.Set;
 
 public abstract class PowerUp {
     private AmmoColour colour;
-
-    public abstract
-    Pair<List<Map<Figure, List<Action>>>, List<Ammo>>
-    effect(Figure figure, List<Map<Figure, List<Action>>> storedMoves);
-    protected abstract Set<Figure>
-    generateTargetSet(List<Map<Figure, List<Action>>> storedMoves);
+    private GraphNode<Effect> staticDefinition;
 
     public AmmoColour getColour() {
         return colour;
     }
 
+    public GraphNode<Effect> getStaticDefinition() { return staticDefinition; }
+
     public void setColour(AmmoColour colour) {
         this.colour = colour;
     }
+
+    public void setStaticDefinition(GraphNode<Effect> staticDefinition) { this.staticDefinition = staticDefinition; }
 }

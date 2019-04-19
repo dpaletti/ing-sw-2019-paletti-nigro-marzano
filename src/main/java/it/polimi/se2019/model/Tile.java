@@ -7,6 +7,7 @@ public abstract class Tile {
     private RoomColour colour;
     private Map<Direction, Boolean> doors;
     private Set<Figure> figures;
+    private WeaponSpot weaponSpot;
 
     public void setColour(RoomColour colour) {
         this.colour = colour;
@@ -20,6 +21,8 @@ public abstract class Tile {
         this.figures = figures;
     }
 
+    public void setWeaponSpot(WeaponSpot weaponSpot) { this.weaponSpot = weaponSpot; }
+
     public RoomColour getColour() {
         return colour;
     }
@@ -31,4 +34,14 @@ public abstract class Tile {
     public Set<Figure> getFigures() {
         return figures;
     }
+
+    public WeaponSpot getWeaponSpot() { return weaponSpot; }
+
+    public LootCard getLootCard(){}
+
+    public WeaponSpot showWeaponSpot(){}
+
+    public Weapon getWeapon(Weapon weapon){}
+
+    public TileType getTileType(){}
 }
