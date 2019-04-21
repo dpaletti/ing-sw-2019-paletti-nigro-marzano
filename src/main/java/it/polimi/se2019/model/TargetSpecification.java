@@ -34,4 +34,4 @@ public class TargetSpecification {
 
     public void setVisible(Integer visible) { this.visible = visible; }
 }
-}
+

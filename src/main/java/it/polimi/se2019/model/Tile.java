@@ -37,11 +37,11 @@ public abstract class Tile {
 
     public WeaponSpot getWeaponSpot() { return weaponSpot; }
 
-    public LootCard getLootCard(){}
+    public LootCard getLootCard(){return null;}
 
-    public WeaponSpot showWeaponSpot(){}
+    public WeaponSpot showWeaponSpot(){return null;}
 
-    public Weapon getWeapon(Weapon weapon){}
+    public Weapon getWeapon(Weapon weapon){return null;}
 
-    public TileType getTileType(){}
+    public TileType getTileType(){return null;}
 }

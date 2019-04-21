@@ -61,7 +61,7 @@ public class Player extends Observable<Action> {
         return thirdPowerUp;
     }
 
-    public List<Tear> getHp() {}
+    public List<Tear> getHp() {return hp;}
 
     public Set<Tear> getMarks() {
         return marks;

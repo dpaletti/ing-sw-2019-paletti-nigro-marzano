@@ -4,8 +4,4 @@ import java.util.List;
 import java.util.Map;
 
 public class PlasmaGun extends Weapon {
-    @Override
-    public GraphNode<Pair<Map<Player, List<Action>>, List<Ammo>>> effect(Player player) {
-        return null;
-    }
-}
+   }

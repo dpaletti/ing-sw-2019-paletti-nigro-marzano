@@ -11,8 +11,6 @@ public abstract class Weapon {
     private Boolean loaded;
     private GraphNode<Pair<List<List<Action>>, List<Ammo>>> storedActions;
 
-    public abstract GraphNode<Pair<Map<Player, List<Action>>, List<Ammo>>>
-    effect (Player player);
 
     public Ammo getCardColour() {
         return cardColour;

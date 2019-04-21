@@ -4,15 +4,23 @@ import java.awt.*;
 import java.util.Map;
 
 public class GameMap {
-    private static GameMap instance;
-    private MapConfig config;
-    private Map<Point, Tile> map;
-    private GameMode mode;
-    private Boolean finalFrenzy;
+    private static GameMap instance=null;
+    private static MapConfig config;
+    private static Map<Point, Tile> map;
+    private static GameMode mode;
+    private static Boolean finalFrenzy;
 
-    private GameMap(MapConfig config, GameMode mode, Boolean finalFrenzy){};
+    private GameMap(MapConfig config, GameMode mode, Boolean finalFrenzy, Map<Point, Tile> map){
+        this.config= config;
+        this.mode=mode;
+        this.finalFrenzy=finalFrenzy;
+        this.map=map;
+    }
 
-    public static GameMap getInstance() {
+    public static GameMap getInstance(MapConfig config) {
+        if (instance==null) {
+            instance= new GameMap(config, mode, finalFrenzy, map);
+        }
         return instance;
     }
 
@@ -30,26 +38,6 @@ public class GameMap {
 
     public MapConfig getConfig() {
         return config;
-    }
-
-    public void setConfig(MapConfig config) {
-        this.config = config;
-    }
-
-    public void setFinalFrenzy(Boolean finalFrenzy) {
-        this.finalFrenzy = finalFrenzy;
-    }
-
-    public static void setInstance(GameMap instance) {
-        GameMap.instance = instance;
-    }
-
-    public void setMap(Map<Point, Tile> map) {
-        this.map = map;
-    }
-
-    public void setMode(GameMode mode) {
-        this.mode = mode;
     }
 
 }
