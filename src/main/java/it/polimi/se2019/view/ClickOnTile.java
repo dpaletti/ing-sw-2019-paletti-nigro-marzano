@@ -1,4 +1,4 @@
 package it.polimi.se2019.view;
 
-public class ClickOnTile extends Event {
+public class ClickOnTile extends VCEvent {
 }

@@ -3,7 +3,7 @@ package it.polimi.se2019.utility;
 import java.util.List;
 
 public class Observable<T> {
-    private List<Observer<T>> observers;
+    protected List<Observer<T>> observers;
 
     public void register(Observer<T> observer){}
 

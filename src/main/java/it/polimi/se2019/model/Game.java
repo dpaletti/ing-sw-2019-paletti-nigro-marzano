@@ -2,10 +2,11 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Observer;
+import it.polimi.se2019.view.MVEvent;
 
 import java.util.List;
 
-public class Game extends Observable<Game> implements Observer<Action> {
+public class Game extends Observable<MVEvent> implements Observer<Action> {
     private GameMap gameMap;
     private KillshotTrack killshotTrack;
     private Deck weaponDeck;

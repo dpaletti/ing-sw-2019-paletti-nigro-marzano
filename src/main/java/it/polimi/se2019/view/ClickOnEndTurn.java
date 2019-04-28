@@ -1,4 +1,4 @@
 package it.polimi.se2019.view;
 
-public class ClickOnEndTurn extends Event {
+public class ClickOnEndTurn extends VCEvent {
 }

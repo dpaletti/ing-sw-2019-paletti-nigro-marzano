@@ -1,4 +1,4 @@
 package it.polimi.se2019.view;
 
-public class ClickOnWeapon extends Event {
+public class ClickOnWeapon extends VCEvent {
 }
