@@ -1,16 +1,17 @@
 package it.polimi.se2019.view;
 
-import java.net.Socket;
+import it.polimi.se2019.controller.MatchMakingController;
 
-public class DisconnectionEvent extends VCEvent {
-    Socket socket;
+import java.net.InetAddress;
 
-    public DisconnectionEvent(Socket socket){
-        super();
-        this.socket = socket;
+public class DisconnectionEvent extends VCEvent{
+
+    public DisconnectionEvent(InetAddress source){
+        super(source);
     }
-    
-    public Socket getSocket() {
-        return socket;
+
+    @Override
+    public void handle(MatchMakingController controller) {
+        controller.update(this);
     }
 }

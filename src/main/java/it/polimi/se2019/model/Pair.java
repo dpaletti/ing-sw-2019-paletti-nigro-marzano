@@ -3,6 +3,10 @@ package it.polimi.se2019.model;
 public class Pair<T, S> {
     private T first;
     private S second;
+    public Pair(T first, S second){
+        this.first = first;
+        this.second = second;
+    }
 
     public void setFirst(T first){
         this.first = first;

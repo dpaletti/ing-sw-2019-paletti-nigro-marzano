@@ -1,57 +1,56 @@
 package it.polimi.se2019.network;
 
+import it.polimi.se2019.utility.Log;
+
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Client {
-    private String ip;
-    private int port;
-    private static final Logger logger = Logger.getLogger(Server.class.getName());
+    private String serverIp;
+    private int serverPort;
+    private NetworkHandler networkHandler;
 
     public Client(String ip, int port){
-        this.ip = ip;
-        this.port = port;
+        this.serverIp = ip;
+        this.serverPort = port;
     }
 
-    public void startClient() throws IOException{
-        logger.log(Level.FINE, "Connection established");
-        try(Socket socket = new Socket(ip, port);
-            Scanner socketln = new Scanner(socket.getInputStream());
-            PrintWriter socketOut = new PrintWriter(socket.getOutputStream());
-            Scanner stdin = new Scanner(System.in)){
-            while(true){
-                //TODO this placeholder loop needs to be worked to a concrete implementation
-                String inputLine = stdin.nextLine();
-                if(inputLine.equals("quit"))
-                    break;
-                socketOut.println(inputLine);
-                socketOut.flush();
-                String socketLine = socketln.nextLine();
-                logger.log(Level.FINE, socketLine);
-            }
-        }catch(NoSuchElementException e){
-            logger.log(Level.SEVERE, e.getMessage());
-        }
+    public int getServerPort() {
+        return serverPort;
+    }
+
+    public String getServerIp() {
+        return serverIp;
     }
 
     public static void main(String[] args){
-        logger.log(Level.INFO, "input Server IP (with no spaces) then press Enter:");
+        Log.input("input Server IP (with no spaces) then press Enter: ");
         Scanner in = new Scanner(System.in);
         String ip = in.nextLine();
-        logger.log(Level.INFO, "input Server port then press Enter ");
+
+        Log.input("input Server port then press Enter: ");
         int port = in.nextInt();
+        in.nextLine();
+
         Client client = new Client(ip, port);
-        try{
-            client.startClient();
-        }catch(IOException e){
-            logger.log(Level.SEVERE, e.getMessage());
+
+        Log.input("Preferred network communication mode (RMI/Socket): ");
+        String connectionType = in.nextLine();
+
+        if(connectionType.equals("Socket"))
+            client.networkHandler = new NetworkHandlerSocket(client);
+        //else if(connectionType.equals("RMI"))
+          //  client.networkHandler = new NetworkHandlerRMI(client);
+        else{
+            Log.info( "'" + connectionType + "'" + " as a network communication mode is not valid, falling back to Socket ");
+            client.networkHandler = new NetworkHandlerSocket(client);
+        }
+
+        try {
+            client.networkHandler.establishConnection();
+        }catch (IOException e){
+            Log.severe(e.getMessage());
         }
     }
-
 
 }

@@ -1,98 +1,87 @@
 package it.polimi.se2019.network;
 
+import it.polimi.se2019.utility.Log;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
-    VirtualView virtualView;
-    private int port;
-    private static final Logger logger = Logger.getLogger(Server.class.getName());
-    private static final int MAXCLIENT = 5;
+    private ServerSocket serverSocket;
+    private List<Socket> socketBuffer = new CopyOnWriteArrayList<>();
+    private VirtualView virtualView;
 
-    public Server(int port){
+    private int port;
+    //TODO make it configurable
+    private static final int DEFAULT_PORT = 2080;
+
+    private Server(int port){
         this.port = port;
     }
 
-    public class ServerClientHandler implements Runnable {
-        private Socket socket;
 
+    private boolean startServer(){
+        //TODO: add RMI register opening
+        //non blocking call should probably be put here or better in a different method
 
-        public ServerClientHandler(Socket socket) {
-            this.socket = socket;
-        }
-
-        public void run() {
-            try {
-                //TODO Understand what to do when a client connects
-
-                Scanner in = new Scanner(socket.getInputStream());
-                new SocketWatchdog(socket, virtualView);
-                virtualView.addConnection(socket);
-                socket.close();
-            } catch (IOException e) {
-                logger.log(Level.SEVERE, e.getMessage());
-            }
-        }
-
-    }
-
-    public boolean startServer(){
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        virtualView = new VirtualView(this);
-
-        try(ServerSocket serverSocket = new ServerSocket(port)){
-            logger.log(Level.FINE, "Server ready");
-            acceptClients(serverSocket, executorService);
+        try{
+            serverSocket = new ServerSocket(port);
+            Log.info("Server ready");
+            acceptClients();
         }catch(IOException e){
             //chosen port is already in use
-            logger.log(Level.SEVERE, e.getMessage());
+            Log.severe(e.getMessage());
             return false;
         }
 
-        executorService.shutdown();
         return true;
     }
 
-    private void acceptClients(ServerSocket serverSocket, ExecutorService executorService){
-        int clientCount = 0;
-
-        while(clientCount < MAXCLIENT){
-            //TODO add end of client registration mechanics
-            //that is: client can register, up to 5, for a limited time that probably the controller manages
-            //together with the room logic for match creation most likely
+    public void acceptClients(){
+        while(true){ //NOSONAR
             try {
                 Socket socket = serverSocket.accept();
-                socket.setSoTimeout(200);
-                executorService.submit(new ServerClientHandler(socket));
-                clientCount++;
+                Log.fine("Accepted new client");
+                socketBuffer.add(socket);
+                virtualView.newEventLoop(socket.getInetAddress(), new Scanner(socket.getInputStream()));
             } catch(IOException e){
                 //serverSocket has been closed
+                Log.severe(e.getMessage());
                 break;
             }
         }
+    }
+
+    public List<Socket> getSocketBuffer() {
+        return new CopyOnWriteArrayList<>(socketBuffer);
+    }
+
+    private int getPort() {
+        return port;
+    }
+
+    private void setPort(int port) {
+        this.port = port;
+    }
+
+    private void setVirtualView(VirtualView v){
+        this.virtualView = v;
     }
 
     public static void main(String[] args){
         Scanner in = new Scanner(System.in);
-        int port;
-        //TODO startup
-        while(true) {
-            logger.log(Level.INFO, "Input port number (> 1024): ");
-            port = in.nextInt();
-            Server server = new Server(port);
-            if(port <= 1024 || !server.startServer()){
-                logger.log(Level.FINE, "This port does not work");
-            }
-            else
-                break;
-        }
 
+        Log.input("Input port number (> 1024): ");
+        Server server = new Server(in.nextInt());
+        server.setVirtualView(new VirtualView(server));
+        if(server.getPort() <= 1024 || !server.startServer()){
+            Log.info("This port does not work, default port will be used " + DEFAULT_PORT);
+        }
+        server.setPort(DEFAULT_PORT);
+        server.startServer();
     }
 
 }

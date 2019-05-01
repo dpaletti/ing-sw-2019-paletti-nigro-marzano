@@ -1,17 +1,15 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
+import it.polimi.se2019.network.VirtualView;
 import it.polimi.se2019.utility.Observer;
 import it.polimi.se2019.view.VCEvent;
-import it.polimi.se2019.view.View;
 
-public class Controller implements Observer<VCEvent> {
-    private Game model;
-    private View view;
+public abstract class Controller implements Observer<VCEvent> {
+    //TODO evaluate the need for storing a reference to the model, probably needed
+    protected VirtualView virtualView;
 
-    @Override
-    public void update(VCEvent message) {
+    public Controller(VirtualView virtualView){
+        this.virtualView = virtualView;
     }
-
-
 }
