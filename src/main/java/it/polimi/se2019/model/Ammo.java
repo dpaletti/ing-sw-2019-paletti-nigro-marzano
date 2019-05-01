@@ -1,6 +1,8 @@
 package it.polimi.se2019.model;
 
-public class Ammo {
+import java.io.Serializable;
+
+public class Ammo implements Serializable {
     private AmmoColour colour;
 
     public void setColour(AmmoColour colour) {
@@ -9,5 +11,9 @@ public class Ammo {
 
     public AmmoColour getColour() {
         return colour;
+    }
+
+    public Ammo(AmmoColour colour){
+        this.colour= colour;
     }
 }

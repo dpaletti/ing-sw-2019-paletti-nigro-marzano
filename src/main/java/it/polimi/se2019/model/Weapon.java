@@ -1,15 +1,14 @@
 package it.polimi.se2019.model;
 
+import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-public abstract class Weapon {
-    private Ammo cardColour;
-    private Set<Ammo> price;
-    private List<Pair<Integer, Ammo>> optionalPrice;
-    private Boolean loaded;
-    private GraphNode<Pair<List<List<Action>>, List<Ammo>>> storedActions;
+public abstract class Weapon implements Serializable {
+    protected Ammo cardColour;
+    protected Set<Ammo> price;
+    private transient Boolean loaded;
+    private transient GraphNode<Pair<List<List<Action>>, List<Ammo>>> storedActions;
 
 
     public Ammo getCardColour() {
@@ -18,10 +17,6 @@ public abstract class Weapon {
 
     public Boolean getLoaded() {
         return loaded;
-    }
-
-    public List<Pair<Integer, Ammo>> getOptionalPrice() {
-        return optionalPrice;
     }
 
     public Set<Ammo> getPrice() {
@@ -34,10 +29,6 @@ public abstract class Weapon {
 
     public void setLoaded(Boolean loaded) {
         this.loaded = loaded;
-    }
-
-    public void setOptionalPrice(List<Pair<Integer, Ammo>> optionalPrice) {
-        this.optionalPrice = optionalPrice;
     }
 
     public void setPrice(Set<Ammo> price) {
