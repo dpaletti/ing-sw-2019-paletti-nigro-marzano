@@ -37,13 +37,12 @@ public class LockRifle extends Weapon {
           tempList.add(tempMark);
           tempBasic.setActions(tempList);
 
-          withSecondLock= new HashSet();
+          withSecondLock= new HashSet<>();
           Effect tempSecond= new Effect();
           withSecondLock.add(tempSecond);
           TargetSpecification tempTargetSecond= new TargetSpecification();
-          Pair tempPair= new Pair<>();
-          tempPair.setFirst(1);
-          tempPair.setSecond(basicEffect);
+          Pair tempPair= new Pair<>(1, basicEffect);
+          //TODO check below if everything works as intended
           tempTargetSecond.setDifferent(tempPair);
           tempSecond.setTargetSpecification(tempTargetSecond);
 
