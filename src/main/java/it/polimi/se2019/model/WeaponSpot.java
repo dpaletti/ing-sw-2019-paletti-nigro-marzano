@@ -28,4 +28,10 @@ public class WeaponSpot {
     public void setThirdWeapon(Weapon thirdWeapon) {
         this.thirdWeapon = thirdWeapon;
     }
+
+    public void weaponSpot (Weapon firstWeapon, Weapon secondWeapon, Weapon thirdWeapon){
+        this.firstWeapon=firstWeapon;
+        this.secondWeapon=secondWeapon;
+        this.thirdWeapon=thirdWeapon;
+    }
 }

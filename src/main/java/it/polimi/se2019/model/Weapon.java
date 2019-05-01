@@ -8,30 +8,24 @@ public abstract class Weapon implements Serializable {
     protected Ammo cardColour;
     protected Set<Ammo> price;
     private transient Boolean loaded;
-    private transient GraphNode<Pair<List<List<Action>>, List<Ammo>>> storedActions;
+    private transient GraphNode<Effect> staticDefinition;
 
 
-    public Ammo getCardColour() {
-        return cardColour;
-    }
+    public Ammo getCardColour() { return cardColour; }
 
-    public Boolean getLoaded() {
-        return loaded;
-    }
+    public Boolean getLoaded() { return loaded; }
 
-    public Set<Ammo> getPrice() {
-        return price;
-    }
+    public Set<Ammo> getPrice() { return price; }
 
-    public void setCardColour(Ammo cardColour) {
-        this.cardColour = cardColour;
-    }
+    public GraphNode<Effect> getStaticDefinition() { return staticDefinition; }
 
-    public void setLoaded(Boolean loaded) {
-        this.loaded = loaded;
-    }
+    public void setCardColour(Ammo cardColour) { this.cardColour = cardColour; }
+
+    public void setLoaded(Boolean loaded) { this.loaded = loaded; }
 
     public void setPrice(Set<Ammo> price) {
         this.price = price;
     }
+
+    public void setStaticDefinition(GraphNode<Effect> staticDefinition) { this.staticDefinition = staticDefinition; }
 }

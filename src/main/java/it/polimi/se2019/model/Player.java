@@ -119,20 +119,62 @@ public class Player extends Observable<Action> {
 
     public void setUsableAmmo(Set<Ammo> usableAmmo) { this.usableAmmo = usableAmmo; }
 
-    public GraphNode<Effect> showWeapon(Weapon weapon){return null;}
 
-    public void useWeapon(Weapon weapon){}
 
-    public void moveFigure(Direction direction){}
+    public GraphNode<Effect> showWeapon(Weapon weapon){
 
-    public void grabStuff(){}
+        return(weapon.getStaticDefinition());
+        }
 
-    public void endTurn(){}
+    public void useWeapon(Weapon weapon){
+        //TODO: cosa fa?
+        //ricordare di scaricare l'arma a fine utilizzo
+    }
 
-    public void reload(Weapon weapon){}
+    public void moveFigure(Direction direction){
+        figure.move(direction);
+    }
 
-    public void usePowerUp (PowerUp powerUp){}
+    public void grabStuff(){
+        figure.grab();
+    }
 
-    public void sellPowerUp (PowerUp powerUp){}
+    public void endTurn(){} //TODO: endTurn sends an event to the virtual view
+
+    public void reload(Weapon weapon){
+        figure.reload(weapon);
+    }
+
+    public void usePowerUp (PowerUp powerUp){
+        //TODO:
+    }
+
+    public void sellPowerUp (PowerUp powerUp){
+        Ammo powerUpToSell= new Ammo(powerUp.getColour());
+        usableAmmo.add(powerUpToSell);
+        if (powerUp.getPowerUpName().equals(firstPowerUp.getPowerUpName())){
+            firstPowerUp=null;
+        }
+        else if (powerUp.getPowerUpName().equals(secondPowerUp.getPowerUpName())){
+            secondPowerUp=null;
+        }
+        else if (powerUp.getPowerUpName().equals(thirdPowerUp.getPowerUpName())){
+            thirdPowerUp=null;
+        }
+    }
+
+    public void addTear (FigureColour figureColour){
+        Tear tear= new Tear(figureColour);
+        hp.add(tear);
+    }
+
+    public void addMark (FigureColour figureColour){
+        Tear tear= new Tear(figureColour);
+        marks.add(tear);
+    }
+
+    public void updatePlayerDamage (){
+        //TODO: checks whether shooting a target changes its PlayerDamage state and updates it if so
+    }
 
 }

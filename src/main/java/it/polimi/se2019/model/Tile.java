@@ -1,5 +1,6 @@
 package it.polimi.se2019.model;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -7,8 +8,20 @@ public abstract class Tile {
     private RoomColour colour;
     private Map<Direction, Boolean> doors;
     private Set<Figure> figures;
-    private WeaponSpot weaponSpot;
+    protected WeaponSpot weaponSpot;
+    protected LootCard loot;
+    private Point position;
+    private List<Tear> hp;
 
+    public Tile (RoomColour colour, Map<Direction, Boolean> doors, Set<Figure> figures, WeaponSpot weaponSpot, LootCard loot, Point position, List<Tear> hp){
+        this.colour= colour;
+        this.doors= doors;
+        this.figures=figures;
+        this.weaponSpot=weaponSpot;
+        this.loot=loot;
+        this.position=position;
+        this.hp=hp;
+    }
     public void setColour(RoomColour colour) {
         this.colour = colour;
     }
@@ -22,6 +35,12 @@ public abstract class Tile {
     }
 
     public void setWeaponSpot(WeaponSpot weaponSpot) { this.weaponSpot = weaponSpot; }
+
+    public void setLoot(LootCard loot) { this.loot = loot; }
+
+    public void setPosition(Point position) { this.position = position; }
+
+    public void setHp(List<Tear> hp) { this.hp = hp; }
 
     public RoomColour getColour() {
         return colour;
@@ -37,11 +56,21 @@ public abstract class Tile {
 
     public WeaponSpot getWeaponSpot() { return weaponSpot; }
 
-    public LootCard getLootCard(){return null;}
+    public LootCard getLoot() { return loot; }
 
-    public WeaponSpot showWeaponSpot(){return null;}
+    public Point getPosition() { return position; }
+
+    public List<Tear> getHp() { return hp; }
+
+    public LootCard getLootCard(){return null;}
 
     public Weapon getWeapon(Weapon weapon){return null;}
 
     public TileType getTileType(){return null;}
+
+    public void addTear(FigureColour figureColour){
+        Tear tearToAdd= new Tear(figureColour);
+        hp.add(tearToAdd);
+    }
+
 }

@@ -1,12 +1,12 @@
 package it.polimi.se2019.model;
 
-import java.util.List;
+import java.util.Set;
 
 public class LootCard {
-    private List<Ammo> ammo;
+    private Set<Ammo> ammo;
     private PowerUp powerUp;
 
-    public void setAmmo(List<Ammo> ammo) {
+    public void setAmmo(Set<Ammo> ammo) {
         this.ammo = ammo;
     }
 
@@ -14,7 +14,7 @@ public class LootCard {
         this.powerUp = powerUp;
     }
 
-    public List<Ammo> getAmmo() {
+    public Set<Ammo> getAmmo() {
         return ammo;
     }
 
