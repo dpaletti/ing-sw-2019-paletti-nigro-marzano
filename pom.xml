@@ -40,6 +40,14 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- Mockito provides easy mocking for unit tests in Java applications -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.8.5</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- GSON provides JSON facilities for Java applications -->
     <dependency>
       <groupId>com.google.code.gson</groupId>

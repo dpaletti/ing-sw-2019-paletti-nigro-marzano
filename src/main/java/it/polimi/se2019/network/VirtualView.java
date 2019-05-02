@@ -11,12 +11,15 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class VirtualView extends View {
     private Server server;
     private List<Connection> connectionList = new CopyOnWriteArrayList<>();
     private List<Connection> timeOuts = new CopyOnWriteArrayList<>();
     private List<EventLoop> eventLoops = new CopyOnWriteArrayList<>();
+    private ExecutorService executorService = Executors.newCachedThreadPool();
 
 
     public VirtualView(Server server){
@@ -56,7 +59,14 @@ public class VirtualView extends View {
         }
     }
 
-    protected String serialize(MVEvent mvEvent, String type){
+    public void newEventLoop (InetAddress ip, Scanner in){
+        EventLoop eventLoop = new EventLoop(in, ip);
+        eventLoops.add(eventLoop);
+        executorService.submit(eventLoop);
+    }
+
+
+    public String serialize(MVEvent mvEvent, String type){
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
         JsonElement jsonElement = gson.toJsonTree(mvEvent);
@@ -141,10 +151,5 @@ public class VirtualView extends View {
         }
     }
 
-    public void newEventLoop (InetAddress ip, Scanner in){
-        EventLoop eventLoop = new EventLoop(in, ip);
-        eventLoops.add(eventLoop);
-        new Thread(eventLoop).start();
-    }
 
 }

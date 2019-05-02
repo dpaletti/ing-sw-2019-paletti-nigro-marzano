@@ -10,6 +10,8 @@ public abstract class Controller implements Observer<VCEvent> {
     protected VirtualView virtualView;
 
     public Controller(VirtualView virtualView){
+        if (virtualView == (null))
+            throw new NullPointerException();
         this.virtualView = virtualView;
     }
 }

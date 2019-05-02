@@ -18,7 +18,7 @@ public class Server {
     //TODO make it configurable
     private static final int DEFAULT_PORT = 2080;
 
-    private Server(int port){
+    public Server(int port){
         this.port = port;
     }
 
