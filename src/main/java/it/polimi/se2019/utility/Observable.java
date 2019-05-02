@@ -1,5 +1,6 @@
 package it.polimi.se2019.utility;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Observable<T> {
@@ -20,5 +21,7 @@ public class Observable<T> {
         }
     }
 
-
+    public List<Observer<T>> getObservers() {
+        return new ArrayList<>(observers);
+    }
 }

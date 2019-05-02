@@ -1,10 +1,10 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.network.ConnectionType;
-import it.polimi.se2019.network.VirtualView;
+import it.polimi.se2019.view.VirtualView;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.DisconnectionEvent;
-import it.polimi.se2019.view.MatchMakingEntranceRequestEvent;
+import it.polimi.se2019.view.JoinEvent;
 import it.polimi.se2019.view.VCEvent;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,8 +13,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.net.InetAddress;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +23,7 @@ public class TestMatchMakingController {
     @Mock
     private VirtualView virtualView;
     @Mock
-    private MatchMakingEntranceRequestEvent join;
+    private JoinEvent join;
     @Mock
     private DisconnectionEvent leave;
     @Mock
@@ -66,6 +64,7 @@ public class TestMatchMakingController {
             matchMakingController.update(join);
         }
         assertTrue(matchMakingController.isMatchMade());
+        assertFalse(virtualView.getObservers().contains(matchMakingController));
     }
 
     @Test
@@ -83,7 +82,7 @@ public class TestMatchMakingController {
 
     @Test
     public void testDispatching(){
-        vcEvent = new MatchMakingEntranceRequestEvent(ConnectionType.SOCKET, ip);
+        vcEvent = new JoinEvent(ConnectionType.SOCKET, ip);
         matchMakingController.update(vcEvent);
         assertFalse(matchMakingController.isTimerRunning());
         assertFalse(matchMakingController.isMatchMade());
@@ -105,11 +104,9 @@ public class TestMatchMakingController {
             //there is no strict timer requisite so it is no issue
             Thread.sleep(1100); //NOSONAR
             assertTrue(matchMakingController.isMatchMade());
+            assertFalse(virtualView.getObservers().contains(matchMakingController));
         }catch(InterruptedException e){
             Log.severe("Thread sleep interrupted during testing, timer test skipped");
         }
-
-
     }
-
 }

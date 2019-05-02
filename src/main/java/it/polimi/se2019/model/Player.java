@@ -2,6 +2,7 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Observable;
 
+import java.net.InetAddress;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +21,25 @@ public class Player extends Observable<Action> {
     private Integer points;
     private Set<Ammo> usableAmmo;
     private Set<Ammo> unusableAmmo;
+    private InetAddress ip; //TODO a player may be identified through its ip, check if it fits well with methods and such
+
+    public InetAddress getIp(){
+        //TODO added getter, check if everything works
+        return ip;
+    }
+
+    public void unpause(){
+        //TODO implement
+        //a paused player can be resurrect if it timed out
+        //probably MVEvent adhoc
+    }
+
+    public void pause(){
+        //TODO implement
+        //players that disconnect should be considered paused
+        //some players may simply time out
+        //probably MVEvent adhoc
+    }
 
     public Weapon getThirdWeapon() {
         return thirdWeapon;
@@ -129,6 +149,7 @@ public class Player extends Observable<Action> {
     public void useWeapon(Weapon weapon){
         //TODO: cosa fa?
         //ricordare di scaricare l'arma a fine utilizzo
+        //TODO don't use italian, mandolino, maccheroni and prosciutto please
     }
 
     public void moveFigure(Direction direction){

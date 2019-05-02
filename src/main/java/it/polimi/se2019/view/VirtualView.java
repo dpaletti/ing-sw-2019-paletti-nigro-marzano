@@ -1,9 +1,11 @@
-package it.polimi.se2019.network;
+package it.polimi.se2019.view;
 
 import com.google.gson.*;
 import it.polimi.se2019.controller.MatchMakingController;
+import it.polimi.se2019.network.Connection;
+import it.polimi.se2019.network.ConnectionType;
+import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -94,7 +96,7 @@ public class VirtualView extends View {
         }
     }
 
-    public void addPlayer(MatchMakingEntranceRequestEvent clientInfo) {
+    public void addPlayer(JoinEvent clientInfo) {
         if (clientInfo.getConnectionType().equals(ConnectionType.SOCKET)) {
             try {
                 PrintWriter out = getCorrespondingPrintWriter(clientInfo.getSource());
@@ -147,9 +149,18 @@ public class VirtualView extends View {
                 connectionList.remove(c);
                 timeOuts.add(c);
             }
-            
         }
     }
 
+    public List<Connection> getConnectionList() {
+        return new ArrayList<>(connectionList);
+    }
 
+    public List<Connection> getTimeOuts(){
+        return new ArrayList<>(timeOuts);
+    }
+
+    public void kick(InetAddress ip){
+        server.kick(ip);
+    }
 }

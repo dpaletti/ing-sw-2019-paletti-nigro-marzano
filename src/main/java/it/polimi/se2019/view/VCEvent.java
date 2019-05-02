@@ -1,5 +1,6 @@
 package it.polimi.se2019.view;
 
+import it.polimi.se2019.controller.MatchController;
 import it.polimi.se2019.controller.MatchMakingController;
 import it.polimi.se2019.network.NetworkHandlerRMI;
 import it.polimi.se2019.network.NetworkHandlerSocket;
@@ -23,6 +24,10 @@ public class VCEvent extends Event {
         throw new UnsupportedOperationException("MatchMaking controller can't handle this event");
     }
 
+    public void handle(MatchController controller){
+        throw new UnsupportedOperationException("MatchController can't handle this event");
+    }
+
     public void handle(NetworkHandlerSocket networkHandler) {
         throw new UnsupportedOperationException("Network Handler can't handle this event");
     }
@@ -30,4 +35,6 @@ public class VCEvent extends Event {
     public void handle(NetworkHandlerRMI networkHandler) {
         throw new UnsupportedOperationException("Network Handler can't handle this event");
     }
+
+
 }

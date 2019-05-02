@@ -1,8 +1,10 @@
 package it.polimi.se2019.network;
 
 import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.view.VirtualView;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -65,6 +67,16 @@ public class Server {
 
     private void setPort(int port) {
         this.port = port;
+    }
+
+    public void kick(InetAddress ip){
+        for (Socket s:
+             socketBuffer) {
+            if(s.getInetAddress().equals(ip)) {
+                socketBuffer.remove(s);
+                Log.info("Kicked " + ip);
+            }
+        }
     }
 
     private void setVirtualView(VirtualView v){

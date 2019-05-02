@@ -1,6 +1,8 @@
 package it.polimi.se2019.network;
 
 
+import it.polimi.se2019.view.VirtualView;
+
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.util.Scanner;

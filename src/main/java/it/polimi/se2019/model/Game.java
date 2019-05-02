@@ -4,6 +4,7 @@ import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Observer;
 import it.polimi.se2019.view.MVEvent;
 
+import java.net.InetAddress;
 import java.util.List;
 
 public class Game extends Observable<MVEvent> implements Observer<Action> {
@@ -73,11 +74,19 @@ public class Game extends Observable<MVEvent> implements Observer<Action> {
 
     public void setTurn(Turn turn) { this.turn = turn; }
 
-    public Player newPlayer(){
+    public Player newPlayer(InetAddress ip){
         //TODO: implement this method (not in UML diagram)
         //this method is called by a controller (most likely MatchController) when match making is closed
         //should add players to the game
-        //may need parameters, don't really know yet.
+        //Players are identified by their ip
+        //model will initialize the player in the correct way (figure chojce for example)
         return null;
+    }
+
+    private void startGame(){
+        //TODO: implement this method
+        //this method should be called by the Game constructor
+        //this method creates a new game
+        //asks map type, with MVEvent, to everyone, for example
     }
 }

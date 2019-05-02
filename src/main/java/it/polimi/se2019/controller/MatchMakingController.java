@@ -1,8 +1,8 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.network.VirtualView;
+import it.polimi.se2019.view.VirtualView;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.MatchMakingEntranceRequestEvent;
+import it.polimi.se2019.view.JoinEvent;
 import it.polimi.se2019.view.DisconnectionEvent;
 import it.polimi.se2019.view.VCEvent;
 
@@ -43,6 +43,8 @@ public class MatchMakingController extends Controller {
         //a new MatchController needs to be instantiated and used
         Log.fine("closing match making");
         matchMade.set(true);
+        virtualView.deregister(this);
+        new MatchController(virtualView);
     }
 
     @Override
@@ -54,7 +56,7 @@ public class MatchMakingController extends Controller {
         }
     }
 
-    public void update(MatchMakingEntranceRequestEvent message){
+    public void update(JoinEvent message){
         virtualView.addPlayer(message);
         playerCount.set(playerCount.addAndGet(1));
         Log.info("Players in match making: " + playerCount);
@@ -78,11 +80,10 @@ public class MatchMakingController extends Controller {
     }
 
     public void update(DisconnectionEvent disconnectionEvent){
-        virtualView.timeOut(disconnectionEvent.getSource());
         playerCount.set(playerCount.decrementAndGet());
         if(playerCount.get() < 0)
             throw new IllegalArgumentException();
-        Log.info("One player just disconnected, players in match making; " + playerCount);
+        Log.info("Player with ip" + disconnectionEvent.getSource() + " just disconnected, players in match making; " + playerCount);
         if(playerCount.get() < 3 && timerRunning.get()){
             timerRunning.set(false);
             Log.info("Timer stopped");

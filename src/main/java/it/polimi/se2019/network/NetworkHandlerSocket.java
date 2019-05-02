@@ -1,7 +1,7 @@
 package it.polimi.se2019.network;
 
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.MatchMakingEntranceRequestEvent;
+import it.polimi.se2019.view.JoinEvent;
 import it.polimi.se2019.view.VCEvent;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class NetworkHandlerSocket extends NetworkHandler {
         }
     }
 
-    public void update(MatchMakingEntranceRequestEvent message){
+    public void update(JoinEvent message){
         String serialized = serialize(message, message.getClass().toString().replace("class ", ""));
         submit(serialized);
     }
@@ -62,7 +62,7 @@ public class NetworkHandlerSocket extends NetworkHandler {
     @Override
     public void enterMatchMaking(){
         Log.info("Entering match making");
-        update(new MatchMakingEntranceRequestEvent(ConnectionType.SOCKET, socket.getLocalAddress()));
+        update(new JoinEvent(ConnectionType.SOCKET, socket.getLocalAddress()));
     }
 
     public void listenToEvent(){
