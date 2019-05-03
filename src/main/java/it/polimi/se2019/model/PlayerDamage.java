@@ -1,8 +1,13 @@
 package it.polimi.se2019.model;
 
+import java.util.Collections;
 import java.util.List;
 
-public interface PlayerDamage {
+public abstract class PlayerDamage {
 
-    List<List<Action>> moveSet (List<Action> elapsedMoves);
+    private Integer maximumHits;
+
+    public Integer getMaximumHits() { return maximumHits; }
+
+    List<List<Action>> moveSet (List<Action> elapsedMoves){return Collections.emptyList();};
 }

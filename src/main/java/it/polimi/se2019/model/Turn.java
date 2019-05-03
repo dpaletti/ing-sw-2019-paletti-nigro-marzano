@@ -1,26 +1,61 @@
 package it.polimi.se2019.model;
 
 import java.util.List;
+import java.util.Set;
 
 public class Turn {
-    private Player playing;
+    private Player player;
     private Combo firstCombo;
+    private Set<Figure> firstTargetSet;
     private Combo secondCombo;
+    private Set<Figure> secondTargetSet;
     List<PowerUp> usedPowerUp;
 
-    public Combo getFirstCombo() { return firstCombo; }
+    public Combo getFirstCombo() {
+        return firstCombo;
+    }
 
-    public Combo getSecondCombo() { return secondCombo; }
+    public Set<Figure> getFirstTargetSet() {
+        return firstTargetSet;
+    }
 
-    public List<PowerUp> getUsedPowerUp() { return usedPowerUp; }
+    public Combo getSecondCombo() {
+        return secondCombo;
+    }
 
-    public Player getPlaying() { return playing; }
+    public Set<Figure> getSecondTargetSet() {
+        return secondTargetSet;
+    }
 
-    public void setFirstCombo(Combo firstCombo) { this.firstCombo = firstCombo; }
+    public List<PowerUp> getUsedPowerUp() {
+        return usedPowerUp;
+    }
 
-    public void setPlaying(Player playing) { this.playing = playing; }
+    public Player getPlayer() {
+        return player;
+    }
 
-    public void setSecondCombo(Combo secondCombo) { this.secondCombo = secondCombo; }
+    public void setFirstCombo(Combo firstCombo) {
+        this.firstCombo = firstCombo;
+    }
 
-    public void setUsedPowerUp(List<PowerUp> usedPowerUp) { this.usedPowerUp = usedPowerUp; }
+    public void setFirstTargetSet(Set<Figure> firstTargetSet) {
+        this.firstTargetSet = firstTargetSet;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public void setSecondCombo(Combo secondCombo) {
+        this.secondCombo = secondCombo;
+    }
+
+    public void setSecondTargetSet(Set<Figure> secondTargetSet) {
+        this.secondTargetSet = secondTargetSet;
+    }
+
+    public void setUsedPowerUp(List<PowerUp> usedPowerUp) {
+        this.usedPowerUp = usedPowerUp;
+    }
 }

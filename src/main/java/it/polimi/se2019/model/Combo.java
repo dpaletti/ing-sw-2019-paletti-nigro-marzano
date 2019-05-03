@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Combo {
     private ComboType comboType;
-    private List<Figure> targets;
+    private List<Action> actions;
     private List<Direction> directions;
     private List<Integer> values;
 
@@ -16,8 +16,8 @@ public class Combo {
         return directions;
     }
 
-    public List<Figure> getTargets() {
-        return targets;
+    public List<Action> getActions() {
+        return actions;
     }
 
     public List<Integer> getValues() {
@@ -32,8 +32,8 @@ public class Combo {
         this.directions = directions;
     }
 
-    public void setTargets(List<Figure> targets) {
-        this.targets = targets;
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
     }
 
     public void setValues(List<Integer> values) {

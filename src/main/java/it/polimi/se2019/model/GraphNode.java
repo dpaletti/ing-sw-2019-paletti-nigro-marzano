@@ -7,6 +7,7 @@ public class GraphNode<T> {
     private Set<Effect> effects;
 
     public void addChild(GraphNode<T> child){}
+
     public Set<GraphNode<T>> getChildren() {
         return children;
     }
@@ -17,5 +18,9 @@ public class GraphNode<T> {
 
     public void setEffects(Set<Effect> effects) {
         this.effects = effects;
+    }
+
+    public void setChildren(Set<GraphNode<T>> children) {
+        this.children = children;
     }
 }

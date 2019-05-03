@@ -2,6 +2,7 @@ package it.polimi.se2019.model;
 
 import java.awt.*;
 import java.util.Map;
+import java.util.Set;
 
 public class GameMap {
     private static GameMap instance=null;
@@ -9,6 +10,7 @@ public class GameMap {
     private static Map<Point, Tile> map;
     private static GameMode mode;
     private static Boolean finalFrenzy;
+    private static Set<Tile> tiles;
 
     private GameMap(MapConfig config, GameMode mode, Boolean finalFrenzy, Map<Point, Tile> map){
         this.config= config;
@@ -32,7 +34,7 @@ public class GameMap {
         return mode;
     }
 
-    public Map<Point, Tile> getMap() {
+    public static Map<Point, Tile> getMap() {
         return map;
     }
 
@@ -40,4 +42,7 @@ public class GameMap {
         return config;
     }
 
+    public static Set<Tile> getTiles() {
+        return tiles;
+    }
 }

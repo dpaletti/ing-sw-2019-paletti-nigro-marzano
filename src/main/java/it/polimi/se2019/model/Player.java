@@ -160,7 +160,7 @@ public class Player extends Observable<Action> {
         figure.grab();
     }
 
-    public void endTurn(){} //TODO: endTurn sends an event to the virtual view
+    public void endTurn(){} //TODO: endTurn sends an event to the virtual view, modifies turns in Game
 
     public void reload(Weapon weapon){
         figure.reload(weapon);

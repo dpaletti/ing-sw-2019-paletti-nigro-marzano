@@ -15,7 +15,7 @@ public class Game extends Observable<MVEvent> implements Observer<Action> {
     private Deck ammoDeck;
     private static Game instance;
     private List<Player> players;
-    private Turn turn;
+    private List<Turn> turns;
 
     @Override
     public void update(Action message) {}
@@ -24,9 +24,7 @@ public class Game extends Observable<MVEvent> implements Observer<Action> {
         return instance;
     }
 
-    public Deck getAmmoDeck() {
-        return ammoDeck;
-    }
+    public Deck getAmmoDeck() { return ammoDeck; }
 
     public Deck getPowerUpDeck() {
         return powerUpDeck;
@@ -46,7 +44,7 @@ public class Game extends Observable<MVEvent> implements Observer<Action> {
 
     public List<Player> getPlayers() { return players; }
 
-    public Turn getTurn() { return turn; }
+    public List<Turn> getTurns() { return turns; }
 
     public void setAmmoDeck(Deck ammoDeck) {
         this.ammoDeck = ammoDeck;
@@ -72,7 +70,7 @@ public class Game extends Observable<MVEvent> implements Observer<Action> {
 
     public void setPlayers(List<Player> players) { this.players = players; }
 
-    public void setTurn(Turn turn) { this.turn = turn; }
+    public void setTurns(List<Turn> turns) { this.turns = turns; }
 
     public Player newPlayer(InetAddress ip){
         //TODO: implement this method (not in UML diagram)
@@ -81,6 +79,10 @@ public class Game extends Observable<MVEvent> implements Observer<Action> {
         //Players are identified by their ip
         //model will initialize the player in the correct way (figure chojce for example)
         return null;
+    }
+
+    public void sendMessage (MVEvent message){
+        notify(message);
     }
 
     private void startGame(){

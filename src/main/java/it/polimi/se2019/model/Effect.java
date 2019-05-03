@@ -5,13 +5,13 @@ import java.util.List;
 public class Effect {
     private Integer priority;
     private TargetSpecification targetSpecification;
-    private List<Action> actions;
+    private List<ActionType> actions;
     private List<Ammo> price;
     private String name;
 
     public Integer getPriority() { return priority; }
 
-    public List<Action> getActions() { return actions; }
+    public List<ActionType> getActions() { return actions; }
 
     public TargetSpecification getTargetSpecification() { return targetSpecification; }
 
@@ -19,7 +19,7 @@ public class Effect {
 
     public String getName() { return name; }
 
-    public void setActions(List<Action> actions) { this.actions = actions; }
+    public void setActions(List<ActionType> actions) { this.actions = actions; }
 
     public void setPriority(Integer priority) { this.priority = priority; }
 

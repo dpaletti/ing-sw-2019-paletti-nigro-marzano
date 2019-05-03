@@ -25,5 +25,10 @@ public class LootTile extends Tile{
         return super.getWeapon(weapon);
     }
 
+    @Override
+    public Integer findDistance() {
+        return position.getX()+position.getY();
+    }
+
 }
 

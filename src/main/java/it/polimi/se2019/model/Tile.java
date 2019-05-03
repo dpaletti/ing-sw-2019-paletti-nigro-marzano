@@ -1,17 +1,18 @@
 package it.polimi.se2019.model;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public abstract class Tile {
-    private RoomColour colour;
-    private Map<Direction, Boolean> doors;
-    private Set<Figure> figures;
+    protected RoomColour colour;
+    protected Map<Direction, Boolean> doors;
+    protected Set<Figure> figures;
     protected WeaponSpot weaponSpot;
     protected LootCard loot;
-    private Point position;
-    private List<Tear> hp;
+    protected Point position;
+    protected List<Tear> hp;
 
     public Tile (RoomColour colour, Map<Direction, Boolean> doors, Set<Figure> figures, WeaponSpot weaponSpot, LootCard loot, Point position, List<Tear> hp){
         this.colour= colour;
@@ -34,13 +35,19 @@ public abstract class Tile {
         this.figures = figures;
     }
 
-    public void setWeaponSpot(WeaponSpot weaponSpot) { this.weaponSpot = weaponSpot; }
+    public void setWeaponSpot(WeaponSpot weaponSpot) {
+        this.weaponSpot = weaponSpot;
+    }
 
     public void setLoot(LootCard loot) { this.loot = loot; }
 
-    public void setPosition(Point position) { this.position = position; }
+    public void setPosition(Point position) {
+        this.position = position;
+    }
 
-    public void setHp(List<Tear> hp) { this.hp = hp; }
+    public void setHp(List<Tear> hp) {
+        this.hp = hp;
+    }
 
     public RoomColour getColour() {
         return colour;
@@ -54,23 +61,184 @@ public abstract class Tile {
         return figures;
     }
 
-    public WeaponSpot getWeaponSpot() { return weaponSpot; }
+    public WeaponSpot getWeaponSpot() {
+        return weaponSpot;
+    }
 
-    public LootCard getLoot() { return loot; }
+    public LootCard getLoot() {
+        return loot;
+    }
 
-    public Point getPosition() { return position; }
+    public Point getPosition() {
+        return position;
+    }
 
-    public List<Tear> getHp() { return hp; }
+    public List<Tear> getHp() {
+        return hp;
+    }
 
-    public LootCard getLootCard(){return null;}
+    public LootCard getLootCard(){
+        return null;
+    }
 
-    public Weapon getWeapon(Weapon weapon){return null;}
+    public Weapon getWeapon(Weapon weapon){
+        return null;
+    }
 
-    public TileType getTileType(){return null;}
+    public TileType getTileType(){
+        return null;
+    }
 
     public void addTear(FigureColour figureColour){
         Tear tearToAdd= new Tear(figureColour);
         hp.add(tearToAdd);
+    }
+    public Integer findDistance (){
+        return null;
+    }
+
+    public Set<Tile> visibleTiles() {
+        Set<Tile> visibleTiles=null;
+        Point point= null;
+        Tile pointToTile=null;
+        for (Tile tileCounter: GameMap.getTiles()){
+            if(tileCounter.colour.equals(colour)){
+                visibleTiles.add(tileCounter);
+            }
+        }
+        if (doors.get(Direction.NORTH)){
+            point.setX(position.getX());
+            point.setY(position.getY()+1);
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.position.equals(point)){
+                    pointToTile=tileCounter;
+                    break;
+                }
+            }
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.colour.equals(pointToTile.colour)){
+                    visibleTiles.add(tileCounter);
+                }
+            }
+        }
+        if (doors.get(Direction.SOUTH)){
+            point.setX(position.getX());
+            point.setY(position.getY()-1);
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.position.equals(point)){
+                    pointToTile=tileCounter;
+                    break;
+                }
+            }
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.colour.equals(pointToTile.colour)){
+                    visibleTiles.add(tileCounter);
+                }
+            }
+        }
+        if (doors.get(Direction.EAST)){
+            point.setX(position.getX()+1);
+            point.setY(position.getY());
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.position.equals(point)){
+                    pointToTile=tileCounter;
+                    break;
+                }
+            }
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.colour.equals(pointToTile.colour)){
+                    visibleTiles.add(tileCounter);
+                }
+            }
+        }
+        if (doors.get(Direction.WEST)){
+            point.setX(position.getX()-1);
+            point.setY(position.getY());
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.position.equals(point)){
+                    pointToTile=tileCounter;
+                    break;
+                }
+            }
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.colour.equals(pointToTile.colour)){
+                    visibleTiles.add(tileCounter);
+                }
+            }
+        }
+        return visibleTiles;
+    }
+
+    public Set<Tile> visibleTiles(Tile tile) {
+        Set<Tile> visibleTiles=null;
+        Point point= null;
+        Tile pointToTile=null;
+        for (Tile tileCounter: GameMap.getTiles()){
+            if(tileCounter.colour.equals(tile.colour)){
+                visibleTiles.add(tileCounter);
+            }
+        }
+        if (tile.doors.get(Direction.NORTH)){
+            point.setX(tile.position.getX());
+            point.setY(tile.position.getY()+1);
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.position.equals(point)){
+                    pointToTile=tileCounter;
+                    break;
+                }
+            }
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.colour.equals(pointToTile.colour)){
+                    visibleTiles.add(tileCounter);
+                }
+            }
+        }
+        if (tile.doors.get(Direction.SOUTH)){
+            point.setX(tile.position.getX());
+            point.setY(tile.position.getY()-1);
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.position.equals(point)){
+                    pointToTile=tileCounter;
+                    break;
+                }
+            }
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.colour.equals(pointToTile.colour)){
+                    visibleTiles.add(tileCounter);
+                }
+            }
+        }
+        if (tile.doors.get(Direction.EAST)){
+            point.setX(tile.position.getX()+1);
+            point.setY(tile.position.getY());
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.position.equals(point)){
+                    pointToTile=tileCounter;
+                    break;
+                }
+            }
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.colour.equals(pointToTile.colour)){
+                    visibleTiles.add(tileCounter);
+                }
+            }
+        }
+        if (tile.doors.get(Direction.WEST)){
+            point.setX(tile.position.getX()-1);
+            point.setY(tile.position.getY());
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.position.equals(point)){
+                    pointToTile=tileCounter;
+                    break;
+                }
+            }
+            for (Tile tileCounter: GameMap.getTiles()){
+                if(tileCounter.colour.equals(pointToTile.colour)){
+                    visibleTiles.add(tileCounter);
+                }
+            }
+        }
+        return visibleTiles;
     }
 
 }
