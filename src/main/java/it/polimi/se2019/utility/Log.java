@@ -12,6 +12,7 @@ public class Log {
      */
 
     //TODO make level configurable from configuration file
+    //TODO make Log file configurable from file
     private static String level = "fine";
 
     private Log(){}

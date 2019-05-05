@@ -35,7 +35,7 @@ public class LockRifle extends Weapon {
           tempMark.setValue(1);
           tempMark.setActionType(ActionType.MARK);
           tempList.add(tempMark);
-          tempBasic.setActions(tempList);
+          //tempBasic.setActions(tempList); this thing does not work
 
           withSecondLock= new HashSet<>();
           Effect tempSecond= new Effect();
@@ -52,7 +52,7 @@ public class LockRifle extends Weapon {
 
           ArrayList<Action> tempList2=new ArrayList<>();
           tempList2.add(tempMark);
-          tempSecond.setActions(tempList2);
+          //tempSecond.setActions(tempList2); this does not work
 
           ArrayList<Ammo> tempAmmo= new ArrayList<>();
           tempAmmo.add(new Ammo(AmmoColour.RED));

@@ -1,7 +1,9 @@
 package it.polimi.se2019.network;
 
+import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.JoinEvent;
+import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
 
 import java.io.IOException;
@@ -15,8 +17,14 @@ public class NetworkHandlerSocket extends NetworkHandler {
     private Scanner in;
     private PrintWriter out;
 
-    public NetworkHandlerSocket(Client client){
-        super(client);
+    public NetworkHandlerSocket(String ip, int port){
+        super();
+        try {
+            establishConnection(ip, port);
+        }
+        catch(IOException e){
+            Log.severe("Could not establish connection" + e.getMessage());
+       }
     }
 
     @Override
@@ -29,8 +37,7 @@ public class NetworkHandlerSocket extends NetworkHandler {
     }
 
     public void update(JoinEvent message){
-        String serialized = serialize(message, message.getClass().toString().replace("class ", ""));
-        submit(serialized);
+        submit(JsonHandler.serialize(message, message.getClass().toString().replace("class ", "")));
     }
 
     @Override
@@ -40,21 +47,15 @@ public class NetworkHandlerSocket extends NetworkHandler {
     }
 
     @Override
-    public String retrieve() {
-        return in.nextLine();
+    public MVEvent retrieve() throws ClassNotFoundException{
+        return (MVEvent)JsonHandler.deserialize(in.nextLine());
     }
 
-    @Override
-    public void establishConnection() throws IOException {
-        Log.info("Establishing new connection with " + client.getServerIp());
-        try{
-            socket = new Socket(client.getServerIp(), client.getServerPort());
-            in = new Scanner(socket.getInputStream());
-            out = new PrintWriter(socket.getOutputStream(), true);
-
-        }catch(NoSuchElementException e){
-            Log.severe(e.getMessage());
-        }
+private void establishConnection(String serverIp, int serverPort) throws IOException{
+        Log.info("Establishing new connection with " + serverIp);
+        socket = new Socket(serverIp, serverPort);
+        in = new Scanner(socket.getInputStream());
+        out = new PrintWriter(socket.getOutputStream(), true);
         listenToEvent();
         enterMatchMaking();
     }
@@ -62,17 +63,20 @@ public class NetworkHandlerSocket extends NetworkHandler {
     @Override
     public void enterMatchMaking(){
         Log.info("Entering match making");
-        update(new JoinEvent(ConnectionType.SOCKET, socket.getLocalAddress()));
+        update(new JoinEvent(socket.getLocalAddress()));
     }
 
-    public void listenToEvent(){
+    @Override
+    protected void listenToEvent(){
         new Thread(() -> {
                 while(true){
                     try {
-                        deserialize(retrieve());
+                        retrieve();
                     }catch (NoSuchElementException e){
                         Log.info("Server disconnected");
                         break;
+                    }catch (ClassNotFoundException e){
+                        Log.severe("Error during deserialization: " + e.getMessage());
                     }
                 }
         }).start();

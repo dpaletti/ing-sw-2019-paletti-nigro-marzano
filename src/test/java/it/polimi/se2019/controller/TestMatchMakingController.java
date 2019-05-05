@@ -1,6 +1,5 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.network.ConnectionType;
 import it.polimi.se2019.view.VirtualView;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.DisconnectionEvent;
@@ -82,7 +81,7 @@ public class TestMatchMakingController {
 
     @Test
     public void testDispatching(){
-        vcEvent = new JoinEvent(ConnectionType.SOCKET, ip);
+        vcEvent = new JoinEvent(ip);
         matchMakingController.update(vcEvent);
         assertFalse(matchMakingController.isTimerRunning());
         assertFalse(matchMakingController.isMatchMade());

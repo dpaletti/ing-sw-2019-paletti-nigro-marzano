@@ -38,15 +38,15 @@ public class MatchController extends Controller{
     }
 
     public void update(JoinEvent message){
-        virtualView.kick(message.getSource());
+        Log.info("Connection from "+ message.getSource() + "ignored while match going");
     }
 
     private void startMatch(){
         model = new Game();
         virtualView.register(this);
         for (Connection c:
-            virtualView.getConnectionList()) {
-            model.newPlayer(c.getIp());
+            virtualView.getConnections()) {
+            model.newPlayer(c.getRemoteEnd());
         }
     }
 

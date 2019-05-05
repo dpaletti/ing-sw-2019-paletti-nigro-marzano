@@ -12,12 +12,23 @@ public class VCEvent extends Event {
 
     private InetAddress source;
 
+    public VCEvent(){
+        source = null;
+    }
+
     public VCEvent(InetAddress source){
         this.source = source;
     }
 
     public InetAddress getSource() {
         return source;
+    }
+
+    public void setSource(InetAddress source) {
+        if(this.source == (null))
+            this.source = source;
+        else
+            throw new UnsupportedOperationException("Cannot reset an event source");
     }
 
     public void handle(MatchMakingController controller) {
