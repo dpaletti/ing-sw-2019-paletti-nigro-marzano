@@ -23,6 +23,7 @@ public abstract class Tile {
         this.position=position;
         this.hp=hp;
     }
+
     public void setColour(RoomColour colour) {
         this.colour = colour;
     }
@@ -93,6 +94,7 @@ public abstract class Tile {
         Tear tearToAdd= new Tear(figureColour);
         hp.add(tearToAdd);
     }
+
     public Integer findDistance (){
         return null;
     }

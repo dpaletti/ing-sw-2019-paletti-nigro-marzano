@@ -11,6 +11,18 @@ public class Figure {
     private FigureColour colour;
     private Player player;
     private String figureName;
+    private Point position;
+
+    public Figure (Tile tile, FigureColour colour, Player player, String figureName){
+        this.tile= tile;
+        this.colour= colour;
+        this.player= player;
+        this.figureName= figureName;
+    }
+
+    public Point getPosition() {
+        return position;
+    }
 
     public FigureColour getColour() {
         return colour;
@@ -63,23 +75,24 @@ public class Figure {
         Point newPosition= new Point(tile.getPosition().getX(), tile.getPosition().getY());
         switch (direction){
             case EAST:
-                newPosition.setY(newPosition.getY()+1);
-                break;
-            case WEST:
-                newPosition.setY(newPosition.getY()-1);
-                break;
-            case NORTH:
                 newPosition.setX(newPosition.getX()+1);
                 break;
-            case SOUTH:
+            case WEST:
                 newPosition.setX(newPosition.getX()-1);
+                break;
+            case NORTH:
+                newPosition.setY(newPosition.getY()+1);
+                break;
+            case SOUTH:
+                newPosition.setY(newPosition.getY()-1);
                 break;
             case TELEPORT:
                 TeleportEvent teleportEvent= new TeleportEvent(newPosition.getX(), newPosition.getY());
                 Game.getInstance().sendMessage(teleportEvent); //sends player its position, asks where to move
                 //TODO: VMEvent: set newPosition to the specified one
         }
-        tile.setPosition(newPosition);
+        position=newPosition;
+        //tile=GameMap.getMap().get(newPosition);
     }
 
     public void move(Figure target, Direction direction){
@@ -100,7 +113,9 @@ public class Figure {
                 default:
                     break;
         }
-    }
+        target.position=newPosition;
+        //target.tile=GameMap.getMap().get(newPosition);
+    } //TODO: move does not consider boundaries, to fix
 
     public void grab(){
         if (tile.getTileType()==TileType.LOOTTILE) { //when on a Loot Tile, adds grabbed ammo to usable ammo making sure the number of ammo of a colour does not exceed 3
