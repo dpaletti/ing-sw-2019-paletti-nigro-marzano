@@ -3,7 +3,7 @@ package it.polimi.se2019.view;
 import java.util.Set;
 
 public class ChooseAmongPreviousTargetsEvent extends MVEvent {
-    Set<String> previousTargets;
+    private Set<String> previousTargets;
 
     public Set<String> getPreviousTargets() {
         return previousTargets;

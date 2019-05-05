@@ -1,6 +1,8 @@
 package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Observable;
+import it.polimi.se2019.view.EffectToApplyEvent;
+import it.polimi.se2019.view.FigureToAttackEvent;
 
 import java.net.InetAddress;
 import java.util.List;
@@ -119,9 +121,13 @@ public class Player extends Observable<Action> {
         this.healthState = healthState;
     }
 
-    public void setHp(List<Tear> hp) { this.hp = hp; }
+    public void setHp(List<Tear> hp) {
+        this.hp = hp;
+    }
 
-    public void setMarks(Set<Tear> marks) { this.marks = marks; }
+    public void setMarks(Set<Tear> marks) {
+        this.marks = marks;
+    }
 
     public void setPoints(Integer points) {
         this.points = points;
@@ -135,10 +141,13 @@ public class Player extends Observable<Action> {
         this.thirdPowerUp = thirdPowerUp;
     }
 
-    public void setUnusableAmmo(Set<Ammo> unusableAmmo) { this.unusableAmmo = unusableAmmo; }
+    public void setUnusableAmmo(Set<Ammo> unusableAmmo) {
+        this.unusableAmmo = unusableAmmo;
+    }
 
-    public void setUsableAmmo(Set<Ammo> usableAmmo) { this.usableAmmo = usableAmmo; }
-
+    public void setUsableAmmo(Set<Ammo> usableAmmo) {
+        this.usableAmmo = usableAmmo;
+    }
 
 
     public GraphNode<Effect> showWeapon(Weapon weapon){
@@ -147,9 +156,34 @@ public class Player extends Observable<Action> {
         }
 
     public void useWeapon(Weapon weapon){
-        //TODO: cosa fa?
-        //ricordare di scaricare l'arma a fine utilizzo
-        //TODO don't use italian, mandolino, maccheroni and prosciutto please
+        FigureToAttackEvent figureToAttackEvent =null;
+        EffectToApplyEvent effectToApplyEvent=null;
+        Set<String> applicableEffects=null;
+        Set<String> attackableFigures=null;
+        Effect chosenEffect=null;
+        Figure chosenTarget=null;
+        String target=null;
+        Set<Pair<Effect, Set<Figure>>> targetSet= figure.generateTargetSet(weapon.getStaticDefinition());
+
+        for (Pair<Effect, Set<Figure>> counter: targetSet){
+            applicableEffects.add(counter.getFirst().getName());
+        }
+        effectToApplyEvent.setApplicableEffects(applicableEffects);
+        Game.getInstance().sendMessage(effectToApplyEvent);
+        //TODO: VCEvent returns chosen effect
+
+        for (Pair<Effect, Set<Figure>> counter: targetSet){
+            if(counter.getFirst().equals(chosenEffect)){
+                for (Figure figureCounter: counter.getSecond()){
+                    attackableFigures.add(figureCounter.getFigureName());
+                }
+            }
+        }
+        figureToAttackEvent.setPlayersToAttack(attackableFigures);
+        Game.getInstance().sendMessage(figureToAttackEvent);
+        //TODO: VCEvent returns chosen target
+        figure.generateWeaponEffect(weapon.getStaticDefinition(), chosenTarget);
+        weapon.setLoaded(false);
     }
 
     public void moveFigure(Direction direction){
@@ -167,7 +201,7 @@ public class Player extends Observable<Action> {
     }
 
     public void usePowerUp (PowerUp powerUp){
-        //TODO:
+        //TODO: implement
     }
 
     public void sellPowerUp (PowerUp powerUp){
@@ -196,6 +230,10 @@ public class Player extends Observable<Action> {
 
     public void updatePlayerDamage (){
         //TODO: checks whether shooting a target changes its PlayerDamage state and updates it if so
+    }
+
+    public void updateTurn (){
+        //List<Turn> turns= Game.getInstance().getTurns();
     }
 
 }

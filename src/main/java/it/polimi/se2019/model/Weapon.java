@@ -9,6 +9,7 @@ public abstract class Weapon implements Serializable {
     protected Set<Ammo> price;
     private transient Boolean loaded;
     private transient GraphNode<Effect> staticDefinition;
+    private String weaponName;
 
 
     public Ammo getCardColour() { return cardColour; }
@@ -19,6 +20,10 @@ public abstract class Weapon implements Serializable {
 
     public GraphNode<Effect> getStaticDefinition() { return staticDefinition; }
 
+    public String getWeaponName() {
+        return weaponName;
+    }
+
     public void setCardColour(Ammo cardColour) { this.cardColour = cardColour; }
 
     public void setLoaded(Boolean loaded) { this.loaded = loaded; }
@@ -28,4 +33,8 @@ public abstract class Weapon implements Serializable {
     }
 
     public void setStaticDefinition(GraphNode<Effect> staticDefinition) { this.staticDefinition = staticDefinition; }
+
+    public void setWeaponName(String weaponName) {
+        this.weaponName = weaponName;
+    }
 }

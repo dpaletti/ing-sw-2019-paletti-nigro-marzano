@@ -9,7 +9,7 @@ public class Turn {
     private Set<Figure> firstTargetSet;
     private Combo secondCombo;
     private Set<Figure> secondTargetSet;
-    List<PowerUp> usedPowerUp;
+    private List<PowerUp> usedPowerUp;
 
     public Combo getFirstCombo() {
         return firstCombo;
