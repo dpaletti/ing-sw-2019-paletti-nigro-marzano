@@ -8,4 +8,9 @@ public class FinalFrenzyStandard extends PlayerDamage {
     public List<List<Action>> moveSet(List<Action> elapsedMoves) {
         return Collections.emptyList();
     }
+
+    @Override
+    public PlayerDamage findNextHealthState() {
+        return this;
+    }
 }

@@ -91,4 +91,8 @@ public class Game extends Observable<MVEvent> implements Observer<Action> {
         //this method creates a new game
         //asks map type, with MVEvent, to everyone, for example
     }
+
+    public void deathHandler(){
+
+    }
 }

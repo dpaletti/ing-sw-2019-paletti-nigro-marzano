@@ -229,9 +229,13 @@ public class Player extends Observable<Action> {
     }
 
     public void updatePlayerDamage (){
-        //TODO: checks whether shooting a target changes its PlayerDamage state and updates it if so
+        if(healthState.getMaximumHits()==hp.size()){
+            healthState= healthState.findNextHealthState();
+        }
+        if (hp.size()>=10){
+            Game.getInstance().deathHandler();
+        }
     }
-
     public void updateTurn (){
         //List<Turn> turns= Game.getInstance().getTurns();
     }
