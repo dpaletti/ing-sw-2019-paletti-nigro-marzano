@@ -1,9 +1,12 @@
 package it.polimi.se2019.network;
 
-import java.net.InetAddress;
 
 public interface Connection {
     void submit(String data);
     String retrieve();
-    InetAddress getRemoteEnd();
+    String getPassword();
+    String getUsername();
+    void setPassword(String password);
+    void setUsername(String username);
+    String getBootstrapId();
 }

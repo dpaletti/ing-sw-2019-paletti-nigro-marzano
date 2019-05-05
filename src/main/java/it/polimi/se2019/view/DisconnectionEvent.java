@@ -7,8 +7,8 @@ import java.net.InetAddress;
 
 public class DisconnectionEvent extends VCEvent{
 
-    public DisconnectionEvent(InetAddress source){
-        super(source);
+    public DisconnectionEvent(String remoteEndId){
+        super(remoteEndId);
     }
 
     @Override

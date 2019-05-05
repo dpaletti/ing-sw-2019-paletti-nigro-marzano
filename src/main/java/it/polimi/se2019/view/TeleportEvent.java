@@ -1,5 +1,7 @@
 package it.polimi.se2019.view;
 
+import it.polimi.se2019.network.Connection;
+
 public class TeleportEvent extends MVEvent {
    private int x;
    private int y;

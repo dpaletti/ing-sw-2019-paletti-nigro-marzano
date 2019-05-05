@@ -72,7 +72,7 @@ public class Game extends Observable<MVEvent> implements Observer<Action> {
 
     public void setTurns(List<Turn> turns) { this.turns = turns; }
 
-    public Player newPlayer(InetAddress ip){
+    public Player newPlayer(){
         //TODO: implement this method (not in UML diagram)
         //this method is called by a controller (most likely MatchController) when match making is closed
         //should add players to the game

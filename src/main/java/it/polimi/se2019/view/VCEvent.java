@@ -10,23 +10,23 @@ import java.net.InetAddress;
 public class VCEvent extends Event {
     //Event coming from the view to the controller
 
-    private InetAddress source;
+    private String username;
 
     public VCEvent(){
-        source = null;
+        username = null;
     }
 
-    public VCEvent(InetAddress source){
-        this.source = source;
+    public VCEvent(String remoteEndId){
+        this.username = remoteEndId;
     }
 
-    public InetAddress getSource() {
-        return source;
+    public String getUsername() {
+        return username;
     }
 
-    public void setSource(InetAddress source) {
-        if(this.source == (null))
-            this.source = source;
+    public void setUsername(String remoteEndId) {
+        if(this.username == (null))
+            this.username = remoteEndId;
         else
             throw new UnsupportedOperationException("Cannot reset an event source");
     }

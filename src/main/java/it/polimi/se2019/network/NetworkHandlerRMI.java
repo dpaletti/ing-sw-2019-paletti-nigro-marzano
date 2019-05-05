@@ -5,6 +5,7 @@ import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.JoinEvent;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
+import it.polimi.se2019.view.View;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -15,11 +16,12 @@ public class NetworkHandlerRMI extends NetworkHandler{
     private Thread listener;
     private ServerInterface gameServer;
 
-    public NetworkHandlerRMI(){
+    public NetworkHandlerRMI(String u, String p, View view){
+        super(u, p, view);
         try {
             Registry importRegistry = LocateRegistry.getRegistry();
             gameServer = (ServerInterface) importRegistry.lookup(RMIRemoteObjects.REMOTE_SERVER_NAME);
-            gameServer.register();
+            gameServer.register(username, password);
             listenToEvent();
             startPinging();
             enterMatchMaking();
@@ -34,7 +36,7 @@ public class NetworkHandlerRMI extends NetworkHandler{
     @Override
     protected void enterMatchMaking() {
         Log.info("Entering match making");
-        update(new JoinEvent());
+        update(new JoinEvent(username, password, username));
     }
 
     @Override
@@ -61,16 +63,14 @@ public class NetworkHandlerRMI extends NetworkHandler{
     }
 
     @Override
-    public MVEvent retrieve() throws ClassNotFoundException {
+    public void retrieve() throws ClassNotFoundException {
         try {
-            return (MVEvent)JsonHandler.deserialize(gameServer.pullEvent());
+            notify((MVEvent) JsonHandler.deserialize(gameServer.pullEvent()));
         }catch (RemoteException e){
             Log.severe("Cannot pull event " + e.getMessage());
-            System.exit(1);
-            return null;
+            System.exit(0);
         }catch (Exception e){
             Log.severe(e.getMessage());
-            return null;
         }
     }
 

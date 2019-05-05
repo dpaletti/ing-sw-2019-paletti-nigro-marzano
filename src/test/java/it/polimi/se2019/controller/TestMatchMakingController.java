@@ -11,10 +11,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.net.InetAddress;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
-
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestMatchMakingController {
@@ -27,14 +28,20 @@ public class TestMatchMakingController {
     private DisconnectionEvent leave;
     @Mock
     private VCEvent vcEvent;
-    @Mock
-    private InetAddress ip;
+    private List<JoinEvent> joinEvents = new ArrayList<>();
+
 
 
     @Before
     public void beforeTest(){
         matchMakingController = new MatchMakingController(virtualView);
         virtualView.register(matchMakingController);
+        joinEvents.add(new JoinEvent("username1", "password1", "boot1"));
+        joinEvents.add(new JoinEvent("username2", "password2", "boot2"));
+        joinEvents.add(new JoinEvent("username3", "password3", "boot3"));
+        joinEvents.add(new JoinEvent("username4", "password4", "boot4"));
+        joinEvents.add(new JoinEvent("username5", "password5", "boot5"));
+        joinEvents.add(new JoinEvent("username6", "password6", "boot6"));
     }
 
     @Test(expected = NullPointerException.class)
@@ -48,7 +55,7 @@ public class TestMatchMakingController {
             assertEquals(matchMakingController.getPlayerCount(), i);
             assertFalse(matchMakingController.isMatchMade());
             assertFalse(matchMakingController.isTimerRunning());
-            matchMakingController.update(join);
+            matchMakingController.update(joinEvents.get(i));
         }
 
     }
@@ -60,7 +67,7 @@ public class TestMatchMakingController {
             assertEquals(matchMakingController.getPlayerCount(), i);
             assertFalse(matchMakingController.isMatchMade());
             assertTrue(matchMakingController.isTimerRunning());
-            matchMakingController.update(join);
+            matchMakingController.update(joinEvents.get(i));
         }
         assertTrue(matchMakingController.isMatchMade());
         assertFalse(virtualView.getObservers().contains(matchMakingController));
@@ -81,13 +88,11 @@ public class TestMatchMakingController {
 
     @Test
     public void testDispatching(){
-        vcEvent = new JoinEvent(ip);
-        matchMakingController.update(vcEvent);
+        matchMakingController.update(join);
         assertFalse(matchMakingController.isTimerRunning());
         assertFalse(matchMakingController.isMatchMade());
         assertEquals(1, matchMakingController.getPlayerCount());
 
-        vcEvent = new VCEvent(ip);
         matchMakingController.update(vcEvent);
         assertFalse(matchMakingController.isTimerRunning());
         assertFalse(matchMakingController.isMatchMade());

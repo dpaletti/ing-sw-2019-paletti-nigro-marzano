@@ -5,6 +5,7 @@ import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.JoinEvent;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
+import it.polimi.se2019.view.View;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,8 +18,8 @@ public class NetworkHandlerSocket extends NetworkHandler {
     private Scanner in;
     private PrintWriter out;
 
-    public NetworkHandlerSocket(String ip, int port){
-        super();
+    public NetworkHandlerSocket(String u, String p, String ip, int port, View view){
+        super(u, p, view);
         try {
             establishConnection(ip, port);
         }
@@ -47,8 +48,8 @@ public class NetworkHandlerSocket extends NetworkHandler {
     }
 
     @Override
-    public MVEvent retrieve() throws ClassNotFoundException{
-        return (MVEvent)JsonHandler.deserialize(in.nextLine());
+    public void retrieve() throws ClassNotFoundException{
+        notify ((MVEvent)JsonHandler.deserialize(in.nextLine()));
     }
 
 private void establishConnection(String serverIp, int serverPort) throws IOException{
@@ -63,7 +64,7 @@ private void establishConnection(String serverIp, int serverPort) throws IOExcep
     @Override
     public void enterMatchMaking(){
         Log.info("Entering match making");
-        update(new JoinEvent(socket.getLocalAddress()));
+        update(new JoinEvent(username, password, socket.getLocalSocketAddress().toString()));
     }
 
     @Override
