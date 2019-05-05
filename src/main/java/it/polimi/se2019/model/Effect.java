@@ -1,8 +1,9 @@
 package it.polimi.se2019.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Effect {
+public class Effect implements Serializable {
     private Integer priority;
     private TargetSpecification targetSpecification;
     private List<ActionType> actions;

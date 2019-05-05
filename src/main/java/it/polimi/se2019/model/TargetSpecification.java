@@ -1,8 +1,9 @@
 package it.polimi.se2019.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class TargetSpecification {
+public class TargetSpecification implements Serializable {
     private Boolean tile;
     private Pair<Integer, List<Effect>> different;
     private Pair<Integer, Integer> radiusBetween;

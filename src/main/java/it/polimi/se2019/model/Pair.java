@@ -1,6 +1,8 @@
 package it.polimi.se2019.model;
 
-public class Pair<T, S> {
+import java.io.Serializable;
+
+public class Pair<T, S> implements Serializable {
     private T first;
     private S second;
     public Pair(T first, S second){
