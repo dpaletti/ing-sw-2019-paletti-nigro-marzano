@@ -121,9 +121,9 @@ public class Figure {
         else {  //when on a Spawn Tile, allows player to grab a weapon and leave one among those they previously grabbed if they already own 3
             Weapon selectedWeapon= null;
             Set<String> availableWeapons=null;
-            availableWeapons.add(tile.getWeaponSpot().getFirstWeapon().getWeaponName());
-            availableWeapons.add(tile.getWeaponSpot().getSecondWeapon().getWeaponName());
-            availableWeapons.add(tile.getWeaponSpot().getThirdWeapon().getWeaponName());
+            availableWeapons.add(tile.getWeaponSpot().getFirstWeapon().getName());
+            availableWeapons.add(tile.getWeaponSpot().getSecondWeapon().getName());
+            availableWeapons.add(tile.getWeaponSpot().getThirdWeapon().getName());
             WeaponToGrabEvent weaponToGrabEvent=null;
             weaponToGrabEvent.setAvailableWeapons(availableWeapons);
             Game.getInstance().sendMessage(weaponToGrabEvent);
@@ -143,9 +143,9 @@ public class Figure {
             else {
                 WeaponToLeaveEvent weaponToLeaveEvent=null;
                 Set<String> weaponsOwned=null;
-                weaponsOwned.add(player.getFirstWeapon().getWeaponName());
-                weaponsOwned.add(player.getSecondWeapon().getWeaponName());
-                weaponsOwned.add(player.getThirdWeapon().getWeaponName());
+                weaponsOwned.add(player.getFirstWeapon().getName());
+                weaponsOwned.add(player.getSecondWeapon().getName());
+                weaponsOwned.add(player.getThirdWeapon().getName());
                 weaponToLeaveEvent.setWeaponsOwned(weaponsOwned);
                 Game.getInstance().sendMessage(weaponToLeaveEvent);
                 //TODO: VCEvent: a weapon is returned and selectedWeapon is assigned to free weapon slot
@@ -167,7 +167,7 @@ public class Figure {
         Figure chosenPreviousTarget=null;
 
         Set<Tile> seenTiles=tile.visibleTiles();
-        for (Effect effectCounter: node.getEffects()){
+        for (Effect effectCounter: node.getNode()){
             Set<Figure> figuresInTargetSet=null;
             if(!effectCounter.getTargetSpecification().getTile()) { //target is a figure
 
