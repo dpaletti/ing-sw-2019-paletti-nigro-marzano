@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class VeryDamaged extends PlayerDamage {
+
     @Override
     public List<List<Action>> moveSet(List<Action> elapsedMoves) {
         return Collections.emptyList();
@@ -11,4 +12,9 @@ public class VeryDamaged extends PlayerDamage {
 
     @Override
     public Integer getMaximumHits() { return 10; }
+
+    @Override
+    public PlayerDamage findNextHealthState() {
+        return this; //TODO: Dead or final frenzy to implement
+    }
 }

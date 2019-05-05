@@ -1,9 +1,6 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.view.ChooseAmongPreviousTargetsEvent;
-import it.polimi.se2019.view.NotEnoughAmmoEvent;
-import it.polimi.se2019.view.WeaponToGrabEvent;
-import it.polimi.se2019.view.WeaponToLeaveEvent;
+import it.polimi.se2019.view.*;
 
 import java.util.List;
 import java.util.Map;
@@ -78,7 +75,8 @@ public class Figure {
                 newPosition.setX(newPosition.getX()-1);
                 break;
             case TELEPORT:
-                //TODO: MVEvent: ask the user where he wants to be teleported
+                TeleportEvent teleportEvent= new TeleportEvent(newPosition.getX(), newPosition.getY());
+                Game.getInstance().sendMessage(teleportEvent); //sends player its position, asks where to move
                 //TODO: VMEvent: set newPosition to the specified one
         }
         tile.setPosition(newPosition);
@@ -295,10 +293,8 @@ public class Figure {
         }
         if(enoughAmmoForReload==weapon.getPrice().size()){  //in case player has enough ammo to pay for the reload
             weapon.setLoaded(true);
-            for (Ammo ammoToReload: weapon.getPrice()) {
-                player.getUsableAmmo().remove(ammoToReload);
-                player.getUnusableAmmo().add(ammoToReload);
-            }
+            Set<Ammo> ammo= player.getUsableAmmo();
+            player.setUsableAmmo(ammo);
         }
         else{
             NotEnoughAmmoEvent notEnoughAmmoEvent=null;
