@@ -2,6 +2,7 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.view.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,12 +14,6 @@ public class Figure {
     private String figureName;
     private Point position;
 
-    public Figure (Tile tile, FigureColour colour, Player player, String figureName){
-        this.tile= tile;
-        this.colour= colour;
-        this.player= player;
-        this.figureName= figureName;
-    }
 
     public Point getPosition() {
         return position;
@@ -135,11 +130,11 @@ public class Figure {
         }
         else {  //when on a Spawn Tile, allows player to grab a weapon and leave one among those they previously grabbed if they already own 3
             Weapon selectedWeapon= null;
-            Set<String> availableWeapons=null;
+            Set<String> availableWeapons= new HashSet<>();
             availableWeapons.add(tile.getWeaponSpot().getFirstWeapon().getName());
             availableWeapons.add(tile.getWeaponSpot().getSecondWeapon().getName());
             availableWeapons.add(tile.getWeaponSpot().getThirdWeapon().getName());
-            WeaponToGrabEvent weaponToGrabEvent=null;
+            WeaponToGrabEvent weaponToGrabEvent=new WeaponToGrabEvent();
             weaponToGrabEvent.setAvailableWeapons(availableWeapons);
             Game.getInstance().sendMessage(weaponToGrabEvent);
             // TODO: VCEvent: a Weapon is returned and assigned to selectedWeapon
@@ -156,8 +151,8 @@ public class Figure {
             }
 
             else {
-                WeaponToLeaveEvent weaponToLeaveEvent=null;
-                Set<String> weaponsOwned=null;
+                WeaponToLeaveEvent weaponToLeaveEvent=new WeaponToLeaveEvent();
+                Set<String> weaponsOwned=new HashSet<>();
                 weaponsOwned.add(player.getFirstWeapon().getName());
                 weaponsOwned.add(player.getSecondWeapon().getName());
                 weaponsOwned.add(player.getThirdWeapon().getName());
@@ -169,11 +164,11 @@ public class Figure {
     }
 
     public Set<Pair<Effect, Set<Figure>>> generateTargetSet(GraphNode<Effect> node){
-        Set<Pair<Effect, Set<Figure>>> targetSet=null;
+        Set<Pair<Effect, Set<Figure>>> targetSet=new HashSet<>();
         Pair <Effect, Set<Figure>> effectToTargets;
 
-        Set<Player> players=null;
-        Set<Figure> figures=null;
+        Set<Player> players=new HashSet<>();
+        Set<Figure> figures=new HashSet<>();
         players.addAll(Game.getInstance().getPlayers());
         for(Player playerCounter: players){
             figures.add(playerCounter.getFigure());
@@ -191,7 +186,6 @@ public class Figure {
                         figuresInTargetSet = figures;
                         break;
                     case 0:
-                        figuresInTargetSet = figures;
                         figuresInTargetSet= targetSetUpdater(figures, seenFigures, 0);
                         break;
                     case 1:
@@ -199,15 +193,15 @@ public class Figure {
                         break;
                     case 2: //figures one of my previous targets can see
                         //TODO: simplify
-                        ChooseAmongPreviousTargetsEvent chooseTargetEvent=null;
-                        Set<String> previousTargetNames=null;
-                        Set<Figure> previousTargets=null;
+                        ChooseAmongPreviousTargetsEvent chooseTargetEvent=new ChooseAmongPreviousTargetsEvent();
+                        Set<String> previousTargetNames= new HashSet<> ();
+                        Set<Figure> previousTargets=new HashSet<>();
                         int indexOfCurrentPlayer= Game.getInstance().getPlayers().indexOf(player);
                         previousTargets.addAll(Game.getInstance().getTurns().get(indexOfCurrentPlayer).getFirstTargetSet());
                         for(Figure figureCounter: previousTargets){
                             previousTargetNames.add(figureCounter.figureName);
                         }
-                        chooseTargetEvent.setPreviousTargets(previousTargetNames);
+                        chooseTargetEvent.setPreviousTargets(previousTargetNames); //no, previous target is already chosen
                         Game.getInstance().sendMessage(chooseTargetEvent);
                         //TODO: VCEvent a target is returned and assigned to chosenPreviousTarget
                         Set<Figure> seenByTargetFigures=visibilitySet(chosenPreviousTarget);
@@ -216,25 +210,19 @@ public class Figure {
                     default:
                         break;
                 }
+                if (effectCounter.getTargetSpecification().getDifferent().getFirst()){
+                    figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter), 0);
+                }
+                else {
+                    figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter), 1);
 
-                switch (effectCounter.getTargetSpecification().getDifferent().getFirst()) {
-                    case -1:
-                        break;
-                    case 0: //targetset+ figures hit in specified events
-                        figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter), 1);
-                        break;
-                    case 1: //targetset- figures hit in specified events
-                        figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter), 0);
-                        break;
-                    default:
-                        break;
                 }
 
                 figuresInTargetSet= areaSelectionForFigures(figuresInTargetSet, effectCounter.getTargetSpecification().getRadiusBetween().getFirst(), effectCounter.getTargetSpecification().getRadiusBetween().getSecond());
 
             }
             else { //target is a tile
-                Set<Tile> tilesInTargetSet=null;
+                Set<Tile> tilesInTargetSet=new HashSet<>();
                 tilesInTargetSet.addAll(GameMap.getTiles());
                 switch (effectCounter.getTargetSpecification().getVisible()){ //same as figures
                     case -1:
@@ -251,19 +239,13 @@ public class Figure {
                     default:
                         break;
                 }
-                switch (effectCounter.getTargetSpecification().getDifferent().getFirst()){
-                    case -1:
-                        break;
-                    case 0:
-                        tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter), 1);
-                        break;
-                    case 1:
-                        tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter), 0);
-                        break;
-                        default:
-                            break;
-
+                if(effectCounter.getTargetSpecification().getDifferent().getFirst()){
+                    tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter), 1);
                 }
+                else {
+                    tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter), 1);
+                }
+
                 switch (effectCounter.getTargetSpecification().getEnlarge()){
                     case -1: //selects whole room
                         for(Tile sameRoomCounter: GameMap.getTiles()){
@@ -333,20 +315,20 @@ public class Figure {
     }
 
     public Set<Figure> visibilitySet (){
-        Set<Figure> visibleFigures=null;
-        Point point= null;
+        Set<Figure> visibleFigures=new HashSet<>();
+        Point point= position;
         Tile pointToTile=null;
         for (Tile tileCounter: GameMap.getTiles()){
             if(tileCounter.getColour().equals(tile.getColour())){
                 visibleFigures.addAll(tileCounter.getFigures());
             }
         }
-        if (tile.getDoors().get(Direction.NORTH)){
+        if (tile.getDoors().get(Direction.NORTH)!=null){
             point.setX(tile.position.getX());
             point.setY(tile.position.getY()+1);
             for (Tile tileCounter: GameMap.getTiles()){
                 if(tileCounter.getPosition().equals(point)){
-                    pointToTile=tileCounter;
+                    pointToTile= tileCounter;
                     break;
                 }
             }
@@ -405,9 +387,9 @@ public class Figure {
     }
 
     public Set<Figure> visibilitySet (Figure targetFigure){
-        Set<Figure> visibleFigures=null;
-        Point point= null;
-        Tile pointToTile=null;
+        Set<Figure> visibleFigures=new HashSet<>();
+        Point point= targetFigure.position;
+        Tile pointToTile= null;
         for (Tile tileCounter: GameMap.getTiles()){
             if(tileCounter.getColour().equals(targetFigure.tile.getColour())){
                 visibleFigures.addAll(tileCounter.getFigures());
@@ -477,34 +459,34 @@ public class Figure {
     }
 
     public Set<Figure> targetsOfSelectedEffect(Effect effect){ //TODO: write method to calculate targets of previous actions
-        Set<Figure> targetSet=null;
+        Set<Figure> targetSet=new HashSet<>();
         return targetSet;
     }
 
     public Set<Tile> tilesOfSelectedEffect(Effect effect){ //TODO: write method to calculate tiles of previous actions
-        Set<Tile> targetSet=null;
+        Set<Tile> targetSet=new HashSet<>();
         return targetSet;
     }
 
     private Set <Figure> areaSelectionForFigures (Set<Figure> figuresInTargetSet, Integer innerRadius, Integer outerRadius){
-        Set<Figure> targetSet=null;
-        Integer value=null;
-        if (innerRadius== 0 & outerRadius== 0) {
+        Set<Figure> targetSet=new HashSet<>();
+        int value=0;
+        if (innerRadius== 0 && outerRadius== 0) {
             targetSet.add(this);
             value=2;
         }
-        else if (innerRadius == -2 & outerRadius == -2) {
+        else if (innerRadius == -2 && outerRadius == -2) {
             targetSet= visibilitySet();
             value=1;
         }
-        else if (innerRadius == -3 & outerRadius == -3) {
+        else if (innerRadius == -3 && outerRadius == -3) {
             for (Figure figureCounter : figuresInTargetSet) {
                 if (figureCounter.tile.getColour().equals(tile.getColour())) {
                     figuresInTargetSet.remove(figureCounter);
                 }
             }
         }
-        else if (outerRadius != -1 & innerRadius != -1) {
+        else if (outerRadius != -1 && innerRadius != -1) {
             for(Figure figureCounter: figuresInTargetSet){
                 if (figureCounter.findDistance()<innerRadius||figureCounter.findDistance()>outerRadius){
                     figuresInTargetSet.remove(figureCounter);
@@ -531,6 +513,9 @@ public class Figure {
             case 2:
                 originalTargetSet.clear();
                 originalTargetSet.add(this);
+                break;
+                default:
+                    break;
         }
         return originalTargetSet;
     }
@@ -550,29 +535,32 @@ public class Figure {
             case 2:
                 originalTargetSet.clear();
                 originalTargetSet.add(this.tile);
+                break;
+                default:
+                    break;
         }
         return originalTargetSet;
     }
 
     private Set <Tile> areaSelectionForTiles (Set<Tile> tilesInTargetSet, Integer innerRadius, Integer outerRadius){
-        Set<Tile> targetSet=null;
-        Integer value=null;
-        if (innerRadius== 0 & outerRadius== 0) {
+        Set<Tile> targetSet=new HashSet<>();
+        int value= 0;
+        if (innerRadius== 0 && outerRadius== 0) {
             targetSet.add(this.tile);
             value=2;
         }
-        else if (innerRadius == -2 & outerRadius == -2) {
+        else if (innerRadius == -2 && outerRadius == -2) {
             targetSet= tile.visibleTiles();
             value=1;
         }
-        else if (innerRadius == -3 & outerRadius == -3) {
+        else if (innerRadius == -3 && outerRadius == -3) {
             for (Tile tileCounter : tilesInTargetSet) {
                 if (tileCounter.colour.equals(tile.getColour())) {
                     tilesInTargetSet.remove(tileCounter);
                 }
             }
         }
-        else if (outerRadius != -1 & innerRadius != -1) {
+        else if (outerRadius != -1 && innerRadius != -1) {
             for(Tile tileCounter: tilesInTargetSet){
                 if (tileCounter.findDistance()<innerRadius||tileCounter.findDistance()>outerRadius){
                     tilesInTargetSet.remove(tileCounter);

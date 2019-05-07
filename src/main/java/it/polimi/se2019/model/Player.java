@@ -4,7 +4,7 @@ import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.view.EffectToApplyEvent;
 import it.polimi.se2019.view.FigureToAttackEvent;
 
-import java.net.InetAddress;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,12 +23,6 @@ public class Player extends Observable<Action> {
     private Integer points;
     private Set<Ammo> usableAmmo;
     private Set<Ammo> unusableAmmo;
-    private InetAddress ip; //TODO a player may be identified through its ip, check if it fits well with methods and such
-
-    public InetAddress getIp(){
-        //TODO added getter, check if everything works
-        return ip;
-    }
 
     public void unpause(){
         //TODO implement
@@ -151,17 +145,16 @@ public class Player extends Observable<Action> {
 
 
     public GraphNode<Effect> showWeapon(Weapon weapon){
-
         return(weapon.getStaticDefinition());
         }
 
     public void useWeapon(Weapon weapon){
-        FigureToAttackEvent figureToAttackEvent =null;
-        EffectToApplyEvent effectToApplyEvent=null;
-        Set<String> applicableEffects=null;
-        Set<String> attackableFigures=null;
-        Effect chosenEffect=null;
-        Figure chosenTarget=null;
+        FigureToAttackEvent figureToAttackEvent =new FigureToAttackEvent();
+        EffectToApplyEvent effectToApplyEvent=new EffectToApplyEvent();
+        Set<String> applicableEffects=new HashSet<>();
+        Set<String> attackableFigures=new HashSet<>();
+        Effect chosenEffect=new Effect();
+        Figure chosenTarget=new Figure();
         String target=null;
         Set<Pair<Effect, Set<Figure>>> targetSet= figure.generateTargetSet(weapon.getStaticDefinition());
 
@@ -194,7 +187,9 @@ public class Player extends Observable<Action> {
         figure.grab();
     }
 
-    public void endTurn(){} //TODO: endTurn sends an event to the virtual view, modifies turns in Game
+    public void endTurn(){
+
+    } //TODO: endTurn sends an event to the virtual view, modifies turns in Game
 
     public void reload(Weapon weapon){
         figure.reload(weapon);
@@ -204,7 +199,7 @@ public class Player extends Observable<Action> {
         //TODO: implement
     }
 
-    public void sellPowerUp (PowerUp powerUp){
+    void sellPowerUp (PowerUp powerUp){
         Ammo powerUpToSell= new Ammo(powerUp.getColour());
         usableAmmo.add(powerUpToSell);
         if (powerUp.getPowerUpName().equals(firstPowerUp.getPowerUpName())){
@@ -218,17 +213,17 @@ public class Player extends Observable<Action> {
         }
     }
 
-    public void addTear (FigureColour figureColour){
+    void addTear (FigureColour figureColour){
         Tear tear= new Tear(figureColour);
         hp.add(tear);
     }
 
-    public void addMark (FigureColour figureColour){
+    void addMark (FigureColour figureColour){
         Tear tear= new Tear(figureColour);
         marks.add(tear);
     }
 
-    public void updatePlayerDamage (){
+    void updatePlayerDamage (){
         if(healthState.getMaximumHits()==hp.size()){
             healthState= healthState.findNextHealthState();
         }
@@ -236,6 +231,7 @@ public class Player extends Observable<Action> {
             Game.getInstance().deathHandler();
         }
     }
+
     public void updateTurn (){
         //List<Turn> turns= Game.getInstance().getTurns();
     }
