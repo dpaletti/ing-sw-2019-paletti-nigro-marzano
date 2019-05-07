@@ -1,19 +1,17 @@
 package it.polimi.se2019.model;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class Weapon implements Serializable {
+public abstract class Weapon {
     private Ammo cardColour;
     private Set<Ammo> price;
     private Set<WeaponEffect> weaponEffects;
     private String name;
     private Integer maxheight;
-    private Set<Set<Effect>> invalidCombinations;
-    private transient Boolean loaded;
-    private transient GraphNode<Effect> staticDefinition;
-
+    private Set<Set<String>> invalidCombinations;
+    private Boolean loaded;
+    private GraphNode<Effect> staticDefinition;
 
     public Ammo getCardColour() { return cardColour; }
 
@@ -55,14 +53,15 @@ public abstract class Weapon implements Serializable {
         return maxheight;
     }
 
-    public void setInvalidCombinations(Set<Set<Effect>> invalidCombinations) {
+    public void setInvalidCombinations(Set<Set<String>> invalidCombinations) {
         this.invalidCombinations = invalidCombinations;
     }
 
-    public Set<Set<Effect>> getInvalidCombinations() {
+    public Set<Set<String>> getInvalidCombinations() {
         return invalidCombinations;
     }
 
+    //TODO Use method addAll
     private Set<Effect> generateAllEffectsSet(){
         Set<Effect> allEffects= new HashSet<>();
         while (weaponEffects.iterator().hasNext()){

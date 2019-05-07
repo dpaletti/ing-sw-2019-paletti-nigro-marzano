@@ -1,11 +1,11 @@
 package it.polimi.se2019.model;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class TargetSpecification implements Serializable {
+public class TargetSpecification  {
     private Boolean tile;
-    private Pair<Integer, List<Effect>> different;
+    private Pair<Boolean, List<String>> different;
+    private Pair<Boolean, List<String>> previous;
     private Pair<Integer, Integer> radiusBetween;
     private Integer visible;
     private Integer enlarge;
@@ -21,10 +21,6 @@ public class TargetSpecification implements Serializable {
 
     public Pair<Integer, Integer> getRadiusBetween() { return radiusBetween; }
 
-    public Pair<Integer, List<Effect>> getDifferent() { return different; }
-
-    public void setDifferent(Pair<Integer, List<Effect>> different) { this.different = different; }
-
     public void setArea(Boolean area) { this.area = area; }
 
     public void setEnlarge(Integer enlarge) { this.enlarge = enlarge; }
@@ -34,5 +30,22 @@ public class TargetSpecification implements Serializable {
     public void setTile(Boolean tile) { this.tile = tile; }
 
     public void setVisible(Integer visible) { this.visible = visible; }
+
+    public void setDifferent(Pair<Boolean, List<String>> different) {
+        this.different = different;
+    }
+
+    public Pair<Boolean, List<String>> getDifferent() {
+        return different;
+    }
+
+    public void setPrevious(Pair<Boolean, List<String>> previous) {
+        this.previous = previous;
+    }
+
+    public Pair<Boolean, List<String>> getPrevious() {
+        return previous;
+    }
+
 }
 

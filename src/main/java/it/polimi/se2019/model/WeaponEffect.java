@@ -1,9 +1,8 @@
 package it.polimi.se2019.model;
 
-import java.io.Serializable;
 import java.util.Set;
 
-public class WeaponEffect implements Serializable {
+public class WeaponEffect {
     private String name;
     private Set<Effect> effects;
 
