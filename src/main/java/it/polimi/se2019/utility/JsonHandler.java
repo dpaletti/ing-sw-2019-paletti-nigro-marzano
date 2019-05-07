@@ -1,7 +1,6 @@
 package it.polimi.se2019.utility;
 
 import com.google.gson.*;
-import it.polimi.se2019.view.Event;
 
 public final class JsonHandler {
 

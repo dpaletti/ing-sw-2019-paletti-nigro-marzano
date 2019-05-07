@@ -1,5 +1,8 @@
 package it.polimi.se2019.network;
 
+import it.polimi.se2019.controller.Controller;
+import it.polimi.se2019.controller.MatchMakingController;
+import it.polimi.se2019.model.Game;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.VirtualView;
 
@@ -13,8 +16,10 @@ import java.util.Scanner;
 
 public class Server {
     private ServerSocket serverSocket;
-    private VirtualView virtualView;
     private boolean socketOpen;
+    private Controller controller;
+    private VirtualView virtualView;
+    private Game model;
 
     private int port;
     //TODO make it configurable together with RMI registry port
@@ -22,7 +27,6 @@ public class Server {
 
     private Server(int port){
         this.port = port;
-        this.virtualView = new VirtualView();
         socketOpen = false;
 
     }
@@ -39,9 +43,26 @@ public class Server {
         return socketOpen;
     }
 
+    public void addController(Controller controller){
+        virtualView.register(controller);
+    }
+
+    public void removeController(Controller controller){
+        virtualView.deregister(controller);
+    }
+
     private void startServer() throws IOException, AlreadyBoundException {
+        model = new Game();
+        controller = new MatchMakingController(model, this);
+        virtualView = new VirtualView();
+
+
+        addController(controller);
+        model.register(virtualView);
+
         serverSocket = new ServerSocket(port);
         socketOpen = true;
+
         Registry registry = LocateRegistry.createRegistry(1099); //using default value
         registry.bind(RMIRemoteObjects.REMOTE_SERVER_NAME, virtualView);
         Log.info("Server ready");
@@ -56,7 +77,7 @@ public class Server {
         while(!serverSocket.isClosed()){
             Socket socket = serverSocket.accept();
             Log.fine("Accepted new client");
-            virtualView.newEventLoop(new ConnectionSocket(socket));
+            virtualView.startListening(new ConnectionSocket(socket));
         }
     }
 

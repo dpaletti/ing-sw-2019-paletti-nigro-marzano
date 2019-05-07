@@ -1,6 +1,6 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.view.*;
+import it.polimi.se2019.model.MVEvents.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -137,7 +137,7 @@ public class Figure {
             WeaponToGrabEvent weaponToGrabEvent=new WeaponToGrabEvent();
             weaponToGrabEvent.setAvailableWeapons(availableWeapons);
             Game.getInstance().sendMessage(weaponToGrabEvent);
-            // TODO: VCEvent: a Weapon is returned and assigned to selectedWeapon
+            // TODO: VCEvents: a Weapon is returned and assigned to selectedWeapon
 
             if (player.getFirstWeapon()==null){
                 player.setFirstWeapon(selectedWeapon);
@@ -158,7 +158,7 @@ public class Figure {
                 weaponsOwned.add(player.getThirdWeapon().getName());
                 weaponToLeaveEvent.setWeaponsOwned(weaponsOwned);
                 Game.getInstance().sendMessage(weaponToLeaveEvent);
-                //TODO: VCEvent: a weapon is returned and selectedWeapon is assigned to free weapon slot
+                //TODO: VCEvents: a weapon is returned and selectedWeapon is assigned to free weapon slot
             }
         }
     }
@@ -203,7 +203,7 @@ public class Figure {
                         }
                         chooseTargetEvent.setPreviousTargets(previousTargetNames); //no, previous target is already chosen
                         Game.getInstance().sendMessage(chooseTargetEvent);
-                        //TODO: VCEvent a target is returned and assigned to chosenPreviousTarget
+                        //TODO: VCEvents a target is returned and assigned to chosenPreviousTarget
                         Set<Figure> seenByTargetFigures=visibilitySet(chosenPreviousTarget);
                         figuresInTargetSet = seenByTargetFigures;
                         break;

@@ -1,5 +1,6 @@
 package it.polimi.se2019.controller;
 
+import it.polimi.se2019.network.Server;
 import it.polimi.se2019.view.VirtualView;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +17,8 @@ public class TestMatchBeginning {
 
     @Mock
     VirtualView virtualView;
+    @Mock
+    Server server;
 
     @Before
     public void setup(){
@@ -29,20 +31,8 @@ public class TestMatchBeginning {
 
     @Test(expected = NullPointerException.class)
     public void testNullView(){
-        new MatchController(null, usernames);
+        new MatchController(null, server);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testNullUsernames(){
-        new MatchController(virtualView, null);
-    }
-
-    @Test(expected = InvalidParameterException.class)
-    public void testInvalidUsernames(){
-        List<String> invalidUsernames = new ArrayList<>();
-        invalidUsernames.add("username1");
-        invalidUsernames.add("username2");
-        new MatchController(virtualView, invalidUsernames);
-    }
 
 }

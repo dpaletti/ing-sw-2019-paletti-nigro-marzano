@@ -2,7 +2,7 @@ package it.polimi.se2019.network;
 
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.DisconnectionEvent;
+import it.polimi.se2019.view.VCEvents.DisconnectionEvent;
 
 import java.util.Queue;
 import java.util.Timer;
@@ -32,8 +32,15 @@ public class ConnectionRMI implements Connection{
         };
 
 
+    public ConnectionRMI(String username, String password){
+        this.username = username;
+        this.password = password;
+        timer.schedule(timeout, 400);
+        //TODO make this configurable and compliant with various game phases
+    }
+
     @Override
-    public String getUsername() {
+    public String getId() {
         return username;
     }
 
@@ -42,27 +49,15 @@ public class ConnectionRMI implements Connection{
         return password;
     }
 
+
     @Override
-    public String getBootstrapId(){
-        //this is not redundant because RMI is a special connection that can use a username as a bootstrapId
-        return username;
+    public void setId(String username) {
+        throw new UnsupportedOperationException("Cannot set username in RMI connection");
     }
 
     @Override
-    public void setUsername(String username) {
-        if(this.username == (null))
-            this.username = username;
-    }
-
-    @Override
-    public void setPassword(String password) {
-        if(this.password == (null))
-            this.password = password;
-    }
-
-    public ConnectionRMI(){
-        timer.schedule(timeout, 400);
-        //TODO make this configurable and compliant with various game phases
+    public void setPassword(String password){
+        throw new UnsupportedOperationException("Cannot set password in RMI connection");
     }
 
     @Override

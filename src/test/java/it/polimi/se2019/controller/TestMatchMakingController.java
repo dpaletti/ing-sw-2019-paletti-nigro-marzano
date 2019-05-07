@@ -1,9 +1,11 @@
 package it.polimi.se2019.controller;
 
+import it.polimi.se2019.model.Game;
+import it.polimi.se2019.network.Server;
 import it.polimi.se2019.view.VirtualView;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.DisconnectionEvent;
-import it.polimi.se2019.view.JoinEvent;
+import it.polimi.se2019.view.VCEvents.DisconnectionEvent;
+import it.polimi.se2019.view.VCEvents.JoinEvent;
 import it.polimi.se2019.view.VCEvent;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,13 +30,17 @@ public class TestMatchMakingController {
     private DisconnectionEvent leave;
     @Mock
     private VCEvent vcEvent;
+    @Mock
+    private Game model;
+    @Mock
+    private Server server;
     private List<JoinEvent> joinEvents = new ArrayList<>();
 
 
 
     @Before
     public void beforeTest(){
-        matchMakingController = new MatchMakingController(virtualView);
+        matchMakingController = new MatchMakingController(model, server);
         virtualView.register(matchMakingController);
         joinEvents.add(new JoinEvent("username1", "password1", "boot1"));
         joinEvents.add(new JoinEvent("username2", "password2", "boot2"));
@@ -46,7 +52,7 @@ public class TestMatchMakingController {
 
     @Test(expected = NullPointerException.class)
     public void testControllerConstruction() throws NullPointerException {
-        MatchMakingController nullView = new MatchMakingController(null);
+        MatchMakingController nullView = new MatchMakingController(model, server);
     }
 
     @Test

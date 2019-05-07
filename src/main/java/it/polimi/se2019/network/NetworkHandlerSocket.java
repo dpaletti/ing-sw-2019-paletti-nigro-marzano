@@ -2,7 +2,8 @@ package it.polimi.se2019.network;
 
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.JoinEvent;
+import it.polimi.se2019.utility.VCEventDispatcher;
+import it.polimi.se2019.view.VCEvents.JoinEvent;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.View;
@@ -17,11 +18,16 @@ public class NetworkHandlerSocket extends NetworkHandler {
     private Socket socket;
     private Scanner in;
     private PrintWriter out;
+    private Dispatcher dispatcher = new Dispatcher();
 
-    public NetworkHandlerSocket(String u, String p, String ip, int port, View view){
-        super(u, p, view);
+    public NetworkHandlerSocket(String username, String password, String ip, int port, View view){
+        super(username, password, view);
         try {
-            establishConnection(ip, port);
+            socket = new Socket(ip, port);
+            in = new Scanner(socket.getInputStream());
+            out = new PrintWriter(socket.getOutputStream(), true);
+            listenToEvent();
+            enterMatchMaking();
         }
         catch(IOException e){
             Log.severe("Could not establish connection" + e.getMessage());
@@ -31,14 +37,19 @@ public class NetworkHandlerSocket extends NetworkHandler {
     @Override
     public void update(VCEvent message) {
         try {
-            message.handle(this);
+            message.handle(dispatcher);
         }catch (UnsupportedOperationException e){
             Log.severe(e.getMessage());
         }
     }
 
-    public void update(JoinEvent message){
-        submit(JsonHandler.serialize(message, message.getClass().toString().replace("class ", "")));
+    private class Dispatcher extends VCEventDispatcher{
+
+        @Override
+        public void update(JoinEvent message){
+            submit(JsonHandler.serialize(message, message.getClass().toString().replace("class ", "")));
+        }
+
     }
 
     @Override
@@ -52,19 +63,11 @@ public class NetworkHandlerSocket extends NetworkHandler {
         notify ((MVEvent)JsonHandler.deserialize(in.nextLine()));
     }
 
-private void establishConnection(String serverIp, int serverPort) throws IOException{
-        Log.info("Establishing new connection with " + serverIp);
-        socket = new Socket(serverIp, serverPort);
-        in = new Scanner(socket.getInputStream());
-        out = new PrintWriter(socket.getOutputStream(), true);
-        listenToEvent();
-        enterMatchMaking();
-    }
 
     @Override
     public void enterMatchMaking(){
         Log.info("Entering match making");
-        update(new JoinEvent(username, password, socket.getLocalSocketAddress().toString()));
+        update(new JoinEvent(socket.getLocalSocketAddress().toString(), password, username ));
     }
 
     @Override

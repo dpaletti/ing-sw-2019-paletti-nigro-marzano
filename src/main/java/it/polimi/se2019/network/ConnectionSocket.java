@@ -31,27 +31,26 @@ public class ConnectionSocket implements Connection{
     }
 
     @Override
-    public String getUsername() {
+    public String getId() {
+        if(username == (null))
+            return socket.getRemoteSocketAddress().toString();
         return username;
-    }
-
-    @Override
-    public String getBootstrapId() {
-        return socket.getRemoteSocketAddress().toString();
     }
 
     @Override
     public void setPassword(String password) {
         if(this.password == (null))
             this.password = password;
-        throw new UnsupportedOperationException();
+        else
+            throw new UnsupportedOperationException("Password in Socket Connection already set");
     }
 
 
-    public void setUsername(String username){
+    public void setId(String username){
         if(this.username == (null))
             this.username = username;
-        throw new UnsupportedOperationException();
+        else
+            throw new UnsupportedOperationException("Username in Socket Connection already set");
     }
 
     @Override

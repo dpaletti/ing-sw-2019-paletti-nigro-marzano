@@ -1,51 +1,34 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.controller.MatchController;
-import it.polimi.se2019.controller.MatchMakingController;
-import it.polimi.se2019.network.NetworkHandlerRMI;
-import it.polimi.se2019.network.NetworkHandlerSocket;
-
-import java.net.InetAddress;
+import it.polimi.se2019.utility.Event;
+import it.polimi.se2019.utility.VCEventDispatcher;
 
 public class VCEvent extends Event {
     //Event coming from the view to the controller
 
-    private String username;
+    private String source;
 
     public VCEvent(){
-        username = null;
+        source = null;
     }
 
     public VCEvent(String remoteEndId){
-        this.username = remoteEndId;
+        this.source = remoteEndId;
     }
 
-    public String getUsername() {
-        return username;
+    public String getSource() {
+        return source;
     }
 
-    public void setUsername(String remoteEndId) {
-        if(this.username == (null))
-            this.username = remoteEndId;
+    public void setSource(String remoteEndId) {
+        if(this.source == (null))
+            this.source = remoteEndId;
         else
             throw new UnsupportedOperationException("Cannot reset an event source");
     }
 
-    public void handle(MatchMakingController controller) {
-        throw new UnsupportedOperationException("MatchMaking controller can't handle this event");
+    public void handle(VCEventDispatcher dispatcher){
+        dispatcher.update(this);
     }
-
-    public void handle(MatchController controller){
-        throw new UnsupportedOperationException("MatchController can't handle this event");
-    }
-
-    public void handle(NetworkHandlerSocket networkHandler) {
-        throw new UnsupportedOperationException("Network Handler can't handle this event");
-    }
-
-    public void handle(NetworkHandlerRMI networkHandler) {
-        throw new UnsupportedOperationException("Network Handler can't handle this event");
-    }
-
 
 }

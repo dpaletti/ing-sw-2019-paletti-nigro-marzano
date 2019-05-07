@@ -9,12 +9,13 @@ import it.polimi.se2019.view.View;
 
 
 public abstract class NetworkHandler extends Observable<MVEvent> implements Observer<VCEvent>{
+    protected String username;
+    protected String password;
+
     protected abstract void enterMatchMaking();
     public abstract void submit(String toVirtualView);
     public abstract void retrieve() throws ClassNotFoundException;
     protected abstract void listenToEvent();
-    protected String username;
-    protected String password;
 
     public NetworkHandler(String u, String p, View view){
         this.username = u;
@@ -23,6 +24,4 @@ public abstract class NetworkHandler extends Observable<MVEvent> implements Obse
         view.register(this);
     }
 
-    public void changeUsernameAndPassword(){
-    }
 }

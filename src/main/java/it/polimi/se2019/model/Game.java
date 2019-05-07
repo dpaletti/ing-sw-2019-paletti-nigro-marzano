@@ -1,13 +1,15 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.MVEvents.MatchMakingEndEvent;
 import it.polimi.se2019.utility.Observable;
-import it.polimi.se2019.utility.Observer;
 import it.polimi.se2019.view.MVEvent;
+import it.polimi.se2019.model.MVEvents.UsernameDeletionEvent;
+import it.polimi.se2019.model.MVEvents.UsernameEvaluationEvent;
 
-import java.net.InetAddress;
 import java.util.List;
+import java.util.Map;
 
-public class Game extends Observable<MVEvent> implements Observer<Action> {
+public class Game extends Observable<MVEvent> {
     private GameMap gameMap;
     private KillshotTrack killshotTrack;
     private Deck weaponDeck;
@@ -16,9 +18,43 @@ public class Game extends Observable<MVEvent> implements Observer<Action> {
     private static Game instance;
     private List<Player> players;
     private List<Turn> turns;
+    private Map<FigureColour, String> userLookup;
+    // TODO Mapping between figures and usernames coming from controller
 
-    @Override
-    public void update(Action message) {}
+
+    public void invalidUsername(String bootstrapId, List<String> usernames){
+        notify(new UsernameEvaluationEvent(bootstrapId, usernames));
+    }
+
+    public void validUsername(String username, String password){
+        notify(new UsernameEvaluationEvent(username, password));
+    }
+
+    public void usernameDeletion(String username){
+        notify(new UsernameDeletionEvent(username));
+    }
+
+    public void closeMatchMaking(List<String> usernames){
+        // '*' is a wildcard, it means that the event goes to everybody
+        notify(new MatchMakingEndEvent("*"));
+    }
+
+    public void startMatch(){
+        //TODO implement this
+    }
+
+    public void pausePlayer(String username){
+        //When a player disconnects or times out while playing needs to be paused
+        //upone reconnection it will be unpaused
+        //throws exception when pausing an already paused player
+        //TODO implement
+    }
+
+    public void unpausePlayer(String username){
+        //unpauses paused player
+        //throws exception when unpausing an already unpaused player
+        //TODO implement
+    }
 
     public static Game getInstance() {
         return instance;
@@ -72,24 +108,8 @@ public class Game extends Observable<MVEvent> implements Observer<Action> {
 
     public void setTurns(List<Turn> turns) { this.turns = turns; }
 
-    public Player newPlayer(){
-        //TODO: implement this method (not in UML diagram)
-        //this method is called by a controller (most likely MatchController) when match making is closed
-        //should add players to the game
-        //Players are identified by their ip
-        //model will initialize the player in the correct way (figure chojce for example)
-        return null;
-    }
-
     public void sendMessage (MVEvent message){
         notify(message);
-    }
-
-    private void startGame(){
-        //TODO: implement this method
-        //this method should be called by the Game constructor
-        //this method creates a new game
-        //asks map type, with MVEvent, to everyone, for example
     }
 
     public void deathHandler(){
