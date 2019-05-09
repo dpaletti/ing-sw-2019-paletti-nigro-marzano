@@ -153,9 +153,9 @@ public class Player extends Observable<Action> {
         FigureToAttackEvent figureToAttackEvent =new FigureToAttackEvent();
         EffectToApplyEvent effectToApplyEvent=new EffectToApplyEvent();
         Set<String> applicableEffects=new HashSet<>();
-        Set<String> attackableFigures=new HashSet<>();
+        Set<FigureColour> attackableFigureColours=new HashSet<>();
         Effect chosenEffect=new Effect();
-        Figure chosenTarget=new Figure();
+        Figure chosenTarget=figure; //temporary, will be updated after vc events are implemented
         String target=null;
         Set<Pair<Effect, Set<Figure>>> targetSet= figure.generateTargetSet(weapon.getStaticDefinition());
 
@@ -167,13 +167,13 @@ public class Player extends Observable<Action> {
         //TODO: vc_events returns chosen effect
 
         for (Pair<Effect, Set<Figure>> counter: targetSet){
-            if(counter.getFirst().equals(chosenEffect)){
-                for (Figure figureCounter: counter.getSecond()){
-                    attackableFigures.add(figureCounter.getFigureName());
+            if(counter.getFirst().equals(chosenEffect)) {
+                for (Figure figureCounter : counter.getSecond()) {
+                    attackableFigureColours.add(figureCounter.getColour());
                 }
             }
         }
-        figureToAttackEvent.setPlayersToAttack(attackableFigures);
+        figureToAttackEvent.setPlayersToAttack(attackableFigureColours);
         Game.getInstance().sendMessage(figureToAttackEvent);
         //TODO: vc_events returns chosen target
         figure.generateWeaponEffect(weapon.getStaticDefinition(), chosenTarget);

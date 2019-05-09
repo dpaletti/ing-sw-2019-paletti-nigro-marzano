@@ -15,10 +15,6 @@ public class MVEventDispatcher implements Observer<MVEvent> {
         throw new UnsupportedOperationException("EffectToApplyEvent not supported");
     }
 
-    public void update(ChooseAmongPreviousTargetsEvent message){
-        throw new UnsupportedOperationException("ChooseAmongPreviousTargetsEvent not supported");
-    }
-
     public void update(FigureToAttackEvent message){
         throw new UnsupportedOperationException("FigureToAttackEvent not supported");
     }

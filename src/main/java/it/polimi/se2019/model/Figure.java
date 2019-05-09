@@ -12,10 +12,14 @@ public class Figure {
     private Tile tile;
     private FigureColour colour;
     private Player player;
-    private String figureName;
     private Point position;
 
-
+    public Figure (Tile tile, Player player, FigureColour figureColour, Point position){
+        this.tile= tile;
+        this.player= player;
+        this.colour=figureColour;
+        this.position= position;
+    }
     public Point getPosition() {
         return position;
     }
@@ -28,42 +32,24 @@ public class Figure {
         return tile;
     }
 
-    public void setColour(FigureColour colour) {
-        this.colour = colour;
-    }
-
-    public void setTile(Tile tile) {
-        this.tile = tile;
-    }
-
     public Player getPlayer() {
         return player;
     }
 
-    public String getFigureName() {
-        return figureName;
-    }
-
-    public void setFigureName(String figureName) {
-        this.figureName = figureName;
-    }
-
-    public void setPlayer(Player player) { this.player = player; }
-
-    public void damage(Figure target, Figure shooter){
-        target.player.addTear(shooter.colour);
+    public void damage(Figure target){
+        target.player.addTear(colour);
         target.player.updatePlayerDamage();
     }
 
-    public void mark(Figure target, Figure shooter){
+    public void mark(Figure target){
         int alreadyMaximumMarks=0;
         for(Tear marksCounter: target.player.getMarks()){
-            if(marksCounter.getColour()==shooter.colour){
+            if(marksCounter.getColour()==colour){
                 alreadyMaximumMarks++;
             }
         }
         if(alreadyMaximumMarks<3) {
-            target.player.addMark(shooter.colour);
+            target.player.addMark(colour);
         }
     }
 
@@ -87,8 +73,10 @@ public class Figure {
                 Game.getInstance().sendMessage(teleportEvent); //sends player its position, asks where to move
                 //TODO: VMEvent: set newPosition to the specified one
         }
-        position=newPosition;
-        //tile=GameMap.getMap().get(newPosition);
+        if (boundaryChecker(this, newPosition)){
+            position=newPosition;
+            tile=GameMap.getMap().get(newPosition);
+        }
     }
 
     public void move(Figure target, Direction direction){
@@ -109,9 +97,132 @@ public class Figure {
                 default:
                     break;
         }
-        target.position=newPosition;
-        //target.tile=GameMap.getMap().get(newPosition);
-    } //TODO: move does not consider boundaries, to fix
+        if (boundaryChecker(target, newPosition)) {
+            target.position = newPosition;
+            target.tile = GameMap.getMap().get(newPosition);
+        }
+    }
+
+    public void damage (SpawnTile target){
+        if (target.getTileType()==TileType.SPAWNTILE){
+            target.addTear(colour);
+        }
+
+    }
+
+    private Set<Figure> visibilitySet (){
+        Set<Figure> visibleFigures=new HashSet<>();
+        Set<Point> positions= new HashSet<>();
+        Point northernDoor= position;
+        Point southernDoor= position;
+        Point easternDoor= position;
+        Point westernDoor= position;
+
+        for (Tile tileCounter: GameMap.getTiles()){
+            if(tileCounter.getColour().equals(tile.getColour())){
+                visibleFigures.addAll(tileCounter.getFigures());
+            }
+        }
+        if (tile.getDoors().get(Direction.NORTH)){
+            northernDoor.setY(tile.position.getY()+1);
+            positions.add(northernDoor);
+        }
+        if (tile.getDoors().get(Direction.SOUTH)){
+            southernDoor.setY(tile.position.getY()-1);
+            positions.add(southernDoor);
+        }
+        if (tile.getDoors().get(Direction.EAST)){
+            easternDoor.setX(tile.position.getX()+1);
+            positions.add(easternDoor);
+        }
+        if (tile.getDoors().get(Direction.WEST)){
+            westernDoor.setX(tile.position.getX()-1);
+            positions.add(westernDoor);
+        }
+        for (Point positionCounter: positions){
+            visibleFigures.addAll(GameMap.getMap().get(positionCounter).getFigures());
+        }
+        return visibleFigures;
+    }
+
+    private Set<Figure> visibilitySet (Figure targetFigure){
+        Set<Figure> visibleFigures=new HashSet<>();
+        Set<Point> positions= new HashSet<>();
+        Point northernDoor= targetFigure.position;
+        Point southernDoor= targetFigure.position;
+        Point easternDoor= targetFigure.position;
+        Point westernDoor= targetFigure.position;
+
+        for (Tile tileCounter: GameMap.getTiles()){
+            if(tileCounter.getColour().equals(targetFigure.tile.getColour())){
+                visibleFigures.addAll(tileCounter.getFigures());
+            }
+        }
+        if (targetFigure.tile.getDoors().get(Direction.NORTH)){
+            northernDoor.setY(targetFigure.tile.position.getY()+1);
+            positions.add(northernDoor);
+        }
+        if (targetFigure.tile.getDoors().get(Direction.SOUTH)){
+            southernDoor.setY(targetFigure.tile.position.getY()-1);
+            positions.add(southernDoor);
+        }
+        if (targetFigure.tile.getDoors().get(Direction.EAST)){
+            easternDoor.setX(targetFigure.tile.position.getX()+1);
+            positions.add(easternDoor);
+        }
+        if (targetFigure.tile.getDoors().get(Direction.WEST)){
+            westernDoor.setX(targetFigure.tile.position.getX()-1);
+            positions.add(westernDoor);
+        }
+        for (Point positionCounter: positions){
+            visibleFigures.addAll(GameMap.getMap().get(positionCounter).getFigures());
+        }
+        return visibleFigures;
+    }
+
+    private Set<Figure> targetSetUpdater (Set<Figure> originalTargetSet, Set<Figure> resultTargetSet, Integer value){
+        switch (value){
+            case 0:
+                originalTargetSet.removeAll(resultTargetSet);
+                break;
+            case 1:
+                for (Figure figureCounter: originalTargetSet){
+                    if(!resultTargetSet.contains(figureCounter)){
+                        originalTargetSet.remove(figureCounter);
+                    }
+                }
+                break;
+            case 2:
+                originalTargetSet.clear();
+                originalTargetSet.add(this);
+                break;
+            default:
+                break;
+        }
+        return originalTargetSet;
+    }
+
+    private Set<Tile> tileSetUpdater (Set<Tile> originalTargetSet, Set<Tile> resultTargetSet, Integer value){
+        switch (value){
+            case 0:
+                originalTargetSet.removeAll(resultTargetSet);
+                break;
+            case 1:
+                for (Tile tileCounter: originalTargetSet){
+                    if(!resultTargetSet.contains(tileCounter)){
+                        originalTargetSet.remove(tileCounter);
+                    }
+                }
+                break;
+            case 2:
+                originalTargetSet.clear();
+                originalTargetSet.add(this.tile);
+                break;
+            default:
+                break;
+        }
+        return originalTargetSet;
+    }
 
     public void grab(){
         if (tile.getTileType()==TileType.LOOTTILE) { //when on a Loot Tile, adds grabbed ammo to usable ammo making sure the number of ammo of a colour does not exceed 3
@@ -164,22 +275,21 @@ public class Figure {
         }
     }
 
+
+
     public Set<Pair<Effect, Set<Figure>>> generateTargetSet(GraphNode<Effect> node){
         Set<Pair<Effect, Set<Figure>>> targetSet=new HashSet<>();
         Pair <Effect, Set<Figure>> effectToTargets;
 
-        Set<Player> players=new HashSet<>();
+        Set<Player> players=new HashSet<>(Game.getInstance().getPlayers());
         Set<Figure> figures=new HashSet<>();
-        players.addAll(Game.getInstance().getPlayers());
         for(Player playerCounter: players){
             figures.add(playerCounter.getFigure());
         }
         Set<Figure> seenFigures=visibilitySet();
-        Figure chosenPreviousTarget=null;
-
         Set<Tile> seenTiles=tile.visibleTiles();
         for (Effect effectCounter: node.getNode()){
-            Set<Figure> figuresInTargetSet=null;
+            Set<Figure> figuresInTargetSet= new HashSet<>();
             if(!effectCounter.getTargetSpecification().getTile()) { //target is a figure
 
                 switch (effectCounter.getTargetSpecification().getVisible()) {
@@ -192,21 +302,13 @@ public class Figure {
                     case 1:
                         figuresInTargetSet = seenFigures;
                         break;
-                    case 2: //figures one of my previous targets can see
-                        //TODO: simplify
-                        ChooseAmongPreviousTargetsEvent chooseTargetEvent=new ChooseAmongPreviousTargetsEvent();
-                        Set<String> previousTargetNames= new HashSet<> ();
-                        Set<Figure> previousTargets=new HashSet<>();
+                    case 2: //figures my previous target can see
                         int indexOfCurrentPlayer= Game.getInstance().getPlayers().indexOf(player);
-                        previousTargets.addAll(Game.getInstance().getTurns().get(indexOfCurrentPlayer).getFirstTargetSet());
-                        for(Figure figureCounter: previousTargets){
-                            previousTargetNames.add(figureCounter.figureName);
+                        Set<Figure> previousTargets= new HashSet<>(Game.getInstance().getTurns().get(indexOfCurrentPlayer).getFirstTargetSet());
+                        for (Figure figureCounter: previousTargets)
+                        {
+                            figuresInTargetSet.addAll(visibilitySet(figureCounter));
                         }
-                        chooseTargetEvent.setPreviousTargets(previousTargetNames); //no, previous target is already chosen
-                        Game.getInstance().sendMessage(chooseTargetEvent);
-                        //TODO: vc_events a target is returned and assigned to chosenPreviousTarget
-                        Set<Figure> seenByTargetFigures=visibilitySet(chosenPreviousTarget);
-                        figuresInTargetSet = seenByTargetFigures;
                         break;
                     default:
                         break;
@@ -223,8 +325,7 @@ public class Figure {
 
             }
             else { //target is a tile
-                Set<Tile> tilesInTargetSet=new HashSet<>();
-                tilesInTargetSet.addAll(GameMap.getTiles());
+                Set<Tile> tilesInTargetSet=new HashSet<>(GameMap.getTiles());
                 switch (effectCounter.getTargetSpecification().getVisible()){ //same as figures
                     case -1:
                         break;
@@ -241,7 +342,7 @@ public class Figure {
                         break;
                 }
                 if(effectCounter.getTargetSpecification().getDifferent().getFirst()){
-                    tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter), 1);
+                    tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter), 0);
                 }
                 else {
                     tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter), 1);
@@ -297,166 +398,15 @@ public class Figure {
         else{
             NotEnoughAmmoEvent notEnoughAmmoEvent=null;
             Game.getInstance().sendMessage(notEnoughAmmoEvent); //not enough ammo available to reload, want to use PowerUps?
-            //TODO: VMEvent: no, end reload/yes, use selectedPowerUp to pay
+            //TODO: VCEvent: no, end reload/yes, use selectedPowerUp to pay
             PowerUp selectedPowerUp=null;
             player.sellPowerUp(selectedPowerUp);
             reload(weapon);
         }
     }
 
-    public void damage (SpawnTile target){
-        if (target.getTileType()==TileType.SPAWNTILE){
-            target.addTear(colour);
-        }
-
-    }
-
     private int findDistance (){
         return tile.getPosition().getX()+tile.getPosition().getY();
-    }
-
-    public Set<Figure> visibilitySet (){
-        Set<Figure> visibleFigures=new HashSet<>();
-        Point point= position;
-        Tile pointToTile=null;
-        for (Tile tileCounter: GameMap.getTiles()){
-            if(tileCounter.getColour().equals(tile.getColour())){
-                visibleFigures.addAll(tileCounter.getFigures());
-            }
-        }
-        if (tile.getDoors().get(Direction.NORTH)!=null){
-            point.setX(tile.position.getX());
-            point.setY(tile.position.getY()+1);
-            for (Tile tileCounter: GameMap.getTiles()){
-                if(tileCounter.getPosition().equals(point)){
-                    pointToTile= tileCounter;
-                    break;
-                }
-            }
-            for (Tile tileCounter: GameMap.getTiles()){
-                if (tileCounter.colour.equals(pointToTile.colour)){
-                    visibleFigures.addAll(tileCounter.getFigures());
-                }
-            }
-        }
-        if (tile.getDoors().get(Direction.SOUTH)){
-            point.setX(tile.position.getX());
-            point.setY(tile.position.getY()-1);
-            for (Tile tileCounter: GameMap.getTiles()){
-                if(tileCounter.getPosition().equals(point)){
-                    pointToTile=tileCounter;
-                    break;
-                }
-            }
-            for (Tile tileCounter: GameMap.getTiles()){
-                if (tileCounter.colour.equals(pointToTile.colour)){
-                    visibleFigures.addAll(tileCounter.getFigures());
-                }
-            }
-        }
-        if (tile.getDoors().get(Direction.EAST)){
-            point.setX(tile.position.getX()+1);
-            point.setY(tile.position.getY());
-            for (Tile tileCounter: GameMap.getTiles()){
-                if(tileCounter.getPosition().equals(point)){
-                    pointToTile=tileCounter;
-                    break;
-                }
-            }
-            for (Tile tileCounter: GameMap.getTiles()){
-                if (tileCounter.colour.equals(pointToTile.colour)){
-                    visibleFigures.addAll(tileCounter.getFigures());
-                }
-            }
-        }
-        if (tile.getDoors().get(Direction.WEST)){
-            point.setX(tile.position.getX()-1);
-            point.setY(tile.position.getY());
-            for (Tile tileCounter: GameMap.getTiles()){
-                if(tileCounter.getPosition().equals(point)){
-                    pointToTile=tileCounter;
-                    break;
-                }
-            }
-            for (Tile tileCounter: GameMap.getTiles()){
-                if (tileCounter.colour.equals(pointToTile.colour)){
-                    visibleFigures.addAll(tileCounter.getFigures());
-                }
-            }
-        }
-        return visibleFigures;
-    }
-
-    public Set<Figure> visibilitySet (Figure targetFigure){
-        Set<Figure> visibleFigures=new HashSet<>();
-        Point point= targetFigure.position;
-        Tile pointToTile= null;
-        for (Tile tileCounter: GameMap.getTiles()){
-            if(tileCounter.getColour().equals(targetFigure.tile.getColour())){
-                visibleFigures.addAll(tileCounter.getFigures());
-            }
-        }
-        if (targetFigure.tile.getDoors().get(Direction.NORTH)) {
-            point.setX(targetFigure.tile.position.getX());
-            point.setY(targetFigure.tile.position.getY() + 1);
-            for (Tile tileCounter: GameMap.getTiles()){
-                if(tileCounter.getPosition().equals(point)){
-                    pointToTile=tileCounter;
-                    break;
-                }
-            }
-            for (Tile tileCounter: GameMap.getTiles()){
-                if (tileCounter.colour.equals(pointToTile.colour)){
-                    visibleFigures.addAll(tileCounter.getFigures());
-                }
-            }
-        }
-        if (targetFigure.tile.getDoors().get(Direction.SOUTH)){
-            point.setX(targetFigure.tile.position.getX());
-            point.setY(targetFigure.tile.position.getY()-1);
-            for (Tile tileCounter: GameMap.getTiles()){
-                if(tileCounter.getPosition().equals(point)){
-                    pointToTile=tileCounter;
-                    break;
-                }
-            }
-            for (Tile tileCounter: GameMap.getTiles()){
-                if (tileCounter.colour.equals(pointToTile.colour)){
-                    visibleFigures.addAll(tileCounter.getFigures());
-                }
-            }
-        }
-        if (targetFigure.tile.getDoors().get(Direction.EAST)){
-            point.setX(targetFigure.tile.position.getX()+1);
-            point.setY(targetFigure.tile.position.getY());
-            for (Tile tileCounter: GameMap.getTiles()){
-                if(tileCounter.getPosition().equals(point)){
-                    pointToTile=tileCounter;
-                    break;
-                }
-            }
-            for (Tile tileCounter: GameMap.getTiles()){
-                if (tileCounter.colour.equals(pointToTile.colour)){
-                    visibleFigures.addAll(tileCounter.getFigures());
-                }
-            }
-        }
-        if (targetFigure.tile.getDoors().get(Direction.WEST)){
-            point.setX(targetFigure.tile.position.getX()-1);
-            point.setY(targetFigure.tile.position.getY());
-            for (Tile tileCounter: GameMap.getTiles()){
-                if(tileCounter.getPosition().equals(point)){
-                    pointToTile=tileCounter;
-                    break;
-                }
-            }
-            for (Tile tileCounter: GameMap.getTiles()){
-                if (tileCounter.colour.equals(pointToTile.colour)){
-                    visibleFigures.addAll(tileCounter.getFigures());
-                }
-            }
-        }
-        return visibleFigures;
     }
 
     public Set<Figure> targetsOfSelectedEffect(Effect effect){ //TODO: write method to calculate targets of previous actions
@@ -499,50 +449,6 @@ public class Figure {
         return targetSet;
     }
 
-    private Set<Figure> targetSetUpdater (Set<Figure> originalTargetSet, Set<Figure> resultTargetSet, Integer value){
-        switch (value){
-            case 0:
-                originalTargetSet.removeAll(resultTargetSet);
-                break;
-            case 1:
-                for (Figure figureCounter: originalTargetSet){
-                    if(!resultTargetSet.contains(figureCounter)){
-                        originalTargetSet.remove(figureCounter);
-                    }
-                }
-                break;
-            case 2:
-                originalTargetSet.clear();
-                originalTargetSet.add(this);
-                break;
-                default:
-                    break;
-        }
-        return originalTargetSet;
-    }
-
-    private Set<Tile> tileSetUpdater (Set<Tile> originalTargetSet, Set<Tile> resultTargetSet, Integer value){
-        switch (value){
-            case 0:
-                originalTargetSet.removeAll(resultTargetSet);
-                break;
-            case 1:
-                for (Tile tileCounter: originalTargetSet){
-                    if(!resultTargetSet.contains(tileCounter)){
-                        originalTargetSet.remove(tileCounter);
-                    }
-                }
-                break;
-            case 2:
-                originalTargetSet.clear();
-                originalTargetSet.add(this.tile);
-                break;
-                default:
-                    break;
-        }
-        return originalTargetSet;
-    }
-
     private Set <Tile> areaSelectionForTiles (Set<Tile> tilesInTargetSet, Integer innerRadius, Integer outerRadius){
         Set<Tile> targetSet=new HashSet<>();
         int value= 0;
@@ -571,5 +477,9 @@ public class Figure {
 
         targetSet= tileSetUpdater(tilesInTargetSet, targetSet, value);
         return targetSet;
+    }
+
+    private Boolean boundaryChecker (Figure figure, Point newPosition){ //TODO: to implement
+        return (true);
     }
 }
