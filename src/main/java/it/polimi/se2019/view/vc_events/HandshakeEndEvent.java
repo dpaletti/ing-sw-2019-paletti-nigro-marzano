@@ -1,12 +1,11 @@
-package it.polimi.se2019.view.VCEvents;
+package it.polimi.se2019.view.vc_events;
 
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
 
-public class DisconnectionEvent extends VCEvent {
-
-    public DisconnectionEvent(String remoteEndId){
-        super(remoteEndId);
+public class HandshakeEndEvent extends VCEvent {
+    public HandshakeEndEvent(){
+        super();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.utility.Pair;
+
 import java.util.List;
 
 public class TargetSpecification  {

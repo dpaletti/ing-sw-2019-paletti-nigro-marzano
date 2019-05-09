@@ -1,8 +1,9 @@
 package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Observable;
-import it.polimi.se2019.model.MVEvents.EffectToApplyEvent;
-import it.polimi.se2019.model.MVEvents.FigureToAttackEvent;
+import it.polimi.se2019.model.mv_events.EffectToApplyEvent;
+import it.polimi.se2019.model.mv_events.FigureToAttackEvent;
+import it.polimi.se2019.utility.Pair;
 
 import java.util.HashSet;
 import java.util.List;
@@ -27,14 +28,14 @@ public class Player extends Observable<Action> {
     public void unpause(){
         //TODO implement
         //a paused player can be resurrect if it timed out
-        //probably MVEvents adhoc
+        //probably mv_events adhoc
     }
 
     public void pause(){
         //TODO implement
         //players that disconnect should be considered paused
         //some players may simply time out
-        //probably MVEvents adhoc
+        //probably mv_events adhoc
     }
 
     public Weapon getThirdWeapon() {
@@ -163,7 +164,7 @@ public class Player extends Observable<Action> {
         }
         effectToApplyEvent.setApplicableEffects(applicableEffects);
         Game.getInstance().sendMessage(effectToApplyEvent);
-        //TODO: VCEvents returns chosen effect
+        //TODO: vc_events returns chosen effect
 
         for (Pair<Effect, Set<Figure>> counter: targetSet){
             if(counter.getFirst().equals(chosenEffect)){
@@ -174,7 +175,7 @@ public class Player extends Observable<Action> {
         }
         figureToAttackEvent.setPlayersToAttack(attackableFigures);
         Game.getInstance().sendMessage(figureToAttackEvent);
-        //TODO: VCEvents returns chosen target
+        //TODO: vc_events returns chosen target
         figure.generateWeaponEffect(weapon.getStaticDefinition(), chosenTarget);
         weapon.setLoaded(false);
     }

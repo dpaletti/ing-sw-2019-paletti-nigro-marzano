@@ -1,6 +1,6 @@
 package it.polimi.se2019.utility;
 
-import it.polimi.se2019.model.MVEvents.*;
+import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.view.*;
 
 
@@ -8,7 +8,7 @@ public class MVEventDispatcher implements Observer<MVEvent> {
 
     @Override
     public void update(MVEvent message) {
-        throw new UnsupportedOperationException("Generic MVEvents not supported");
+        throw new UnsupportedOperationException("Generic MVEvent not supported");
     }
 
     public void update(EffectToApplyEvent message){
@@ -50,4 +50,5 @@ public class MVEventDispatcher implements Observer<MVEvent> {
     public void update(MatchMakingEndEvent message){
         throw new UnsupportedOperationException("MatchMakingEndEvent not supported");
     }
+
 }

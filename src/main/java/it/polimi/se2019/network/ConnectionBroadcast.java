@@ -19,23 +19,15 @@ public class ConnectionBroadcast implements Connection{
         throw new UnsupportedOperationException("Cannot retrieve on broadcast connection");
     }
 
+
     @Override
-    public void setId(String username) {
-        throw new UnsupportedOperationException("Cannot set id on broadcast connection");
+    public String getToken() {
+        throw new UnsupportedOperationException("Cannot get token on broadcast connection");
     }
 
     @Override
-    public String getPassword() {
-        throw new UnsupportedOperationException("Cannot get password on broadcast connection");
+    public void setToken(String password) {
+        throw new UnsupportedOperationException("Cannot set token on broadcast connection");
     }
 
-    @Override
-    public void setPassword(String password) {
-        throw new UnsupportedOperationException("Cannot set password on broadcast connection");
-    }
-
-    @Override
-    public String getId() {
-        throw new UnsupportedOperationException("Cannot get id on broadcast connection");
-    }
 }

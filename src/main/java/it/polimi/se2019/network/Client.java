@@ -1,6 +1,7 @@
 package it.polimi.se2019.network;
 
 import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.view.View;
 import it.polimi.se2019.view.ViewCLI;
 import it.polimi.se2019.view.ViewGUI;
 
@@ -9,14 +10,14 @@ import java.util.Scanner;
 
 public class Client {
     private NetworkHandler networkHandler;
-    //TODO encrypt in a file the password
-    //TODO read it like a password
+    private View view;
 
     public NetworkHandler getNetworkHandler() {
         return networkHandler;
     }
 
     public static void main(String[] args) {
+        //TODO manage reconnection by logging connection token on a file
         Client client = new Client();
 
         Scanner in = new Scanner(System.in);
@@ -29,12 +30,13 @@ public class Client {
 
         String username = in.nextLine();
 
-        Log.input("Insert password");
-
-        String password = in.nextLine();
-
         Log.input("Preferred network communication mode (RMI/Socket): ");
         String connectionType = in.nextLine();
+
+        if(!viewMode.equals("CLI"))
+            client.view = new ViewGUI();
+        else
+            client.view = new ViewCLI();
 
         if (!connectionType.equals("RMI")) {
             Log.input("input Server IP (with no spaces) then press Enter: ");
@@ -43,17 +45,12 @@ public class Client {
             Log.input("input Server port then press Enter: ");
             int port = in.nextInt();
             in.nextLine();
-            if(viewMode.equals("CLI"))
-                client.networkHandler = new NetworkHandlerSocket(username, password, ip, port, new ViewCLI());
-            else
-
-                client.networkHandler = new NetworkHandlerSocket(username, password, ip, port, new ViewGUI());
+                client.networkHandler = new NetworkHandlerSocket(username, ip, port);
         }
         else {
-            if(viewMode.equals("CLI"))
-                client.networkHandler = new NetworkHandlerRMI(username, password, new ViewCLI());
-            else
-                client.networkHandler = new NetworkHandlerRMI(username, password, new ViewGUI());
-        }
+                client.networkHandler = new NetworkHandlerRMI(username);
+            }
+        client.view.register(client.networkHandler);
+        client.networkHandler.register(client.view);
     }
 }

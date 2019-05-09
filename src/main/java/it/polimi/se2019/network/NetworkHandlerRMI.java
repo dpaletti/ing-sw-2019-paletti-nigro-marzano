@@ -1,58 +1,81 @@
 package it.polimi.se2019.network;
 
-import it.polimi.se2019.utility.JsonHandler;
-import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.utility.VCEventDispatcher;
-import it.polimi.se2019.view.VCEvents.JoinEvent;
+import it.polimi.se2019.utility.*;
+import it.polimi.se2019.view.vc_events.HandshakeEndEvent;
+import it.polimi.se2019.view.vc_events.JoinEvent;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
-import it.polimi.se2019.view.View;
 
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
+import java.io.Serializable;
+import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
-public class NetworkHandlerRMI extends NetworkHandler{
-    private Thread listener;
-    private ServerInterface gameServer;
-    private Dispatcher dispatcher;
+public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterface {
+    private transient ServerInterface gameServer;
+    private transient Dispatcher dispatcher = new Dispatcher();
 
-    public NetworkHandlerRMI(String u, String p, View view){
-        super(u, p, view);
+    public NetworkHandlerRMI(String username){
+        super(username);
         try {
             Registry importRegistry = LocateRegistry.getRegistry();
-            gameServer = (ServerInterface) importRegistry.lookup(RMIRemoteObjects.REMOTE_SERVER_NAME);
-            gameServer.startListening(username, password);
+            gameServer = (ServerInterface) importRegistry.lookup(Settings.REMOTE_SERVER_NAME);
+
+            UnicastRemoteObject.exportObject(this, 4000);
+
+            gameServer.startListening(username, this);
+            token = username;
             listenToEvent();
-            startPinging();
-            enterMatchMaking();
+            enterRoom();
         }catch (RemoteException e){
             Log.severe("Could not get RMI registry " + e.getMessage());
         }catch (NotBoundException e) {
-            Log.severe("Could not bind " + RMIRemoteObjects.REMOTE_SERVER_NAME);
+            Log.severe("Could not bind " + Settings.REMOTE_SERVER_NAME);
         }
     }
 
 
-    private class Dispatcher extends VCEventDispatcher{
+    public NetworkHandlerRMI(String username, String token){
+        super(username, token);
+        try {
+            Registry importRegistry = LocateRegistry.getRegistry();
+            gameServer = (ServerInterface) importRegistry.lookup(Settings.REMOTE_SERVER_NAME);
+            gameServer.startListening(username, this);
+            listenToEvent();
+            enterRoom();
+        }catch (RemoteException e){
+            Log.severe("Could not get RMI registry " + e.getMessage());
+        }catch (NotBoundException e) {
+            Log.severe("Could not bind " + Settings.REMOTE_SERVER_NAME);
+        }
+    }
+
+    @Override
+    public void setToken(String token) {
+        this.token = token;
+        Log.fine("Token is set to: " + token);
+    }
+
+    private class Dispatcher extends VCEventDispatcher implements Serializable {
 
         @Override
         public void update(JoinEvent message){
             submit(JsonHandler.serialize(message, message.getClass().toString().replace("class ", "")));
         }
 
+        @Override
+        public void update(HandshakeEndEvent message) {
+        }
     }
 
     @Override
-    protected void enterMatchMaking() {
+    protected void enterRoom() {
         Log.info("Entering match making");
-        update(new JoinEvent(username, password, username));
-        //RMI connection can have usernames as bootstrapping IDs
-        //this repetition is needed to hold the generalization over socket connections that can't
+        update(new JoinEvent(username, username));
+        //RMI connection knows its token when sending joinEven
+        //repetition is used to hold the generalization over socket connections
     }
-
-
 
     @Override
     public void update(VCEvent message) {
@@ -68,7 +91,7 @@ public class NetworkHandlerRMI extends NetworkHandler{
     public void submit(String toVirtualView) {
         try {
             Log.fine("submitted JSON: " + toVirtualView);
-            gameServer.pushEvent(username, toVirtualView);
+            gameServer.pushEvent(token, toVirtualView);
         }catch(Exception e) {
             Log.severe(e.getMessage());
         }
@@ -77,40 +100,29 @@ public class NetworkHandlerRMI extends NetworkHandler{
     @Override
     public void retrieve() {
         try {
-            notify((MVEvent) JsonHandler.deserialize(gameServer.pullEvent(username)));
+            String data = gameServer.pullEvent(token);
+            if(data != null)
+                notify((MVEvent) JsonHandler.deserialize(data));
         }catch (RemoteException e){
             Log.severe("Cannot pull event " + e.getMessage());
             System.exit(0);
-        }catch (Exception e){
-            Log.severe(e.getMessage());
+        }catch (ClassNotFoundException e){
+            Log.severe("Cannot deserialize event while pulling " + e.getMessage());
         }
     }
 
     @Override
     protected void listenToEvent() {
-        listener = new Thread(() -> {
+        new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 //TODO this will be restructured to terminate on EndEvent (that is the closing event that server sends to client)
                 retrieve();
             }
-        });
-        listener.start();
+        }).start();
     }
 
-    private void startPinging(){
-        new Thread(() -> {
-            try {
-                while (!Thread.currentThread().isInterrupted()) {
-                    gameServer.ping(username);
-                    Thread.sleep(100);
-                    //TODO make it configurable and compliant with timeout
-                }
-            }catch (RemoteException e){
-                Log.severe("Server is down" + e.getMessage());
-            }catch (InterruptedException e){
-                Log.severe(e.getMessage());
-                Thread.currentThread().interrupt();
-            }
-        }).start();
+    @Override
+    public String ping() throws RemoteException {
+        return "Still alive";
     }
 }

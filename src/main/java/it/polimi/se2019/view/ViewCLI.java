@@ -1,16 +1,14 @@
 package it.polimi.se2019.view;
 
 
-import it.polimi.se2019.utility.MVEventDispatcher;
-
 public class ViewCLI extends View {
-    public Dispatcher dispatcher;
+    private Dispatcher dispatcher = new Dispatcher();
 
     public ViewCLI(){
         super();
     }
 
-    private class Dispatcher extends MVEventDispatcher{
+    private class Dispatcher extends ClientViewDispatcher{
 
     }
 

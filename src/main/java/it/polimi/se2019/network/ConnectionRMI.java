@@ -2,66 +2,53 @@ package it.polimi.se2019.network;
 
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.VCEvents.DisconnectionEvent;
+import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 
-import java.util.Queue;
+import java.rmi.RemoteException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 
 public class ConnectionRMI implements Connection{
     private SynchronousQueue<String> in = new SynchronousQueue<>();
     private SynchronousQueue<String> out = new SynchronousQueue<>();
+    private CallbackInterface gameClient;
+    private boolean isConnected = true;
+    //TODO manage disconnections through threads and waits
+    //or maybe with client callbacks
+    Timer timer;
 
-    private String username = null;
-    private String password = null;
+    private String token = null;
 
-    Timer timer = new Timer();
-    TimerTask timeout = new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    DisconnectionEvent disconnectionEvent = new DisconnectionEvent(username);
-                    in.put(JsonHandler.serialize(disconnectionEvent, disconnectionEvent.getClass().toString().replace("class ", "")));
-                }catch(InterruptedException e){
-                    Log.severe(e.getMessage());
-                    Thread.currentThread().interrupt();
-                }
-
-            }
-        };
-
-
-    public ConnectionRMI(String username, String password){
-        this.username = username;
-        this.password = password;
-        timer.schedule(timeout, 400);
-        //TODO make this configurable and compliant with various game phases
-    }
-
-    @Override
-    public String getId() {
-        return username;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
+    public ConnectionRMI(String token, CallbackInterface gameClient) {
+        this.token = token;
+        this.gameClient = gameClient;
+        timeOutCheck();
     }
 
 
-    @Override
-    public void setId(String username) {
-        throw new UnsupportedOperationException("Cannot set username in RMI connection");
+    public CallbackInterface getGameClient() {
+        return gameClient;
     }
 
     @Override
-    public void setPassword(String password){
-        throw new UnsupportedOperationException("Cannot set password in RMI connection");
+    public String getToken() {
+        return token;
     }
 
     @Override
-    public String retrieve() {
+    public void setToken(String token) throws RemoteException {
+        try {
+            this.token = token;
+            gameClient.setToken(token);
+        }catch (RemoteException e){
+            throw new RemoteException("Error while setting token: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public synchronized String retrieve() {
         try {
             return in.take();
         }catch (InterruptedException e){
@@ -81,33 +68,43 @@ public class ConnectionRMI implements Connection{
         }
     }
 
-    public void ping(){
+    public String pull(){
+        try {
+            return out.take();
+        }catch (InterruptedException e){
+            Log.severe(e.getMessage());
+            Thread.currentThread().interrupt();
+            return null;
+        }
+    }
+
+    public void push(String data){
+        try {
+            in.put(data);
+        }catch (InterruptedException e){
+            Log.severe(e.getMessage());
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void stopPing(){
         timer.cancel();
         timer.purge();
+    }
+
+    public void timeOutCheck(){
         timer = new Timer();
-        timer.schedule(new TimerTask() {
+        timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                try {
-                    DisconnectionEvent disconnectionEvent = new DisconnectionEvent(username);
-                    in.put(JsonHandler.serialize(disconnectionEvent, disconnectionEvent.getClass().toString().replace("class ", "")));
-                }catch(InterruptedException e){
-                    Log.severe(e.getMessage());
-                    Thread.currentThread().interrupt();
+                try{
+                    gameClient.ping();
+                }catch (RemoteException e) {
+                    DisconnectionEvent event = new DisconnectionEvent(token);
+                    stopPing();
+                    push(JsonHandler.serialize(event, event.getClass().toString().replace("class ", "")));
                 }
-
             }
-        }, 200);
-        //TODO make it configurable
-
+        }, 0, 1000);
     }
-
-    public Queue<String> getOut() {
-        return out;
-    }
-
-    public Queue<String> getIn() {
-        return in;
-    }
-
 }

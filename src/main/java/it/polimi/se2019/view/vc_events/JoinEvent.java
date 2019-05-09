@@ -1,20 +1,27 @@
-package it.polimi.se2019.view.VCEvents;
+package it.polimi.se2019.view.vc_events;
 
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
 
 public class JoinEvent extends VCEvent {
     private String username;
-    private String password;
+    private String token;
 
-    public JoinEvent(String source, String password, String username){
+    public JoinEvent(String source, String username){
         super(source);
-        this.password = password;
         this.username = username;
+        this.token = null;
     }
 
-    public String getPassword() {
-        return password;
+    public JoinEvent(String source, String username, String token){
+        super(source);
+        this.username = username;
+        this.token = token;
+    }
+
+
+    public String getToken() {
+        return token;
     }
     public String getUsername(){
         return username;

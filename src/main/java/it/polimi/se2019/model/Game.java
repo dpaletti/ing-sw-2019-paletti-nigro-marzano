@@ -1,11 +1,12 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.model.MVEvents.MatchMakingEndEvent;
+import it.polimi.se2019.model.mv_events.MatchMakingEndEvent;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.view.MVEvent;
-import it.polimi.se2019.model.MVEvents.UsernameDeletionEvent;
-import it.polimi.se2019.model.MVEvents.UsernameEvaluationEvent;
+import it.polimi.se2019.model.mv_events.UsernameDeletionEvent;
+import it.polimi.se2019.model.mv_events.UsernameEvaluationEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,13 +22,20 @@ public class Game extends Observable<MVEvent> {
     private Map<FigureColour, String> userLookup;
     // TODO Mapping between figures and usernames coming from controller
 
-
-    public void invalidUsername(String bootstrapId, List<String> usernames){
-        notify(new UsernameEvaluationEvent(bootstrapId, usernames));
+    public Game(){
+        //TODO implement
+        //keep the line below!!!!111111!!!1!1!!!
+        observers = new ArrayList<>();
     }
 
-    public void validUsername(String username, String password){
-        notify(new UsernameEvaluationEvent(username, password));
+
+
+    public void invalidUsername(String usernameSource, List<String> usernames){
+        notify(new UsernameEvaluationEvent(usernameSource, usernames));
+    }
+
+    public void validUsername(String usernameSource, String username) {
+        notify(new UsernameEvaluationEvent(usernameSource, username));
     }
 
     public void usernameDeletion(String username){

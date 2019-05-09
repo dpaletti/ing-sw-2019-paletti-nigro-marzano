@@ -1,4 +1,4 @@
-package it.polimi.se2019.model.MVEvents;
+package it.polimi.se2019.model.mv_events;
 
 import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.view.MVEvent;

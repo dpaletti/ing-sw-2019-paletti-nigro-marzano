@@ -1,8 +1,9 @@
 package it.polimi.se2019.utility;
 
-import it.polimi.se2019.view.VCEvents.ChosenEffectEvent;
-import it.polimi.se2019.view.VCEvents.DisconnectionEvent;
-import it.polimi.se2019.view.VCEvents.JoinEvent;
+import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
+import it.polimi.se2019.view.vc_events.DisconnectionEvent;
+import it.polimi.se2019.view.vc_events.HandshakeEndEvent;
+import it.polimi.se2019.view.vc_events.JoinEvent;
 import it.polimi.se2019.view.VCEvent;
 
 public class VCEventDispatcher implements Observer<VCEvent>{
@@ -21,7 +22,11 @@ public class VCEventDispatcher implements Observer<VCEvent>{
     }
 
     public void update(ChosenEffectEvent message){
-        throw new UnsupportedOperationException("Chosen effect event not supported");
+        throw new UnsupportedOperationException("ChosenEffect event not supported");
+    }
+
+    public void update(HandshakeEndEvent message){
+        throw new UnsupportedOperationException("HandshakeEnd event not supported");
     }
 
 }

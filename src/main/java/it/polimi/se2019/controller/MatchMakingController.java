@@ -2,10 +2,11 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.network.Server;
+import it.polimi.se2019.network.Settings;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.VCEvents.JoinEvent;
-import it.polimi.se2019.view.VCEvents.DisconnectionEvent;
+import it.polimi.se2019.view.vc_events.JoinEvent;
+import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 import it.polimi.se2019.view.VCEvent;
 
 import java.util.ArrayList;
@@ -30,29 +31,27 @@ public class MatchMakingController extends Controller {
     }
 
     @Override
-    public void update(VCEvent message) {
-        message.handle(dispatcher);
+    public void update(VCEvent message)
+    {
+        try {
+            message.handle(dispatcher);
+        }catch (UnsupportedOperationException e){
+            throw new UnsupportedOperationException("MatchMaking controller: " + e.getMessage(), e);
+        }
     }
 
     private class Dispatcher extends VCEventDispatcher{
         @Override
-        public void update(VCEvent message){
-            try {
-                message.handle(this);
-            }catch (UnsupportedOperationException e){
-                Log.severe("Unsupported event type: " + e.getMessage());
-            }
-        }
-
-        @Override
         public void update(JoinEvent message) {
-
+            Log.fine("Here I am");
+            //JoinEvents arriving here can't be re-connections so the token is always null
             if(usernames.contains(message.getUsername())) {
+                Log.fine("Username is not valid");
                 model.invalidUsername(message.getSource(), new ArrayList<>(usernames));
                 return;
             }
 
-            model.validUsername(message.getUsername(), message.getPassword());
+            model.validUsername(message.getSource(), message.getUsername());
             usernames.add(message.getUsername());
 
             playerCount.set(playerCount.addAndGet(1));
@@ -65,7 +64,7 @@ public class MatchMakingController extends Controller {
                     public void run() {
                         closeMatchMaking();
                     }
-                }, 1000); //time in milliseconds
+                }, Settings.MATCH_MAKING_TIMER); //time in milliseconds
             }
             //TODO make time interval configurable
             if (playerCount.get() == 5) {
@@ -82,8 +81,6 @@ public class MatchMakingController extends Controller {
             model.usernameDeletion(disconnectionEvent.getSource());
 
             playerCount.set(playerCount.decrementAndGet());
-            if(playerCount.get() < 0)
-                throw new IllegalArgumentException();
             Log.info(disconnectionEvent.getSource() + " just disconnected, players in match making; " + playerCount);
             if(playerCount.get() < 3 && timerRunning.get()){
                 timerRunning.set(false);

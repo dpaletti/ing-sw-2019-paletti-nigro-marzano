@@ -9,15 +9,14 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ConnectionSocket implements Connection{
-    private Socket socket;
     private Scanner in;
     private PrintWriter out;
-    private String username = null;
-    private String password = null;
+
+    private String token = null;
 
     public ConnectionSocket(Socket socket){
         try{
-            this.socket=socket;
+            token = socket.getRemoteSocketAddress().toString();
             this.in = new Scanner(socket.getInputStream());
             this.out = new PrintWriter(socket.getOutputStream());
         }catch (IOException e){
@@ -26,31 +25,13 @@ public class ConnectionSocket implements Connection{
     }
 
     @Override
-    public String getPassword() {
-        return password;
+    public String getToken() {
+        return token;
     }
 
     @Override
-    public String getId() {
-        if(username == (null))
-            return socket.getRemoteSocketAddress().toString();
-        return username;
-    }
-
-    @Override
-    public void setPassword(String password) {
-        if(this.password == (null))
-            this.password = password;
-        else
-            throw new UnsupportedOperationException("Password in Socket Connection already set");
-    }
-
-
-    public void setId(String username){
-        if(this.username == (null))
-            this.username = username;
-        else
-            throw new UnsupportedOperationException("Username in Socket Connection already set");
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

@@ -1,6 +1,7 @@
-package it.polimi.se2019.model.MVEvents;
+package it.polimi.se2019.model.mv_events;
 
 
+import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.view.MVEvent;
 
 import java.util.ArrayList;
@@ -9,20 +10,20 @@ import java.util.List;
 public class UsernameEvaluationEvent extends MVEvent {
         private boolean validUsername;
         private List<String> nonAvailableUsernames;
-        private String password;
+        private String username;
 
         public UsernameEvaluationEvent(String destination, List<String> nonAvailableUsernames){
                 super(destination);
                 this.nonAvailableUsernames = nonAvailableUsernames;
                 validUsername = false;
-                this.password = null;
+                username = null;
 
         }
 
-        public UsernameEvaluationEvent (String destination, String password){
+        public UsernameEvaluationEvent (String destination, String username){
                 super(destination);
                 validUsername = true;
-                this.password = password;
+                this.username = username;
         }
 
         public List<String> getNonAvailableUsernames() {
@@ -33,7 +34,12 @@ public class UsernameEvaluationEvent extends MVEvent {
                 return validUsername;
         }
 
-        public String getPassword() {
-                return password;
+        public String getUsername() {
+                return username;
+        }
+
+        @Override
+        public void handle(MVEventDispatcher dispatcher) {
+            dispatcher.update(this);
         }
 }

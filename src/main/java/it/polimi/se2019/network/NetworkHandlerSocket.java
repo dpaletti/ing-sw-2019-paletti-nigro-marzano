@@ -3,35 +3,57 @@ package it.polimi.se2019.network;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.VCEventDispatcher;
-import it.polimi.se2019.view.VCEvents.JoinEvent;
+import it.polimi.se2019.view.vc_events.JoinEvent;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.View;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class NetworkHandlerSocket extends NetworkHandler {
-    private Socket socket;
-    private Scanner in;
-    private PrintWriter out;
-    private Dispatcher dispatcher = new Dispatcher();
+    private transient Socket socket;
+    private transient Scanner in;
+    private transient PrintWriter out;
+    private transient Dispatcher dispatcher = new Dispatcher();
 
-    public NetworkHandlerSocket(String username, String password, String ip, int port, View view){
-        super(username, password, view);
+    public NetworkHandlerSocket(String username, String ip, int port){
+        super(username);
+        try {
+            socket = new Socket(ip, port);
+            in = new Scanner(socket.getInputStream());
+            out = new PrintWriter(socket.getOutputStream(), true);
+
+
+            listenToEvent();
+            enterRoom();
+        }catch (IOException e){
+            Log.severe("Could not establish connection" + e.getMessage());
+        }
+    }
+
+
+    public NetworkHandlerSocket(String username, String token,  String ip, int port){
+        super(username, token);
         try {
             socket = new Socket(ip, port);
             in = new Scanner(socket.getInputStream());
             out = new PrintWriter(socket.getOutputStream(), true);
             listenToEvent();
-            enterMatchMaking();
+            enterRoom();
         }
         catch(IOException e){
-            Log.severe("Could not establish connection" + e.getMessage());
+            Log.severe("Could not establish connection " + e.getMessage());
        }
+    }
+
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override
@@ -43,7 +65,7 @@ public class NetworkHandlerSocket extends NetworkHandler {
         }
     }
 
-    private class Dispatcher extends VCEventDispatcher{
+    private class Dispatcher extends VCEventDispatcher {
 
         @Override
         public void update(JoinEvent message){
@@ -65,9 +87,9 @@ public class NetworkHandlerSocket extends NetworkHandler {
 
 
     @Override
-    public void enterMatchMaking(){
+    public void enterRoom(){
         Log.info("Entering match making");
-        update(new JoinEvent(socket.getLocalSocketAddress().toString(), password, username ));
+        update(new JoinEvent(socket.getLocalSocketAddress().toString(), username));
     }
 
     @Override

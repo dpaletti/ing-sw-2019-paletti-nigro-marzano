@@ -1,4 +1,4 @@
-package it.polimi.se2019.view.VCEvents;
+package it.polimi.se2019.view.vc_events;
 
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;

@@ -1,28 +1,27 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.MVEvents.MatchMakingEndEvent;
-import it.polimi.se2019.model.MVEvents.UsernameDeletionEvent;
-import it.polimi.se2019.model.MVEvents.UsernameEvaluationEvent;
+import it.polimi.se2019.utility.*;
+import it.polimi.se2019.model.mv_events.MatchMakingEndEvent;
+import it.polimi.se2019.model.mv_events.UsernameDeletionEvent;
+import it.polimi.se2019.model.mv_events.UsernameEvaluationEvent;
 import it.polimi.se2019.network.*;
-import it.polimi.se2019.utility.JsonHandler;
-import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.utility.MVEventDispatcher;
-import it.polimi.se2019.view.VCEvents.DisconnectionEvent;
+import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.SynchronousQueue;
 
 public class VirtualView extends View implements ServerInterface {
     private List<Connection> connections = new CopyOnWriteArrayList<>();
     private List<Connection> timeOuts = new CopyOnWriteArrayList<>();
     private ExecutorService executorService = Executors.newCachedThreadPool();
-    private Dispatcher dispatcher = new Dispatcher();
+    private MVEventDispatcher dispatcher = new Dispatcher();
     private static final String PREFIX = "class ";
+    private BiSet<String, String> biTokenUsername = new BiSet<>(); //Pair<"token", "username">
 
     public VirtualView(){
         super();
@@ -48,18 +47,19 @@ public class VirtualView extends View implements ServerInterface {
             this.connection = c;
         }
 
+        private boolean shutdown = false;
+
         @Override
         public void run() {
-            while(!Thread.currentThread().isInterrupted()){
+            while (!shutdown) {
                 try {
                     retrieve(connection);
-                }catch(NoSuchElementException e) {
-                    VirtualView.this.notify(new DisconnectionEvent(connection.getId()));
-                    Thread.currentThread().interrupt();
+                } catch (NoSuchElementException e) {
+                    VirtualView.this.notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken())));
+                    shutdown = true;
                 }
             }
         }
-
     }
 
     private class Dispatcher extends MVEventDispatcher{
@@ -69,34 +69,25 @@ public class VirtualView extends View implements ServerInterface {
             try{
                 Connection connection = getConnectionOnId(message.getDestination(), timeOuts);
                 if(message.isValidUsername()) {
-                    if(connection.getId() == (null) && connection.getPassword() == (null)) {
-                        connection.setId(message.getDestination());
-                        connection.setPassword(message.getPassword());
-                    }
+                    String token = generateToken();
+                    connection.setToken(token);
+                    biTokenUsername.add(new Pair<>(connection.getToken(), message.getDestination()));
                     connections.add(connection);
                     timeOuts.remove(connection);
                 }
                 submit(connection, JsonHandler.serialize(message, message.getClass().toString().replace(PREFIX, "")));
             }catch (NullPointerException e){
                 Log.severe("Trying to notify over a non-existent connection about username");
+            }catch (RemoteException e){
+                Log.severe("Remote exception while handling Username evaluatioin event");
             }
         }
 
         @Override
         public void update(UsernameDeletionEvent message) {
-            Connection connection = null;
-            try {
-                Log.info("Deleting" + message.getDestination());
-                connection = getConnectionOnId(message.getDestination(), connections);
-                connections.remove(connection);
-            }catch (NullPointerException e){
-                Log.info("Deleting" + message.getDestination() + "from TimeOuts");
-                connection = getConnectionOnId(message.getDestination(), timeOuts);
-                timeOuts.remove(connection);
-            }finally {
-                if(connection != (null))
-                    submit(connection, JsonHandler.serialize(message, message.getClass().toString().replace(PREFIX, "")));
-            }
+            Connection connection = getConnectionOnId(message.getDestination(), connections);
+            timeOuts.remove(connection);
+            Log.fine("Deleted player");
         }
 
         @Override
@@ -107,17 +98,22 @@ public class VirtualView extends View implements ServerInterface {
 
     @Override
     public void update(MVEvent message) {
-        message.handle(dispatcher);
+        try {
+            message.handle(dispatcher);
+        }catch (UnsupportedOperationException e){
+            Log.severe(e.getMessage());
+        }
     }
 
 
     private void retrieve(Connection connection){
         try {
-            notify((VCEvent) JsonHandler.deserialize(connection.retrieve()));
-        }catch (ClassNotFoundException e){
+            String data = connection.retrieve();
+            notify((VCEvent) JsonHandler.deserialize(data));
+        }catch (ClassNotFoundException e) {
             Log.severe("Error during deserialization: " + e.getMessage());
+            System.exit(0);
         }
-
     }
 
     private void submit(Connection connection, String data){
@@ -127,60 +123,73 @@ public class VirtualView extends View implements ServerInterface {
 
     public void startListening (Connection connection){
         timeOuts.add(connection); //until the join request, connected clients are considered time-outed
-        executorService.submit(new EventLoop(connection));
+        EventLoop eventLoop= new EventLoop(connection);
+        executorService.submit(eventLoop);
     }
 
     //------------------------RMI REMOTE SERVER INTERFACE IMPLEMENTATION------------------------//
 
     @Override
-    public void startListening(String username, String password) {
-        startListening(new ConnectionRMI(username, password));
+    public void startListening(String username, CallbackInterface client) {
+        Connection connection = new ConnectionRMI(username,  client);
+        startListening(connection);
     }
 
     @Override
-    public String pullEvent(String username) throws RemoteException {
+    public String pullEvent(String token) throws RemoteException {
         try {
-            return ((SynchronousQueue<String>) ((ConnectionRMI) getConnectionOnId(username, connections)).getOut()).take();
+            ConnectionRMI connection;
+            if(!biTokenUsername.containsFirst(token))
+                connection = (ConnectionRMI) getConnectionOnId(token, timeOuts);
+            else
+                connection = (ConnectionRMI) getConnectionOnId(token, connections);
+            return connection.pull();
         } catch (Exception e) {
             Log.severe(e.getMessage());
             Thread.currentThread().interrupt();
-            return null;
+            System.exit(0);
         }
+        return null;
     }
 
     @Override
-    public void pushEvent(String username, String data) throws RemoteException {
+    public void pushEvent(String token, String data) throws RemoteException {
         try{
-            ((SynchronousQueue<String>) ((ConnectionRMI) getConnectionOnId(username, connections)).getIn()).put(data);
-        }catch(InterruptedException e){
-            Log.severe(e.getMessage());
-            Thread.currentThread().interrupt();
+            ConnectionRMI connection;
+            if(!biTokenUsername.containsFirst(token))
+                connection = (ConnectionRMI) getConnectionOnId(token, timeOuts);
+            else
+                connection = (ConnectionRMI) getConnectionOnId(token, connections);
+            connection.push(data);
         }catch (Exception e){
             Log.severe(e.getMessage());
-        }
-    }
-
-    @Override
-    public void ping(String username) throws RemoteException {
-        try {
-            ((ConnectionRMI) getConnectionOnId(username, connections)).ping();
-        }catch (Exception e){
-            Log.severe(e.getMessage());
+            System.exit(0);
         }
     }
 
     //------------------------RMI REMOTE SERVER INTERFACE IMPLEMENTATION------------------------//
 
     private Connection getConnectionOnId(String id, List<Connection> toQuery){
+        Log.fine("Getting connection  with id: " + id);
         if(id.equals("*"))
             return new ConnectionBroadcast(connections);
 
         for (Connection c:
              toQuery) {
-            if(c.getId().equals(id))
+            if(c.getToken().equals(id))
                 return c;
         }
-        throw new NullPointerException();
+        throw new NullPointerException("Did not find any connection with " + id + " as identification");
     }
 
+    public String generateToken(){
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[20];
+        random.nextBytes(bytes);
+        String token = Base64.getEncoder().encodeToString(bytes);
+        if(biTokenUsername.containsFirst(token))
+            generateToken();
+        return token;
+    }
+    
 }

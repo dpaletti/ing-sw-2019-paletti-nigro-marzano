@@ -2,10 +2,11 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.network.Server;
-import it.polimi.se2019.view.VirtualView;
+import it.polimi.se2019.network.Settings;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.VCEvents.DisconnectionEvent;
-import it.polimi.se2019.view.VCEvents.JoinEvent;
+import it.polimi.se2019.view.VirtualView;
+import it.polimi.se2019.view.vc_events.DisconnectionEvent;
+import it.polimi.se2019.view.vc_events.JoinEvent;
 import it.polimi.se2019.view.VCEvent;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
@@ -42,17 +44,12 @@ public class TestMatchMakingController {
     public void beforeTest(){
         matchMakingController = new MatchMakingController(model, server);
         virtualView.register(matchMakingController);
-        joinEvents.add(new JoinEvent("username1", "password1", "boot1"));
-        joinEvents.add(new JoinEvent("username2", "password2", "boot2"));
-        joinEvents.add(new JoinEvent("username3", "password3", "boot3"));
-        joinEvents.add(new JoinEvent("username4", "password4", "boot4"));
-        joinEvents.add(new JoinEvent("username5", "password5", "boot5"));
-        joinEvents.add(new JoinEvent("username6", "password6", "boot6"));
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testControllerConstruction() throws NullPointerException {
-        MatchMakingController nullView = new MatchMakingController(model, server);
+        joinEvents.add(new JoinEvent("tok1", "username1", "boot1"));
+        joinEvents.add(new JoinEvent("tok2", "username2", "boot2"));
+        joinEvents.add(new JoinEvent("tok3", "username3", "boot3"));
+        joinEvents.add(new JoinEvent("tok4", "username4", "boot4"));
+        joinEvents.add(new JoinEvent("tok5", "username5", "boot5"));
+        joinEvents.add(new JoinEvent("tok6", "username6", "boot6"));
     }
 
     @Test
@@ -80,43 +77,45 @@ public class TestMatchMakingController {
     }
 
     @Test
-    public void testLeave(){
+    public void testUsernameClash(){
+        matchMakingController.update(joinEvents.get(1));
+        assertTrue(matchMakingController.getUsernames().contains("*"));
+        assertTrue(matchMakingController.getUsernames().contains("username2"));
+        List<String> store = new ArrayList<>(matchMakingController.getUsernames());
+        matchMakingController.update(new JoinEvent("tok1", "username2", "tok1"));
+        assertEquals(matchMakingController.getUsernames(), store);
+    }
+
+    @Test
+    public void testMatchMakingTimer(){
         testJoin3Clients();
         assertTrue(matchMakingController.isTimerRunning());
-        matchMakingController.update(leave);
-        assertFalse(matchMakingController.isTimerRunning());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testInvalidLeave(){
-        matchMakingController.update(leave);
-    }
-
-    @Test
-    public void testDispatching(){
-        matchMakingController.update(join);
-        assertFalse(matchMakingController.isTimerRunning());
-        assertFalse(matchMakingController.isMatchMade());
-        assertEquals(1, matchMakingController.getPlayerCount());
-
-        matchMakingController.update(vcEvent);
-        assertFalse(matchMakingController.isTimerRunning());
-        assertFalse(matchMakingController.isMatchMade());
-        assertEquals(1, matchMakingController.getPlayerCount());
-    }
-
-    @Test
-    public void testTimer(){
-        testJoin3Clients();
         try {
-            //TODO make time configurable from file once the one on MatchMakingController is
-            //time needs to be a little bit more than the actual timer
-            //there is no strict timer requisite so it is no issue
-            Thread.sleep(1100); //NOSONAR
+            TimeUnit.MILLISECONDS.sleep(Settings.MATCH_MAKING_TIMER);
             assertTrue(matchMakingController.isMatchMade());
-            assertFalse(virtualView.getObservers().contains(matchMakingController));
-        }catch(InterruptedException e){
-            Log.severe("Thread sleep interrupted during testing, timer test skipped");
+        }catch (InterruptedException e){
+            Log.severe("Interrupt during test");
         }
     }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testDispatcher(){
+        matchMakingController.update(new VCEvent());
+    }
+
+    @Test
+    public void testDisconnection(){
+        testJoin3Clients();
+        assertTrue(matchMakingController.isTimerRunning());
+        try {
+            TimeUnit.MILLISECONDS.sleep(Settings.MATCH_MAKING_TIMER / 2);
+            matchMakingController.update(new DisconnectionEvent("username1"));
+            assertFalse(matchMakingController.getUsernames().contains("username1"));
+            assertEquals(matchMakingController.getPlayerCount(), 2);
+            assertFalse(matchMakingController.isTimerRunning());
+        }catch (InterruptedException e){
+            Log.severe("Interrupt during test");
+        }
+    }
+
 }

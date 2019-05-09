@@ -51,7 +51,7 @@ public class Server {
         virtualView.deregister(controller);
     }
 
-    private void startServer() throws IOException, AlreadyBoundException {
+    public void startServer() throws IOException, AlreadyBoundException {
         model = new Game();
         controller = new MatchMakingController(model, this);
         virtualView = new VirtualView();
@@ -63,8 +63,8 @@ public class Server {
         serverSocket = new ServerSocket(port);
         socketOpen = true;
 
-        Registry registry = LocateRegistry.createRegistry(1099); //using default value
-        registry.bind(RMIRemoteObjects.REMOTE_SERVER_NAME, virtualView);
+        Registry registry = LocateRegistry.createRegistry(1099);
+        registry.bind(Settings.REMOTE_SERVER_NAME, virtualView);
         Log.info("Server ready");
         try {
             acceptClients();
