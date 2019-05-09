@@ -10,8 +10,6 @@ import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestJsonHandler {
-    //TODO json test files
-
     @Test(expected = NullPointerException.class)
     public void testSerializeNull(){
         JsonHandler.serialize(null, null);
@@ -27,4 +25,19 @@ public class TestJsonHandler {
             //
         }
     }
+
+    @Test
+    public void testSerializeDeserialize(){
+        VCEvent event = new VCEvent("source");
+        String serialized = JsonHandler.serialize(event, event.getClass().toString().replace("class ", ""));
+        try {
+            VCEvent deserialized = (VCEvent) JsonHandler.deserialize(serialized);
+            assertEquals(event.getSource(), deserialized.getSource());
+        }catch (ClassNotFoundException e){
+            //
+        }
+
+    }
+
+
 }

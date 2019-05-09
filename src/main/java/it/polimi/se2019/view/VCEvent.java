@@ -3,7 +3,7 @@ package it.polimi.se2019.view;
 import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.VCEventDispatcher;
 
-public class VCEvent extends Event {
+public class VCEvent implements Event {
     //Event coming from the view to the controller
 
     private String source;

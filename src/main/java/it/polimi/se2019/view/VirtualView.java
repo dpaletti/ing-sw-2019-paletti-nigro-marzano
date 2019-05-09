@@ -75,6 +75,7 @@ public class VirtualView extends View implements ServerInterface {
                     connections.add(connection);
                     timeOuts.remove(connection);
                 }
+                message.setDestination(message.getDestination());
                 submit(connection, JsonHandler.serialize(message, message.getClass().toString().replace(PREFIX, "")));
             }catch (NullPointerException e){
                 Log.severe("Trying to notify over a non-existent connection about username");
@@ -86,7 +87,7 @@ public class VirtualView extends View implements ServerInterface {
         @Override
         public void update(UsernameDeletionEvent message) {
             Connection connection = getConnectionOnId(message.getDestination(), connections);
-            timeOuts.remove(connection);
+            connections.remove(connection);
             Log.fine("Deleted player");
         }
 

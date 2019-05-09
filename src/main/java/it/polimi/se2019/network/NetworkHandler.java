@@ -4,7 +4,6 @@ import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Observer;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
-import it.polimi.se2019.view.View;
 
 import java.io.Serializable;
 import java.util.ArrayList;

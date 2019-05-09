@@ -65,7 +65,9 @@ public class BiSet<T, S> extends AbstractSet<Pair<T, S>> {
     }
 
     public boolean containsFirst(T t) {
-        try{
+        if(t == (null))
+            return false;
+        try {
             getSecond(t);
             return true;
         }catch (NullPointerException e){
@@ -74,7 +76,9 @@ public class BiSet<T, S> extends AbstractSet<Pair<T, S>> {
     }
 
     public boolean containsSecond(S s) {
-        try {
+        if(s == (null))
+            return false;
+        try{
             getFirst(s);
             return true;
         }catch (NullPointerException e){

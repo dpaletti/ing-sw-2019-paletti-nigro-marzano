@@ -8,13 +8,17 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BiSetTest <T, S>{
+public class TestBiSet<T, S>{
 
     BiSet<T, S> set = new BiSet<>();
     @Mock
     T t;
     @Mock
     S s;
+    @Mock
+    T t1;
+    @Mock
+    S s1;
 
     @Test
     public void testEqualPairs(){
@@ -34,6 +38,21 @@ public class BiSetTest <T, S>{
         assertEquals(set.hashCode(), set1.hashCode());
         set.remove(pair1);
         assertEquals(set.size(), 0);
+    }
+
+    @Test
+    public void testContainsNull(){
+        assertFalse(set.containsFirst(null));
+        assertFalse(set.containsSecond(null));
+    }
+
+    @Test
+    public void presenceAbsence(){
+        set.add(new Pair<> (t, s));
+        Pair<T, S> pair2 = new Pair<>(t1, s1);
+        assertFalse(set.contains(pair2));
+        assertFalse(set.containsFirst(t1));
+        assertFalse(set.containsSecond(s1));
     }
 
 }

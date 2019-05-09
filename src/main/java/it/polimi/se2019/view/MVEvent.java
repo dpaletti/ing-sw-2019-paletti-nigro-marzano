@@ -3,7 +3,7 @@ package it.polimi.se2019.view;
 import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.MVEventDispatcher;
 
-public class MVEvent extends Event {
+public class MVEvent implements Event {
 
     private String destination;
 

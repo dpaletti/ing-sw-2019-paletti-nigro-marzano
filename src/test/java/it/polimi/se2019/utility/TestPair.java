@@ -13,6 +13,10 @@ public class TestPair <T, S>{
     T t;
     @Mock
     S s;
+    @Mock
+    T t1;
+    @Mock
+    S s1;
 
     private Pair<T, S>  pair;
 
@@ -20,6 +24,23 @@ public class TestPair <T, S>{
     public void testNull(){
         pair = new Pair<>(t, s);
         pair.setFirst(null);
-        pair.setSecond(s);
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testNull2(){
+        pair = new Pair<>(t, s);
+        pair.setSecond(null);
+    }
+
+    @Test
+    public void testSet(){
+        pair = new Pair<>(t, s);
+        pair.setFirst(t1);
+        pair.setSecond(s1);
+        assertEquals(pair.getFirst(), t1);
+        assertEquals(pair.getSecond(), s1);
+
+    }
+
+
 }
