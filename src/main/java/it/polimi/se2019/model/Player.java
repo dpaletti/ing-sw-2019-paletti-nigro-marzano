@@ -200,16 +200,17 @@ public class Player extends Observable<Action> {
         //TODO: implement
     }
 
+    //MASSI: finally changed the powerUp structure, method getPowerUpName->getName, method getColour->getCardColour.getColour
     void sellPowerUp (PowerUp powerUp){
-        Ammo powerUpToSell= new Ammo(powerUp.getColour());
+        Ammo powerUpToSell= new Ammo(powerUp.getCardColour().getColour());
         usableAmmo.add(powerUpToSell);
-        if (powerUp.getPowerUpName().equals(firstPowerUp.getPowerUpName())){
+        if (powerUp.getName().equals(firstPowerUp.getName())){
             firstPowerUp=null;
         }
-        else if (powerUp.getPowerUpName().equals(secondPowerUp.getPowerUpName())){
+        else if (powerUp.getName().equals(secondPowerUp.getName())){
             secondPowerUp=null;
         }
-        else if (powerUp.getPowerUpName().equals(thirdPowerUp.getPowerUpName())){
+        else if (powerUp.getName().equals(thirdPowerUp.getName())){
             thirdPowerUp=null;
         }
     }
