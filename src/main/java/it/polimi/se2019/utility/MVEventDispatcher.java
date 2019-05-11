@@ -35,16 +35,20 @@ public class MVEventDispatcher implements Observer<MVEvent> {
         throw new UnsupportedOperationException("WeaponToLeaveEvent not supported");
     }
 
-    public void update(UsernameEvaluationEvent message){
-        throw new UnsupportedOperationException("UsernameEvalutationEvent not supported");
-    }
-
     public void update(UsernameDeletionEvent message){
         throw new UnsupportedOperationException("UsernameDeletionEvent not supported");
     }
 
     public void update(MatchMakingEndEvent message){
         throw new UnsupportedOperationException("MatchMakingEndEvent not supported");
+    }
+
+    public void update(HandshakeEndEvent message){
+        throw new UnsupportedOperationException("HandshakeEndEvent not supported");
+    }
+
+    public void update(JoinMatchMakingEvent message){
+        throw new UnsupportedOperationException("JoinMatchMakingEvent not supported");
     }
 
 }

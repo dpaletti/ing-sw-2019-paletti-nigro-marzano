@@ -2,24 +2,25 @@ package it.polimi.se2019.network;
 
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.view.MVEvent;
+import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 
 import java.rmi.RemoteException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.TimeUnit;
 
 public class ConnectionRMI implements Connection{
-    private SynchronousQueue<String> in = new SynchronousQueue<>();
-    private SynchronousQueue<String> out = new SynchronousQueue<>();
-    private CallbackInterface gameClient;
-    private boolean isConnected = true;
-    //TODO manage disconnections through threads and waits
-    //or maybe with client callbacks
-    Timer timer;
+    private SynchronousQueue<VCEvent> in = new SynchronousQueue<>();
+    private SynchronousQueue<MVEvent> out = new SynchronousQueue<>();
+    private boolean remoteClientRetrieving = false;
 
-    private String token = null;
+    private CallbackInterface gameClient;
+
+    private Timer timer;
+
+    private String token;
 
     public ConnectionRMI(String token, CallbackInterface gameClient) {
         this.token = token;
@@ -38,17 +39,7 @@ public class ConnectionRMI implements Connection{
     }
 
     @Override
-    public void setToken(String token) throws RemoteException {
-        try {
-            this.token = token;
-            gameClient.setToken(token);
-        }catch (RemoteException e){
-            throw new RemoteException("Error while setting token: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public synchronized String retrieve() {
+    public synchronized VCEvent retrieve() {
         try {
             return in.take();
         }catch (InterruptedException e){
@@ -59,16 +50,23 @@ public class ConnectionRMI implements Connection{
     }
 
     @Override
-    public void submit(String data) {
+    public void submit(MVEvent mvEvent) {
         try {
-            out.put(data);
+            if(!remoteClientRetrieving){
+                gameClient.setToken(token);
+                gameClient.listenToEvent();
+                remoteClientRetrieving = true;
+            }
+            out.put(mvEvent);
         }catch (InterruptedException e){
             Log.severe(e.getMessage());
             Thread.currentThread().interrupt();
+        }catch (RemoteException e){
+            Log.severe("Cannot start remote event loop");
         }
     }
 
-    public String pull(){
+    public MVEvent pull(){
         try {
             return out.take();
         }catch (InterruptedException e){
@@ -78,9 +76,9 @@ public class ConnectionRMI implements Connection{
         }
     }
 
-    public void push(String data){
+    public void push(VCEvent vcEvent){
         try {
-            in.put(data);
+            in.put(vcEvent);
         }catch (InterruptedException e){
             Log.severe(e.getMessage());
             Thread.currentThread().interrupt();
@@ -102,7 +100,7 @@ public class ConnectionRMI implements Connection{
                 }catch (RemoteException e) {
                     DisconnectionEvent event = new DisconnectionEvent(token);
                     stopPing();
-                    push(JsonHandler.serialize(event, event.getClass().toString().replace("class ", "")));
+                    push(event);
                 }
             }
         }, 0, 1000);

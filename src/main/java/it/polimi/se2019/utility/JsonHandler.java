@@ -6,13 +6,13 @@ public final class JsonHandler {
 
     private JsonHandler(){}
 
-    public static String serialize(Event event, String type){
-        if(event == (null) || type == (null))
+    public static String serialize(Event event){
+        if(event == (null))
             throw new NullPointerException("Cannot serialize null event");
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
         JsonElement jsonElement = gson.toJsonTree(event);
-        jsonElement.getAsJsonObject().addProperty("type", type);
+        jsonElement.getAsJsonObject().addProperty("type", event.getClass().toString().replace("class ", ""));
         return gson.toJson(jsonElement);
     }
 

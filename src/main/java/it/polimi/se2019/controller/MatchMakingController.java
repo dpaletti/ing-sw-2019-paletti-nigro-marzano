@@ -43,16 +43,11 @@ public class MatchMakingController extends Controller {
     private class Dispatcher extends VCEventDispatcher{
         @Override
         public void update(JoinEvent message) {
-            Log.fine("Here I am");
-            //JoinEvents arriving here can't be re-connections so the token is always null
-            if(usernames.contains(message.getUsername())) {
-                Log.fine("Username is not valid");
-                model.invalidUsername(message.getSource(), new ArrayList<>(usernames));
-                return;
-            }
-
-            model.validUsername(message.getSource(), message.getUsername());
             usernames.add(message.getUsername());
+            model.newPlayerInMatchMaking(message.getSource(), message.getUsername());
+            //username uniqueness is checked client side
+            //join events are the only one on which tokens are exposed
+            //other events will contain a username as source
 
             playerCount.set(playerCount.addAndGet(1));
             Log.info("Players in match making: " + playerCount);
@@ -89,6 +84,8 @@ public class MatchMakingController extends Controller {
             }
 
         }
+
+
 
     }
 

@@ -2,6 +2,7 @@ package it.polimi.se2019.utility;
 
 
 import it.polimi.se2019.view.VCEvent;
+import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -12,9 +13,9 @@ import static org.junit.Assert.*;
 public class TestJsonHandler {
     @Test(expected = NullPointerException.class)
     public void testSerializeNull(){
-        JsonHandler.serialize(null, null);
-        JsonHandler.serialize(null, "type");
-        JsonHandler.serialize(new VCEvent(), null);
+        JsonHandler.serialize(null);
+        JsonHandler.serialize(null);
+        JsonHandler.serialize(new ChosenEffectEvent("source"));
     }
 
     @Test(expected = NullPointerException.class)
@@ -28,8 +29,8 @@ public class TestJsonHandler {
 
     @Test
     public void testSerializeDeserialize(){
-        VCEvent event = new VCEvent("source");
-        String serialized = JsonHandler.serialize(event, event.getClass().toString().replace("class ", ""));
+        VCEvent event = new ChosenEffectEvent("source");
+        String serialized = JsonHandler.serialize(event);
         try {
             VCEvent deserialized = (VCEvent) JsonHandler.deserialize(serialized);
             assertEquals(event.getSource(), deserialized.getSource());

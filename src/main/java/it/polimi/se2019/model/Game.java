@@ -1,10 +1,10 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.mv_events.JoinMatchMakingEvent;
 import it.polimi.se2019.model.mv_events.MatchMakingEndEvent;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.model.mv_events.UsernameDeletionEvent;
-import it.polimi.se2019.model.mv_events.UsernameEvaluationEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +28,8 @@ public class Game extends Observable<MVEvent> {
         observers = new ArrayList<>();
     }
 
-
-
-    public void invalidUsername(String usernameSource, List<String> usernames){
-        notify(new UsernameEvaluationEvent(usernameSource, usernames));
-    }
-
-    public void validUsername(String usernameSource, String username) {
-        notify(new UsernameEvaluationEvent(usernameSource, username));
+    public void newPlayerInMatchMaking(String token, String username){
+        notify(new JoinMatchMakingEvent(token, username));
     }
 
     public void usernameDeletion(String username){

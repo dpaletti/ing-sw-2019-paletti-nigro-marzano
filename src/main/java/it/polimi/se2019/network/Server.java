@@ -4,17 +4,21 @@ import it.polimi.se2019.controller.Controller;
 import it.polimi.se2019.controller.MatchMakingController;
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.view.MVEvent;
+import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.VirtualView;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
-public class Server {
+public class Server implements ServerInterface {
     private ServerSocket serverSocket;
     private boolean socketOpen;
     private Controller controller;
@@ -28,6 +32,11 @@ public class Server {
     private Server(int port){
         this.port = port;
         socketOpen = false;
+        try {
+            UnicastRemoteObject.exportObject(this, 0);
+        }catch (RemoteException e) {
+            Log.severe("Cannot export server message" + e.getMessage());
+        }
 
     }
 
@@ -64,7 +73,7 @@ public class Server {
         socketOpen = true;
 
         Registry registry = LocateRegistry.createRegistry(1099);
-        registry.bind(Settings.REMOTE_SERVER_NAME, virtualView);
+        registry.bind(Settings.REMOTE_SERVER_NAME, this);
         Log.info("Server ready");
         try {
             acceptClients();
@@ -77,9 +86,41 @@ public class Server {
         while(!serverSocket.isClosed()){
             Socket socket = serverSocket.accept();
             Log.fine("Accepted new client");
-            virtualView.startListening(new ConnectionSocket(socket));
+            virtualView.startListening(new ConnectionSocket(virtualView.generateToken(), socket));
         }
     }
+
+    //------------------------RMI REMOTE SERVER INTERFACE IMPLEMENTATION------------------------//
+
+    @Override
+    public void startListening(CallbackInterface client) {
+        Log.severe("Accepted new client");
+        virtualView.startListening(new ConnectionRMI(virtualView.generateToken(), client));
+    }
+
+    @Override
+    public MVEvent pullEvent(String token) throws RemoteException {
+        try {
+            return ((ConnectionRMI) virtualView.getConnectionOnId(token, virtualView.getConnections())).pull();
+        } catch (Exception e) {
+            Log.severe(e.getMessage());
+            Thread.currentThread().interrupt();
+            System.exit(0);
+        }
+        return null;
+    }
+
+    @Override
+    public void pushEvent(String token, VCEvent vcEvent) throws RemoteException {
+        try{
+            ((ConnectionRMI) virtualView.getConnectionOnId(token, virtualView.getConnections())).push(vcEvent);
+        }catch (Exception e){
+            Log.severe(e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    //------------------------RMI REMOTE SERVER INTERFACE IMPLEMENTATION------------------------//
 
 
     public static void main(String[] args){

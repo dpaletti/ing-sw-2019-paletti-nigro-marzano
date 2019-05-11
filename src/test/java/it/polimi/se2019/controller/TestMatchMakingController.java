@@ -5,6 +5,7 @@ import it.polimi.se2019.network.Server;
 import it.polimi.se2019.network.Settings;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.VirtualView;
+import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 import it.polimi.se2019.view.vc_events.JoinEvent;
 import it.polimi.se2019.view.VCEvent;
@@ -44,12 +45,12 @@ public class TestMatchMakingController {
     public void beforeTest(){
         matchMakingController = new MatchMakingController(model, server);
         virtualView.register(matchMakingController);
-        joinEvents.add(new JoinEvent("tok1", "username1", "boot1"));
-        joinEvents.add(new JoinEvent("tok2", "username2", "boot2"));
-        joinEvents.add(new JoinEvent("tok3", "username3", "boot3"));
-        joinEvents.add(new JoinEvent("tok4", "username4", "boot4"));
-        joinEvents.add(new JoinEvent("tok5", "username5", "boot5"));
-        joinEvents.add(new JoinEvent("tok6", "username6", "boot6"));
+        joinEvents.add(new JoinEvent("tok1", "username1"));
+        joinEvents.add(new JoinEvent("tok2", "username2"));
+        joinEvents.add(new JoinEvent("tok3", "username3"));
+        joinEvents.add(new JoinEvent("tok4", "username4"));
+        joinEvents.add(new JoinEvent("tok5", "username5"));
+        joinEvents.add(new JoinEvent("tok6", "username6"));
     }
 
     @Test
@@ -77,16 +78,6 @@ public class TestMatchMakingController {
     }
 
     @Test
-    public void testUsernameClash(){
-        matchMakingController.update(joinEvents.get(1));
-        assertTrue(matchMakingController.getUsernames().contains("*"));
-        assertTrue(matchMakingController.getUsernames().contains("username2"));
-        List<String> store = new ArrayList<>(matchMakingController.getUsernames());
-        matchMakingController.update(new JoinEvent("tok1", "username2", "tok1"));
-        assertEquals(matchMakingController.getUsernames(), store);
-    }
-
-    @Test
     public void testMatchMakingTimer(){
         testJoin3Clients();
         assertTrue(matchMakingController.isTimerRunning());
@@ -100,7 +91,7 @@ public class TestMatchMakingController {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testDispatcher(){
-        matchMakingController.update(new VCEvent());
+        matchMakingController.update(new ChosenEffectEvent("source"));
     }
 
     @Test

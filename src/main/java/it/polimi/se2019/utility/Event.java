@@ -1,4 +1,6 @@
 package it.polimi.se2019.utility;
 
-public interface Event {
+import java.io.Serializable;
+
+public abstract class Event implements Serializable {
 }

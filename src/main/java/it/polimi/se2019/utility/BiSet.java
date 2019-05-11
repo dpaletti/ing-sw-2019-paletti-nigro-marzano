@@ -5,6 +5,7 @@ import java.util.*;
 public class BiSet<T, S> extends AbstractSet<Pair<T, S>> {
     //A set of pairs in which given one value it is possible to retrieve the other one
     //there is no guarantee over the order of those pairs
+    //all in all a bidirectional map
     private Set<Pair<T, S>> set = new HashSet<>();
 
     @Override
@@ -19,6 +20,8 @@ public class BiSet<T, S> extends AbstractSet<Pair<T, S>> {
 
     @Override
     public boolean add(Pair<T, S> tsPair) {
+        if(containsFirst(tsPair.getFirst()) || containsSecond(tsPair.getSecond()))
+            return false;
         return set.add(tsPair);
     }
 

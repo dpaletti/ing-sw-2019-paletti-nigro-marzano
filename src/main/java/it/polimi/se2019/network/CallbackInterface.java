@@ -6,4 +6,5 @@ import java.rmi.RemoteException;
 public interface CallbackInterface extends Remote {
     void setToken(String token) throws RemoteException;
     String ping() throws RemoteException;
+    void listenToEvent() throws RemoteException;
 }

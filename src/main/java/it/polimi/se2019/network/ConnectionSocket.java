@@ -1,7 +1,10 @@
 package it.polimi.se2019.network;
 
 
+import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.view.MVEvent;
+import it.polimi.se2019.view.VCEvent;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,13 +15,13 @@ public class ConnectionSocket implements Connection{
     private Scanner in;
     private PrintWriter out;
 
-    private String token = null;
+    private String token;
 
-    public ConnectionSocket(Socket socket){
+    public ConnectionSocket(String token, Socket socket){
         try{
-            token = socket.getRemoteSocketAddress().toString();
+            this.token = token;
             this.in = new Scanner(socket.getInputStream());
-            this.out = new PrintWriter(socket.getOutputStream());
+            this.out = new PrintWriter(socket.getOutputStream(), true);
         }catch (IOException e){
             Log.severe("Cannot establish connection with" + socket.getInetAddress());
         }
@@ -30,18 +33,18 @@ public class ConnectionSocket implements Connection{
     }
 
     @Override
-    public void setToken(String token) {
-        this.token = token;
+    public void submit(MVEvent mvEvent) {
+        out.println(JsonHandler.serialize(mvEvent));
     }
 
     @Override
-    public void submit(String data) {
-        out.println(data);
-    }
-
-    @Override
-    public String retrieve(){
-        return in.nextLine();
+    public VCEvent retrieve(){
+        try {
+            return (VCEvent) JsonHandler.deserialize(in.nextLine());
+        }catch (ClassNotFoundException e){
+            Log.severe(e.getMessage());
+            throw new NullPointerException("Cannot deserialize");
+        }
     }
 
 }

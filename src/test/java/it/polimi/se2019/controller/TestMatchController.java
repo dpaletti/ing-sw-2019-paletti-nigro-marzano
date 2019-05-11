@@ -2,7 +2,7 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.network.Server;
-import it.polimi.se2019.view.VCEvent;
+import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 import it.polimi.se2019.view.vc_events.JoinEvent;
 import org.junit.Before;
@@ -16,14 +16,14 @@ import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestMatchController {
-    List<String> usernames;
+    private List<String> usernames;
 
     @Mock
     Game model;
     @Mock
     Server server;
 
-    MatchController matchController;
+    private MatchController matchController;
 
     @Before
     public void setup(){
@@ -36,7 +36,7 @@ public class TestMatchController {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testDispatcher(){
-        matchController.update(new VCEvent());
+        matchController.update(new ChosenEffectEvent("source"));
     }
 
     @Test
@@ -46,6 +46,6 @@ public class TestMatchController {
 
     @Test
     public void testJoin(){
-        matchController.update(new JoinEvent("test source", "test username", "test token"));
+        matchController.update(new JoinEvent("test source", "test username"));
     }
 }

@@ -1,5 +1,8 @@
 package it.polimi.se2019.network;
 
+import it.polimi.se2019.view.MVEvent;
+import it.polimi.se2019.view.VCEvent;
+
 import java.util.List;
 
 public class ConnectionBroadcast implements Connection{
@@ -10,12 +13,12 @@ public class ConnectionBroadcast implements Connection{
     }
 
     @Override
-    public void submit(String data) {
-        connectionList.forEach(connection -> connection.submit(data));
+    public void submit(MVEvent mvEvent) {
+        connectionList.forEach(connection -> connection.submit(mvEvent));
     }
 
     @Override
-    public String retrieve() {
+    public VCEvent retrieve() {
         throw new UnsupportedOperationException("Cannot retrieve on broadcast connection");
     }
 
@@ -23,11 +26,6 @@ public class ConnectionBroadcast implements Connection{
     @Override
     public String getToken() {
         throw new UnsupportedOperationException("Cannot get token on broadcast connection");
-    }
-
-    @Override
-    public void setToken(String password) {
-        throw new UnsupportedOperationException("Cannot set token on broadcast connection");
     }
 
 }

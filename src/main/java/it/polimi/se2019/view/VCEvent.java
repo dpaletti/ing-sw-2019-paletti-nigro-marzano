@@ -3,7 +3,7 @@ package it.polimi.se2019.view;
 import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.VCEventDispatcher;
 
-public class VCEvent implements Event {
+public abstract class VCEvent extends Event {
     //Event coming from the view to the controller
 
     private String source;
@@ -27,8 +27,6 @@ public class VCEvent implements Event {
             throw new UnsupportedOperationException("Cannot reset an event source");
     }
 
-    public void handle(VCEventDispatcher dispatcher){
-        dispatcher.update(this);
-    }
+    public abstract void handle(VCEventDispatcher dispatcher);
 
 }
