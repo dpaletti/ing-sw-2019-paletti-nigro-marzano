@@ -1,14 +1,11 @@
 package it.polimi.se2019.network;
 
-import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 
 import java.rmi.RemoteException;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.SynchronousQueue;
 
 public class ConnectionRMI implements Connection{
@@ -17,8 +14,6 @@ public class ConnectionRMI implements Connection{
     private boolean remoteClientRetrieving = false;
 
     private CallbackInterface gameClient;
-
-    private Timer timer;
 
     private String token;
 
@@ -85,24 +80,21 @@ public class ConnectionRMI implements Connection{
         }
     }
 
-    private void stopPing(){
-        timer.cancel();
-        timer.purge();
-    }
-
     public void timeOutCheck(){
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                try{
+        new Thread(() -> {
+            try {
+                while(!Thread.currentThread().isInterrupted()) {
+                    Log.fine("Pinging");
                     gameClient.ping();
-                }catch (RemoteException e) {
-                    DisconnectionEvent event = new DisconnectionEvent(token);
-                    stopPing();
-                    push(event);
+                    Thread.sleep(1000);
                 }
+            }catch (RemoteException e){
+                push(new DisconnectionEvent(token));
+            }catch (InterruptedException e){
+                Log.severe("Interrupted");
+                Thread.currentThread().interrupt();
             }
-        }, 0, 1000);
+        }).start();
+
     }
 }

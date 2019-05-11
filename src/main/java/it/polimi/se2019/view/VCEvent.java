@@ -21,10 +21,7 @@ public abstract class VCEvent extends Event {
     }
 
     public void setSource(String remoteEndId) {
-        if(this.source == (null))
-            this.source = remoteEndId;
-        else
-            throw new UnsupportedOperationException("Cannot reset an event source");
+        this.source = remoteEndId;
     }
 
     public abstract void handle(VCEventDispatcher dispatcher);

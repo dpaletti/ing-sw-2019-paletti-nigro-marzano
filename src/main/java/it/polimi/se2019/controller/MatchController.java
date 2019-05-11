@@ -37,6 +37,7 @@ public class MatchController extends Controller{
 
         @Override
         public void update(DisconnectionEvent message) {
+            Log.fine(message.getSource() + "just disconnected");
             model.pausePlayer(message.getSource());
         }
 

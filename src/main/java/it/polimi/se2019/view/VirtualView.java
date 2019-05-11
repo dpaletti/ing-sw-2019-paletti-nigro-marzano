@@ -10,11 +10,10 @@ import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 
 import java.security.SecureRandom;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Semaphore;
 
 public class VirtualView extends View {
     private List<Connection> connections = new CopyOnWriteArrayList<>();
@@ -23,8 +22,9 @@ public class VirtualView extends View {
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private MVEventDispatcher dispatcher = new Dispatcher();
 
-    private BiSet<String, String> biTokenUsername = new BiSet<>(); //Pair<"token", "username">
+    private final BiSet<String, String> biTokenUsername = new BiSet<>(); //Pair<"token", "username">
 
+    private Semaphore sem = new Semaphore(1, true);
 
     public VirtualView(){
         super();
@@ -42,6 +42,8 @@ public class VirtualView extends View {
         return biTokenUsername;
     }
 
+
+
     private class EventLoop implements Runnable{
         Connection connection;
 
@@ -57,7 +59,13 @@ public class VirtualView extends View {
                 try {
                     retrieve(connection);
                 } catch (NoSuchElementException e) {
-                    VirtualView.this.notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken())));
+                    if(biTokenUsername.containsFirst(connection.getToken()))
+                        VirtualView.this.notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken())));
+                    else
+                        //TODO further inspect disconnection on username choiche
+                            //may need to save refence to eventLoop
+                        //disconnection while choosing username on Socket
+                        VirtualView.this.notify(new DisconnectionEvent(connection.getToken()));
                     shutdown = true;
                 }
             }
@@ -68,13 +76,16 @@ public class VirtualView extends View {
 
         @Override
         public void update(JoinMatchMakingEvent message) {
-            biTokenUsername.add(new Pair<>(message.getDestination(), message.getUsername()));
-            Log.fine(biTokenUsername.toString());
+                Log.fine("Here I am");
+                biTokenUsername.add(new Pair<>(message.getDestination(), message.getUsername()));
+                sem.release();
         }
         @Override
         public void update(UsernameDeletionEvent message) {
             Connection connection = getConnectionOnId(message.getDestination(), connections);
             connections.remove(connection);
+            String username = biTokenUsername.getSecond(message.getDestination());
+            biTokenUsername.remove(new Pair<>(connection.getToken(), username));
             Log.fine("Deleted player");
         }
 
@@ -108,6 +119,7 @@ public class VirtualView extends View {
         //players are identified by usernames
 
         VCEvent vcEvent = connection.retrieve();
+        Log.fine(observers.toString());
         if(biTokenUsername.containsFirst(vcEvent.getSource()))
             vcEvent.setSource(biTokenUsername.getSecond(vcEvent.getSource()));
         notify(vcEvent);
@@ -119,14 +131,20 @@ public class VirtualView extends View {
 
 
     public void startListening (Connection connection){
-        connections.add(connection);
-        executorService.submit(new EventLoop(connection));
-        ArrayList<String> usernames = new ArrayList<>();
-        for (Pair<String, String> s:
-             biTokenUsername) {
-            usernames.add(s.getSecond());
+        try {
+            sem.acquire();
+        } catch (InterruptedException e) {
+            Log.severe(e.getMessage());
+            Thread.currentThread().interrupt();
         }
-        submit(connection, new HandshakeEndEvent(connection.getToken(), usernames));
+            connections.add(connection);
+            executorService.submit(new EventLoop(connection));
+            ArrayList<String> usernames = new ArrayList<>();
+            for (Pair<String, String> s :
+                    biTokenUsername) {
+                usernames.add(s.getSecond());
+            }
+            submit(connection, new HandshakeEndEvent(connection.getToken(), usernames));
     }
 
 

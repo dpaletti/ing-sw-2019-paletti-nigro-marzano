@@ -1,6 +1,7 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.mv_events.HandshakeEndEvent;
+import it.polimi.se2019.model.mv_events.MatchMakingEndEvent;
 import it.polimi.se2019.network.Client;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.MVEventDispatcher;
@@ -18,6 +19,10 @@ public class ViewGUI extends View {
         public void update(HandshakeEndEvent message) {
             client.setSessionToken(message.getDestination());
             client.usernameSelection(message.getUsernames());
+        }
+
+        public void update(MatchMakingEndEvent message){
+            //TODO stuff
         }
     }
 

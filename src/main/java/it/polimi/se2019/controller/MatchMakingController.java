@@ -72,7 +72,6 @@ public class MatchMakingController extends Controller {
 
         @Override
         public void update(DisconnectionEvent disconnectionEvent){
-            Log.fine("Removing");
             usernames.remove(disconnectionEvent.getSource());
             model.usernameDeletion(disconnectionEvent.getSource());
 

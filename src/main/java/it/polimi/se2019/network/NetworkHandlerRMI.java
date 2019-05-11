@@ -89,6 +89,15 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
             notify(gameServer.pullEvent(token));
         }catch (RemoteException e) {
             Log.severe("Cannot pull event " + e.getMessage());
+            Log.severe("Waiting for godot");
+            try {
+                while(!Thread.currentThread().isInterrupted())
+                    wait();
+            }catch (InterruptedException ex){
+                Log.severe(ex.getMessage());
+                Thread.currentThread().interrupt();
+            }
+
         }
     }
 
@@ -96,7 +105,6 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
     public void listenToEvent() {
         new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
-                //TODO this will be restructured to terminate on EndEvent (that is the closing event that server sends to client)
                 Log.fine("Listening");
                 retrieve();
             }
