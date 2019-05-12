@@ -1,0 +1,117 @@
+{
+	"type": "it.polimi.se2019.model.PowerUp",
+    "cardColour": {
+		"colour": "RED"
+	},
+    "price": [],
+	"weaponEffects": [
+		{
+			"name": "effect",
+			"effects": [
+				{
+					"priority": 3,
+					"targetSpecification":{
+						"tile":false,
+						"different":{
+							"first": false,
+							"second": []
+						},
+						"previous":{
+							"first": false,
+							"second": []
+						},
+						 "radiusBetween": {
+                            "first": -1,
+                            "second": -1
+                        },
+                        "visible": 0,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                       {
+                           "actionType": "DAMAGE",
+                           "value": 1
+                       }
+                    ],
+                    "name": "B1",
+					"price": [
+						{
+							"colour": "YELLOW"
+						}
+					]
+				},
+				{
+					
+					"priority": 3,
+					"targetSpecification":{
+						"tile":false,
+						"different":{
+							"first": false,
+							"second": []
+						},
+						"previous":{
+							"first": false,
+							"second": []
+						},
+						 "radiusBetween": {
+                            "first": -1,
+                            "second": -1
+                        },
+                        "visible": 0,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                       {
+                           "actionType": "DAMAGE",
+                           "value": 1
+                       }
+                    ],
+                    "name": "B2",
+					"price": [
+						{
+							"colour": "BLUE"
+						}
+					]
+				},
+				{
+					"priority": 3,
+					"targetSpecification":{
+						"tile":false,
+						"different":{
+							"first": false,
+							"second": []
+						},
+						"previous":{
+							"first": false,
+							"second": []
+						},
+						 "radiusBetween": {
+                            "first": -1,
+                            "second": -1
+                        },
+                        "visible": 0,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                       {
+                           "actionType": "DAMAGE",
+                           "value": 1
+                       }
+                    ],
+                    "name": "B3",
+					"price": [
+						{
+							"colour": "RED"
+						}
+					]
+				}
+			]
+		}
+	],
+	"name": "Targeting Scope",
+    "maxheight": 1,
+    "invalidCombinations":[]
+}

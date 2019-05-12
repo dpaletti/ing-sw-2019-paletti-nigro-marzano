@@ -1,7 +1,6 @@
 package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Log;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,22 +11,14 @@ public abstract class Card {
     private String name;
     private Integer maxheight;
     private Set<Set<String>> invalidCombinations;
-    private GraphNode<Effect> staticDefinition;
+    private GraphNode<Effect> staticDefinition= new GraphNode<>();
 
     public Integer getMaxheight() {
         return maxheight;
     }
 
-    public void setMaxheight(Integer maxheight) {
-        this.maxheight = maxheight;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Set<WeaponEffect> getWeaponEffects() {
@@ -42,32 +33,16 @@ public abstract class Card {
         return cardColour;
     }
 
-    public void setCardColour(Ammo cardColour) {
-        this.cardColour = cardColour;
-    }
-
     public GraphNode<Effect> getStaticDefinition() {
         return staticDefinition;
-    }
-
-    public void setStaticDefinition(GraphNode<Effect> staticDefinition) {
-        this.staticDefinition = staticDefinition;
     }
 
     public Set<Ammo> getPrice() {
         return price;
     }
 
-    public void setPrice(Set<Ammo> price) {
-        this.price = price;
-    }
-
     public Set<Set<String>> getInvalidCombinations() {
         return invalidCombinations;
-    }
-
-    public void setInvalidCombinations(Set<Set<String>> invalidCombinations) {
-        this.invalidCombinations = invalidCombinations;
     }
 
     private Set<Effect> generateAllEffectsSet(){
@@ -79,7 +54,12 @@ public abstract class Card {
     }
 
     public void generateGraph(){
-        generateCombinations(generateAllEffectsSet(),staticDefinition,maxheight);
+        if(staticDefinition.getChildren().isEmpty()) {
+            generateCombinations(generateAllEffectsSet(), staticDefinition, maxheight);
+            eliminateInvalidCombinations();
+        }else{
+            throw new UnsupportedOperationException("static definition has been generated");
+        }
     }
 
     private void generateCombinations(Set<Effect> effects, GraphNode<Effect> radix, int maxheight){
@@ -116,6 +96,42 @@ public abstract class Card {
         }
     }
 
-    //TODO Write method to eliminate invalid Combinations
+    //This method builds an invalidCombination Set<Set<Effect>> from a Set<Set<String>>
+    private Set<Set<Effect>> buildInvalidSets(){
+        Set<Set<Effect>> obj= new HashSet<>();
+        for(Set<String> combination : invalidCombinations){
+            Set<Effect> newSet= new HashSet<>();
+            for(String effectName: combination){
+                try {
+                    newSet.add(getEffect(effectName));
+                }catch (ClassNotFoundException e){
+                    Log.severe("One of the string in the invalidCombinations was not found in the WeaponEffects");
+                }
+            }
+            obj.add(newSet);
+        }
+        return obj;
+    }
+
+    //This method returns the effect in the weapon with the specified name, if there is not such effect it throws an exception
+    private Effect getEffect(String name) throws ClassNotFoundException {
+        for (Effect e : generateAllEffectsSet()) {
+            if (e.getName().equals(name)) {
+                return e;
+            }
+        }
+        throw  new ClassNotFoundException("There is not such effect in the weapon");
+    }
+
+    //This method eliminates the invalidCombination of the weapon from the staticDefinition graph
+    private void eliminateInvalidCombinations(){
+        for (Set<Effect> set: buildInvalidSets()){
+            try {
+                staticDefinition.remove(set);
+            }catch (ClassNotFoundException e){
+                Log.severe("There is not such node in the static Definition graph");
+            }
+        }
+    }
 
 }

@@ -1,0 +1,59 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": {
+        "colour": "BLUE"
+    },
+    "price": [
+        {
+            "colour": "BLUE"
+        },
+        {
+            "colour": "BLUE"
+        },
+        {
+            "colour": "YELLOW"
+        }
+    ],
+    "weaponEffects": [
+        {
+            "name": "effect",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -2,
+                            "second": -1
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 3
+                        },
+                        {
+                            "actionType": "MARK",
+                            "value": 1
+                        }
+                    ],
+                    "name": "B1" 
+                }
+            ]
+        }
+    ],
+    "name": "Whisper",
+    "maxheight": 1,
+    "invalidCombinations": []
+}

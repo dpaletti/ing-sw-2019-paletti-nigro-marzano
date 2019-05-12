@@ -1,0 +1,169 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": {
+        "colour": "YELLOW"
+    },
+    "price": [
+        {
+            "colour": "YELLOW"
+        },
+        {
+            "colour": "RED"
+        }
+    ],
+    "weaponEffects": [
+    {
+        "name": "basicMode",
+            "effects":[
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -1,
+                            "second": -1
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": true  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 2
+                        },
+                        {
+                            "actionType": "MARK",
+                            "value": 1
+                        }
+                    ],
+                    "name": "B1" 
+                }
+            ]
+        },
+        {
+            "name": "inScannerMode",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification":{
+                        "tile":false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -1,
+                            "second": -1
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "B2"
+                },
+                {
+                    "priority": 2,
+                    "targetSpecification":{
+                        "tile":false,
+                        "different": {
+                            "first": true,
+                            "second": [
+                                   "B2"
+                            ]
+                        },
+                        "previous":{
+                            "first": false,
+                            "second": []
+                        },
+                        "radiusBetween": {
+                            "first": -1,
+                            "second": -1
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "E1"
+                },
+                {
+                    "priority": 1,
+                    "targetSpecification":{
+                        "tile":false,
+                        "different": {
+                            "first": true,
+                            "second": [
+								"B2",
+								"E1"
+                            ]
+                        },
+                        "previous":{
+                            "first": false,
+                            "second": []
+                        },
+                        "radiusBetween": {
+                            "first": -1,
+                            "second": -1
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "M1"
+                }
+            ]
+        }
+    ],
+    "name": "Zx2",
+    "maxheight": 3,
+    "invalidCombinations": [
+		[
+			"M1"
+		],
+		[
+			"E1"
+		],
+		[
+			"B1",
+			"B2"
+		],
+		[
+			"B1",
+			"M1"
+		],
+		[
+			"B1",
+			"E1"
+		]
+    ]
+}

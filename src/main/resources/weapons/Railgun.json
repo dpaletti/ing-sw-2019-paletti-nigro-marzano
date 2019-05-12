@@ -1,0 +1,130 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": {
+        "colour": "YELLOW"
+    },
+    "price": [
+        {
+            "colour": "YELLOW"
+        },
+        {
+            "colour": "YELLOW"
+        },
+        {
+            "colour": "BLUE"
+        }
+    ],
+    "weaponEffects": [
+    {
+        "name": "basicMode",
+            "effects":[
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": -2,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 3
+                        }
+                    ],
+                    "name": "B1" 
+                }
+            ]
+        },
+        {
+            "name": "inPiercingMode",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification":{
+                        "tile":true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": -2,
+                        "area": false
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 2
+                        }
+                    ],
+                    "name": "B2"
+                },
+                {
+                    "priority": 2,
+                    "targetSpecification":{
+                        "tile":true,
+                        "different": {
+                            "first": true,
+                            "second": [
+								"B2"
+                            ]
+                        },
+                        "previous":{
+                            "first": false,
+                            "second": []
+                        },
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": -2,
+                        "area": false
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 2
+                        }
+                    ],
+                    "name": "E1"
+                }
+            ]
+        }
+    ],
+    "name": "Railgun",
+    "maxheight": 2,
+    "invalidCombinations": [
+        [
+            "B1",
+			"B2"
+        ],
+        [
+            "B1",
+			"E1"
+        ],
+		[
+			"E1"
+		]
+    ]
+}

@@ -1,0 +1,132 @@
+{
+    "type": "it.polimi.se2019.model.Weapon",
+	"cardColour": {
+        "colour": "YELLOW"
+    },
+    "price": [
+        {
+            "colour": "YELLOW"
+        },
+        {
+            "colour": "RED"
+        }
+    ],
+    "weaponEffects": [
+        {
+            "name": "basicEffect",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                       "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": false 
+                    },
+                    "actions": [
+                          {
+                            "actionType": "DAMAGE",
+                            "value": 2
+                          }
+                    ],
+                    "name": "B1"
+                }
+            ]
+        },
+        {
+            "name": "withShadowStep",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                       "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": false 
+                    },
+                    "actions": [
+                      {
+                        "actionType": "MOVE",
+                        "value": 1
+                      }
+                    ],
+                    "name": "B2"
+                }
+            ]
+        },
+        {
+            "name": "withSliceAndDice",
+            "effects": [
+                {
+                    "priority": 2,
+                    "targetSpecification": {
+                       "tile": true,
+                        "different": {
+                            "first": true,
+                            "second": [
+                                "B1"
+							]
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": false 
+                    },
+                    "actions": [
+                      {
+                        "actionType": "DAMAGE",
+                        "value": 2
+                      }
+                    ],
+                    "name": "E1",
+                    "price": [
+                        {
+                            "colour": "YELLOW"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "name": "Cyberblade",
+    "maxheight": 3,
+    "invalidCombinations": [
+       [
+          "B2"
+       ],
+	   [
+		   "E1"
+	   ]	
+    ]
+}

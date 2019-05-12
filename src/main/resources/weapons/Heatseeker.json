@@ -1,0 +1,55 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": {
+        "colour": "RED"
+    },
+    "price": [
+        {
+            "colour": "RED"
+        },
+        {
+            "colour": "RED"
+        },
+        {
+            "colour": "YELLOW"
+        }
+    ],
+    "weaponEffects": [
+        {
+            "name": "Effect",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -3,
+                            "second": -3
+                        },
+                        "visible": 0,
+                        "enlarge": 0,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 3
+                        }
+                    ],
+                    "name": "B1" 
+                }
+            ]
+        }
+    ],
+    "name": "Heatseeker",
+    "maxheight": 1,
+    "invalidCombinations": []
+}

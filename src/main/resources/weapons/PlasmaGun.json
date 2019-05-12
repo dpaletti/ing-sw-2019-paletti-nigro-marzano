@@ -1,0 +1,167 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": {
+        "colour": "BLUE"
+    },
+    "price": [
+        {
+            "colour": "BLUE"
+        },
+        {
+            "colour": "YELLOW"
+        }
+    ],
+    "weaponEffects": [
+        {
+            "name": "basicEffect",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                       "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -2,
+                            "second": -2
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": false 
+                    },
+                    "actions": [
+                      {
+                        "actionType": "DAMAGE",
+                        "value": 2
+                      }
+                    ],
+                    "name": "B1"
+                }
+            ]
+        },
+        {
+            "name": "withPhaseGlide",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                       "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": false 
+                    },
+                    "actions": [
+                      {
+                        "actionType": "MOVE",
+                        "value": 1
+                      }
+                    ],
+                    "name": "B2"
+                },
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                       "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": false 
+                    },
+                    "actions": [
+                      {
+                        "actionType": "MOVE",
+                        "value": 2
+                      }
+                    ],
+                    "name": "B3"
+                }
+            ]
+        },
+        {
+            "name": "withChargedSlot",
+            "effects": [
+                {
+                    "priority": 2,
+                    "targetSpecification": {
+                       "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": true,
+							"second": [
+								"B1"
+							]
+						},
+                        "radiusBetween": {
+                            "first": -2,
+                            "second": -2
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": false 
+                    },
+                    "actions": [
+                      {
+                        "actionType": "DAMAGE",
+                        "value": 1
+                      }
+                    ],
+                    "name": "E1",
+                    "price": [
+                        {
+                            "colour": "BLUE"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "name": "PlasmaGun",
+    "maxheight": 3,
+    "invalidCombinations": [
+        [
+            "B2"
+        ],
+        [
+            "B3"
+        ],
+        [
+            "B2",
+			"B3"
+        ],
+		[
+			"E1"
+		]
+    ]
+}

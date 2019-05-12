@@ -1,0 +1,135 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": {
+        "colour": "BLUE"
+    },
+    "price": [
+        {
+            "colour": "BLUE"
+        },
+        {
+            "colour": "RED"
+        }
+    ],
+    "weaponEffects": [
+        {
+            "name": "basicEffect",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -2,
+                            "second": -2
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 2
+                        }
+                    ],
+                    "name": "B1" 
+                }
+            ]
+        },
+        {
+            "name": "withChainReaction",
+            "effects": [
+                {
+                    "priority": 2,
+                    "targetSpecification": {
+                        "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -1,
+                            "second": -1
+                        },
+                        "visible": 2,
+                        "enlarge": 0,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "E1",
+                    "price":[
+                        {
+                            "colour": "BLUE"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "withHighVoltage",
+            "effects": [
+                {
+                    "priority": 1,
+                    "targetSpecification": {
+                        "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -1,
+                            "second": -1
+                        },
+                        "visible": 2,
+                        "enlarge": 0,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 2
+                        }
+                    ],
+                    "name": "M1",
+                    "price":[
+                        {
+                            "colour": "BLUE"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "name": "Thor",
+    "maxheight": 3,
+    "invalidCombinations": [
+		[
+			"M1"
+		],
+		[
+			"E1"
+		]
+	]
+}

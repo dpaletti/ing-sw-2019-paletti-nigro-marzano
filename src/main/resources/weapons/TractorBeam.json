@@ -1,0 +1,234 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": {
+        "colour": "BLUE"
+    },
+    "price": [
+        {
+            "colour": "BLUE"
+        }
+    ],
+    "weaponEffects": [
+    {
+        "name": "basicMode",
+            "effects":[
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -2,
+                            "second": -2
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "B1" 
+                },
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -2,
+                            "second": -2
+                        },
+                        "visible": 1,
+                        "enlarge": 1,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "MOVE",
+                            "value": 1
+                        },
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "B2" 
+                },
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -2,
+                            "second": -2
+                        },
+                        "visible": 1,
+                        "enlarge": 2,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "MOVE",
+                            "value": 2
+                        },
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "B3" 
+                }
+            ]
+        },
+        {
+            "name": "inPunisherMode",
+            "effects": [
+                 {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -2,
+                            "second": -2
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 3
+                        }
+                    ],
+                    "name": "B4",
+                    "price": [
+                        {
+                            "color": "RED"
+                        },
+                        {
+                            "color": "YELLOW"
+                        }
+                    ]
+                },
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -2,
+                            "second": -2
+                        },
+                        "visible": 1,
+                        "enlarge": 1,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "MOVE",
+                            "value": 1
+                        },
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 3
+                        }
+                    ],
+                    "name": "B5",
+                    "price": [
+                        {
+                            "color": "RED"
+                        },
+                        {
+                            "color": "YELLOW"
+                        }
+                    ]
+                },
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -2,
+                            "second": -2
+                        },
+                        "visible": 1,
+                        "enlarge": 2,
+                        "area": false  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "MOVE",
+                            "value": 2
+                        },
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 3
+                        }
+                    ],
+                    "name": "B6",
+                    "price": [
+                        {
+                            "color": "RED"
+                        },
+                        {
+                            "color": "YELLOW"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "name": "TractorBeam",
+    "maxheight": 1,
+    "invalidCombinations": []
+}

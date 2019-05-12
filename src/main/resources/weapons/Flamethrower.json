@@ -1,0 +1,169 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": {
+        "colour": "RED"
+    },
+    "price": [
+        {
+            "colour": "RED"
+        }
+    ],
+    "weaponEffects": [
+    {
+        "name": "basicMode",
+            "effects":[
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 1,
+                            "second": 1
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": false 
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "B1" 
+                },
+                {
+                    "priority": 2,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": true,
+							"second": [
+								"B1"
+							]
+						},
+                        "radiusBetween": {
+                            "first": 2,
+                            "second": 2
+                        },
+                        "visible": 1,
+                        "enlarge": -2,
+                        "area": false 
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "E1" 
+                }
+            ]
+        },
+      {
+        "name": "inBarbecueMode",
+        "effects": [
+          {
+            "priority": 3,
+            "targetSpecification": {
+              "tile": true,
+              "different": {
+                "first": false,
+                "second": []
+              },
+              "previous": {
+                "first": false,
+                "second": []
+              },
+              "radiusBetween": {
+                "first": 1,
+                "second": 1
+              },
+              "visible": 1,
+              "enlarge": 0,
+              "area": true
+            },
+            "actions": [
+              {
+                "actionType": "DAMAGE",
+                "value": 2
+              }
+            ],
+            "name": "B2",
+            "price": [
+              {
+                "colour": "YELLOW"
+              },
+              {
+                "colour": "YELLOW"
+              }
+            ]
+          },
+          {
+            "priority": 2,
+            "targetSpecification": {
+              "tile": true,
+              "different": {
+                "first": false,
+                "second": []
+              },
+              "previous": {
+                "first": false,
+                "second": [
+                  "B2"
+                ]
+              },
+              "radiusBetween": {
+                "first": 2,
+                "second": 2
+              },
+              "visible": 1,
+              "enlarge": -2,
+              "area": true
+            },
+            "actions": [
+              {
+                "actionType": "DAMAGE",
+                "value": 1
+              }
+            ],
+            "name": "E2"
+          }
+        ]
+      }
+    ],
+    "name": "Flamethrower",
+    "maxheight": 2,
+    "invalidCombinations": [
+        [
+            "B1",
+			"B2"
+        ],
+		[
+			"B1",
+			"E2"
+		],
+		[
+			"B2",
+			"E1"
+		],
+		[
+			"E1"
+		],
+		[
+			"E2"
+		]
+    ]
+}

@@ -1,0 +1,89 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardcolour": {
+        "colour": "RED"
+    },
+    "price": [
+        {
+            "colour": "RED"
+        },
+        {
+            "colour": "BLUE"
+        }
+    ],
+    "weaponEffects":[
+        {
+            "name": "basicMode",
+            "effects":[
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -3,
+                            "second": -3
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": true  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "B1" 
+                }
+            ]
+        },
+        {
+            "name": "inCozyFireMode",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification":{
+                        "tile":true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 1,
+                            "second": 1
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": true
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        },
+                        {
+                            "actionType": "MARK",
+                            "value": 1
+                        }
+                    ],
+                    "name": "B2"
+                }
+            ]
+        }
+    ],
+    "name": "Furnace",
+    "maxheight": 1,
+    "invalidCombinations": []
+}

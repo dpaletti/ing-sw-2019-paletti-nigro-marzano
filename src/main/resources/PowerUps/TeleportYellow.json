@@ -1,0 +1,45 @@
+{
+	"type": "it.polimi.se2019.model.PowerUp",
+    "cardColour": {
+		"colour": "YELLOW"
+	},
+    "price": [],
+	"weaponEffects": [
+		{
+			"name": "effect",
+			"effects": [
+				{
+					"priority": 3,
+					"targetSpecification":{
+						"tile": false,
+						"different":{
+							"first": false,
+							"second": []
+						},
+						"previous":{
+							"first": false,
+							"second": []
+						},
+						 "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": 0,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                       {
+                           "actionType": "MOVE",
+                           "value": 1
+                       }
+                    ],
+                    "name": "B"
+				}
+			]
+		}
+	],
+	"name": "Teleport",
+    "maxheight": 1,
+    "invalidCombinations":[]
+}

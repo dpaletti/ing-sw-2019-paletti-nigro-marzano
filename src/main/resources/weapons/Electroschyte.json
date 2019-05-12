@@ -1,0 +1,90 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": {
+        "colour": "BLUE"
+    },
+    "price": [
+        {
+            "colour": "BLUE"
+        }
+    ],
+    "weaponEffects": [
+    {
+        "name": "basicMode",
+            "effects":[
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": true  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "B1" 
+                }
+            ]
+        },
+        {
+            "name": "inReaperMode",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification":{
+                        "tile":true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+						"radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": true
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 2
+                        }
+                    ],
+                    "name": "B2",
+                    "price": [
+                        {
+                            "color": "BLUE"
+                        },
+                        {
+                            "color": "RED"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "name": "Electroschyte",
+    "maxheight": 1,
+    "invalidCombinations": []
+}

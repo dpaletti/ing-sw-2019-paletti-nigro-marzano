@@ -1,0 +1,166 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": {
+        "colour": "YELLOW"
+    },
+    "price": [
+        {
+            "colour": "YELLOW"
+        }
+    ],
+    "weaponEffects": [
+    {
+        "name": "basicMode",
+            "effects":[
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 2
+                        }
+                    ],
+                    "name": "B1" 
+                }
+            ]
+        },
+        {
+            "name": "inPulverizeMode",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification":{
+                        "tile":true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 3
+                        }
+                    ],
+                    "name": "B2",
+                    "price": [
+                        {
+                            "color": "RED"
+                        }
+                    ]
+                },
+                {
+                    "priority": 2,
+                    "targetSpecification":{
+                        "tile":true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                        {
+                            "actionType": "MOVE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "E1"
+                },
+                {
+                    "priority": 2,
+                    "targetSpecification":{
+                        "tile":true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                        {
+                            "actionType": "MOVE",
+                            "value": 2
+                        }
+                    ],
+                    "name": "E2"
+                }
+            ]
+        }
+    ],
+    "name": "Sledgehammer",
+    "maxheight": 2,
+    "invalidCombinations": [
+		[
+			"E1"
+		],
+		[
+			"E2"
+		],
+		[
+			"B1",
+			"B2"
+		],
+		[
+			"B1",
+			"E1"
+		],
+		[
+			"B1",
+			"E2"
+		],
+		[
+			"E1",
+			"E2"
+		]
+    ]
+}

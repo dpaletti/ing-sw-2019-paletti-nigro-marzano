@@ -1,5 +1,6 @@
 package it.polimi.se2019.utility;
 
+import it.polimi.se2019.model.Card;
 import it.polimi.se2019.model.PowerUp;
 import it.polimi.se2019.model.Weapon;
 
@@ -11,10 +12,9 @@ import java.nio.file.Paths;
 public final class Factory {
     private Factory(){}
 
-    //TODO Test it and see if it's good to return a list of objects
-    private static Object create(Path directory){
+    private static Card create(Path directory){
         try {
-            return JsonHandler.deserialize(new String(Files.readAllBytes(directory)));
+            return (Card)JsonHandler.deserialize(new String(Files.readAllBytes(directory)));
         }catch (NullPointerException e){
             Log.severe("Such directory does not exists");
         }catch (IOException e){

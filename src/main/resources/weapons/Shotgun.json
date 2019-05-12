@@ -1,0 +1,129 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": {
+        "colour": "YELLOW"
+    },
+    "price": [
+        {
+            "colour": "YELLOW"
+        },
+        {
+            "colour": "YELLOW"
+        }
+    ],
+    "weaponEffects": [
+    {
+        "name": "basicMode",
+            "effects":[
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": true  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 3
+                        }
+                    ],
+                    "name": "B1" 
+                },
+                {
+                    "priority": 2,
+                    "targetSpecification": {
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": true,
+							"second": [
+								"B1"
+							]
+						},
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": true  
+                    },
+                    "actions": [
+                        {
+                            "actionType": "MOVE",
+                            "value": 1
+                        }
+                    ],
+                    "name": "E1" 
+                }
+            ]
+        },
+        {
+            "name": "inLongBarrelMode",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification":{
+                        "tile": true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+                        "previous":{
+                            "first": true,
+                            "second": [
+                                "B1"
+                            ]
+                        },
+                        "radiusBetween": {
+                            "first": 1,
+                            "second": 1
+                        },
+                        "visible": -1,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 2
+                        }
+                    ],
+                    "name": "B2"
+                }
+            ]
+        }
+    ],
+    "name": "Shotgun",
+    "maxheight": 2,
+    "invalidCombinations": [
+        [
+			"B1",
+			"B2"
+		],
+		[
+			"B2",
+			"E1"
+		],
+		[
+			"E1"
+		]
+    ]
+}

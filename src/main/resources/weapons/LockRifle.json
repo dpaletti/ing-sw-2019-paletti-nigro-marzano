@@ -1,0 +1,98 @@
+{
+	"type": "it.polimi.se2019.model.Weapon",
+    "cardColour": "BLUE",
+    "price": [
+        {
+            "colour": "BLUE"
+        },
+        {
+            "colour": "BLUE"
+        }
+    ],
+    "weaponEffects": [
+        {
+            "name": "basicEffect",
+            "effects": [
+                {
+                    "priority": 3,
+                    "targetSpecification": {
+                        "tile": false,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+						"previous":{
+							"first": false,
+							"second": []
+						},
+                        "radiusBetween": {
+                            "first": -2,
+                            "second": -2
+                        },
+                        "visible": 1,
+                        "enlarge": 0,
+                        "area": false
+                    },
+                    "actions": [
+                        {
+                            "actionType": "DAMAGE",
+                            "value": 2
+                        },
+                       {
+                           "actionType": "MARK",
+                           "value": 1
+                       }
+                    ],
+                    "name": "B1"
+                }
+            ]
+        },
+        {
+            "name": "withSecondLock",
+            "effects": [
+                            {
+                                "priority": 2,
+                                "targetSpecification": {
+                                    "tile": false,
+                                    "different": {
+                                        "first": true,
+                                        "second": [
+												"B1"
+										]
+                                    },
+									"previous":{
+										"first": false,
+										"second": []
+									},
+									"radiusBetween": {
+                                        "first": -2,
+                                        "second": -2
+                                    },
+                                    "visible": 1,
+                                    "enlarge": 0,
+                                    "area": false  
+                                },
+                                "actions":[
+                                    {
+                                      "actionType": "MARK",
+                                        "value": 1
+                                    }
+                                 ],
+                                "price": [
+                                    {
+                                        "colour": "RED"
+                                    }
+                                ],
+                                "name": "E1"
+                          }      
+            ]
+        }
+    ],
+    "name": "LockRifle",
+    "maxheight": 2,
+    "invalidCombinations": [
+		[
+			"E1"
+		]
+	]
+}
