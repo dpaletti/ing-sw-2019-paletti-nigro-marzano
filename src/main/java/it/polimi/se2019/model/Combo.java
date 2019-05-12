@@ -6,7 +6,6 @@ public class Combo {
     private ComboType comboType;
     private List<Action> actions;
     private List<Direction> directions;
-    private List<Integer> values;
 
     public ComboType getComboType() {
         return comboType;
@@ -20,10 +19,6 @@ public class Combo {
         return actions;
     }
 
-    public List<Integer> getValues() {
-        return values;
-    }
-
     public void setComboType(ComboType comboType) {
         this.comboType = comboType;
     }
@@ -34,9 +29,5 @@ public class Combo {
 
     public void setActions(List<Action> actions) {
         this.actions = actions;
-    }
-
-    public void setValues(List<Integer> values) {
-        this.values = values;
     }
 }

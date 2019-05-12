@@ -23,10 +23,4 @@ public class SpawnTile extends Tile {
     public LootCard getLootCard() {
         return super.getLootCard();
     }//non è permesso restituire loot card da qui
-
-    @Override
-    public Integer findDistance() {
-        return position.getX()+position.getY();
-    }
-
 }

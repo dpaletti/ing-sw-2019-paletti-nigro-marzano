@@ -95,8 +95,8 @@ public abstract class Tile {
         hp.add(tearToAdd);
     }
 
-    public Integer findDistance (){
-        return null;
+    public int findDistance (Point positionOfTile){
+        return ((positionOfTile.getX()-position.getX())+(positionOfTile.getY()-position.getY()));
     }
 
     public Set<Tile> visibleTiles() {

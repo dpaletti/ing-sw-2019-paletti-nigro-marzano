@@ -8,10 +8,6 @@ import java.util.Set;
 public class EffectToApplyEvent extends MVEvent {
     Set<String> applicableEffects;
 
-    public EffectToApplyEvent(){
-        super();
-    }
-
     public EffectToApplyEvent(String destination){
         super(destination);
     }

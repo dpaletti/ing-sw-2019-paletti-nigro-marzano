@@ -8,9 +8,6 @@ import java.util.Set;
 public class WeaponToGrabEvent extends MVEvent {
     private Set<String> availableWeapons;
 
-    public WeaponToGrabEvent(){
-        super(null);
-    }
     public WeaponToGrabEvent(String destination){
         super(destination);
     }

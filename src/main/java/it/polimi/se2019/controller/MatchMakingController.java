@@ -111,6 +111,7 @@ public class MatchMakingController extends Controller {
         actualUsernames.remove("*");
         model.closeMatchMaking(actualUsernames);
         server.addController(new MatchController(model, server));
+        server.addController(new TurnController(model, server));
         server.removeController(this);
 
     }

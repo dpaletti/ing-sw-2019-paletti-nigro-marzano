@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Set;
 
 public class Turn {
-    private Player player;
     private Combo firstCombo;
     private Set<Figure> firstTargetSet;
     private Combo secondCombo;
     private Set<Figure> secondTargetSet;
     private List<PowerUp> usedPowerUp;
+    private List<String> usedEffects;
+    private List<List<Tile>> shotTiles;
+    private List<List<Figure>> shotFigures;
 
     public Combo getFirstCombo() {
         return firstCombo;
@@ -31,8 +33,16 @@ public class Turn {
         return usedPowerUp;
     }
 
-    public Player getPlayer() {
-        return player;
+    public List<String> getUsedEffects() {
+        return usedEffects;
+    }
+
+    public List<List<Tile>> getShotTiles() {
+        return shotTiles;
+    }
+
+    public List<List<Figure>> getShotFigures() {
+        return shotFigures;
     }
 
     public void setFirstCombo(Combo firstCombo) {
@@ -41,10 +51,6 @@ public class Turn {
 
     public void setFirstTargetSet(Set<Figure> firstTargetSet) {
         this.firstTargetSet = firstTargetSet;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public void setSecondCombo(Combo secondCombo) {
@@ -57,5 +63,15 @@ public class Turn {
 
     public void setUsedPowerUp(List<PowerUp> usedPowerUp) {
         this.usedPowerUp = usedPowerUp;
+    }
+
+    public List<Figure> mapEffectToTargets (String effect){
+        int indexOfEffect= usedEffects.indexOf(effect);
+        return (shotFigures.get(indexOfEffect));
+    }
+
+    public List<Tile> mapEffectToTiles (String effect){
+        int indexOfEffect= usedEffects.indexOf(effect);
+        return (shotTiles.get(indexOfEffect));
     }
 }

@@ -1,8 +1,6 @@
 package it.polimi.se2019.utility;
 
-import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
-import it.polimi.se2019.view.vc_events.DisconnectionEvent;
-import it.polimi.se2019.view.vc_events.JoinEvent;
+import it.polimi.se2019.view.vc_events.*;
 import it.polimi.se2019.view.VCEvent;
 
 public class VCEventDispatcher implements Observer<VCEvent>{
@@ -24,4 +22,7 @@ public class VCEventDispatcher implements Observer<VCEvent>{
         throw new UnsupportedOperationException("ChosenEffect event not supported");
     }
 
+    public void update (DefineTeleportPositionEvent message){
+        throw new UnsupportedOperationException("DefineTeleportPosition event not supported");
+    }
 }

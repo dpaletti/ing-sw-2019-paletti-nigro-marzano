@@ -2,9 +2,12 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.model.mv_events.JoinMatchMakingEvent;
 import it.polimi.se2019.model.mv_events.MatchMakingEndEvent;
+import it.polimi.se2019.utility.BiSet;
 import it.polimi.se2019.utility.Observable;
+import it.polimi.se2019.utility.Pair;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.model.mv_events.UsernameDeletionEvent;
+import it.polimi.se2019.view.VCEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +22,9 @@ public class Game extends Observable<MVEvent> {
     private static Game instance;
     private List<Player> players;
     private List<Turn> turns;
-    private Map<FigureColour, String> userLookup;
+    private BiSet<FigureColour, String> userLookup;
+    private Map<String, Effect> effectMap;
+
     // TODO Mapping between figures and usernames coming from controller
 
     public Game(){
@@ -37,12 +42,17 @@ public class Game extends Observable<MVEvent> {
     }
 
     public void closeMatchMaking(List<String> usernames){
+        int colourCounter=0;
+        for (String userCounter: usernames){
+            userLookup.add(new Pair<>(FigureColour.values()[colourCounter], userCounter));
+            colourCounter++;
+        }
         // '*' is a wildcard, it means that the event goes to everybody
         notify(new MatchMakingEndEvent("*"));
     }
 
     public void startMatch(){
-        //TODO implement this
+        //TODO implement
     }
 
     public void pausePlayer(String username){
@@ -84,6 +94,14 @@ public class Game extends Observable<MVEvent> {
 
     public List<Turn> getTurns() { return turns; }
 
+    public Map<String, Effect> getEffectMap() {
+        return effectMap;
+    }
+
+    public BiSet<FigureColour, String> getUserLookup() {
+        return userLookup;
+    }
+
     public void setAmmoDeck(Deck ammoDeck) {
         this.ammoDeck = ammoDeck;
     }
@@ -114,7 +132,27 @@ public class Game extends Observable<MVEvent> {
         notify(message);
     }
 
+    public Player colourToPlayer (FigureColour figureColour){
+        Player playerOfSelectedColour= new Player();
+        for (Player playerCounter: players){
+            if (playerCounter.getFigure().getColour().equals(figureColour)){
+                playerOfSelectedColour=playerCounter;
+                break;
+            }
+        }
+        return playerOfSelectedColour;
+    }
+
+    public String colourToUser (FigureColour figureColour){
+        return userLookup.getSecond(figureColour);
+    }
+
     public void deathHandler(){
 
+    }
+
+    public void movePlayer(String username, Point teleportPosition){
+        Player playerToMove= colourToPlayer(userLookup.getFirst(username));
+        playerToMove.teleport(teleportPosition);
     }
 }

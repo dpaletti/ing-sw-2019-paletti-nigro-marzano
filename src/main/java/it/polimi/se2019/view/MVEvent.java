@@ -7,10 +7,6 @@ public abstract class MVEvent extends Event {
 
     private String destination;
 
-    public MVEvent(){
-        destination = null;
-    }
-
     public MVEvent(String destination){
         this.destination=destination;
     }

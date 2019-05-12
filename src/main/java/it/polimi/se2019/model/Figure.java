@@ -13,13 +13,18 @@ public class Figure {
     private FigureColour colour;
     private Player player;
     private Point position;
+    private Turn turn;
 
-    public Figure (Tile tile, Player player, FigureColour figureColour, Point position){
+    //ready
+
+    public Figure (Tile tile, Player player, FigureColour figureColour, Point position, Turn turn){
         this.tile= tile;
         this.player= player;
-        this.colour=figureColour;
+        this.colour= figureColour;
         this.position= position;
+        this.turn= turn;
     }
+
     public Point getPosition() {
         return position;
     }
@@ -34,6 +39,10 @@ public class Figure {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public Turn getTurn() {
+        return turn;
     }
 
     public void damage(Figure target){
@@ -68,10 +77,8 @@ public class Figure {
             case SOUTH:
                 newPosition.setY(newPosition.getY()-1);
                 break;
-            case TELEPORT:
-                TeleportEvent teleportEvent= new TeleportEvent(newPosition.getX(), newPosition.getY());
-                Game.getInstance().sendMessage(teleportEvent); //sends player its position, asks where to move
-                //TODO: VMEvent: set newPosition to the specified one
+                default:
+                    break;
         }
         if (boundaryChecker(this, newPosition)){
             position=newPosition;
@@ -100,6 +107,13 @@ public class Figure {
         if (boundaryChecker(target, newPosition)) {
             target.position = newPosition;
             target.tile = GameMap.getMap().get(newPosition);
+        }
+    }
+
+    public void teleport (Point teleportPosition){ //only called in case of Teleport Event
+        if (boundaryChecker(this, teleportPosition)){
+            position= teleportPosition;
+            tile=GameMap.getMap().get(position);
         }
     }
 
@@ -180,6 +194,74 @@ public class Figure {
         return visibleFigures;
     }
 
+    private int findDistance (Point positionOfTarget){
+        return ((positionOfTarget.getX()-tile.getPosition().getX())+(positionOfTarget.getY()-tile.getPosition().getY()));
+    }
+
+    private Set <Figure> areaSelectionForFigures (Set<Figure> figuresInTargetSet, Integer innerRadius, Integer outerRadius){
+        Set<Figure> targetSet=new HashSet<>();
+        int value=0;
+        if (innerRadius== 0 && outerRadius== 0) {
+            targetSet.add(this);
+            value=2;
+        }
+        else if (innerRadius == -2 && outerRadius == -2) {
+            targetSet= visibilitySet();
+            value=1;
+        }
+        else if (innerRadius == -3 && outerRadius == -3) {
+            for (Figure figureCounter : figuresInTargetSet) {
+                if (figureCounter.tile.getColour().equals(tile.getColour())) {
+                    targetSet.add(figureCounter);
+                    value=0;
+                }
+            }
+        }
+        else if (outerRadius != -1 && innerRadius != -1) {
+            for(Figure figureCounter: figuresInTargetSet){
+                if (figureCounter.findDistance(figureCounter.position)<innerRadius||figureCounter.findDistance(figureCounter.position)>outerRadius){
+                    targetSet.add(figureCounter);
+                    value=0;
+                }
+            }
+        }
+
+        targetSet= targetSetUpdater(figuresInTargetSet, targetSet, value);
+        return targetSet;
+    }
+
+    private Set <Tile> areaSelectionForTiles (Set<Tile> tilesInTargetSet, Integer innerRadius, Integer outerRadius){
+        Set<Tile> targetSet=new HashSet<>();
+        int value= 0;
+        if (innerRadius== 0 && outerRadius== 0) {
+            targetSet.add(this.tile);
+            value=2;
+        }
+        else if (innerRadius == -2 && outerRadius == -2) {
+            targetSet= tile.visibleTiles();
+            value=1;
+        }
+        else if (innerRadius == -3 && outerRadius == -3) {
+            for (Tile tileCounter : tilesInTargetSet) {
+                if (tileCounter.colour.equals(tile.getColour())) {
+                    targetSet.add(tileCounter);
+                    value=0;
+                }
+            }
+        }
+        else if (outerRadius != -1 && innerRadius != -1) {
+            for(Tile tileCounter: tilesInTargetSet){
+                if (tileCounter.findDistance(tileCounter.position)<innerRadius||tileCounter.findDistance(tileCounter.position)>outerRadius){
+                    targetSet.add(tileCounter);
+                    value=0;
+                }
+            }
+        }
+
+        targetSet= tileSetUpdater(tilesInTargetSet, targetSet, value);
+        return targetSet;
+    }
+
     private Set<Figure> targetSetUpdater (Set<Figure> originalTargetSet, Set<Figure> resultTargetSet, Integer value){
         switch (value){
             case 0:
@@ -224,6 +306,61 @@ public class Figure {
         return originalTargetSet;
     }
 
+    private Boolean boundaryChecker (Figure figureToMove, Point newPosition){
+        if (!GameMap.checkBoundaries(newPosition)){
+            return (false);
+        }
+        if (GameMap.getMap().get(newPosition).getColour().equals(figureToMove.tile.colour)){ //same room, figure can be moved
+            return (true);
+        }
+        else { //not same room, check if door
+            Point positionCounter= figureToMove.position;
+            for (Direction directionCounter: Direction.values()){
+                if (figureToMove.tile.doors.get(directionCounter)){
+                    if (directionCounter.equals(Direction.NORTH)){
+                        positionCounter.setY(positionCounter.getY()+1);
+                        if (positionCounter.equals(newPosition)){
+                            return (true);
+                        }
+                    }
+                    if (directionCounter.equals(Direction.SOUTH)){
+                        positionCounter.setY(positionCounter.getY()-1);
+                        if (positionCounter.equals(newPosition)){
+                            return (true);
+                        }
+                    }
+                    if (directionCounter.equals(Direction.EAST)){
+                        positionCounter.setX(positionCounter.getX()+1);
+                        if (positionCounter.equals(newPosition)){
+                            return (true);
+                        }
+                    }
+                    if (directionCounter.equals(Direction.WEST)){
+                        positionCounter.setX(positionCounter.getX()-1);
+                        if (positionCounter.equals(newPosition)){
+                            return (true);
+                        }
+                    }
+                }
+            }
+        }
+        return (false);
+    }
+
+    private Set<Figure> targetsOfSelectedEffect(String effectName){
+        Set<Figure> targetSet=new HashSet<>();
+        targetSet.addAll(turn.mapEffectToTargets(effectName));
+        return targetSet;
+    }
+
+    private Set<Tile> tilesOfSelectedEffect(String effectName){
+        Set<Tile> targetSet=new HashSet<>();
+        targetSet.addAll(turn.mapEffectToTiles(effectName));
+        return targetSet;
+    }
+
+    //missing events
+
     public void grab(){
         if (tile.getTileType()==TileType.LOOTTILE) { //when on a Loot Tile, adds grabbed ammo to usable ammo making sure the number of ammo of a colour does not exceed 3
             int ammoOfSelectedColour=0;
@@ -246,7 +383,7 @@ public class Figure {
             availableWeapons.add(tile.getWeaponSpot().getFirstWeapon().getName());
             availableWeapons.add(tile.getWeaponSpot().getSecondWeapon().getName());
             availableWeapons.add(tile.getWeaponSpot().getThirdWeapon().getName());
-            WeaponToGrabEvent weaponToGrabEvent=new WeaponToGrabEvent();
+            WeaponToGrabEvent weaponToGrabEvent=new WeaponToGrabEvent(Game.getInstance().colourToUser(colour));
             weaponToGrabEvent.setAvailableWeapons(availableWeapons);
             Game.getInstance().sendMessage(weaponToGrabEvent);
             // TODO: vc_events: a Weapon is returned and assigned to selectedWeapon
@@ -263,7 +400,7 @@ public class Figure {
             }
 
             else {
-                WeaponToLeaveEvent weaponToLeaveEvent=new WeaponToLeaveEvent();
+                WeaponToLeaveEvent weaponToLeaveEvent=new WeaponToLeaveEvent(Game.getInstance().colourToUser(colour));
                 Set<String> weaponsOwned=new HashSet<>();
                 weaponsOwned.add(player.getFirstWeapon().getName());
                 weaponsOwned.add(player.getSecondWeapon().getName());
@@ -275,9 +412,35 @@ public class Figure {
         }
     }
 
+    public void reload (Weapon weapon){
+        int enoughAmmoForReload=0;
+        for (Ammo reloadCostCounter: weapon.getPrice()) {   //checks whether the reload price can be payed
+            for (Ammo availableAmmoCounter: player.getUsableAmmo()){
+                if(reloadCostCounter==availableAmmoCounter){
+                    enoughAmmoForReload++;
+                    break;
+                }
+            }
 
+        }
+        if(enoughAmmoForReload==weapon.getPrice().size()){  //in case player has enough ammo to pay for the reload
+            weapon.setLoaded(true);
+            Set<Ammo> ammo= player.getUsableAmmo();
+            player.setUsableAmmo(ammo);
+        }
+        else{
+            NotEnoughAmmoEvent notEnoughAmmoEvent=null;
+            Game.getInstance().sendMessage(notEnoughAmmoEvent); //not enough ammo available to reload, want to use PowerUps?
+            //TODO: VCEvent: no, end reload/yes, use selectedPowerUp to pay
+            PowerUp selectedPowerUp=null;
+            player.sellPowerUp(selectedPowerUp);
+            reload(weapon);
+        }
+    }
 
-    public Set<Pair<Effect, Set<Figure>>> generateTargetSet(GraphNode<Effect> node){
+    //to fix
+
+    public Set<Pair<Effect, Set<Figure>>> generateWeaponEffect (GraphNode<Effect> node){
         Set<Pair<Effect, Set<Figure>>> targetSet=new HashSet<>();
         Pair <Effect, Set<Figure>> effectToTargets;
 
@@ -314,10 +477,10 @@ public class Figure {
                         break;
                 }
                 if (effectCounter.getTargetSpecification().getDifferent().getFirst()){
-                    figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter), 0);
+                    figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter.getName()), 0);
                 }
                 else {
-                    figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter), 1);
+                    figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter.getName()), 1);
 
                 }
 
@@ -342,10 +505,10 @@ public class Figure {
                         break;
                 }
                 if(effectCounter.getTargetSpecification().getDifferent().getFirst()){
-                    tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter), 0);
+                    tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter.getName()), 0);
                 }
                 else {
-                    tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter), 1);
+                    tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter.getName()), 1);
                 }
 
                 switch (effectCounter.getTargetSpecification().getEnlarge()){
@@ -367,7 +530,7 @@ public class Figure {
 
                 tilesInTargetSet= areaSelectionForTiles(tilesInTargetSet, effectCounter.getTargetSpecification().getRadiusBetween().getFirst(), effectCounter.getTargetSpecification().getRadiusBetween().getSecond());
 
-                for (Tile tileCounter: tilesInTargetSet){ //coonverts tiles in figures to hit
+                for (Tile tileCounter: tilesInTargetSet){ //converts tiles in figures to hit
                     figuresInTargetSet.addAll(tileCounter.getFigures());
                 }
             }
@@ -375,111 +538,5 @@ public class Figure {
             targetSet.add(effectToTargets);
         }
         return targetSet;
-    }
-
-    public Map<Figure, List<Effect>> generateWeaponEffect (GraphNode<Effect> node, Figure target){ return null;}
-
-    public void reload (Weapon weapon){
-        int enoughAmmoForReload=0;
-        for (Ammo reloadCostCounter: weapon.getPrice()) {   //checks whether the reload price can be payed
-            for (Ammo availableAmmoCounter: player.getUsableAmmo()){
-                if(reloadCostCounter==availableAmmoCounter){
-                    enoughAmmoForReload++;
-                    break;
-                }
-            }
-
-        }
-        if(enoughAmmoForReload==weapon.getPrice().size()){  //in case player has enough ammo to pay for the reload
-            weapon.setLoaded(true);
-            Set<Ammo> ammo= player.getUsableAmmo();
-            player.setUsableAmmo(ammo);
-        }
-        else{
-            NotEnoughAmmoEvent notEnoughAmmoEvent=null;
-            Game.getInstance().sendMessage(notEnoughAmmoEvent); //not enough ammo available to reload, want to use PowerUps?
-            //TODO: VCEvent: no, end reload/yes, use selectedPowerUp to pay
-            PowerUp selectedPowerUp=null;
-            player.sellPowerUp(selectedPowerUp);
-            reload(weapon);
-        }
-    }
-
-    private int findDistance (){
-        return tile.getPosition().getX()+tile.getPosition().getY();
-    }
-
-    public Set<Figure> targetsOfSelectedEffect(Effect effect){ //TODO: write method to calculate targets of previous actions
-        Set<Figure> targetSet=new HashSet<>();
-        return targetSet;
-    }
-
-    public Set<Tile> tilesOfSelectedEffect(Effect effect){ //TODO: write method to calculate tiles of previous actions
-        Set<Tile> targetSet=new HashSet<>();
-        return targetSet;
-    }
-
-    private Set <Figure> areaSelectionForFigures (Set<Figure> figuresInTargetSet, Integer innerRadius, Integer outerRadius){
-        Set<Figure> targetSet=new HashSet<>();
-        int value=0;
-        if (innerRadius== 0 && outerRadius== 0) {
-            targetSet.add(this);
-            value=2;
-        }
-        else if (innerRadius == -2 && outerRadius == -2) {
-            targetSet= visibilitySet();
-            value=1;
-        }
-        else if (innerRadius == -3 && outerRadius == -3) {
-            for (Figure figureCounter : figuresInTargetSet) {
-                if (figureCounter.tile.getColour().equals(tile.getColour())) {
-                    figuresInTargetSet.remove(figureCounter);
-                }
-            }
-        }
-        else if (outerRadius != -1 && innerRadius != -1) {
-            for(Figure figureCounter: figuresInTargetSet){
-                if (figureCounter.findDistance()<innerRadius||figureCounter.findDistance()>outerRadius){
-                    figuresInTargetSet.remove(figureCounter);
-                }
-            }
-        }
-
-        targetSet= targetSetUpdater(figuresInTargetSet, targetSet, value);
-        return targetSet;
-    }
-
-    private Set <Tile> areaSelectionForTiles (Set<Tile> tilesInTargetSet, Integer innerRadius, Integer outerRadius){
-        Set<Tile> targetSet=new HashSet<>();
-        int value= 0;
-        if (innerRadius== 0 && outerRadius== 0) {
-            targetSet.add(this.tile);
-            value=2;
-        }
-        else if (innerRadius == -2 && outerRadius == -2) {
-            targetSet= tile.visibleTiles();
-            value=1;
-        }
-        else if (innerRadius == -3 && outerRadius == -3) {
-            for (Tile tileCounter : tilesInTargetSet) {
-                if (tileCounter.colour.equals(tile.getColour())) {
-                    tilesInTargetSet.remove(tileCounter);
-                }
-            }
-        }
-        else if (outerRadius != -1 && innerRadius != -1) {
-            for(Tile tileCounter: tilesInTargetSet){
-                if (tileCounter.findDistance()<innerRadius||tileCounter.findDistance()>outerRadius){
-                    tilesInTargetSet.remove(tileCounter);
-                }
-            }
-        }
-
-        targetSet= tileSetUpdater(tilesInTargetSet, targetSet, value);
-        return targetSet;
-    }
-
-    private Boolean boundaryChecker (Figure figure, Point newPosition){ //TODO: to implement
-        return (true);
-    }
+    } //missing previous
 }

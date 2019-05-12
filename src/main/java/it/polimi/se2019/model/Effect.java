@@ -1,6 +1,7 @@
 package it.polimi.se2019.model;
 
 import java.util.List;
+import java.util.Map;
 
 public class Effect {
     private Integer priority;
@@ -8,6 +9,7 @@ public class Effect {
     private List<Action> actions;
     private List<Ammo> price;
     private String name;
+    private Map<String, Effect> map;
 
     public Integer getPriority() { return priority; }
 
@@ -23,9 +25,11 @@ public class Effect {
 
     public void setPriority(Integer priority) { this.priority = priority; }
 
-    public void setTargetSpecification(TargetSpecification targetSpecification) { this.targetSpecification = targetSpecification; }
+    public Map<String, Effect> getMap() {
+        return map;
+    }
 
-    public void setPrice(List<Ammo> price) { this.price = price; }
-
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 }

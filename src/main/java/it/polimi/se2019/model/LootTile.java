@@ -24,11 +24,6 @@ public class LootTile extends Tile{
     public Weapon getWeapon(Weapon weapon){ //eccezione sempre
         return super.getWeapon(weapon);
     }
-
-    @Override
-    public Integer findDistance() {
-        return position.getX()+position.getY();
-    }
-
 }
+
 

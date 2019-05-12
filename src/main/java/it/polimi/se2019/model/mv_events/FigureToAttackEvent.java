@@ -10,10 +10,6 @@ public class FigureToAttackEvent extends MVEvent {
 
     private Set<FigureColour> playersToAttack;
 
-    public FigureToAttackEvent(){
-        super();
-    }
-
     public FigureToAttackEvent(String destination){
         super(destination);
     }

@@ -45,4 +45,8 @@ public class GameMap {
     public static Set<Tile> getTiles() {
         return tiles;
     }
+
+    public static Boolean checkBoundaries (Point position){
+        return (map.containsKey(position));
+    }
 }

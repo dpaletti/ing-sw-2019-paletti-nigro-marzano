@@ -84,9 +84,13 @@ public class Player extends Observable<Action> {
         return marks;
     }
 
-    public Set<Ammo> getUnusableAmmo() { return unusableAmmo; }
+    public Set<Ammo> getUnusableAmmo() {
+        return unusableAmmo;
+    }
 
-    public Set<Ammo> getUsableAmmo() { return usableAmmo; }
+    public Set<Ammo> getUsableAmmo() {
+        return usableAmmo;
+    }
 
     public void setThirdWeapon(Weapon thirdWeapon) {
         this.thirdWeapon = thirdWeapon;
@@ -150,14 +154,14 @@ public class Player extends Observable<Action> {
         }
 
     public void useWeapon(Weapon weapon){
-        FigureToAttackEvent figureToAttackEvent =new FigureToAttackEvent();
-        EffectToApplyEvent effectToApplyEvent=new EffectToApplyEvent();
+        FigureToAttackEvent figureToAttackEvent =new FigureToAttackEvent(Game.getInstance().colourToUser(figure.getColour()));
+        EffectToApplyEvent effectToApplyEvent=new EffectToApplyEvent(Game.getInstance().colourToUser(figure.getColour()));
         Set<String> applicableEffects=new HashSet<>();
         Set<FigureColour> attackableFigureColours=new HashSet<>();
         Effect chosenEffect=new Effect();
         Figure chosenTarget=figure; //temporary, will be updated after vc events are implemented
         String target=null;
-        Set<Pair<Effect, Set<Figure>>> targetSet= figure.generateTargetSet(weapon.getStaticDefinition());
+        Set<Pair<Effect, Set<Figure>>> targetSet= figure.generateWeaponEffect(weapon.getStaticDefinition());
 
         for (Pair<Effect, Set<Figure>> counter: targetSet){
             applicableEffects.add(counter.getFirst().getName());
@@ -176,12 +180,19 @@ public class Player extends Observable<Action> {
         figureToAttackEvent.setPlayersToAttack(attackableFigureColours);
         Game.getInstance().sendMessage(figureToAttackEvent);
         //TODO: vc_events returns chosen target
-        figure.generateWeaponEffect(weapon.getStaticDefinition(), chosenTarget);
         weapon.setLoaded(false);
     }
 
     public void moveFigure(Direction direction){
         figure.move(direction);
+    }
+
+    public void moveFigure(Direction direction, Figure target){
+        figure.move(target, direction);
+    }
+
+    public void teleport (Point position){
+        figure.teleport(position);
     }
 
     public void grabStuff(){
