@@ -32,6 +32,7 @@ public class Server implements ServerInterface {
     private Server(int port){
         this.port = port;
         socketOpen = false;
+
         try {
             UnicastRemoteObject.exportObject(this, 0);
         }catch (RemoteException e) {
@@ -64,7 +65,6 @@ public class Server implements ServerInterface {
         model = new Game();
         controller = new MatchMakingController(model, this);
         virtualView = new VirtualView();
-
 
         addController(controller);
         model.register(virtualView);
@@ -101,22 +101,20 @@ public class Server implements ServerInterface {
     @Override
     public MVEvent pullEvent(String token) throws RemoteException {
         try {
-            return ((ConnectionRMI) virtualView.getConnectionOnId(token, virtualView.getConnections())).pull();
-        } catch (Exception e) {
-            Log.severe(e.getMessage());
-            Thread.currentThread().interrupt();
-            System.exit(0);
+            return ((ConnectionRMI) virtualView.getConnectionOnId(token)).pull();
+        } catch (NullPointerException e) {
+            Log.fine(e.getMessage());
+            throw new NullPointerException(e.getMessage() + "You detain an invalid token");
         }
-        return null;
     }
 
     @Override
     public void pushEvent(String token, VCEvent vcEvent) throws RemoteException {
         try{
-            ((ConnectionRMI) virtualView.getConnectionOnId(token, virtualView.getConnections())).push(vcEvent);
-        }catch (Exception e){
-            Log.severe(e.getMessage());
-            System.exit(0);
+            ((ConnectionRMI) virtualView.getConnectionOnId(token)).push(vcEvent);
+        }catch (NullPointerException e){
+            Log.fine(e.getMessage());
+            throw new NullPointerException(e.getMessage() + " You detain an invalid token");
         }
     }
 

@@ -37,6 +37,12 @@ public class Game extends Observable<MVEvent> {
         notify(new JoinMatchMakingEvent(token, username));
     }
 
+    public void playerReconnection(String token, String temporaryToken, boolean isMatchMaking){
+        if(isMatchMaking) {
+            notify(new ConnectionRefusedEvent(token, temporaryToken,"Cannot reconnect during match-making, your match may have ended"));
+        }
+    }
+
     public void usernameDeletion(String username){
         notify(new UsernameDeletionEvent(username));
     }
@@ -59,6 +65,7 @@ public class Game extends Observable<MVEvent> {
         //When a player disconnects or times out while playing needs to be paused
         //upone reconnection it will be unpaused
         //throws exception when pausing an already paused player
+        notify(new PausePlayerEvent(username));
         //TODO implement
     }
 

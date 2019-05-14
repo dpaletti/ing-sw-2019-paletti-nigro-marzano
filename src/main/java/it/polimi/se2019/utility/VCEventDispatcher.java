@@ -2,6 +2,7 @@ package it.polimi.se2019.utility;
 
 import it.polimi.se2019.view.vc_events.*;
 import it.polimi.se2019.view.VCEvent;
+import it.polimi.se2019.view.vc_events.ReconnectionEvent;
 
 public class VCEventDispatcher implements Observer<VCEvent>{
 
@@ -20,6 +21,10 @@ public class VCEventDispatcher implements Observer<VCEvent>{
 
     public void update(ChosenEffectEvent message){
         throw new UnsupportedOperationException("ChosenEffect event not supported");
+    }
+
+    public void update(ReconnectionEvent message){
+        throw new UnsupportedOperationException("Reconnection event not supported");
     }
 
     public void update (DefineTeleportPositionEvent message){

@@ -84,7 +84,6 @@ public class ConnectionRMI implements Connection{
         new Thread(() -> {
             try {
                 while(!Thread.currentThread().isInterrupted()) {
-                    Log.fine("Pinging");
                     gameClient.ping();
                     Thread.sleep(1000);
                 }

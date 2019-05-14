@@ -1,11 +1,10 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.mv_events.HandshakeEndEvent;
-import it.polimi.se2019.model.mv_events.JoinMatchMakingEvent;
-import it.polimi.se2019.model.mv_events.MatchMakingEndEvent;
+import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.utility.*;
-import it.polimi.se2019.model.mv_events.UsernameDeletionEvent;
 import it.polimi.se2019.network.*;
+import it.polimi.se2019.utility.Observable;
+import it.polimi.se2019.utility.Observer;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 
 import java.security.SecureRandom;
@@ -15,28 +14,28 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
-public class VirtualView extends View {
+public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent> {
     private List<Connection> connections = new CopyOnWriteArrayList<>();
-    private List<Connection> timeOuts = new CopyOnWriteArrayList<>();
 
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private MVEventDispatcher dispatcher = new Dispatcher();
 
     private final BiSet<String, String> biTokenUsername = new BiSet<>(); //Pair<"token", "username">
 
+    private boolean isMatchMaking = true;
+
+
+
     private Semaphore sem = new Semaphore(1, true);
 
     public VirtualView(){
-        super();
+        observers = new ArrayList<>();
     }
 
     public List<Connection> getConnections() {
         return new ArrayList<>(connections);
     }
 
-    public List<Connection> getTimeOuts(){
-        return new ArrayList<>(timeOuts);
-    }
 
     public BiSet<String, String> getBiTokenUsername() {
         return biTokenUsername;
@@ -62,9 +61,6 @@ public class VirtualView extends View {
                     if(biTokenUsername.containsFirst(connection.getToken()))
                         VirtualView.this.notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken())));
                     else
-                        //TODO further inspect disconnection on username choiche
-                            //may need to save refence to eventLoop
-                        //disconnection while choosing username on Socket
                         VirtualView.this.notify(new DisconnectionEvent(connection.getToken()));
                     shutdown = true;
                 }
@@ -82,20 +78,37 @@ public class VirtualView extends View {
         }
         @Override
         public void update(UsernameDeletionEvent message) {
-            Connection connection = getConnectionOnId(message.getDestination(), connections);
+            if(biTokenUsername.containsFirst(message.getDestination())){
+                //disconnection after username selection
+                String username = biTokenUsername.getSecond(message.getDestination());
+                biTokenUsername.remove(new Pair<>(message.getDestination(), username));
+            }else
+                //disconnection during username choice
+                sem.release();
+            Connection connection = getConnectionOnId(message.getDestination());
             connections.remove(connection);
-            String username = biTokenUsername.getSecond(message.getDestination());
-            biTokenUsername.remove(new Pair<>(connection.getToken(), username));
             Log.fine("Deleted player");
         }
 
         @Override
         public void update(HandshakeEndEvent message){
-            submit(getConnectionOnId(message.getDestination(), connections), message);
+            Log.fine("Sending handshake end event");
+            submit(getConnectionOnId(message.getDestination()), message);
         }
+
         @Override
         public void update(MatchMakingEndEvent message){
+            isMatchMaking = false;
             submit(new ConnectionBroadcast(connections), message);
+        }
+
+        @Override
+        public void update(ConnectionRefusedEvent message){
+            Log.fine("Refusing connection");
+            Connection connection = getConnectionOnId(message.getTemporaryToken());
+            submit(connection, message);
+            connections.remove(connection);
+            sem.release();
         }
     }
 
@@ -131,7 +144,12 @@ public class VirtualView extends View {
 
 
     public void startListening (Connection connection){
+        if(!isMatchMaking){
+
+        }
+        Log.fine("Start listening on token: " + connection.getToken());
         try {
+            //TODO try a login screen and move wait on another thread
             sem.acquire();
         } catch (InterruptedException e) {
             Log.severe(e.getMessage());
@@ -140,6 +158,7 @@ public class VirtualView extends View {
             connections.add(connection);
             executorService.submit(new EventLoop(connection));
             ArrayList<String> usernames = new ArrayList<>();
+            usernames.add("*"); //wildcard username not assignable
             for (Pair<String, String> s :
                     biTokenUsername) {
                 usernames.add(s.getSecond());
@@ -148,13 +167,13 @@ public class VirtualView extends View {
     }
 
 
-    public Connection getConnectionOnId(String id, List<Connection> toQuery){
+    public Connection getConnectionOnId(String id){
         Log.fine("Getting connection  with id: " + id);
         if(id.equals("*"))
             return new ConnectionBroadcast(connections);
 
         for (Connection c:
-             toQuery) {
+             connections) {
             if(c.getToken().equals(id))
                 return c;
         }

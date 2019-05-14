@@ -12,11 +12,12 @@ import java.util.List;
 
 
 public class MatchController extends Controller{
-    private List<String> usernames;
+    private List<String> activeUsernames;
     private Dispatcher dispatcher = new Dispatcher();
 
-    public MatchController(Game model, Server server){
+    public MatchController(Game model, Server server, List<String> usernames){
         super(model, server);
+        this.activeUsernames = usernames;
         startMatch();
     }
 

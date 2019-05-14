@@ -19,8 +19,8 @@ public class NetworkHandlerSocket extends NetworkHandler {
     private transient PrintWriter out;
     private transient Dispatcher dispatcher = new Dispatcher();
 
-    public NetworkHandlerSocket(String ip, int port){
-        super();
+    public NetworkHandlerSocket(Client client, String ip, int port){
+        super(client);
         try {
             socket = new Socket(ip, port);
             in = new Scanner(socket.getInputStream());
@@ -34,8 +34,8 @@ public class NetworkHandlerSocket extends NetworkHandler {
     }
 
 
-    public NetworkHandlerSocket(String token,  String ip, int port){
-        super(token);
+    public NetworkHandlerSocket(String token, Client client , String ip, int port){
+        super(token, client);
         try {
             socket = new Socket(ip, port);
             in = new Scanner(socket.getInputStream());
@@ -47,14 +47,6 @@ public class NetworkHandlerSocket extends NetworkHandler {
        }
     }
 
-    @Override
-    public void setToken(String token){
-        if (this.token == (null))
-            this.token = token;
-        else
-            throw new UnsupportedOperationException("Session token is already set");
-
-    }
 
     @Override
     public void update(VCEvent message) {
@@ -86,7 +78,7 @@ public class NetworkHandlerSocket extends NetworkHandler {
 
     @Override
     protected void listenToEvent(){
-        new Thread(() -> {
+        listener = new Thread(() -> {
                 while(true){
                     try {
                         retrieve();
@@ -97,7 +89,8 @@ public class NetworkHandlerSocket extends NetworkHandler {
                         Log.severe("Error during deserialization: " + e.getMessage());
                     }
                 }
-        }).start();
+        });
+        listener.start();
     }
 }
 

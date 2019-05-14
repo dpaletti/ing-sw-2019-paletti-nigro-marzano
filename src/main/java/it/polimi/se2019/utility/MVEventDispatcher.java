@@ -51,4 +51,11 @@ public class MVEventDispatcher implements Observer<MVEvent> {
         throw new UnsupportedOperationException("JoinMatchMakingEvent not supported");
     }
 
+    public void update(ConnectionRefusedEvent message){
+        throw new UnsupportedOperationException("ConnectionRefusedEvent not supported");
+    }
+
+    public void update(PausePlayerEvent message){
+        throw new UnsupportedOperationException("PausePlayerEvent not supported");
+    }
 }

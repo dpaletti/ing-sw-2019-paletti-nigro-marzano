@@ -8,6 +8,7 @@ import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.vc_events.JoinEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 import it.polimi.se2019.view.VCEvent;
+import it.polimi.se2019.view.vc_events.ReconnectionEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class MatchMakingController extends Controller {
         }
     }
 
-    private class Dispatcher extends VCEventDispatcher{
+    private class Dispatcher extends VCEventDispatcher {
         @Override
         public void update(JoinEvent message) {
             usernames.add(message.getUsername());
@@ -71,22 +72,26 @@ public class MatchMakingController extends Controller {
         }
 
         @Override
-        public void update(DisconnectionEvent disconnectionEvent){
-            usernames.remove(disconnectionEvent.getSource());
+        public void update(DisconnectionEvent disconnectionEvent) {
             model.usernameDeletion(disconnectionEvent.getSource());
+            if (usernames.remove(disconnectionEvent.getSource())) {
 
-            playerCount.set(playerCount.decrementAndGet());
-            Log.info(disconnectionEvent.getSource() + " just disconnected, players in match making; " + playerCount);
-            if(playerCount.get() < 3 && timerRunning.get()){
-                timerRunning.set(false);
-                Log.info("Timer stopped");
+                playerCount.set(playerCount.decrementAndGet());
+                Log.info(disconnectionEvent.getSource() + " just disconnected, players in match making; " + playerCount);
+                if (playerCount.get() < 3 && timerRunning.get()) {
+                    timerRunning.set(false);
+                    Log.info("Timer stopped");
+                }
             }
 
         }
 
-
-
+        @Override
+        public void update(ReconnectionEvent message) {
+            model.playerReconnection(message.getSource(), message.getTemporaryToken(), true);
+        }
     }
+
 
     public int getPlayerCount() {
         return playerCount.get();
