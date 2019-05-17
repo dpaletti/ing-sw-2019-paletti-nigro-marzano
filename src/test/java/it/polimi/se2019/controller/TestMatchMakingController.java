@@ -7,7 +7,7 @@ import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.VirtualView;
 import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
-import it.polimi.se2019.view.vc_events.JoinEvent;
+import it.polimi.se2019.view.vc_events.VcJoinEvent;
 import it.polimi.se2019.view.VCEvent;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class TestMatchMakingController {
     @Mock
     private VirtualView virtualView;
     @Mock
-    private JoinEvent join;
+    private VcJoinEvent join;
     @Mock
     private DisconnectionEvent leave;
     @Mock
@@ -37,7 +37,7 @@ public class TestMatchMakingController {
     private Game model;
     @Mock
     private Server server;
-    private List<JoinEvent> joinEvents = new ArrayList<>();
+    private List<VcJoinEvent> vcJoinEvents = new ArrayList<>();
 
 
 
@@ -45,12 +45,12 @@ public class TestMatchMakingController {
     public void beforeTest(){
         matchMakingController = new MatchMakingController(model, server);
         virtualView.register(matchMakingController);
-        joinEvents.add(new JoinEvent("tok1", "username1"));
-        joinEvents.add(new JoinEvent("tok2", "username2"));
-        joinEvents.add(new JoinEvent("tok3", "username3"));
-        joinEvents.add(new JoinEvent("tok4", "username4"));
-        joinEvents.add(new JoinEvent("tok5", "username5"));
-        joinEvents.add(new JoinEvent("tok6", "username6"));
+        vcJoinEvents.add(new VcJoinEvent("tok1", "username1"));
+        vcJoinEvents.add(new VcJoinEvent("tok2", "username2"));
+        vcJoinEvents.add(new VcJoinEvent("tok3", "username3"));
+        vcJoinEvents.add(new VcJoinEvent("tok4", "username4"));
+        vcJoinEvents.add(new VcJoinEvent("tok5", "username5"));
+        vcJoinEvents.add(new VcJoinEvent("tok6", "username6"));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class TestMatchMakingController {
             assertEquals(matchMakingController.getPlayerCount(), i);
             assertFalse(matchMakingController.isMatchMade());
             assertFalse(matchMakingController.isTimerRunning());
-            matchMakingController.update(joinEvents.get(i));
+            matchMakingController.update(vcJoinEvents.get(i));
         }
 
     }
@@ -71,7 +71,7 @@ public class TestMatchMakingController {
             assertEquals(matchMakingController.getPlayerCount(), i);
             assertFalse(matchMakingController.isMatchMade());
             assertTrue(matchMakingController.isTimerRunning());
-            matchMakingController.update(joinEvents.get(i));
+            matchMakingController.update(vcJoinEvents.get(i));
         }
         assertTrue(matchMakingController.isMatchMade());
         assertFalse(virtualView.getObservers().contains(matchMakingController));

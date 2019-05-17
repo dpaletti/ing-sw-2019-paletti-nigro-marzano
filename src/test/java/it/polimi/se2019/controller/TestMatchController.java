@@ -4,7 +4,7 @@ import it.polimi.se2019.model.Game;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
-import it.polimi.se2019.view.vc_events.JoinEvent;
+import it.polimi.se2019.view.vc_events.VcJoinEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +31,7 @@ public class TestMatchController {
         usernames.add("username1");
         usernames.add("username2");
         usernames.add("username3");
-        matchController = new MatchController(model, server);
+        matchController = new MatchController(model, server, usernames);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -46,6 +46,6 @@ public class TestMatchController {
 
     @Test
     public void testJoin(){
-        matchController.update(new JoinEvent("test source", "test username"));
+        matchController.update(new VcJoinEvent("test source", "test username"));
     }
 }

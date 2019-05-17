@@ -1,13 +1,10 @@
 package it.polimi.se2019.network;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import it.polimi.se2019.utility.*;
 import it.polimi.se2019.view.VCEvent;
-import it.polimi.se2019.view.vc_events.JoinEvent;
-import org.omg.PortableServer.THREAD_POLICY_ID;
+import it.polimi.se2019.view.vc_events.VcJoinEvent;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -56,7 +53,7 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
 
 
         @Override
-        public void update(JoinEvent message){
+        public void update(VcJoinEvent message){
             submit(message);
         }
 
@@ -94,6 +91,7 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
         }catch (NullPointerException e){
             Log.info(e.getMessage());
             listener.interrupt();
+            System.exit(0);
         }
     }
 

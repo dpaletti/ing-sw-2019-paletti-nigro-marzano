@@ -71,7 +71,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     private class Dispatcher extends MVEventDispatcher{
 
         @Override
-        public void update(JoinMatchMakingEvent message) {
+        public void update(MvJoinEvent message) {
                 Log.fine("Here I am");
                 biTokenUsername.add(new Pair<>(message.getDestination(), message.getUsername()));
                 sem.release();
@@ -103,11 +103,36 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         }
 
         @Override
-        public void update(ConnectionRefusedEvent message){
-            Log.fine("Refusing connection");
-            Connection connection = getConnectionOnId(message.getTemporaryToken());
-            submit(connection, message);
-            connections.remove(connection);
+        public void update(MvReconnectionEvent message) {
+            Log.fine("handling reconnection " + message);
+            Connection connection = getConnectionOnId(message.getDestination());
+            Connection oldConnection = getConnectionOnId(message.getOldToken());
+            String username;
+            try {
+                username = biTokenUsername.getSecond(message.getOldToken());
+            }catch (NullPointerException e){
+                submit(connection, new ConnectionRefusedEvent(message.getDestination(), "You got an invalid token"));
+                sem.release();
+                return;
+            }
+            Log.severe("Here I am");
+            biTokenUsername.remove(new Pair<>(message.getOldToken(), username));
+            if(message.isMatchMaking()) {
+                Log.fine("Refusing connection");
+                submit(connection, new ConnectionRefusedEvent(message.getDestination(), "Cannot reconnect during matchmaking"));
+                if (!connections.remove(connection)) {
+                    Log.severe("Cannot find connection");
+                } else if (!connections.remove(oldConnection)) {
+                    Log.severe("Cannot find old connection");
+                }
+            } else{
+                connection.reconnect((List<MVEvent>) oldConnection.getBufferedEvents());
+                if(connections.remove(oldConnection)){
+                    Log.severe("Cannot find oldConnection");
+                }
+                biTokenUsername.add(new Pair<>(message.getDestination(), username));
+                Log.fine(username + " just reconnected");
+            }
             sem.release();
         }
     }
@@ -145,7 +170,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
     public void startListening (Connection connection){
         if(!isMatchMaking){
-
+                //TODO
         }
         Log.fine("Start listening on token: " + connection.getToken());
         try {
@@ -177,7 +202,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             if(c.getToken().equals(id))
                 return c;
         }
-        throw new NullPointerException("Did not find any connection with " + id + " as identification");
+        return null;
     }
 
     public String generateToken(){

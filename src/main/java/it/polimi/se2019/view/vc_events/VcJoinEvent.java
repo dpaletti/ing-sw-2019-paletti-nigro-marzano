@@ -3,16 +3,16 @@ package it.polimi.se2019.view.vc_events;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
 
-public class ReconnectionEvent extends VCEvent {
-    private String temporaryToken;
+public class VcJoinEvent extends VCEvent {
+    private String username;
 
-    public ReconnectionEvent(String source, String temporaryToken){
+    public VcJoinEvent(String source, String username){
         super(source);
-        this.temporaryToken = temporaryToken;
+        this.username = username;
     }
 
-    public String getTemporaryToken() {
-        return temporaryToken;
+    public String getUsername(){
+        return username;
     }
 
     @Override

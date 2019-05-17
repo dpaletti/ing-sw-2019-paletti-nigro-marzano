@@ -5,10 +5,10 @@ import it.polimi.se2019.network.Server;
 import it.polimi.se2019.network.Settings;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.vc_events.JoinEvent;
+import it.polimi.se2019.view.vc_events.VcJoinEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 import it.polimi.se2019.view.VCEvent;
-import it.polimi.se2019.view.vc_events.ReconnectionEvent;
+import it.polimi.se2019.view.vc_events.VcReconnectionEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,13 +37,14 @@ public class MatchMakingController extends Controller {
         try {
             message.handle(dispatcher);
         }catch (UnsupportedOperationException e){
+            //this is the only controller registered on matchMaking thus it cannot receive unsupported events
             throw new UnsupportedOperationException("MatchMaking controller: " + e.getMessage(), e);
         }
     }
 
     private class Dispatcher extends VCEventDispatcher {
         @Override
-        public void update(JoinEvent message) {
+        public void update(VcJoinEvent message) {
             usernames.add(message.getUsername());
             model.newPlayerInMatchMaking(message.getSource(), message.getUsername());
             //username uniqueness is checked client side
@@ -87,8 +88,8 @@ public class MatchMakingController extends Controller {
         }
 
         @Override
-        public void update(ReconnectionEvent message) {
-            model.playerReconnection(message.getSource(), message.getTemporaryToken(), true);
+        public void update(VcReconnectionEvent message) {
+            model.playerReconnection(message.getSource(), message.getOldToken(), true);
         }
     }
 
@@ -115,7 +116,7 @@ public class MatchMakingController extends Controller {
         List<String> actualUsernames = new ArrayList<>(usernames);
         actualUsernames.remove("*");
         model.closeMatchMaking(actualUsernames);
-        server.addController(new MatchController(model, server));
+        server.addController(new MatchController(model, server, actualUsernames));
         server.addController(new TurnController(model, server));
         server.removeController(this);
 

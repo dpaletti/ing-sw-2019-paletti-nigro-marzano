@@ -28,4 +28,13 @@ public class ConnectionBroadcast implements Connection{
         throw new UnsupportedOperationException("Cannot get token on broadcast connection");
     }
 
+    @Override
+    public List<MVEvent> getBufferedEvents() {
+        throw new UnsupportedOperationException("Cannot get event buffer on broadcast connection");
+    }
+
+    @Override
+    public void disconnect() {
+        throw new UnsupportedOperationException("Cannot disconnect a broadcast connection");
+    }
 }

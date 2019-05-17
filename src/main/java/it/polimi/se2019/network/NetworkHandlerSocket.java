@@ -3,7 +3,7 @@ package it.polimi.se2019.network;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.VCEventDispatcher;
-import it.polimi.se2019.view.vc_events.JoinEvent;
+import it.polimi.se2019.view.vc_events.VcJoinEvent;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
 
@@ -60,7 +60,7 @@ public class NetworkHandlerSocket extends NetworkHandler {
     private class Dispatcher extends VCEventDispatcher {
 
         @Override
-        public void update(JoinEvent message){
+        public void update(VcJoinEvent message){
             submit(message);
         }
 

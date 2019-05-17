@@ -2,7 +2,7 @@ package it.polimi.se2019.utility;
 
 import it.polimi.se2019.view.vc_events.*;
 import it.polimi.se2019.view.VCEvent;
-import it.polimi.se2019.view.vc_events.ReconnectionEvent;
+import it.polimi.se2019.view.vc_events.VcReconnectionEvent;
 
 public class VCEventDispatcher implements Observer<VCEvent>{
 
@@ -11,7 +11,7 @@ public class VCEventDispatcher implements Observer<VCEvent>{
         throw new UnsupportedOperationException("Generic VC Event not supported");
     }
 
-    public void update(JoinEvent message){
+    public void update(VcJoinEvent message){
         throw new UnsupportedOperationException("Join Event not supported");
     }
 
@@ -23,7 +23,7 @@ public class VCEventDispatcher implements Observer<VCEvent>{
         throw new UnsupportedOperationException("ChosenEffect event not supported");
     }
 
-    public void update(ReconnectionEvent message){
+    public void update(VcReconnectionEvent message){
         throw new UnsupportedOperationException("Reconnection event not supported");
     }
 

@@ -104,7 +104,7 @@ public class Server implements ServerInterface {
             return ((ConnectionRMI) virtualView.getConnectionOnId(token)).pull();
         } catch (NullPointerException e) {
             Log.fine(e.getMessage());
-            throw new NullPointerException(e.getMessage() + "You detain an invalid token");
+            throw new NullPointerException("You detain an invalid token");
         }
     }
 
@@ -114,7 +114,7 @@ public class Server implements ServerInterface {
             ((ConnectionRMI) virtualView.getConnectionOnId(token)).push(vcEvent);
         }catch (NullPointerException e){
             Log.fine(e.getMessage());
-            throw new NullPointerException(e.getMessage() + " You detain an invalid token");
+            throw new NullPointerException("You detain an invalid token");
         }
     }
 

@@ -6,12 +6,17 @@ import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 
 public class ConnectionRMI implements Connection{
     private SynchronousQueue<VCEvent> in = new SynchronousQueue<>();
     private SynchronousQueue<MVEvent> out = new SynchronousQueue<>();
     private boolean remoteClientRetrieving = false;
+    private List<MVEvent> eventBuffer = new ArrayList<>();
+    private boolean disconnected = false;
+
 
     private CallbackInterface gameClient;
 
@@ -47,18 +52,32 @@ public class ConnectionRMI implements Connection{
     @Override
     public void submit(MVEvent mvEvent) {
         try {
-            if(!remoteClientRetrieving){
-                gameClient.setToken(token);
-                gameClient.listenToEvent();
-                remoteClientRetrieving = true;
+            if(!disconnected) {
+                if (!remoteClientRetrieving) {
+                    gameClient.setToken(token);
+                    gameClient.listenToEvent();
+                    remoteClientRetrieving = true;
+                }
+                out.put(mvEvent);
+                return;
             }
-            out.put(mvEvent);
+            eventBuffer.add(mvEvent);
         }catch (InterruptedException e){
             Log.severe(e.getMessage());
             Thread.currentThread().interrupt();
         }catch (RemoteException e){
             Log.severe("Cannot start remote event loop");
         }
+    }
+
+    @Override
+    public void disconnect() {
+        disconnected = true;
+    }
+
+    @Override
+    public List<MVEvent> getBufferedEvents() {
+        return new ArrayList<>(eventBuffer);
     }
 
     public MVEvent pull(){

@@ -1,5 +1,7 @@
 package it.polimi.se2019.model;
 
-public enum AmmoColour {
+import java.io.Serializable;
+
+public enum AmmoColour implements Serializable {
     RED, BLUE, YELLOW
 }

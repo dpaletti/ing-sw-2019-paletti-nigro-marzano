@@ -5,20 +5,14 @@ import it.polimi.se2019.view.MVEvent;
 
 public class ConnectionRefusedEvent extends MVEvent {
     private String cause;
-    private String temporaryToken;
 
-    public ConnectionRefusedEvent(String token, String temporaryToken, String cause){
+    public ConnectionRefusedEvent(String token, String cause){
         super(token);
-        this.temporaryToken = temporaryToken;
         this.cause = cause;
     }
 
     public String getCause() {
         return cause;
-    }
-
-    public String getTemporaryToken() {
-        return temporaryToken;
     }
 
     @Override

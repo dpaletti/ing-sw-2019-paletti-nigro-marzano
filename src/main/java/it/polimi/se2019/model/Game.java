@@ -1,13 +1,10 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.model.mv_events.JoinMatchMakingEvent;
-import it.polimi.se2019.model.mv_events.MatchMakingEndEvent;
+import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.utility.BiSet;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Pair;
 import it.polimi.se2019.view.MVEvent;
-import it.polimi.se2019.model.mv_events.UsernameDeletionEvent;
-import it.polimi.se2019.view.VCEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,7 @@ public class Game extends Observable<MVEvent> {
     private static Game instance;
     private List<Player> players;
     private List<Turn> turns;
-    private BiSet<FigureColour, String> userLookup;
+    private BiSet<FigureColour, String> userLookup = new BiSet<>();
     private Map<String, Effect> effectMap;
 
     // TODO Mapping between figures and usernames coming from controller
@@ -34,13 +31,11 @@ public class Game extends Observable<MVEvent> {
     }
 
     public void newPlayerInMatchMaking(String token, String username){
-        notify(new JoinMatchMakingEvent(token, username));
+        notify(new MvJoinEvent(token, username));
     }
 
-    public void playerReconnection(String token, String temporaryToken, boolean isMatchMaking){
-        if(isMatchMaking) {
-            notify(new ConnectionRefusedEvent(token, temporaryToken,"Cannot reconnect during match-making, your match may have ended"));
-        }
+    public void playerReconnection(String token, String oldToken, boolean isMatchMaking){
+        notify(new MvReconnectionEvent(token, oldToken, isMatchMaking));
     }
 
     public void usernameDeletion(String username){
@@ -63,9 +58,8 @@ public class Game extends Observable<MVEvent> {
 
     public void pausePlayer(String username){
         //When a player disconnects or times out while playing needs to be paused
-        //upone reconnection it will be unpaused
+        //upon reconnection it will be un-paused
         //throws exception when pausing an already paused player
-        notify(new PausePlayerEvent(username));
         //TODO implement
     }
 

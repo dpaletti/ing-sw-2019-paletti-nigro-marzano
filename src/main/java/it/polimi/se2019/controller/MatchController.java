@@ -2,11 +2,13 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.network.Server;
+import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.*;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
-import it.polimi.se2019.view.vc_events.JoinEvent;
+import it.polimi.se2019.view.vc_events.VcJoinEvent;
+import it.polimi.se2019.view.vc_events.VcReconnectionEvent;
 
 import java.util.List;
 
@@ -30,7 +32,8 @@ public class MatchController extends Controller{
         try {
             message.handle(dispatcher);
         }catch (UnsupportedOperationException e){
-            throw new UnsupportedOperationException("Match Controller dispatcher: " + e.getMessage(), e);
+            //ignore unsupported events
+            Log.fine("MatchController ignored: " + JsonHandler.serialize(message));
         }
     }
 
@@ -43,10 +46,11 @@ public class MatchController extends Controller{
         }
 
         @Override
-        public void update(JoinEvent message) {
-            model.unpausePlayer(message.getSource());
+        public void update(VcReconnectionEvent message) {
+            Log.fine("Handling " + message);
+            model.unpausePlayer(message.getUsername());
+            model.playerReconnection(message.getSource(), message.getOldToken(), false);
         }
-
     }
 
 }

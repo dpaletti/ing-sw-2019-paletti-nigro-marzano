@@ -9,6 +9,8 @@ import it.polimi.se2019.view.VCEvent;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConnectionSocket implements Connection{
@@ -16,6 +18,9 @@ public class ConnectionSocket implements Connection{
     private PrintWriter out;
 
     private String token;
+
+    private boolean disconnected = false;
+    private List<MVEvent> eventBuffer = new ArrayList<>();
 
     public ConnectionSocket(String token, Socket socket){
         try{
@@ -34,7 +39,11 @@ public class ConnectionSocket implements Connection{
 
     @Override
     public void submit(MVEvent mvEvent) {
-        out.println(JsonHandler.serialize(mvEvent));
+
+        if(!disconnected)
+            out.println(JsonHandler.serialize(mvEvent));
+        else
+            eventBuffer.add(mvEvent);
     }
 
     @Override
@@ -47,4 +56,13 @@ public class ConnectionSocket implements Connection{
         }
     }
 
+    @Override
+    public void disconnect() {
+        disconnected = true;
+    }
+
+    @Override
+    public List<MVEvent> getBufferedEvents() {
+        return new ArrayList<>(eventBuffer);
+    }
 }

@@ -1,11 +1,12 @@
 package it.polimi.se2019.network;
 
+import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Observer;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
-import it.polimi.se2019.view.vc_events.JoinEvent;
-import it.polimi.se2019.view.vc_events.ReconnectionEvent;
+import it.polimi.se2019.view.vc_events.VcJoinEvent;
+import it.polimi.se2019.view.vc_events.VcReconnectionEvent;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 
 public abstract class NetworkHandler extends Observable<MVEvent> implements Observer<VCEvent>, Serializable{
     protected transient String token;
+    protected transient String oldToken;
     protected transient Client client;
     protected transient boolean reconnection;
     protected transient Thread listener;
@@ -30,21 +32,26 @@ public abstract class NetworkHandler extends Observable<MVEvent> implements Obse
         client.writeToken(token);
     }
 
-    public void reconnect(String temporaryToken){
+    public void setOldToken(String oldToken){
+        this.oldToken = oldToken;
+    }
+
+    public void reconnect(String newToken){
+        setToken(newToken);
         //for sync purposes the received token needs to be sent along with the old (but still valid) one
-        submit(new ReconnectionEvent(token, temporaryToken));
+        submit(new VcReconnectionEvent(newToken, oldToken, client.getUsername())); //token here represents old token
     }
 
 
     public void chooseUsername(String username){
-        update(new JoinEvent(token, username));
+        update(new VcJoinEvent(token, username));
     }
 
 
     public NetworkHandler(String token, Client client){
         //reconnection after client crash
         this(client);
-        this.token = token;
+        setOldToken(token);
         reconnection = true;
     }
 
