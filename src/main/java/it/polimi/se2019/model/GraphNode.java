@@ -1,5 +1,4 @@
 package it.polimi.se2019.model;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,15 +59,20 @@ public class GraphNode<T> {
     }
 
     //Returns the graphNode with the input set as a node if that is in the subgraph of the graphnode, returns null otherwise
-    public GraphNode<T> getGraphNode(Set<T> tSet) throws ClassNotFoundException{
+    public GraphNode<T> getGraphNode(Set<T> tSet){
         if(node.equals(tSet)){
             return this;
-        }else{
-            while(children.iterator().hasNext()){
-                return children.iterator().next().getGraphNode(tSet);
+        }else if(!children.isEmpty()) {
+            for (GraphNode<T> graphNode : children) {
+                try {
+                    return graphNode.getGraphNode(tSet);
+                }catch (NullPointerException e){
+                    /*Cathing this exception to let the search of the node continue, if there isn't such node, at last will be thrown the exception anyway*/
+                }
             }
         }
-        throw new ClassNotFoundException("There is not such node in the subGraph");
+        throw new NullPointerException();
+
     }
 
 
@@ -79,18 +83,15 @@ public class GraphNode<T> {
         this.addChild(child);
         return child;
     }
-    //Safely removed a node with the node inserted, the root has to be passed
-    public void remove (Set<T> set) throws ClassNotFoundException{
-        if(this.isIn(set)){
-            GraphNode<T> obj= this.getGraphNode(set);
-            for (GraphNode<T> parent: obj.getParents()){
-                parent.removeChild(obj);
-            }
-            for (GraphNode<T> child : obj.getChildren()){
-                child.removeParent(obj);
-            }
-        }else{
-            throw new ClassNotFoundException("There is not such node in the subGraph");
+    //Safely removed a node
+    public void remove (GraphNode<T> graphNode){
+        graphNode.getParents().forEach( parent -> parent.getChildren().removeIf(child -> (child.equals(graphNode))));
+        graphNode.getChildren().forEach(child -> child.getParents().removeIf(parent -> (parent.equals(graphNode))));
+    }
+
+    public void removeAll(Set<GraphNode<T>> set){
+        for (GraphNode<T> graphNode : set){
+            this.remove(graphNode);
         }
     }
 
@@ -107,4 +108,5 @@ public class GraphNode<T> {
     public boolean isEmpty(){
         return node.isEmpty();
     }
+
 }

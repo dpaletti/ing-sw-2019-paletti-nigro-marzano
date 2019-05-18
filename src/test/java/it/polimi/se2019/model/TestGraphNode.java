@@ -1,7 +1,6 @@
 package it.polimi.se2019.model;
 
 import org.junit.Test;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,34 +37,33 @@ public class TestGraphNode {
             stringSet.add("Lulic");
             child.getNode().add("Lulic");
             child.addParent(parent);
-            assertEquals(true,parent.isIn(stringSet));
+            assertTrue(parent.isIn(stringSet));
             stringSet.clear();
             stringSet.add("71");
-            assertEquals(false,parent.isIn(stringSet));
+            assertFalse(parent.isIn(stringSet));
         }
 
 
        @Test
-       public void testGetGraphNode(){
+       public void testGetGraphNode() {
 
-            try {
-                stringSet.add("Lulic");
-                child.getNode().add("Lulic");
-                child.addParent(parent);
-                assertEquals(child, parent.getGraphNode(stringSet));
-            }catch (ClassNotFoundException c){
-                fail();
-            }
-
-            try {
-                stringSet.clear();
-                stringSet.add("71");
-                child= parent.getGraphNode(stringSet);
-            }catch (ClassNotFoundException c){
-                assertTrue(true);
-            }
-
+           try {
+               stringSet.add("Lulic");
+               child.getNode().add("Lulic");
+               child.addParent(parent);
+               assertEquals(child, parent.getGraphNode(stringSet));
+           } catch (NullPointerException c) {
+               fail();
+           }
        }
+
+      @Test (expected = NullPointerException.class)
+       public void testGetGraphNodeException(){
+            stringSet.add("71");
+            child.getNode().add("Lulic");
+            child.addParent(parent);
+            parent.getGraphNode(stringSet);
+      }
 
        @Test
         public void testInsert(){
@@ -84,33 +82,28 @@ public class TestGraphNode {
         public void testRemoveChild(){
             parent.addChild(child);
             parent.removeChild(child);
-            assertEquals(true,parent.getChildren().isEmpty());
+            assertTrue(parent.getChildren().isEmpty());
         }
 
      @Test
      public void testRemoveParent(){
             child.addParent(parent);
             child.removeParent(parent);
-            assertEquals(true,child.getParents().isEmpty());
+            assertTrue(child.getParents().isEmpty());
      }
+
 
      @Test
      public void testRemove(){
             stringSet.add("Lulic");
             child=parent.insert(stringSet);
             try {
-                parent.remove(stringSet);
-                assertEquals(true,parent.getChildren().isEmpty());
-            }catch (ClassNotFoundException c){
+                GraphNode<String> obj= parent.getGraphNode(stringSet);
+                parent.remove(obj);
+                assertTrue(parent.getChildren().isEmpty());
+            }catch (NullPointerException c){
                 fail();
             }
-
-            try {
-                parent.remove(stringSet);
-            }catch (ClassNotFoundException c){
-                assertTrue(true);
-            }
-
 
      }
 
