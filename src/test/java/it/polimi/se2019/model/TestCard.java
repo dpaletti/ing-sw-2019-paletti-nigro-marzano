@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TestCard {
-    private Weapon cyberblade= Factory.createWeapon("/Users/max/IdeaProjects/copy/ing-sw-2019-paletti-nigro-marzano/src/main/resources/weapons/Cyberblade.json");
+    private Weapon cyberblade= Factory.createWeapon(Weapon.class.getClassLoader().getResource("weapons/Cyberblade.json").getPath());
 
     @Test
     public void testGenerateGraph(){
