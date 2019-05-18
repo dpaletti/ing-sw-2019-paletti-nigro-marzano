@@ -153,33 +153,9 @@ public class Player extends Observable<Action> {
         return(weapon.getStaticDefinition());
         }
 
-    public void useWeapon(Weapon weapon){
-        FigureToAttackEvent figureToAttackEvent =new FigureToAttackEvent(Game.getInstance().colourToUser(figure.getColour()));
-        EffectToApplyEvent effectToApplyEvent=new EffectToApplyEvent(Game.getInstance().colourToUser(figure.getColour()));
-        Set<String> applicableEffects=new HashSet<>();
-        Set<FigureColour> attackableFigureColours=new HashSet<>();
-        Effect chosenEffect=new Effect();
-        Figure chosenTarget=figure; //temporary, will be updated after vc events are implemented
-        String target=null;
-        Set<Pair<Effect, Set<Figure>>> targetSet= figure.generateWeaponEffect(weapon.getStaticDefinition());
-
-        for (Pair<Effect, Set<Figure>> counter: targetSet){
-            applicableEffects.add(counter.getFirst().getName());
-        }
-        effectToApplyEvent.setApplicableEffects(applicableEffects);
-        Game.getInstance().sendMessage(effectToApplyEvent);
-        //TODO: vc_events returns chosen effect
-
-        for (Pair<Effect, Set<Figure>> counter: targetSet){
-            if(counter.getFirst().equals(chosenEffect)) {
-                for (Figure figureCounter : counter.getSecond()) {
-                    attackableFigureColours.add(figureCounter.getColour());
-                }
-            }
-        }
-        figureToAttackEvent.setPlayersToAttack(attackableFigureColours);
-        Game.getInstance().sendMessage(figureToAttackEvent);
-        //TODO: vc_events returns chosen target
+    public void useWeapon(Weapon weapon, Player target, String effectName){
+        Effect effect= Game.getInstance().getEffectMap().get(effectName);
+        target.getFigure().shoot(effect, getFigure().getColour());
         weapon.setLoaded(false);
     }
 
@@ -194,6 +170,8 @@ public class Player extends Observable<Action> {
     public void teleport (Point position){
         figure.teleport(position);
     }
+
+    public void run (Point destination) {figure.run(destination);}
 
     public void grabStuff(){
         figure.grab();

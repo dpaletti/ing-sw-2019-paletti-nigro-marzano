@@ -45,6 +45,7 @@ public class Figure {
         return turn;
     }
 
+
     public void damage(Figure target){
         target.player.addTear(colour);
         target.player.updatePlayerDamage();
@@ -113,6 +114,13 @@ public class Figure {
     public void teleport (Point teleportPosition){ //only called in case of Teleport Event
         if (boundaryChecker(this, teleportPosition)){
             position= teleportPosition;
+            tile=GameMap.getMap().get(position);
+        }
+    }
+
+    public void run (Point destination){
+        if ((findDistance(destination)<=3)&&(boundaryChecker(this, destination))){
+            position=destination;
             tile=GameMap.getMap().get(position);
         }
     }
@@ -539,4 +547,10 @@ public class Figure {
         }
         return targetSet;
     } //missing previous
+
+    public void shoot (Effect effect, FigureColour figureColour){
+        for (Action action: effect.getActions()){
+
+        }
+    }
 }

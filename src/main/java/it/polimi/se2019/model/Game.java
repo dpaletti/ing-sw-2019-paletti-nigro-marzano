@@ -123,17 +123,23 @@ public class Game extends Observable<MVEvent> {
         this.weaponDeck = weaponDeck;
     }
 
-    public static void setInstance(Game instance) { Game.instance = instance; }
+    public static void setInstance(Game instance) {
+        Game.instance = instance;
+    }
 
-    public void setPlayers(List<Player> players) { this.players = players; }
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
 
-    public void setTurns(List<Turn> turns) { this.turns = turns; }
+    public void setTurns(List<Turn> turns) {
+        this.turns = turns;
+    }
 
     public void sendMessage (MVEvent message){
         notify(message);
     }
 
-    public Player colourToPlayer (FigureColour figureColour){
+    private Player colourToPlayer (FigureColour figureColour){
         Player playerOfSelectedColour= new Player();
         for (Player playerCounter: players){
             if (playerCounter.getFigure().getColour().equals(figureColour)){
@@ -148,12 +154,57 @@ public class Game extends Observable<MVEvent> {
         return userLookup.getSecond(figureColour);
     }
 
+    public Player userToPlayer (String username){
+        return colourToPlayer(userLookup.getFirst(username));
+    }
+
+    public Weapon nameToWeapon (String weaponName){
+        return null;
+    } //TODO: implement, Weapon should contain Map <String, Weapon>
+
     public void deathHandler(){
 
     }
 
-    public void movePlayer(String username, Point teleportPosition){
-        Player playerToMove= colourToPlayer(userLookup.getFirst(username));
+    //exposed methods, used by controller
+
+    public void teleportPlayer (String username, Point teleportPosition){
+        Player playerToMove= userToPlayer(username);
         playerToMove.teleport(teleportPosition);
     }
+
+    public void reloadWeapon (String username, String weaponName){
+        Player playerReloading= userToPlayer(username);
+        if (weaponName.equals(playerReloading.getFirstWeapon().getName())){
+            playerReloading.reload(playerReloading.getFirstWeapon());
+        }
+        else if (weaponName.equals(playerReloading.getSecondWeapon().getName())){
+            playerReloading.reload(playerReloading.getSecondWeapon());
+        }
+        else if (weaponName.equals(playerReloading.getThirdWeapon().getName())){
+            playerReloading.reload(playerReloading.getThirdWeapon());
+        }
+    }
+
+    public void run (String username, Point destination){
+        Player playerRunning= userToPlayer(username);
+        playerRunning.run(destination);
+    }
+
+    public void grab (String username){
+        Player playerGrabbing= userToPlayer(username);
+        playerGrabbing.grabStuff();
+    }
+
+    public void shoot (String username, String weapon, ArrayList<String> effects, ArrayList<ArrayList<String>> targetNames){
+        Player shooter= userToPlayer(username);
+        for (ArrayList<String> targetCounter: targetNames){
+            int actionIndex= targetNames.indexOf(targetCounter);
+            for (String counter: targetCounter){
+                Player target= userToPlayer(counter);
+                shooter.useWeapon(nameToWeapon(weapon), target, effects.get(actionIndex));
+            }
+        }
+    }
+
 }

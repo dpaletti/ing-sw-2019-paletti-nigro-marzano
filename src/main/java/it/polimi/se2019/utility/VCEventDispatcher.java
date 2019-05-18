@@ -30,4 +30,24 @@ public class VCEventDispatcher implements Observer<VCEvent>{
     public void update (DefineTeleportPositionEvent message){
         throw new UnsupportedOperationException("DefineTeleportPosition event not supported");
     }
+
+    public void update (ReloadEvent message){
+        throw new UnsupportedOperationException("Reload event not supported");
+    }
+
+    public void update (MoveEvent message){
+        throw new UnsupportedOperationException("Move event not supported");
+    }
+
+    public void update (GrabEvent message){
+        throw new UnsupportedOperationException("Grab event not supported");
+    }
+
+    public void update (ChosenTargetAndEffectEvent message){
+        throw new UnsupportedOperationException("Chosen Target Event not supported");
+    }
+
+    public void update (ChosenWeaponEvent message){
+        throw new UnsupportedOperationException("Chosen Weapon Event not supported");
+    }
 }
