@@ -107,6 +107,24 @@ public class TestGraphNode {
 
      }
 
+     @Test
+     public void testSetChildren(){
+            Set<GraphNode<String>> children= new HashSet<>();
+            children.add(child);
+            parent.setChildren(children);
+            assertEquals(children,parent.getChildren());
+     }
+
+     @Test
+     public void testRemoveAll(){
+         stringSet.add("Lulic");
+         child=parent.insert(stringSet);
+         Set<GraphNode<String>> set= new HashSet<>();
+         set.add(child);
+         parent.removeAll(set);
+         assertTrue(!parent.isIn(stringSet));
+     }
+
 
 
 }

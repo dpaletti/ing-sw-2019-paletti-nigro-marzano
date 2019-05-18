@@ -25,14 +25,14 @@ public class TestFactory {
 
     @Test
     public void TestCreateWeapon(){
-        Weapon Cyberblade= Factory.createWeapon("/Users/max/IdeaProjects/copy/ing-sw-2019-paletti-nigro-marzano/src/main/resources/weapons/Cyberblade.json");
+        Weapon Cyberblade= Factory.createWeapon(Weapon.class.getClassLoader().getResource("weapons/Cyberblade.json").getPath());
         assertEquals("Cyberblade" , Cyberblade.getName());
         assertEquals(invalidCombinations, Cyberblade.getInvalidCombinations());
     }
 
    @Test
    public void TestCreatePowerUp(){
-        PowerUp teleportRed= Factory.createPowerUp("/Users/max/IdeaProjects/copy/ing-sw-2019-paletti-nigro-marzano/src/main/resources/PowerUps/TeleportRed.json");
+        PowerUp teleportRed= Factory.createPowerUp(PowerUp.class.getClassLoader().getResource("powerUps/TeleportRed.json").getPath());
         assertEquals("Teleport",teleportRed.getName());
         assertEquals(cardColour.getColour(), teleportRed.getCardColour().getColour());
    }

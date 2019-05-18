@@ -22,4 +22,11 @@ public class TestCard {
         }
         assertEquals(stringSet,effectNames);
     }
+
+   @Test(expected = UnsupportedOperationException.class)
+    public void testGenerateGraphException(){
+       cyberblade.generateGraph();
+       cyberblade.generateGraph();
+   }
+
 }

@@ -25,10 +25,6 @@ public abstract class Card {
         return weaponEffects;
     }
 
-    public void setWeaponEffects(Set<WeaponEffect> weaponEffects) {
-        this.weaponEffects = weaponEffects;
-    }
-
     public Ammo getCardColour() {
         return cardColour;
     }
