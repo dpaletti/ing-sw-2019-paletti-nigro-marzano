@@ -5,7 +5,7 @@ import it.polimi.se2019.view.View;
 import it.polimi.se2019.view.ViewCLI;
 import it.polimi.se2019.view.ViewGUI;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -80,6 +80,9 @@ public class Client {
             Log.severe("could not write token to file");
         }
         networkHandler.chooseUsername(username);
+        usernames.add(username);
+        usernames.remove("*");
+        view.matchMaking(usernames);
     }
 
     private String readToken(){
@@ -112,8 +115,8 @@ public class Client {
     public static void main(String[] args) {
 
         Client client = new Client();
-        TOKEN_FILE_PATH = Paths.get(client.getClass().getClassLoader().getResource("config/token").getPath());
-        USERNAME_FILE_PATH = Paths.get(client.getClass().getClassLoader().getResource("config/username").getPath());
+        TOKEN_FILE_PATH = Paths.get(Client.class.getClassLoader().getResource("config/token").getPath());
+        USERNAME_FILE_PATH = Paths.get(Client.class.getClassLoader().getResource("config/username").getPath());
 
         Log.input("Preferred view mode (GUI/CLI): [default = GUI] ");
 
@@ -127,7 +130,6 @@ public class Client {
         String token = null;
         if(reconnecting)
             token = client.readToken();
-        Log.fine("Read token: " + token);
         if(!viewMode.equals("CLI"))
             client.view = new ViewGUI(client);
         else

@@ -5,9 +5,15 @@ import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.view.MVEvent;
 
 public class UsernameDeletionEvent extends MVEvent {
+    private String username;
 
-    public UsernameDeletionEvent(String username){
-        super(username);
+    public UsernameDeletionEvent(String destination, String username){
+        super(destination);
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     @Override

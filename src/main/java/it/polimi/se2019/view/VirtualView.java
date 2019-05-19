@@ -1,14 +1,16 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.mv_events.*;
+import it.polimi.se2019.network.Connection;
+import it.polimi.se2019.network.ConnectionBroadcast;
 import it.polimi.se2019.utility.*;
-import it.polimi.se2019.network.*;
-import it.polimi.se2019.utility.Observable;
-import it.polimi.se2019.utility.Observer;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,10 +23,6 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     private MVEventDispatcher dispatcher = new Dispatcher();
 
     private final BiSet<String, String> biTokenUsername = new BiSet<>(); //Pair<"token", "username">
-
-    private boolean isMatchMaking = true;
-
-
 
     private Semaphore sem = new Semaphore(1, true);
 
@@ -72,34 +70,28 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
         @Override
         public void update(MvJoinEvent message) {
-                Log.fine("Here I am");
-                biTokenUsername.add(new Pair<>(message.getDestination(), message.getUsername()));
-                sem.release();
+            biTokenUsername.add(new Pair<>(message.getDestination(), message.getUsername()));
+            List<Connection> toBroadcast = new ArrayList<>(connections);
+            toBroadcast.remove(getConnectionOnId(message.getDestination()));
+            ConnectionBroadcast connection = new ConnectionBroadcast(toBroadcast);
+            connection.submit(message);
+            sem.release();
+            Log.fine("Semaphore released");
         }
         @Override
         public void update(UsernameDeletionEvent message) {
-            if(biTokenUsername.containsFirst(message.getDestination())){
-                //disconnection after username selection
-                String username = biTokenUsername.getSecond(message.getDestination());
-                biTokenUsername.remove(new Pair<>(message.getDestination(), username));
-            }else
+            Log.fine("Deleting " + message.getUsername());
+            if(biTokenUsername.containsSecond(message.getUsername())) {
+                connections.remove(getConnectionOnId(biTokenUsername.getFirst(message.getUsername())));
+                biTokenUsername.removeSecond(message.getUsername());
+                submit(getConnectionOnId(message.getDestination()), message);
+            }
+            else {
+                connections.remove(connections.get(connections.size() - 1));
                 //disconnection during username choice
                 sem.release();
-            Connection connection = getConnectionOnId(message.getDestination());
-            connections.remove(connection);
-            Log.fine("Deleted player");
-        }
-
-        @Override
-        public void update(HandshakeEndEvent message){
-            Log.fine("Sending handshake end event");
-            submit(getConnectionOnId(message.getDestination()), message);
-        }
-
-        @Override
-        public void update(MatchMakingEndEvent message){
-            isMatchMaking = false;
-            submit(new ConnectionBroadcast(connections), message);
+                Log.fine("Semaphore released");
+            }
         }
 
         @Override
@@ -113,6 +105,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             }catch (NullPointerException e){
                 submit(connection, new ConnectionRefusedEvent(message.getDestination(), "You got an invalid token"));
                 sem.release();
+                Log.fine("Semaphore released");
                 return;
             }
             Log.severe("Here I am");
@@ -134,6 +127,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
                 Log.fine(username + " just reconnected");
             }
             sem.release();
+            Log.fine("Semaphore released");
         }
     }
 
@@ -143,11 +137,14 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             if(biTokenUsername.containsSecond(message.getDestination()))
                 //virtual view changes usernames in tokens while sending
                 //connections are identified by tokens
+                //this branch guards against events that already contain tokens
 
                 message.setDestination(biTokenUsername.getFirst(message.getDestination()));
             message.handle(dispatcher);
         }catch (UnsupportedOperationException e){
-            Log.severe(e.getMessage());
+            Log.fine("Ignoring and submitting: " + message);
+            //if an event cannot be handled is submitted to clients by default
+            submit(getConnectionOnId(message.getDestination()), message);
         }
     }
 
@@ -157,7 +154,6 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         //players are identified by usernames
 
         VCEvent vcEvent = connection.retrieve();
-        Log.fine(observers.toString());
         if(biTokenUsername.containsFirst(vcEvent.getSource()))
             vcEvent.setSource(biTokenUsername.getSecond(vcEvent.getSource()));
         notify(vcEvent);
@@ -169,18 +165,16 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
 
     public void startListening (Connection connection){
-        if(!isMatchMaking){
-                //TODO
-        }
-        Log.fine("Start listening on token: " + connection.getToken());
         try {
             //TODO try a login screen and move wait on another thread
             sem.acquire();
+            Log.fine("Semaphore acquired");
         } catch (InterruptedException e) {
             Log.severe(e.getMessage());
             Thread.currentThread().interrupt();
         }
             connections.add(connection);
+            Log.fine(connections.toString());
             executorService.submit(new EventLoop(connection));
             ArrayList<String> usernames = new ArrayList<>();
             usernames.add("*"); //wildcard username not assignable
@@ -193,7 +187,6 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
 
     public Connection getConnectionOnId(String id){
-        Log.fine("Getting connection  with id: " + id);
         if(id.equals("*"))
             return new ConnectionBroadcast(connections);
 

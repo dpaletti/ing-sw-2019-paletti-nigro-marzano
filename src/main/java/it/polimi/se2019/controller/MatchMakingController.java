@@ -3,28 +3,29 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.network.Settings;
-import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.vc_events.VcJoinEvent;
-import it.polimi.se2019.view.vc_events.DisconnectionEvent;
+import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
+import it.polimi.se2019.view.vc_events.DisconnectionEvent;
+import it.polimi.se2019.view.vc_events.VcJoinEvent;
 import it.polimi.se2019.view.vc_events.VcReconnectionEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.lang.Thread.sleep;
 
 public class MatchMakingController extends Controller {
     private AtomicInteger playerCount = new AtomicInteger(0);
     private AtomicBoolean matchMade = new AtomicBoolean(false);
     private AtomicBoolean timerRunning = new AtomicBoolean(false);
     private List<String> usernames = new CopyOnWriteArrayList<>();
-    private Timer timer = new Timer();
+    private Thread timer;
     private Dispatcher dispatcher = new Dispatcher();
+
 
     public MatchMakingController(Game model, Server server){
         super(model, server);
@@ -45,29 +46,35 @@ public class MatchMakingController extends Controller {
     private class Dispatcher extends VCEventDispatcher {
         @Override
         public void update(VcJoinEvent message) {
+            int period = Settings.MATCH_MAKING_TIMER/10;
             usernames.add(message.getUsername());
             model.newPlayerInMatchMaking(message.getSource(), message.getUsername());
-            //username uniqueness is checked client side
-            //join events are the only one on which tokens are exposed
-            //other events will contain a username as source
 
             playerCount.set(playerCount.addAndGet(1));
             Log.info("Players in match making: " + playerCount);
             if (playerCount.get() == 3) {
                 Log.fine("Timer started");
                 timerRunning.set(true);
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        closeMatchMaking();
-                    }
-                }, Settings.MATCH_MAKING_TIMER); //time in milliseconds
+
+               timer = new Thread(() ->{
+                    int counter = 0;
+                        try {
+                            while(counter < Settings.MATCH_MAKING_TIMER && !Thread.currentThread().isInterrupted()){
+                                model.timerTick(Settings.MATCH_MAKING_TIMER - counter);
+                                counter += period;
+                                sleep(period);
+                            }
+                            closeMatchMaking();
+                        }catch (InterruptedException e){
+                            Log.severe("MatchMaking timer interrupted");
+                            Thread.currentThread().interrupt();
+                }});
+               timer.start();
+
             }
-            //TODO make time interval configurable
             if (playerCount.get() == 5) {
                 timerRunning.set(false);
-                timer.cancel();
-                timer.purge();
+                timer.interrupt();
                 closeMatchMaking();
             }
         }
@@ -80,7 +87,9 @@ public class MatchMakingController extends Controller {
                 playerCount.set(playerCount.decrementAndGet());
                 Log.info(disconnectionEvent.getSource() + " just disconnected, players in match making; " + playerCount);
                 if (playerCount.get() < 3 && timerRunning.get()) {
+                    timer.interrupt();
                     timerRunning.set(false);
+                    model.timerTick(-1); //negative time to go signals countdown interruption
                     Log.info("Timer stopped");
                 }
             }

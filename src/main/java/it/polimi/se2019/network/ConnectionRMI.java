@@ -115,4 +115,10 @@ public class ConnectionRMI implements Connection{
         }).start();
 
     }
+
+    @Override
+    public String toString() {
+        return ("{Connection type: " + "RMI " +
+                "Connection token: " + token + "}");
+    }
 }

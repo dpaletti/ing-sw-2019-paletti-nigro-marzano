@@ -1,7 +1,7 @@
 package it.polimi.se2019.utility;
 
 import it.polimi.se2019.model.mv_events.*;
-import it.polimi.se2019.view.*;
+import it.polimi.se2019.view.MVEvent;
 
 
 public class MVEventDispatcher implements Observer<MVEvent> {
@@ -61,5 +61,9 @@ public class MVEventDispatcher implements Observer<MVEvent> {
 
     public void update(SyncEvent message){
         throw new UnsupportedOperationException("SyncEvent not supported");
+    }
+
+    public void update(TimerEvent message){
+        throw new UnsupportedOperationException("TimerEvent not supported");
     }
 }

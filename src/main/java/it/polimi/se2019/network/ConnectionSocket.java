@@ -65,4 +65,11 @@ public class ConnectionSocket implements Connection{
     public List<MVEvent> getBufferedEvents() {
         return new ArrayList<>(eventBuffer);
     }
+
+
+    @Override
+    public String toString() {
+        return ("{Connection type: " + "Socket " +
+                "Connection token: " + token + "}");
+    }
 }

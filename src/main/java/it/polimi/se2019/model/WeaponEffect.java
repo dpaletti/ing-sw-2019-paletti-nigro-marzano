@@ -14,11 +14,4 @@ public class WeaponEffect {
         return name;
     }
 
-    public void setEffects(Set<Effect> effects) {
-        this.effects = effects;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }
