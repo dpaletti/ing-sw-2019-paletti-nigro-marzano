@@ -49,6 +49,18 @@ public class BiSet<T, S> extends AbstractSet<Pair<T, S>> {
         return Objects.hash(super.hashCode(), set);
     }
 
+    public boolean removeFirst(T t){
+        if(!containsFirst(t))
+            return false;
+        return remove(new Pair<>(t, getSecond(t)));
+    }
+
+    public boolean removeSecond(S s){
+        if(!containsSecond(s))
+            return false;
+        return remove(new Pair<>(getFirst(s), s));
+    }
+
     public T getFirst(S s){
         for(Pair<T, S> p :
             set) {

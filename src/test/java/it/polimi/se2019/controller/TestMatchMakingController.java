@@ -2,23 +2,19 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.network.Server;
-import it.polimi.se2019.network.Settings;
-import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.VirtualView;
 import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 import it.polimi.se2019.view.vc_events.VcJoinEvent;
-import it.polimi.se2019.view.VCEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
@@ -77,36 +73,8 @@ public class TestMatchMakingController {
         assertFalse(virtualView.getObservers().contains(matchMakingController));
     }
 
-    @Test
-    public void testMatchMakingTimer(){
-        testJoin3Clients();
-        assertTrue(matchMakingController.isTimerRunning());
-        try {
-            TimeUnit.MILLISECONDS.sleep(Settings.MATCH_MAKING_TIMER);
-            assertTrue(matchMakingController.isMatchMade());
-        }catch (InterruptedException e){
-            Log.severe("Interrupt during test");
-        }
-    }
-
     @Test(expected = UnsupportedOperationException.class)
     public void testDispatcher(){
         matchMakingController.update(new ChosenEffectEvent("source"));
     }
-
-    @Test
-    public void testDisconnection(){
-        testJoin3Clients();
-        assertTrue(matchMakingController.isTimerRunning());
-        try {
-            TimeUnit.MILLISECONDS.sleep(Settings.MATCH_MAKING_TIMER / 2);
-            matchMakingController.update(new DisconnectionEvent("username1"));
-            assertFalse(matchMakingController.getUsernames().contains("username1"));
-            assertEquals(matchMakingController.getPlayerCount(), 2);
-            assertFalse(matchMakingController.isTimerRunning());
-        }catch (InterruptedException e){
-            Log.severe("Interrupt during test");
-        }
-    }
-
 }

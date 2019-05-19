@@ -30,6 +30,11 @@ public class Game extends Observable<MVEvent> {
         observers = new ArrayList<>();
     }
 
+    public void timerTick(int timeToGo){
+
+        notify(new TimerEvent("*", timeToGo));
+    }
+
     public void newPlayerInMatchMaking(String token, String username){
         notify(new MvJoinEvent(token, username));
     }
@@ -39,7 +44,7 @@ public class Game extends Observable<MVEvent> {
     }
 
     public void usernameDeletion(String username){
-        notify(new UsernameDeletionEvent(username));
+        notify(new UsernameDeletionEvent("*", username));
     }
 
     public void closeMatchMaking(List<String> usernames){
