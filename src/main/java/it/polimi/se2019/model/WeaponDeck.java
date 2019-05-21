@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.io.File;
+import java.util.Random;
 
 public class WeaponDeck implements Deck {
     private List<Weapon> cards;
@@ -31,5 +32,12 @@ public class WeaponDeck implements Deck {
         return cards;
     }
 
-
+    @Override
+    public Card draw() {
+        Random random= new Random();
+        int number= random.nextInt(cards.size());
+        Weapon weapon=cards.get(number);
+        cards.remove(cards.get(number));
+        return weapon;
+    }
 }

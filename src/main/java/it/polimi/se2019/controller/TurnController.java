@@ -90,6 +90,16 @@ public class TurnController extends Controller {
             }
             model.shoot(message.getSource(), message.getWeapon(), effect, target);
         }
+
+        @Override
+        public void update(SpawnEvent message) {
+            model.spawn(message.getSource(), message.getDiscardedPowerUp());
+        }
+
+        @Override
+        public void update(PowerUpUsageEvent message) {
+            model.usePowerUp(message.getSource(), message.getUsedPowerUp());
+        }
     }
 
 }

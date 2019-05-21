@@ -13,16 +13,12 @@ public class Figure {
     private FigureColour colour;
     private Player player;
     private Point position;
-    private Turn turn;
 
-    //ready
-
-    public Figure (Tile tile, Player player, FigureColour figureColour, Point position, Turn turn){
+    public Figure (Tile tile, Player player, FigureColour figureColour, Point position){
         this.tile= tile;
         this.player= player;
         this.colour= figureColour;
         this.position= position;
-        this.turn= turn;
     }
 
     public Point getPosition() {
@@ -41,19 +37,19 @@ public class Figure {
         return player;
     }
 
-    public Turn getTurn() {
-        return turn;
-    }
-
-
     public void damage(Figure target){
         target.player.addTear(colour);
+        for (Tear tear: target.player.getMarks()){
+            if (tear.getColour().equals(colour)){
+                target.player.addTear(colour);
+            }
+        }
         target.player.updatePlayerDamage();
     }
 
     public void mark(Figure target){
         int alreadyMaximumMarks=0;
-        for(Tear marksCounter: target.player.getMarks()){
+        for(Tear marksCounter: target.player.getMarks()){ //
             if(marksCounter.getColour()==colour){
                 alreadyMaximumMarks++;
             }
@@ -355,15 +351,16 @@ public class Figure {
         return (false);
     }
 
-    private Set<Figure> targetsOfSelectedEffect(String effectName){
-        Set<Figure> targetSet=new HashSet<>();
-        targetSet.addAll(turn.mapEffectToTargets(effectName));
-        return targetSet;
-    }
 
     private Set<Tile> tilesOfSelectedEffect(String effectName){
         Set<Tile> targetSet=new HashSet<>();
-        targetSet.addAll(turn.mapEffectToTiles(effectName));
+        targetSet.addAll(player.getTurnMemory().mapEffectToTiles(effectName));
+        return targetSet;
+    }
+
+    private Set<Figure> targetsOfSelectedEffect(String effectName){
+        Set<Figure> targetSet=new HashSet<>();
+        targetSet.addAll(player.getTurnMemory().mapEffectToTargets(effectName));
         return targetSet;
     }
 
@@ -487,12 +484,11 @@ public class Figure {
                 if (effectCounter.getTargetSpecification().getDifferent().getFirst()){
                     figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter.getName()), 0);
                 }
-                else {
-                    figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter.getName()), 1);
-
-                }
 
                 figuresInTargetSet= areaSelectionForFigures(figuresInTargetSet, effectCounter.getTargetSpecification().getRadiusBetween().getFirst(), effectCounter.getTargetSpecification().getRadiusBetween().getSecond());
+                if (effectCounter.getTargetSpecification().getPrevious().getFirst()){
+                    figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter.getName()), 1);
+                }
 
             }
             else { //target is a tile

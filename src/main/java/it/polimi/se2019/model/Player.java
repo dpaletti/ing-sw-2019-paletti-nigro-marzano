@@ -5,9 +5,7 @@ import it.polimi.se2019.model.mv_events.EffectToApplyEvent;
 import it.polimi.se2019.model.mv_events.FigureToAttackEvent;
 import it.polimi.se2019.utility.Pair;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Player extends Observable<Action> {
     private Figure figure;
@@ -24,6 +22,8 @@ public class Player extends Observable<Action> {
     private Integer points;
     private Set<Ammo> usableAmmo;
     private Set<Ammo> unusableAmmo;
+    private TurnMemory turnMemory;
+    private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1));
 
     public void unpause(){
         //TODO implement
@@ -92,6 +92,14 @@ public class Player extends Observable<Action> {
         return usableAmmo;
     }
 
+    public TurnMemory getTurnMemory() {
+        return turnMemory;
+    }
+
+    public List<Integer> getPointsToAssign() {
+        return pointsToAssign;
+    }
+
     public void setThirdWeapon(Weapon thirdWeapon) {
         this.thirdWeapon = thirdWeapon;
     }
@@ -148,6 +156,9 @@ public class Player extends Observable<Action> {
         this.usableAmmo = usableAmmo;
     }
 
+    public void setTurnMemory(TurnMemory turnMemory) {
+        this.turnMemory = turnMemory;
+    }
 
     public GraphNode<Effect> showWeapon(Weapon weapon){
         return(weapon.getStaticDefinition());
@@ -179,6 +190,7 @@ public class Player extends Observable<Action> {
 
     public void endTurn(){
 
+        updateTurn();
     } //TODO: endTurn sends an event to the virtual view, modifies turns in Game
 
     public void reload(Weapon weapon){
@@ -187,6 +199,16 @@ public class Player extends Observable<Action> {
 
     public void usePowerUp (PowerUp powerUp){
         //TODO: implement
+        // powerUp is discarded after usage
+        if (powerUp.equals(firstPowerUp)){
+            firstPowerUp=null;
+        }
+        else if (powerUp.equals(secondPowerUp)){
+            secondPowerUp=null;
+        }
+        else if (powerUp.equals(thirdPowerUp)){
+            thirdPowerUp=null;
+        }
     }
 
     //MASSI: finally changed the powerUp structure, method getPowerUpName->getName, method getColour->getCardColour.getColour
@@ -219,12 +241,78 @@ public class Player extends Observable<Action> {
             healthState= healthState.findNextHealthState();
         }
         if (hp.size()>=10){
-            Game.getInstance().deathHandler();
+            Game.getInstance().deathHandler(this);
         }
     }
 
-    public void updateTurn (){
-        //List<Turn> turns= Game.getInstance().getTurns();
+    public void updateTurn (){ //only called from player and accessed from Figure
+        Game.getInstance().updateTurns(this, turnMemory);
+        turnMemory.clear();
     }
 
+
+    public void calculatePoints(Player deadPlayer){
+        FigureColour figureColour= deadPlayer.hp.get(0).getColour();
+        Player firstShooter= Game.getInstance().colourToPlayer(figureColour);
+        firstShooter.points++;
+
+        Map<FigureColour, Integer> tags= new HashMap<>();
+        for (Player player: Game.getInstance().getPlayers()){
+            tags.put(player.getFigure().getColour(), 0);
+        }
+        for(Tear tear: deadPlayer.getHp()){
+            tags.put(tear.getColour(), tags.get(tear.getColour())+1);
+        }
+        for (Map.Entry entry: tags.entrySet()){
+            if (entry.getValue().equals(0)){
+                tags.remove(entry.getKey());
+            }
+        }
+
+        Map.Entry<FigureColour, Integer> maximumHits= null;
+        for (Integer counter: pointsToAssign){
+            for (Map.Entry<FigureColour, Integer> entry: tags.entrySet()){
+                if (maximumHits==null || entry.getValue()>maximumHits.getValue()){
+                    maximumHits=entry;
+                }
+                if (entry.getValue()==maximumHits.getValue()){
+                    
+                }
+            }
+        Player nextBestPlayer= Game.getInstance().colourToPlayer(maximumHits.getKey());
+        nextBestPlayer.points= nextBestPlayer.points+counter;
+        tags.remove(maximumHits.getKey());
+        }
+    }
+
+    public void finalFrenzyCalculatePoints (Player deadPlayer){
+        List<Integer> finalFrenzyPoints= new ArrayList<>(Arrays.asList(2, 1, 1, 1));
+        Map<FigureColour, Integer> tags= new HashMap<>();
+        for (Player player: Game.getInstance().getPlayers()){
+            tags.put(player.getFigure().getColour(), 0);
+        }
+        for(Tear tear: deadPlayer.getHp()){
+            tags.put(tear.getColour(), tags.get(tear.getColour())+1);
+        }
+        for (Map.Entry entry: tags.entrySet()){
+            if (entry.getValue().equals(0)){
+                tags.remove(entry.getKey());
+            }
+        }
+        Map.Entry<FigureColour, Integer> maximumHits= null;
+        for (Integer counter: finalFrenzyPoints){
+            for (Map.Entry<FigureColour, Integer> entry: tags.entrySet()){
+                if (maximumHits==null || entry.getValue()>=maximumHits.getValue()){
+                    maximumHits=entry;
+                }
+            }
+            Player nextBestPlayer= Game.getInstance().colourToPlayer(maximumHits.getKey());
+            nextBestPlayer.points= nextBestPlayer.points+counter;
+            tags.remove(maximumHits.getKey());
+        }
+    }
+
+    public void updatePointsToAssign (){
+        pointsToAssign.remove(0);
+    }
 }

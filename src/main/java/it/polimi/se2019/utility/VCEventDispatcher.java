@@ -50,4 +50,12 @@ public class VCEventDispatcher implements Observer<VCEvent>{
     public void update (ChosenWeaponEvent message){
         throw new UnsupportedOperationException("Chosen Weapon Event not supported");
     }
+
+    public void update (SpawnEvent message){
+        throw new UnsupportedOperationException("Respawn Event not supported");
+    }
+
+    public void update (PowerUpUsageEvent message){
+        throw new UnsupportedOperationException("PowerUp Usage Event not supported");
+    }
 }

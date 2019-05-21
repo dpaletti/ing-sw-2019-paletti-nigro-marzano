@@ -136,15 +136,11 @@ public class Game extends Observable<MVEvent> {
         this.players = players;
     }
 
-    public void setTurns(List<Turn> turns) {
-        this.turns = turns;
-    }
-
     public void sendMessage (MVEvent message){
         notify(message);
     }
 
-    private Player colourToPlayer (FigureColour figureColour){
+    public Player colourToPlayer (FigureColour figureColour){
         Player playerOfSelectedColour= new Player();
         for (Player playerCounter: players){
             if (playerCounter.getFigure().getColour().equals(figureColour)){
@@ -167,9 +163,38 @@ public class Game extends Observable<MVEvent> {
         return null;
     } //TODO: implement, Weapon should contain Map <String, Weapon>
 
-    public void deathHandler(){
+    public PowerUp nameToPowerUp (String powerUpName){
+        return null;
+    } //TODO: implement, PowerUp should contain Map <String, Weapon>
 
+    public void deathHandler(Player player){
+        player.calculatePoints(player);
+        player.updatePointsToAssign();
+        updateKillshotTrack(player);
+        player.setHp(null);
+        //MVEvent: you're dead, draw a card and respawn
     }
+
+     private void updateKillshotTrack(Player deadPlayer){
+        FigureColour killer= deadPlayer.getHp().get(10).getColour(); //the 11th shot causes the death of the figure
+         Boolean overkill= false;
+         if (deadPlayer.getHp().size()==12){
+             overkill= true; //if a 12th element is present in the list, overkill
+             colourToPlayer(killer).addMark(deadPlayer.getFigure().getColour()); //overkiller receives a mark from deadplayer
+         }
+        killshotTrack.addKillshot(killer, overkill);
+         if (killshotTrack.getKillshot().size()==killshotTrack.getNumberOfSkulls()){
+             finalFrenzy();
+         }
+     }
+
+     public void updateTurns(Player player, TurnMemory turnMemory){
+        turns.set(players.indexOf(player), turnMemory.getTurn());
+     }
+
+     public void finalFrenzy (){
+
+     }
 
     //exposed methods, used by controller
 
@@ -210,6 +235,21 @@ public class Game extends Observable<MVEvent> {
                 shooter.useWeapon(nameToWeapon(weapon), target, effects.get(actionIndex));
             }
         }
+    }
+
+    public void spawn (String username, AmmoColour spawnColour){
+        Player spawning= userToPlayer(username);
+        for (Tile tile: GameMap.getTiles()){
+            if (tile.getColour().equals(spawnColour)&&tile.getTileType().equals(TileType.SPAWNTILE)){
+                spawning.run(tile.position);
+            }
+        }
+    }
+
+    public void usePowerUp (String username, String powerUpName){
+        Player player= userToPlayer(username);
+        PowerUp powerUp= nameToPowerUp(powerUpName);
+        player.usePowerUp(powerUp);
     }
 
 }

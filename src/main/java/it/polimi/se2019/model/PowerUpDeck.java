@@ -7,6 +7,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class PowerUpDeck implements Deck {
     private List<PowerUp> cards;
@@ -31,5 +32,12 @@ public class PowerUpDeck implements Deck {
         return cards;
     }
 
+    public Card draw() {
+        Random random= new Random();
+        int number= random.nextInt(cards.size());
+        PowerUp powerUp=cards.get(number);
+        cards.remove(cards.get(number));
+        return powerUp;
+    }
 
 }

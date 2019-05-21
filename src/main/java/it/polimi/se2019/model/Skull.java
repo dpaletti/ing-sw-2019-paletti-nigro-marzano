@@ -5,6 +5,10 @@ public class Skull {
     private Tear tear;
     private Boolean overkill;
 
+    public Skull (Tear tear, Boolean overkill){
+        this.tear= tear;
+        this.overkill= overkill;
+    }
     public Boolean getOverkill() {
         return overkill;
     }
@@ -13,11 +17,4 @@ public class Skull {
         return tear;
     }
 
-    public void setOverkill(Boolean overkill) {
-        this.overkill = overkill;
-    }
-
-    public void setTear(Tear tear) {
-        this.tear = tear;
-    }
 }
