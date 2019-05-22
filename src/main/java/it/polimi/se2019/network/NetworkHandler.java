@@ -1,6 +1,5 @@
 package it.polimi.se2019.network;
 
-import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Observer;
 import it.polimi.se2019.view.MVEvent;
@@ -8,7 +7,7 @@ import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.VcJoinEvent;
 import it.polimi.se2019.view.vc_events.VcReconnectionEvent;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
@@ -61,6 +60,8 @@ public abstract class NetworkHandler extends Observable<MVEvent> implements Obse
         this.token = null;
         this.client = client;
         reconnection = false;
+        client.getViewRegistration(this);
+        client.setNetworkHandler(this); //this is needed for RMI sync on delayed connections.
     }
 
     public boolean isReconnection() {

@@ -27,8 +27,8 @@ public class MatchMakingController extends Controller {
     private Dispatcher dispatcher = new Dispatcher();
 
 
-    public MatchMakingController(Game model, Server server){
-        super(model, server);
+    public MatchMakingController(Game model, Server server, int roomNumber){
+        super(model, server, roomNumber);
         usernames.add("*"); //adding wildcard so that no player can choose that username
     }
 
@@ -70,7 +70,6 @@ public class MatchMakingController extends Controller {
                             Thread.currentThread().interrupt();
                 }});
                timer.start();
-
             }
             if (playerCount.get() == 5) {
                 timerRunning.set(false);
@@ -125,10 +124,9 @@ public class MatchMakingController extends Controller {
         List<String> actualUsernames = new ArrayList<>(usernames);
         actualUsernames.remove("*");
         model.closeMatchMaking(actualUsernames);
-        server.addController(new MatchController(model, server, actualUsernames));
-        server.addController(new TurnController(model, server));
-        server.removeController(this);
-
+        server.addController(new MatchController(model, server, actualUsernames, getRoomNumber()), getRoomNumber());
+        server.addController(new TurnController(model, server, getRoomNumber()), getRoomNumber());
+        server.removeController(this, getRoomNumber());
     }
 
 }

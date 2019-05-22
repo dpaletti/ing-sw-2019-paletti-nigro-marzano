@@ -16,18 +16,26 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.Semaphore;
 
 public class Server implements ServerInterface {
     private ServerSocket serverSocket;
     private boolean socketOpen;
-    private Controller controller;
-    private VirtualView virtualView;
-    private Game model;
+    private List<VirtualView> virtualViews = new ArrayList<>();
+    private int roomNumber = 0;
 
     private int port;
     //TODO make it configurable together with RMI registry port
     private static final int DEFAULT_PORT = 2080;
+    private Semaphore semRMI = new Semaphore(1, true);
+
+    private boolean isMatchMaking = true;
+    boolean firstMatch = true;
+
+    Connection suspendedConnection = null;
 
     private Server(int port){
         this.port = port;
@@ -53,27 +61,34 @@ public class Server implements ServerInterface {
         return socketOpen;
     }
 
-    public void addController(Controller controller){
-        virtualView.register(controller);
+    public void addController(Controller controller, int roomNumber){
+        virtualViews.get(roomNumber).register(controller);
     }
 
-    public void removeController(Controller controller){
-        virtualView.deregister(controller);
+    public void removeController(Controller controller, int roomNumber){
+        virtualViews.get(roomNumber).deregister(controller);
     }
 
-    public void startServer() throws IOException, AlreadyBoundException {
-        model = new Game();
-        controller = new MatchMakingController(model, this);
-        virtualView = new VirtualView();
-
-        addController(controller);
-        model.register(virtualView);
-
+    private void openConnections()throws IOException, AlreadyBoundException {
         serverSocket = new ServerSocket(port);
         socketOpen = true;
 
         Registry registry = LocateRegistry.createRegistry(1099);
         registry.bind(Settings.REMOTE_SERVER_NAME, this);
+    }
+
+    private void startServer() {
+        Game model = new Game();
+        Controller controller = new MatchMakingController(model, this, roomNumber);
+        virtualViews.add(new VirtualView(roomNumber, this));
+
+        addController(controller, controller.getRoomNumber());
+        model.register(virtualViews.get(roomNumber));
+        if(suspendedConnection != null) {
+            Log.fine("Un-suspending connection");
+            virtualViews.get(roomNumber).startListening(suspendedConnection);
+            suspendedConnection = null;
+        }
         Log.info("Server ready");
         try {
             acceptClients();
@@ -83,25 +98,60 @@ public class Server implements ServerInterface {
     }
 
     private void acceptClients() throws IOException{
-        while(!serverSocket.isClosed()){
+        semRMI.release();
+        while(true){
+            Log.fine("Before accept");
             Socket socket = serverSocket.accept();
-            Log.fine("Accepted new client");
-            virtualView.startListening(new ConnectionSocket(virtualView.generateToken(), socket));
+            Log.fine("After accept");
+            if(!isMatchMaking) {
+                isMatchMaking = true;
+                suspendedConnection = new ConnectionSocket(virtualViews.get(roomNumber).generateToken(), socket);
+                break;
+            }
+            Log.fine("After condition, room number " + roomNumber);
+            //Log.fine("Accepted new client");
+            virtualViews.get(roomNumber).startListening(new ConnectionSocket(virtualViews.get(roomNumber).generateToken(), socket));
+            Log.fine("after listening");
+          }
+    }
+
+    private void startMatch(){
+        while(!Thread.currentThread().isInterrupted()) {
+            semRMI.acquireUninterruptibly();
+            if(firstMatch) {
+                firstMatch = false;
+            }else
+                roomNumber++;
+            startServer();
+            Log.fine("Creating new game");
         }
+    }
+
+    public void endMatchMaking(){
+        Log.fine("Ending matchMaking");
+        isMatchMaking = false;
     }
 
     //------------------------RMI REMOTE SERVER INTERFACE IMPLEMENTATION------------------------//
 
     @Override
     public void startListening(CallbackInterface client) {
-        Log.severe("Accepted new client");
-        virtualView.startListening(new ConnectionRMI(virtualView.generateToken(), client));
+        semRMI.acquireUninterruptibly();
+        semRMI.release();
+        Log.fine("Accepted new client");
+        if(!isMatchMaking) {
+            isMatchMaking = true;
+            suspendedConnection = new ConnectionRMI(virtualViews.get(roomNumber).generateToken(), client);
+            startMatch();
+            return;
+        }
+        virtualViews.get(roomNumber).startListening(new ConnectionRMI(virtualViews.get(roomNumber).generateToken(), client));
     }
 
     @Override
     public MVEvent pullEvent(String token) throws RemoteException {
         try {
-            return ((ConnectionRMI) virtualView.getConnectionOnId(token)).pull();
+            return ((ConnectionRMI) virtualViews.get(roomNumber).getConnectionOnId(token)).pull();
         } catch (NullPointerException e) {
             Log.fine(e.getMessage());
             throw new NullPointerException("You detain an invalid token");
@@ -111,7 +161,7 @@ public class Server implements ServerInterface {
     @Override
     public void pushEvent(String token, VCEvent vcEvent) throws RemoteException {
         try{
-            ((ConnectionRMI) virtualView.getConnectionOnId(token)).push(vcEvent);
+            ((ConnectionRMI) virtualViews.get(roomNumber).getConnectionOnId(token)).push(vcEvent);
         }catch (NullPointerException e){
             Log.fine(e.getMessage());
             throw new NullPointerException("You detain an invalid token");
@@ -132,7 +182,7 @@ public class Server implements ServerInterface {
         }
 
         try {
-            server.startServer();
+            server.openConnections();
         }catch (IOException e){
             if(server.isSocketOpen())
                 Log.severe("Could not get RMI registry");
@@ -141,6 +191,8 @@ public class Server implements ServerInterface {
         }catch (AlreadyBoundException e){
             Log.severe("Could not bind server interface to RMI registry");
         }
+
+        server.startMatch();
     }
 
 }

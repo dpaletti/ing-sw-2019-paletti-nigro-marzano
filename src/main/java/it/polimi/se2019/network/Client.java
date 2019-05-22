@@ -112,11 +112,55 @@ public class Client {
         return false;
     }
 
+    public void getViewRegistration(NetworkHandler networkHandler){
+            Log.fine(view.toString());
+            networkHandler.register(view);
+    }
+
+    public void viewInitialization(String viewMode){
+        if(!viewMode.equals("CLI"))
+            view = new ViewGUI(this);
+        else
+            view = new ViewCLI(this);
+
+
+    }
+
+    public void networkInitialization(String connectionType, String token, boolean reconnecting){
+        if (!connectionType.equals("RMI")) {
+            Log.input("input Server IP (with no spaces) then press Enter: ");
+            String ip = in.nextLine();
+
+            Log.input("input Server port then press Enter: ");
+            int port = in.nextInt();
+            in.nextLine();
+            if(!reconnecting)
+                networkHandler = new NetworkHandlerSocket(this, ip, port);
+            else
+                networkHandler = new NetworkHandlerSocket(token, this, ip, port);
+
+        }
+        else {
+            if(!reconnecting)
+                networkHandler = new NetworkHandlerRMI(this);
+            else
+                networkHandler = new NetworkHandlerRMI(token, this);
+        }
+    }
+
+    public void setNetworkHandler(NetworkHandler networkHandler) {
+        this.networkHandler = networkHandler;
+    }
+
     public static void main(String[] args) {
 
         Client client = new Client();
-        TOKEN_FILE_PATH = Paths.get(Client.class.getClassLoader().getResource("config/token").getPath());
-        USERNAME_FILE_PATH = Paths.get(Client.class.getClassLoader().getResource("config/username").getPath());
+        try {
+            TOKEN_FILE_PATH = Paths.get(Client.class.getClassLoader().getResource("config/token").getPath());
+            USERNAME_FILE_PATH = Paths.get(Client.class.getClassLoader().getResource("config/username").getPath());
+        }catch (NullPointerException e){
+            Log.severe("Could not find files for token and username");
+        }
 
         Log.input("Preferred view mode (GUI/CLI): [default = GUI] ");
 
@@ -130,31 +174,11 @@ public class Client {
         String token = null;
         if(reconnecting)
             token = client.readToken();
-        if(!viewMode.equals("CLI"))
-            client.view = new ViewGUI(client);
-        else
-            client.view = new ViewCLI(client);
 
-        if (!connectionType.equals("RMI")) {
-            Log.input("input Server IP (with no spaces) then press Enter: ");
-            String ip = client.in.nextLine();
-
-            Log.input("input Server port then press Enter: ");
-            int port = client.in.nextInt();
-            client.in.nextLine();
-            if(!reconnecting)
-                client.networkHandler = new NetworkHandlerSocket(client, ip, port);
-            else
-                client.networkHandler = new NetworkHandlerSocket(token, client, ip, port);
-
-        }
-        else {
-            if(!reconnecting)
-                client.networkHandler = new NetworkHandlerRMI(client);
-            else
-                client.networkHandler = new NetworkHandlerRMI(token, client);
-            }
+        client.viewInitialization(viewMode);
+        //view needs to be initialized before network
+        //nullPointer exception is thrown otherwise
+        client.networkInitialization(connectionType, token, reconnecting);
         client.view.register(client.networkHandler);
-        client.networkHandler.register(client.view);
     }
 }

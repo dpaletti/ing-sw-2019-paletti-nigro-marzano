@@ -3,11 +3,10 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
-import it.polimi.se2019.utility.VCEventDispatcher;
-import it.polimi.se2019.view.*;
 import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.utility.VCEventDispatcher;
+import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
-import it.polimi.se2019.view.vc_events.VcJoinEvent;
 import it.polimi.se2019.view.vc_events.VcReconnectionEvent;
 
 import java.util.List;
@@ -17,8 +16,8 @@ public class MatchController extends Controller{
     private List<String> activeUsernames;
     private Dispatcher dispatcher = new Dispatcher();
 
-    public MatchController(Game model, Server server, List<String> usernames){
-        super(model, server);
+    public MatchController(Game model, Server server, List<String> usernames, int roomNumber){
+        super(model, server, roomNumber);
         this.activeUsernames = usernames;
         startMatch();
     }

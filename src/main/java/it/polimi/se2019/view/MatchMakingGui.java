@@ -18,6 +18,7 @@ public class MatchMakingGui extends Application {
 
         primaryStage.setTitle("Adrenaline: waiting for more players");
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

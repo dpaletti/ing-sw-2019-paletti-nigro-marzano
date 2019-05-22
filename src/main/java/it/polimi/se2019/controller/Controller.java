@@ -9,10 +9,15 @@ public abstract class Controller implements Observer<VCEvent> {
     //TODO evaluate the need for storing a reference to the model, probably needed
     protected Game model;
     protected Server server;
+    private int roomNumber;
 
-    public Controller(Game model, Server server){
+    public Controller(Game model, Server server, int roomNumber){
         this.model = model;
         this.server = server;
+        this.roomNumber = roomNumber;
     }
 
+    public int getRoomNumber() {
+        return roomNumber;
+    }
 }

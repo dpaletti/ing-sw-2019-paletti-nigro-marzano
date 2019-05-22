@@ -19,6 +19,7 @@ public abstract class View extends Observable<VCEvent> implements Observer<MVEve
     public View(Client client){
         this.client = client;
         observers = new ArrayList<>();
+
     }
 
     public abstract void matchMaking(List<String> usernames);

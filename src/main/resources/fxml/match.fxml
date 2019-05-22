@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Region?>
+
+<AnchorPane  xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.MatchControllerGui">
+   <children>
+      <Region fx:id="run" layoutX="1587.0" layoutY="2509.0" prefHeight="25.0" prefWidth="42.0" />
+      <Region fx:id="moveAndGrab" layoutX="1587.0" layoutY="2555.0" prefHeight="25.0" prefWidth="42.0" />
+      <Region fx:id="shoot" layoutX="1587.0" layoutY="2599.0" prefHeight="25.0" prefWidth="42.0" />
+      <Region fx:id="reload" layoutX="1594.0" layoutY="2640.0" prefHeight="58.0" prefWidth="42.0" />
+      <Region fx:id="moveMoveGrab" layoutX="1809.0" layoutY="2509.0" prefHeight="25.0" prefWidth="50.0" />
+      <Region fx:id="moveAndShoot" layoutX="1995.0" layoutY="2509.0" prefHeight="25.0" prefWidth="50.0" />
+      <ImageView fx:id="player" fitHeight="275.0" fitWidth="1120.0" layoutX="1572.0" layoutY="2449.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="108.0" AnchorPane.leftAnchor="1572.0" AnchorPane.rightAnchor="1571.1402587890625" AnchorPane.topAnchor="2449.0">
+         <image>
+            <Image url="@../assets/player/player_blue.png" />
+         </image></ImageView>
+      <ImageView fitHeight="1250.0" fitWidth="880.0" layoutX="2045.0" layoutY="962.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="620.0" AnchorPane.leftAnchor="2045.0" AnchorPane.rightAnchor="1338.03173828125" AnchorPane.topAnchor="962.0">
+         <image>
+            <Image url="@../../../../../../Documents/assets/board_right_1.png" />
+         </image></ImageView>
+      <ImageView fitHeight="1250.0" fitWidth="880.0" layoutX="1271.0" layoutY="962.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="620.0" AnchorPane.leftAnchor="1271.0" AnchorPane.rightAnchor="2209.55615234375" AnchorPane.topAnchor="962.0">
+         <image>
+            <Image url="@../../../../../../Documents/assets/board_left_1.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

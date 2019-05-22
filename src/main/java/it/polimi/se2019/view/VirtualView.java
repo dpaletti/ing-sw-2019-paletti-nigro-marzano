@@ -3,6 +3,7 @@ package it.polimi.se2019.view;
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Connection;
 import it.polimi.se2019.network.ConnectionBroadcast;
+import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.*;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 
@@ -39,6 +40,15 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         return biTokenUsername;
     }
 
+    private int roomNumber;
+
+    private Server server;
+
+    public VirtualView(int matchNumber, Server server){
+        this.roomNumber = matchNumber;
+        this.server = server;
+        observers = new ArrayList<>();
+    }
 
 
     private class EventLoop implements Runnable{
@@ -58,8 +68,11 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
                 } catch (NoSuchElementException e) {
                     if(biTokenUsername.containsFirst(connection.getToken()))
                         VirtualView.this.notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken())));
-                    else
+                    else {
                         VirtualView.this.notify(new DisconnectionEvent(connection.getToken()));
+                        connection.disconnect();
+                    }
+
                     shutdown = true;
                 }
             }
@@ -129,6 +142,12 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             sem.release();
             Log.fine("Semaphore released");
         }
+
+        @Override
+        public void update(MatchMakingEndEvent message) {
+            server.endMatchMaking();
+            submit(getConnectionOnId(message.getDestination()), message);
+        }
     }
 
     @Override
@@ -142,8 +161,8 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
                 message.setDestination(biTokenUsername.getFirst(message.getDestination()));
             message.handle(dispatcher);
         }catch (UnsupportedOperationException e){
-            Log.fine("Ignoring and submitting: " + message);
             //if an event cannot be handled is submitted to clients by default
+
             submit(getConnectionOnId(message.getDestination()), message);
         }
     }
@@ -160,6 +179,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     }
 
     private void submit(Connection connection, MVEvent event){
+        Log.fine("Submitting: " + event);
         connection.submit(event);
     }
 

@@ -2,7 +2,6 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.network.Server;
-import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.VCEventDispatcher;
@@ -32,8 +31,8 @@ public class TurnController extends Controller {
 
         }
     }
-    public TurnController (Game model, Server server){
-        super(model, server);
+    public TurnController (Game model, Server server, int roomNumber){
+        super(model, server, roomNumber);
         //turn controller is registered to virtualView in closeMatchMaking() inside MatchMaking controller
         //either leave things like this or take that one out and add server.addController(this) here
     }

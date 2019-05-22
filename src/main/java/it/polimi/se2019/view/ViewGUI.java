@@ -16,8 +16,8 @@ public class ViewGUI extends View{
 
 
     private static MatchMakingControllerGui matchMakingControllerGui;
+    private static MatchControllerGui matchControllerGui;
     private Dispatcher dispatcher = new Dispatcher();
-    private Thread gui;
     private static Semaphore sem = new Semaphore(1, true);
 
 
@@ -27,20 +27,10 @@ public class ViewGUI extends View{
 
     @Override
     public void matchMaking(List<String> usernames) {
-
-        try {
-            sem.acquire();
-        } catch (InterruptedException e){
-            Thread.currentThread().interrupt();
-        }
-        gui = new Thread(() ->  Application.launch(MatchMakingGui.class));
-        gui.start();
-        try {
-            sem.acquire();
-        } catch (InterruptedException e){
-            Thread.currentThread().interrupt();
-        }
-
+        sem.acquireUninterruptibly();
+        new Thread(() ->  Application.launch(MatchMakingGui.class)).start();
+        sem.acquireUninterruptibly();
+        sem.release();
         for (String username:
              usernames) {
             matchMakingControllerGui.addPlayer(username);
@@ -57,14 +47,18 @@ public class ViewGUI extends View{
         sem.release();
     }
 
+    public static void setMatchControllerGui(MatchControllerGui controller){
+        matchControllerGui = controller;
+        sem.release();
+    }
+
     private class Dispatcher extends CommonDispatcher {
 
         @Override
         public void update(TimerEvent message) {
-            Log.fine("Time to go: " + message.getTimeToGo());
-            if(((Integer) message.getTimeToGo()).equals(Settings.MATCH_MAKING_TIMER))
+            if (((Integer) message.getTimeToGo()).equals(Settings.MATCH_MAKING_TIMER))
                 matchMakingControllerGui.startTimer();
-            if(message.getTimeToGo() < 0)
+            if (message.getTimeToGo() < 0)
                 matchMakingControllerGui.stopTimer();
             matchMakingControllerGui.timerTick(message.getTimeToGo());
         }
@@ -75,14 +69,19 @@ public class ViewGUI extends View{
         }
 
         @Override
-        public void update(MatchMakingEndEvent message){
-            //TODO
+        public void update(MatchMakingEndEvent message) {
+            Log.fine("Acquiring semaphore");
+            sem.acquireUninterruptibly();
+            Log.fine("Closing matchMaking");
+            matchMakingControllerGui.endMatchMaking();
+            sem.acquireUninterruptibly();
         }
     }
 
     @Override
     public void update(MVEvent message) {
         try {
+            Log.fine("Received: " + message);
             message.handle(dispatcher);
         }catch (UnsupportedOperationException e){
             Log.severe("Unsupported event in view");
@@ -90,3 +89,4 @@ public class ViewGUI extends View{
         }
     }
 }
+
