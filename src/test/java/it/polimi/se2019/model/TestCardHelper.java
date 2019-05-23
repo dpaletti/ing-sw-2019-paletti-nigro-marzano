@@ -3,43 +3,35 @@ import it.polimi.se2019.utility.Factory;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.junit.Assert.*;
 
 public class TestCardHelper {
-    Set<Weapon> weaponSet= new HashSet<>();
-    Set<PowerUp> powerUpSet= new HashSet<>();
     Weapon weapon;
     PowerUp powerUp;
 
-
     @Before
     public void setup(){
-        weapon=Factory.createWeapon(Weapon.class.getClassLoader().getResource("weapons/Furnace.json").getPath());
-        weaponSet.add(weapon);
+        weapon=Factory.createWeapon(Weapon.class.getClassLoader().getResource("weapons/Cyberblade.json").getPath());
         powerUp=Factory.createPowerUp(PowerUp.class.getClassLoader().getResource("powerUps/NewtonBlue.json").getPath());
-        powerUpSet.add(powerUp);
     }
 
     @Test
     public void testFindWeaponByName(){
-        assertEquals(weapon,CardHelper.findWeaponByName("Furnace", weaponSet));
+        assertEquals(weapon.getName(),CardHelper.getInstance().findWeaponByName("Cyberblade").getName());
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testFindWeaponByNameException(){
-        Weapon secondWeapon= CardHelper.findWeaponByName("Cyberblade",weaponSet);
-    }
+   @Test(expected = NullPointerException.class)
+   public void testFindWeaponByNameException(){
+       Weapon secondWeapon= CardHelper.getInstance().findWeaponByName("Lulic");
+   }
 
     @Test
     public void testFindPowerUpByName(){
-        assertEquals(powerUp,CardHelper.findPowerUpByName("Newton",powerUpSet,AmmoColour.BLUE));
+        assertEquals(powerUp.getName(),CardHelper.getInstance().findPowerUpByName("Newton",AmmoColour.BLUE).getName());
     }
 
     @Test(expected = NullPointerException.class)
     public void testFindPowerUpByNameException(){
-        PowerUp secondPowerUp= CardHelper.findPowerUpByName("Teleport",powerUpSet,AmmoColour.BLUE);
+        PowerUp secondPowerUp= CardHelper.getInstance().findPowerUpByName("Lulic",AmmoColour.BLUE);
     }
 }

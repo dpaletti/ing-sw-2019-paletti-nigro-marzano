@@ -1,6 +1,8 @@
 {
 	"type": "it.polimi.se2019.model.Weapon",
-    "cardColour": "BLUE",
+    "cardColour": {
+        "colour": "BLUE"
+    },
     "price": [
         {
             "colour": "BLUE"

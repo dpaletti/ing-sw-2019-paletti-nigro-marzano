@@ -1,0 +1,24 @@
+package it.polimi.se2019.model;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class TestAction {
+    Action action= new Action();
+
+    @Before
+    public void setAction(){
+        action.setActionType(ActionType.MOVE);
+        action.setValue(2);
+        action.setDirection(Direction.NORTH);
+    }
+
+    @Test
+    public void testActionGetters(){
+        assertEquals(ActionType.MOVE,action.getActionType());
+        Integer integer=2;
+        assertEquals(integer,action.getValue());
+        assertEquals(Direction.NORTH,action.getDirection());
+    }
+}
