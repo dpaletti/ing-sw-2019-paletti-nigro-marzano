@@ -4,7 +4,7 @@ import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.view.MVEvent;
 
 
-public class MVEventDispatcher implements Observer<MVEvent> {
+public class MVEventDispatcher implements Observer<MVEvent>, EventDispatcher {
 
     @Override
     public void update(MVEvent message) {

@@ -1,5 +1,6 @@
 package it.polimi.se2019.network;
 
+import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Observer;
 import it.polimi.se2019.view.MVEvent;
@@ -11,7 +12,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public abstract class NetworkHandler extends Observable<MVEvent> implements Observer<VCEvent>, Serializable{
+public abstract class NetworkHandler extends Observable<MVEvent> implements Observer<Event>, Serializable{
     protected transient String token;
     protected transient String oldToken;
     protected transient Client client;

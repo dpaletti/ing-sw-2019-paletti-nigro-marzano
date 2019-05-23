@@ -4,7 +4,7 @@ import it.polimi.se2019.view.vc_events.*;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.VcReconnectionEvent;
 
-public class VCEventDispatcher implements Observer<VCEvent>{
+public class VCEventDispatcher implements Observer<VCEvent>, EventDispatcher {
 
     @Override
     public void update(VCEvent message) {

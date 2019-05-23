@@ -10,16 +10,16 @@ import javafx.application.Application;
 
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.SynchronousQueue;
 
 
 public class ViewGUI extends View{
 
 
-    private static MatchMakingControllerGui matchMakingControllerGui;
-    private static MatchControllerGui matchControllerGui;
+    private static GuiControllerMatchMaking guiControllerMatchMaking;
     private Dispatcher dispatcher = new Dispatcher();
     private static Semaphore sem = new Semaphore(1, true);
-
+    private static SynchronousQueue<GuiController> guiControllers = new SynchronousQueue<>();
 
     public ViewGUI(Client client){
         super(client);
@@ -33,23 +33,37 @@ public class ViewGUI extends View{
         sem.release();
         for (String username:
              usernames) {
-            matchMakingControllerGui.addPlayer(username);
+            guiControllerMatchMaking.addPlayer(username);
         }
+        startControllerWatchDog();
+
+    }
+
+    public void startControllerWatchDog(){
+        new Thread(() ->{
+            try {
+                while(Thread.currentThread().isInterrupted())
+                    register(guiControllers.take());
+            }catch (InterruptedException e){
+                Log.severe("Interrupted guiController take");
+                Thread.currentThread().interrupt();
+            }
+        }).start();
     }
 
     @Override
     public void addPlayer(String username) {
-        matchMakingControllerGui.addPlayer(username);
+        guiControllerMatchMaking.addPlayer(username);
     }
 
-    public static void setMatchMakingControllerGui(MatchMakingControllerGui controller){
-        matchMakingControllerGui = controller;
-        sem.release();
-    }
-
-    public static void setMatchControllerGui(MatchControllerGui controller){
-        matchControllerGui = controller;
-        sem.release();
+    public static void staticRegister(GuiController controller){
+        try {
+            guiControllers.put(controller);
+            sem.release();
+        }catch (InterruptedException e){
+            Log.severe("Gui Controller put interrupted");
+            Thread.currentThread().interrupt();
+        }
     }
 
     private class Dispatcher extends CommonDispatcher {
@@ -57,15 +71,15 @@ public class ViewGUI extends View{
         @Override
         public void update(TimerEvent message) {
             if (((Integer) message.getTimeToGo()).equals(Settings.MATCH_MAKING_TIMER))
-                matchMakingControllerGui.startTimer();
+                guiControllerMatchMaking.startTimer();
             if (message.getTimeToGo() < 0)
-                matchMakingControllerGui.stopTimer();
-            matchMakingControllerGui.timerTick(message.getTimeToGo());
+                guiControllerMatchMaking.stopTimer();
+            guiControllerMatchMaking.timerTick(message.getTimeToGo());
         }
 
         @Override
         public void update(UsernameDeletionEvent message) {
-            matchMakingControllerGui.removePlayer(message.getUsername());
+            guiControllerMatchMaking.removePlayer(message.getUsername());
         }
 
         @Override
@@ -73,7 +87,7 @@ public class ViewGUI extends View{
             Log.fine("Acquiring semaphore");
             sem.acquireUninterruptibly();
             Log.fine("Closing matchMaking");
-            matchMakingControllerGui.endMatchMaking();
+            guiControllerMatchMaking.endMatchMaking();
             sem.acquireUninterruptibly();
         }
     }

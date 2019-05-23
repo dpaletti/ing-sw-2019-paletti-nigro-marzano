@@ -1,8 +1,8 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.network.Settings;
+import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.Log;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,12 +17,10 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
-public class MatchMakingControllerGui implements Initializable {
+public class GuiControllerMatchMaking implements Initializable, GuiController {
     @FXML
     private VBox usernames;
     @FXML
@@ -40,29 +38,25 @@ public class MatchMakingControllerGui implements Initializable {
 
     private SimpleStringProperty timerValue = new SimpleStringProperty(((Integer) Settings.MATCH_MAKING_TIMER).toString());
 
+    private Dispatcher dispatcher = new Dispatcher();
+
+    private class Dispatcher implements GuiDispatcher{
+        //TODO
+    }
+
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        ViewGUI.setMatchMakingControllerGui(this);
+    public void update(Event message) {
+        message.handle(dispatcher);
     }
-
-
-    private void ensureJavaFXThread(Runnable action){
-        if(Platform.isFxApplicationThread())
-            action.run();
-        else
-            Platform.runLater(action);
-
-    }
-
 
     public void endMatchMaking(){
         ensureJavaFXThread(() -> {
             currentStage.close();
 
-            FXMLLoader loader = new FXMLLoader(MatchMakingControllerGui.class.getClassLoader().getResource("fxml/match.fxml"));
+            FXMLLoader loader = new FXMLLoader(GuiControllerMatchMaking.class.getClassLoader().getResource("fxml/table.fxml"));
            try {
-               AnchorPane anchor = loader.load();
-               Scene scene = new Scene(anchor);
+               AnchorPane border = loader.load();
+               Scene scene = new Scene(border);
                Screen screen = Screen.getPrimary();
                Stage stage = new Stage();
                Rectangle2D bounds = screen.getVisualBounds();

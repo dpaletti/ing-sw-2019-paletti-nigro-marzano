@@ -8,4 +8,8 @@ public abstract class Event implements Serializable {
     public String toString() {
         return JsonHandler.serialize(this);
     }
+
+    public void handle(EventDispatcher eventDispatcher){
+        eventDispatcher.update(this);
+    }
 }

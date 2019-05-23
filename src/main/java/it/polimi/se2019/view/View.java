@@ -1,15 +1,14 @@
 package it.polimi.se2019.view;
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Client;
-import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.utility.MVEventDispatcher;
-import it.polimi.se2019.utility.Observable;
-import it.polimi.se2019.utility.Observer;
+import it.polimi.se2019.utility.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class View extends Observable<VCEvent> implements Observer<MVEvent>{
+public abstract class View extends Observable<Event> implements Observer<MVEvent>{
+    //View is observable of VCEvent and GuiEvents to facilitate gui management
+    //TODO see whether CliEvents make sense
     protected Client client;
 
     public View(){

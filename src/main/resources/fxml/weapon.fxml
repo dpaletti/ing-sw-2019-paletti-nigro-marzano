@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane hgap="10.0" prefHeight="162.0" prefWidth="383.0" GridPane.columnIndex="1" GridPane.rowIndex="3" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerWeapon">
+    <columnConstraints>
+        <ColumnConstraints hgrow="NEVER" percentWidth="33" />
+        <ColumnConstraints hgrow="NEVER" percentWidth="33" />
+        <ColumnConstraints hgrow="NEVER" percentWidth="33" />
+    </columnConstraints>
+    <ImageView fx:id="weaponFirst" fitHeight="151.0" fitWidth="122.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+        <Image url="@../assets/cards/AD_weapons_IT_024.png" />
+    </ImageView>
+    <ImageView fx:id="weaponSecond" fitHeight="153.0" fitWidth="121.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+        <Image url="@../assets/cards/AD_weapons_IT_022.png" />
+    </ImageView>
+    <ImageView fx:id="weaponThird" fitHeight="152.0" fitWidth="117.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
+        <Image url="@../assets/cards/AD_weapons_IT_023.png" />
+    </ImageView>
+    <rowConstraints>
+        <RowConstraints />
+    </rowConstraints>
+</GridPane>
+

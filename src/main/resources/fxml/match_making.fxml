@@ -8,17 +8,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="401.0" prefWidth="570.0" stylesheets="@../css/match_making.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.MatchMakingControllerGui">
-   <children>
+<AnchorPane fx:id="anchorPane" prefHeight="401.0" prefWidth="570.0" stylesheets="@../css/match.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerMatchMaking">
       <ImageView fitHeight="401.0" fitWidth="570.0" pickOnBounds="true" preserveRatio="true" smooth="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <image>
             <Image url="@../assets/adrenalina_part.png" />
-         </image>
          <effect>
             <GaussianBlur radius="8.46" />
          </effect>
       </ImageView>
-      <Label alignment="CENTER" layoutX="25.0" layoutY="14.0" prefHeight="59.0" prefWidth="335.0" stylesheets="@../css/match_making.css" text="Match Making" AnchorPane.bottomAnchor="328.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="210.0" AnchorPane.topAnchor="14.0">
+      <Label alignment="CENTER" layoutX="25.0" layoutY="14.0" prefHeight="59.0" prefWidth="335.0" stylesheets="@../css/match.css" text="Match Making" AnchorPane.bottomAnchor="328.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="210.0" AnchorPane.topAnchor="14.0">
          <font>
             <Font size="48.0" />
          </font>
@@ -34,5 +31,4 @@
             <Font size="24.0" />
          </font>
       </Label>
-   </children>
 </AnchorPane>

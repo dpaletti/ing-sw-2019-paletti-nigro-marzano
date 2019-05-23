@@ -1,11 +1,12 @@
 package it.polimi.se2019.network;
 
+import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.VCEventDispatcher;
-import it.polimi.se2019.view.vc_events.VcJoinEvent;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
+import it.polimi.se2019.view.vc_events.VcJoinEvent;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,7 +50,7 @@ public class NetworkHandlerSocket extends NetworkHandler {
 
 
     @Override
-    public void update(VCEvent message) {
+    public void update(Event message) {
         try {
             message.handle(dispatcher);
         }catch (UnsupportedOperationException e){

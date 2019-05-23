@@ -1,5 +1,6 @@
 package it.polimi.se2019.network;
 
+import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
@@ -62,7 +63,7 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
     }
 
     @Override
-    public void update(VCEvent message) {
+    public void update(Event message) {
         try {
             message.handle(dispatcher);
         }catch (UnsupportedOperationException e){
