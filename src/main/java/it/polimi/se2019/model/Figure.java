@@ -14,9 +14,7 @@ public class Figure {
     private Player player;
     private Point position;
 
-    public Figure (Tile tile, Player player, FigureColour figureColour, Point position){
-        this.tile= tile;
-        this.player= player;
+    public Figure (FigureColour figureColour, Point position){
         this.colour= figureColour;
         this.position= position;
     }

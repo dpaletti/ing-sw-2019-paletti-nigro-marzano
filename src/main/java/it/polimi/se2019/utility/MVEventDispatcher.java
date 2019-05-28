@@ -66,4 +66,24 @@ public class MVEventDispatcher implements Observer<MVEvent>, EventDispatcher {
     public void update(TimerEvent message){
         throw new UnsupportedOperationException("TimerEvent not supported");
     }
+
+    public void update (FinalFrenzyStartingEvent message){
+        throw new UnsupportedOperationException("FinalFrenzyStartingEvent not supported");
+    }
+
+    public void update (DeathEvent message){
+        throw new UnsupportedOperationException("DeathEvent not supported");
+    }
+
+    public void update (MoveEvent message){
+        throw new UnsupportedOperationException("MoveEvent not supported");
+    }
+
+    public void update (TurnEvent message){
+        throw new UnsupportedOperationException("TurnEvent not supported");
+    }
+
+    public void update (StartFirstTurnEvent message){
+        throw new UnsupportedOperationException("StartFirstTurnEvent not supported");
+    }
 }

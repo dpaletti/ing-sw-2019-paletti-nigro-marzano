@@ -7,7 +7,7 @@ import java.util.*;
 public class TestAddMark {
     @Test
     public void testAddMark (){
-        Player player= new Player();
+        Player player= new Player(new Figure(FigureColour.GREEN, new Point(0, 0)));
         Set<Tear> mark = new HashSet<>();
         Tear tear= new Tear(FigureColour.MAGENTA);
         mark.add(tear);

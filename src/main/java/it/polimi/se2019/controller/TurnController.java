@@ -97,7 +97,7 @@ public class TurnController extends Controller {
 
         @Override
         public void update(PowerUpUsageEvent message) {
-            model.usePowerUp(message.getSource(), message.getUsedPowerUp());
+            model.usePowerUp(message.getSource(), message.getUsedPowerUp(), message.getPowerUpColour());
         }
     }
 

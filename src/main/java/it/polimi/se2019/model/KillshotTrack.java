@@ -6,8 +6,7 @@ public class KillshotTrack {
     private List<Skull> killshot;
     private Integer numberOfSkulls;
 
-    public KillshotTrack (List<Skull> killshot, Integer numberOfSkulls){
-        this.killshot=killshot;
+    public KillshotTrack (Integer numberOfSkulls){
         this.numberOfSkulls= numberOfSkulls;
     }
     public List<Skull> getKillshot() {

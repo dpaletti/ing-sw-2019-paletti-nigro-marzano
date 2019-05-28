@@ -6,27 +6,28 @@ import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Pair;
 import it.polimi.se2019.view.MVEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Game extends Observable<MVEvent> {
     private GameMap gameMap;
+    private Boolean finalFrenzy;
     private KillshotTrack killshotTrack;
     private Deck weaponDeck;
     private Deck powerUpDeck;
-    private Deck ammoDeck;
-    private static Game instance;
-    private List<Player> players;
+    private Deck lootDeck;
+    private static Game instance=null;
+    private List<Player> players= new ArrayList<>();
     private List<Turn> turns;
     private BiSet<FigureColour, String> userLookup = new BiSet<>();
-    private Map<String, Effect> effectMap;
+    private Map<String, Effect> effectMap; //getEffect in Card class
+    private Random randomConfig= new Random();
 
     // TODO Mapping between figures and usernames coming from controller
 
-    public Game(){
-        //TODO implement
-        //keep the line below!!!!111111!!!1!1!!!
+    private Game(){
+        weaponDeck= new WeaponDeck();
+        powerUpDeck= new PowerUpDeck();
+        //lootDeck= new LootDeck();
         observers = new ArrayList<>();
     }
 
@@ -49,18 +50,51 @@ public class Game extends Observable<MVEvent> {
 
     public void closeMatchMaking(List<String> usernames){
         int colourCounter=0;
+        int chosenConfig=-1;
+        int numberOfLootCards=7;
+        HashMap<String, FigureColour> userToColour= new HashMap<>();
+        List<String> weaponSpots= new ArrayList<>();
+        List<String> lootCards= new ArrayList<>();
         for (String userCounter: usernames){
             userLookup.add(new Pair<>(FigureColour.values()[colourCounter], userCounter));
+            players.add(new Player(new Figure(FigureColour.values()[colourCounter], new Point(-1, -1))));
             colourCounter++;
         }
-        // '*' is a wildcard, it means that the event goes to everybody
-        notify(new MatchMakingEndEvent("*"));
+        if (((Integer) usernames.size()).equals(3)){
+            chosenConfig= randomConfig.nextInt(2);
+        }
+        else if (((Integer) usernames.size()).equals(4)){
+            chosenConfig= randomConfig.nextInt(3);
+        }
+        else if (((Integer) usernames.size()).equals(5)){
+            chosenConfig= randomConfig.nextInt(2)+1;
+        }
+        //TODO: initialize gameMap
+        for (Player player: players){
+            userToColour.put(userLookup.getSecond(player.getFigure().getColour()), player.getFigure().getColour());
+        }
+        for (int i=0; i<9; i++) {
+            weaponSpots.add(weaponDeck.draw().getName());
+        }
+        numberOfLootCards+=chosenConfig;
+        for (int i=0; i<numberOfLootCards; i++){
+            lootCards.add(lootDeck.draw().getName());
+        }
+        killshotTrack= new KillshotTrack(randomConfig.nextInt(4)+5);
+
+        notify(new MatchMakingEndEvent("*", chosenConfig, userToColour, weaponSpots, lootCards, killshotTrack.getNumberOfSkulls()));
     }
 
     public void startMatch(){
-        //TODO implement
+        Card firstCard= powerUpDeck.draw();
+        Card secondCard= powerUpDeck.draw();
+        notify(new StartFirstTurnEvent(colourToUser(players.get(0).getFigure().getColour()),
+                firstCard.getCardColour().toString(),
+                firstCard.getName(),
+                secondCard.getCardColour().toString(),
+                secondCard.getName()
+                ));
     }
-
     public void pausePlayer(String username){
         //When a player disconnects or times out while playing needs to be paused
         //upon reconnection it will be un-paused
@@ -75,10 +109,17 @@ public class Game extends Observable<MVEvent> {
     }
 
     public static Game getInstance() {
+        if (instance==null){
+            instance= new Game();
+        }
         return instance;
     }
 
-    public Deck getAmmoDeck() { return ammoDeck; }
+    public Boolean getFinalFrenzy() {
+        return finalFrenzy;
+    }
+
+    public Deck getLootDeck() { return lootDeck; }
 
     public Deck getPowerUpDeck() {
         return powerUpDeck;
@@ -108,8 +149,8 @@ public class Game extends Observable<MVEvent> {
         return userLookup;
     }
 
-    public void setAmmoDeck(Deck ammoDeck) {
-        this.ammoDeck = ammoDeck;
+    public void setLootDeck(Deck lootDeck) {
+        this.lootDeck = lootDeck;
     }
 
     public void setGameMap(GameMap gameMap) {
@@ -136,19 +177,18 @@ public class Game extends Observable<MVEvent> {
         this.players = players;
     }
 
+
     public void sendMessage (MVEvent message){
         notify(message);
     }
 
     public Player colourToPlayer (FigureColour figureColour){
-        Player playerOfSelectedColour= new Player();
         for (Player playerCounter: players){
             if (playerCounter.getFigure().getColour().equals(figureColour)){
-                playerOfSelectedColour=playerCounter;
-                break;
+                return playerCounter;
             }
         }
-        return playerOfSelectedColour;
+        return null;
     }
 
     public String colourToUser (FigureColour figureColour){
@@ -160,21 +200,27 @@ public class Game extends Observable<MVEvent> {
     }
 
     public Weapon nameToWeapon (String weaponName){
-        return null;
-    } //TODO: implement, Weapon should contain Map <String, Weapon>
+        return CardHelper.getInstance().findWeaponByName(weaponName);
+    }
 
-    public PowerUp nameToPowerUp (String powerUpName){
-        return null;
-    } //TODO: implement, PowerUp should contain Map <String, Weapon>
+    public PowerUp nameToPowerUp (String powerUpName, AmmoColour powerUpColour){
+        return CardHelper.getInstance().findPowerUpByName(powerUpName, powerUpColour);
+    }
 
     public void deathHandler(Player player){
         player.calculatePoints(player);
-        player.updatePointsToAssign();
         updateKillshotTrack(player);
         player.setHp(null);
-        //MVEvent: you're dead, draw a card and respawn
+        notify(new DeathEvent(colourToUser(player.getFigure().getColour()), player.getHp().get(10).getColour().toString()));
+        if (killshotTrack.getNumberOfSkulls().equals(killshotTrack.getKillshot().size())){
+            //finalFrenzyTurn: change status of players, change moves
+        }
     }
 
+    public void finalFrenzyDeathHandler (Player player){
+        player.finalFrenzyCalculatePoints(player);
+    }
+    
      private void updateKillshotTrack(Player deadPlayer){
         FigureColour killer= deadPlayer.getHp().get(10).getColour(); //the 11th shot causes the death of the figure
          Boolean overkill= false;
@@ -184,6 +230,7 @@ public class Game extends Observable<MVEvent> {
          }
         killshotTrack.addKillshot(killer, overkill);
          if (killshotTrack.getKillshot().size()==killshotTrack.getNumberOfSkulls()){
+             notify(new FinalFrenzyStartingEvent("*"));
              finalFrenzy();
          }
      }
@@ -246,10 +293,9 @@ public class Game extends Observable<MVEvent> {
         }
     }
 
-    public void usePowerUp (String username, String powerUpName){
+    public void usePowerUp (String username, String powerUpName, AmmoColour powerUpColour){
         Player player= userToPlayer(username);
-        PowerUp powerUp= nameToPowerUp(powerUpName);
+        PowerUp powerUp= nameToPowerUp(powerUpName, powerUpColour);
         player.usePowerUp(powerUp);
     }
-
 }

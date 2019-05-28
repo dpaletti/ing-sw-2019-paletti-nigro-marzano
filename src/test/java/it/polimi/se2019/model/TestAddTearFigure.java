@@ -9,7 +9,7 @@ import java.util.List;
 public class TestAddTearFigure {
     @Test
     public void testAddTear (){
-        Player player= new Player();
+        Player player= new Player(new Figure(FigureColour.BLUE, new Point (0,0)));
         List<Tear> finalHP = new ArrayList<>();
         Tear tear= new Tear(FigureColour.MAGENTA);
         finalHP.add(tear);

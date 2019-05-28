@@ -1,29 +1,35 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.mv_events.MoveEvent;
 import it.polimi.se2019.utility.Observable;
-import it.polimi.se2019.model.mv_events.EffectToApplyEvent;
-import it.polimi.se2019.model.mv_events.FigureToAttackEvent;
-import it.polimi.se2019.utility.Pair;
 
 import java.util.*;
 
 public class Player extends Observable<Action> {
     private Figure figure;
-    private List<Tear> hp;
-    private PlayerDamage healthState;
-    private PlayerValue deathState;
-    private Set<Tear> marks;
+    private List<Tear> hp= new ArrayList<>();
+    private PlayerDamage healthState= new Healthy();
+    private Set<Tear> marks= new HashSet<>();
     private Weapon firstWeapon;
     private Weapon secondWeapon;
     private Weapon thirdWeapon;
     private PowerUp firstPowerUp;
     private PowerUp secondPowerUp;
     private PowerUp thirdPowerUp;
-    private Integer points;
-    private Set<Ammo> usableAmmo;
-    private Set<Ammo> unusableAmmo;
+    private Integer points= 0;
+    private Set<Ammo> usableAmmo= new HashSet<>();
+    private Set<Ammo> unusableAmmo= new HashSet<>();
     private TurnMemory turnMemory;
     private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1));
+
+    public Player (Figure figure){
+        this.figure=figure;
+        for (AmmoColour ammoColour: AmmoColour.values()){
+            for (int i=0; i<3; i++){
+                usableAmmo.add(new Ammo(ammoColour));
+            }
+        }
+    }
 
     public void unpause(){
         //TODO implement
@@ -60,10 +66,6 @@ public class Player extends Observable<Action> {
 
     public Integer getPoints() {
         return points;
-    }
-
-    public PlayerValue getDeathState() {
-        return deathState;
     }
 
     public PowerUp getFirstPowerUp() {
@@ -110,10 +112,6 @@ public class Player extends Observable<Action> {
 
     public void setFirstWeapon(Weapon firstWeapon) {
         this.firstWeapon = firstWeapon;
-    }
-
-    public void setDeathState(PlayerValue deathState) {
-        this.deathState = deathState;
     }
 
     public void setFigure(Figure figure) {
@@ -180,9 +178,15 @@ public class Player extends Observable<Action> {
 
     public void teleport (Point position){
         figure.teleport(position);
+        String user= Game.getInstance().colourToUser(figure.getColour());
+        Game.getInstance().sendMessage(new MoveEvent(user, position));
     }
 
-    public void run (Point destination) {figure.run(destination);}
+    public void run (Point destination) {
+        figure.run(destination);
+        String user= Game.getInstance().colourToUser(figure.getColour());
+        Game.getInstance().sendMessage(new MoveEvent(user, destination));
+    }
 
     public void grabStuff(){
         figure.grab();
@@ -241,7 +245,12 @@ public class Player extends Observable<Action> {
             healthState= healthState.findNextHealthState();
         }
         if (hp.size()>=10){
-            Game.getInstance().deathHandler(this);
+            if (Game.getInstance().getKillshotTrack().getNumberOfSkulls().equals(Game.getInstance().getKillshotTrack().getKillshot().size())){
+                Game.getInstance().finalFrenzyDeathHandler(this);
+            }
+            else {
+                Game.getInstance().deathHandler(this);
+            }
         }
     }
 
@@ -269,20 +278,29 @@ public class Player extends Observable<Action> {
             }
         }
 
-        Map.Entry<FigureColour, Integer> maximumHits= null;
-        for (Integer counter: pointsToAssign){
+        List <FigureColour> localBestShooters= new ArrayList<>();
+        int maximumHits=0;
+        for (int counter=0; counter<pointsToAssign.size(); counter++){
             for (Map.Entry<FigureColour, Integer> entry: tags.entrySet()){
-                if (maximumHits==null || entry.getValue()>maximumHits.getValue()){
-                    maximumHits=entry;
+                if (maximumHits==0 || entry.getValue()>maximumHits){
+                    maximumHits=entry.getValue();
+                    localBestShooters.clear();
+                    localBestShooters.add(entry.getKey());
                 }
-                if (entry.getValue()==maximumHits.getValue()){
-                    
+                if (entry.getValue()==maximumHits){
+                    localBestShooters.add(entry.getKey());
                 }
+                Player localBestPlayer= Game.getInstance().colourToPlayer(localBestShooters.get(0));
+                localBestPlayer.points=localBestPlayer.points+pointsToAssign.get(counter);
+                localBestShooters.remove(0);
+                    for (FigureColour localBestShooter : localBestShooters) {
+                        localBestPlayer = Game.getInstance().colourToPlayer(localBestShooter);
+                        localBestPlayer.points = localBestPlayer.points + pointsToAssign.get(counter+1);
+                        counter++;
+                    }
             }
-        Player nextBestPlayer= Game.getInstance().colourToPlayer(maximumHits.getKey());
-        nextBestPlayer.points= nextBestPlayer.points+counter;
-        tags.remove(maximumHits.getKey());
         }
+        updatePointsToAssign();
     }
 
     public void finalFrenzyCalculatePoints (Player deadPlayer){
@@ -299,16 +317,26 @@ public class Player extends Observable<Action> {
                 tags.remove(entry.getKey());
             }
         }
-        Map.Entry<FigureColour, Integer> maximumHits= null;
-        for (Integer counter: finalFrenzyPoints){
+        List <FigureColour> localBestFrenzyShooters= new ArrayList<>();
+        int maximumHits=0;
+        for (int counter=0; counter<finalFrenzyPoints.size(); counter++){
             for (Map.Entry<FigureColour, Integer> entry: tags.entrySet()){
-                if (maximumHits==null || entry.getValue()>=maximumHits.getValue()){
-                    maximumHits=entry;
+                if (maximumHits==0 || entry.getValue()>maximumHits){
+                    maximumHits=entry.getValue();
+                    localBestFrenzyShooters.clear();
+                    localBestFrenzyShooters.add(entry.getKey());
+                }
+                if (entry.getValue()==maximumHits){
+                    localBestFrenzyShooters.add(entry.getKey());
+                }
+                Player localBestFrenzyPlayer= Game.getInstance().colourToPlayer(localBestFrenzyShooters.get(0));
+                localBestFrenzyPlayer.points= localBestFrenzyPlayer.points+finalFrenzyPoints.get(counter);
+                for (FigureColour localBestShooter: localBestFrenzyShooters){
+                    localBestFrenzyPlayer= Game.getInstance().colourToPlayer(localBestShooter);
+                    localBestFrenzyPlayer.points=localBestFrenzyPlayer.points+finalFrenzyPoints.get(counter+1);
+                    counter++;
                 }
             }
-            Player nextBestPlayer= Game.getInstance().colourToPlayer(maximumHits.getKey());
-            nextBestPlayer.points= nextBestPlayer.points+counter;
-            tags.remove(maximumHits.getKey());
         }
     }
 
