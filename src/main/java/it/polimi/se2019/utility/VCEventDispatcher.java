@@ -58,4 +58,8 @@ public class VCEventDispatcher implements Observer<VCEvent>, EventDispatcher {
     public void update (PowerUpUsageEvent message){
         throw new UnsupportedOperationException("PowerUp Usage Event not supported");
     }
+
+    public void update (ActionEvent message){
+        throw new UnsupportedOperationException("ActionEvent not supported");
+    }
 }

@@ -6,6 +6,10 @@ import it.polimi.se2019.view.VCEvent;
 public class ChosenWeaponEvent extends VCEvent {
     private String weapon;
 
+    public ChosenWeaponEvent (String source, String weapon){
+        super(source);
+        this.weapon=weapon;
+    }
     public String getWeapon() {
         return weapon;
     }

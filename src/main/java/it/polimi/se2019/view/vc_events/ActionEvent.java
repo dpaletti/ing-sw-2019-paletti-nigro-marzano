@@ -3,14 +3,20 @@ package it.polimi.se2019.view.vc_events;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
 
-public class GrabEvent extends VCEvent {
+public class ActionEvent extends VCEvent {
+    String action;
 
-    GrabEvent(String source){
+    public ActionEvent(String source, String action){
         super(source);
+        this.action=action;
     }
 
     @Override
     public void handle(VCEventDispatcher dispatcher) {
         dispatcher.update(this);
+    }
+
+    public String getAction() {
+        return action;
     }
 }

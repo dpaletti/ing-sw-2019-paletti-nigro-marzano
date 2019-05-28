@@ -8,12 +8,8 @@ public abstract class VCEvent extends Event {
 
     private String source;
 
-    public VCEvent(){
-        source = null;
-    }
-
-    public VCEvent(String remoteEndId){
-        this.source = remoteEndId;
+    public VCEvent(String source){
+        this.source = source;
     }
 
     public String getSource() {

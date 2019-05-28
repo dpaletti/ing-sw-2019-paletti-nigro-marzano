@@ -158,6 +158,14 @@ public class Player extends Observable<Action> {
         this.turnMemory = turnMemory;
     }
 
+    public Set<Weapon> showWeapons (){
+        Set<Weapon> weapons= new HashSet<>();
+        weapons.add(firstWeapon);
+        weapons.add(secondWeapon);
+        weapons.add(thirdWeapon);
+        return weapons;
+    }
+
     public GraphNode<Effect> showWeapon(Weapon weapon){
         return(weapon.getStaticDefinition());
         }

@@ -7,6 +7,10 @@ import it.polimi.se2019.view.VCEvent;
 public class DefineTeleportPositionEvent extends VCEvent {
     private Point teleportPosition;
 
+    public DefineTeleportPositionEvent (String source, Point teleportPosition){
+        super(source);
+        this.teleportPosition= teleportPosition;
+    }
     public Point getTeleportPosition() {
         return teleportPosition;
     }

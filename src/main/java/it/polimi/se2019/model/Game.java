@@ -95,6 +95,11 @@ public class Game extends Observable<MVEvent> {
                 secondCard.getName()
                 ));
     }
+
+    public void startTurn (String playing){
+        notify(new StartTurnEvent(playing));
+    }
+
     public void pausePlayer(String username){
         //When a player disconnects or times out while playing needs to be paused
         //upon reconnection it will be un-paused
@@ -245,6 +250,21 @@ public class Game extends Observable<MVEvent> {
 
     //exposed methods, used by controller
 
+    public void allowedMovements (String username, int radius){
+        Player playing= userToPlayer(username);
+        List<Point> allowedPositions= new ArrayList<>();
+        //TODO: calculates where the player can move
+        notify(new AllowedMovementsEvent(username, allowedPositions));
+    }
+
+    public void allowedWeapons(String username){
+        Player playing= userToPlayer(username);
+        List<String> weapons= new ArrayList<>();
+        for (Weapon weapon: playing.showWeapons()){
+            weapons.add(weapon.getName());
+        }
+        notify(new AllowedWeaponsEvent(username, weapons));
+    }
     public void teleportPlayer (String username, Point teleportPosition){
         Player playerToMove= userToPlayer(username);
         playerToMove.teleport(teleportPosition);
@@ -291,6 +311,7 @@ public class Game extends Observable<MVEvent> {
                 spawning.run(tile.position);
             }
         }
+        notify(new MoveEvent("*", spawning.getFigure().getPosition()));
     }
 
     public void usePowerUp (String username, String powerUpName, AmmoColour powerUpColour){

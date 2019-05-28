@@ -7,6 +7,11 @@ import it.polimi.se2019.view.VCEvent;
 public class MoveEvent extends VCEvent {
     private Point destionation;
 
+    public MoveEvent (String source, Point destionation){
+        super(source);
+        this.destionation=destionation;
+    }
+
     public Point getDestionation() {
         return destionation;
     }

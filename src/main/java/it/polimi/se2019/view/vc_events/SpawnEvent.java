@@ -1,13 +1,17 @@
 package it.polimi.se2019.view.vc_events;
 
-import it.polimi.se2019.model.AmmoColour;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
 
 public class SpawnEvent extends VCEvent {
-    private AmmoColour discardedPowerUp;
+    private String discardedPowerUp;
 
-    public AmmoColour getDiscardedPowerUp() {
+    public SpawnEvent (String source, String discardedPowerUp){
+        super(source);
+        this.discardedPowerUp= discardedPowerUp;
+    }
+
+    public String getDiscardedPowerUp() {
         return discardedPowerUp;
     }
 

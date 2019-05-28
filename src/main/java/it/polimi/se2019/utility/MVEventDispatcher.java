@@ -86,4 +86,8 @@ public class MVEventDispatcher implements Observer<MVEvent>, EventDispatcher {
     public void update (StartFirstTurnEvent message){
         throw new UnsupportedOperationException("StartFirstTurnEvent not supported");
     }
+
+    public void update (AllowedMovementsEvent message){
+        throw new UnsupportedOperationException("Allowed Movements Event not supported");
+    }
 }

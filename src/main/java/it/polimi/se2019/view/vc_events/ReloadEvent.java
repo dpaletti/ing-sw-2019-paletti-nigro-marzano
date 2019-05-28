@@ -6,6 +6,10 @@ import it.polimi.se2019.view.VCEvent;
 public class ReloadEvent extends VCEvent {
     private String weaponName;
 
+    public ReloadEvent (String source, String weaponName){
+        super(source);
+        this.weaponName= weaponName;
+    }
     public String getWeaponName() {
         return weaponName;
     }
