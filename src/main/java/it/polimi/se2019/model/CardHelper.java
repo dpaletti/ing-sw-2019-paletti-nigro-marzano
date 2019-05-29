@@ -2,8 +2,6 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Factory;
 
-import java.io.File;
-import java.net.URL;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +12,7 @@ public class CardHelper {
     private static Set<Weapon> allWeapons= new HashSet<>();
     private static Set<PowerUp> allPowerUp= new HashSet<>();
     private CardHelper(){
+        //TODO change path with getResource, or something similar
         for (String name : Paths.get("src/main/resources/weapons").toFile().list()) {
                 allWeapons.add((Factory.createWeapon(Weapon.class.getClassLoader().getResource("weapons/".concat(name)).getPath())));
         }

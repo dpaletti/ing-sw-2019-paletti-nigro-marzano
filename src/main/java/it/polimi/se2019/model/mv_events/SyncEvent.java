@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SyncEvent extends MVEvent {
-    ArrayList<MVEvent> events;
+    private ArrayList<MVEvent> events;
 
     public SyncEvent(String destination, List<MVEvent> events){
         super(destination);
@@ -16,6 +16,6 @@ public class SyncEvent extends MVEvent {
 
     @Override
     public void handle(MVEventDispatcher dispatcher) {
-        dispatcher.update(this);
+        dispatcher.dispatch(this);
     }
 }

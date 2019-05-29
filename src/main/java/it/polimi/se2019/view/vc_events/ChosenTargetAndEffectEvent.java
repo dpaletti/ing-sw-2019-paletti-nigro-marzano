@@ -17,7 +17,7 @@ public class ChosenTargetAndEffectEvent extends VCEvent {
     }
     @Override
     public void handle(VCEventDispatcher dispatcher) {
-        dispatcher.update(this);
+        dispatcher.dispatch(this);
     }
 
     public ArrayList<ArrayList<String>> getTargetNames() {

@@ -32,7 +32,7 @@ public class MatchMakingEndEvent extends MVEvent {
 
     @Override
     public void handle(MVEventDispatcher dispatcher) {
-        dispatcher.update(this);
+        dispatcher.dispatch(this);
     }
 
     public Map<String, FigureColour> getUserToColour() {

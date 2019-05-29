@@ -3,11 +3,11 @@ package it.polimi.se2019.model;
 import java.util.*;
 
 public class WeaponDeck implements Deck {
-    private List<Weapon> deck;
+    private List<Weapon> deck = new ArrayList<>();
+    private Random random= new Random();
 
-    @Override
-    public void createDeck() {
-      deck.addAll(CardHelper.getInstance().getAllWeapons());
+    public WeaponDeck(){
+        deck.addAll(CardHelper.getInstance().getAllWeapons());
     }
 
     @Override
@@ -17,7 +17,6 @@ public class WeaponDeck implements Deck {
 
     @Override
     public Card draw() {
-        Random random= new Random();
         int number= random.nextInt(deck.size());
         Weapon weapon=deck.get(number);
         deck.remove(deck.get(number));

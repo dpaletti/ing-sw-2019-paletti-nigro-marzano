@@ -23,6 +23,6 @@ public class MvReconnectionEvent extends MVEvent {
 
     @Override
     public void handle(MVEventDispatcher dispatcher) {
-        dispatcher.update(this);
+        dispatcher.dispatch(this);
     }
 }

@@ -3,7 +3,6 @@ package it.polimi.se2019.network;
 import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.VcJoinEvent;
@@ -18,7 +17,6 @@ public class NetworkHandlerSocket extends NetworkHandler {
     private transient Socket socket;
     private transient Scanner in;
     private transient PrintWriter out;
-    private transient Dispatcher dispatcher = new Dispatcher();
 
     public NetworkHandlerSocket(Client client, String ip, int port){
         super(client);
@@ -49,22 +47,17 @@ public class NetworkHandlerSocket extends NetworkHandler {
     }
 
 
-    @Override
     public void update(Event message) {
         try {
-            message.handle(dispatcher);
+            message.handle(this);
         }catch (UnsupportedOperationException e){
-            Log.severe(e.getMessage());
+            Log.fine("Ignored " + message);
         }
     }
 
-    private class Dispatcher extends VCEventDispatcher {
-
-        @Override
-        public void update(VcJoinEvent message){
-            submit(message);
-        }
-
+    @Override
+    public void dispatch(VcJoinEvent message){
+        submit(message);
     }
 
     @Override

@@ -8,7 +8,7 @@ import javafx.fxml.Initializable;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public interface GuiController extends Observer<Event>, Initializable {
+public interface GuiController extends Observer<Event>, Initializable, GuiDispatcher {
     
     @Override
     default void initialize(URL location, ResourceBundle resources) {

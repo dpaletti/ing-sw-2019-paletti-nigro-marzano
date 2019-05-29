@@ -17,11 +17,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
-public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent> {
+public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent>, MVEventDispatcher {
     private List<Connection> connections = new CopyOnWriteArrayList<>();
 
     private ExecutorService executorService = Executors.newCachedThreadPool();
-    private MVEventDispatcher dispatcher = new Dispatcher();
 
     private final BiSet<String, String> biTokenUsername = new BiSet<>(); //Pair<"token", "username">
 
@@ -79,10 +78,8 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         }
     }
 
-    private class Dispatcher extends MVEventDispatcher{
-
         @Override
-        public void update(MvJoinEvent message) {
+        public void dispatch(MvJoinEvent message) {
             biTokenUsername.add(new Pair<>(message.getDestination(), message.getUsername()));
             List<Connection> toBroadcast = new ArrayList<>(connections);
             toBroadcast.remove(getConnectionOnId(message.getDestination()));
@@ -92,7 +89,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             Log.fine("Semaphore released");
         }
         @Override
-        public void update(UsernameDeletionEvent message) {
+        public void dispatch(UsernameDeletionEvent message) {
             Log.fine("Deleting " + message.getUsername());
             if(biTokenUsername.containsSecond(message.getUsername())) {
                 connections.remove(getConnectionOnId(biTokenUsername.getFirst(message.getUsername())));
@@ -108,7 +105,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         }
 
         @Override
-        public void update(MvReconnectionEvent message) {
+        public void dispatch(MvReconnectionEvent message) {
             Log.fine("handling reconnection " + message);
             Connection connection = getConnectionOnId(message.getDestination());
             Connection oldConnection = getConnectionOnId(message.getOldToken());
@@ -144,11 +141,10 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         }
 
         @Override
-        public void update(MatchMakingEndEvent message) {
+        public void dispatch(MatchMakingEndEvent message) {
             server.endMatchMaking();
             submit(getConnectionOnId(message.getDestination()), message);
         }
-    }
 
     @Override
     public void update(MVEvent message) {
@@ -159,7 +155,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
                 //this branch guards against events that already contain tokens
 
                 message.setDestination(biTokenUsername.getFirst(message.getDestination()));
-            message.handle(dispatcher);
+            message.handle(this);
         }catch (UnsupportedOperationException e){
             //if an event cannot be handled is submitted to clients by default
 

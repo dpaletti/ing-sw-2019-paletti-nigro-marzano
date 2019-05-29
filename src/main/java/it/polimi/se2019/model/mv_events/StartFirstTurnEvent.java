@@ -22,7 +22,7 @@ public class StartFirstTurnEvent extends MVEvent {
 
     @Override
     public void handle(MVEventDispatcher dispatcher) {
-        dispatcher.update(this);
+        dispatcher.dispatch(this);
     }
 
     public String getFirstPowerUpColour() {

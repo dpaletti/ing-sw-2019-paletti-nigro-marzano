@@ -1,65 +1,58 @@
 package it.polimi.se2019.utility;
 
 import it.polimi.se2019.view.vc_events.*;
-import it.polimi.se2019.view.VCEvent;
-import it.polimi.se2019.view.vc_events.VcReconnectionEvent;
 
-public class VCEventDispatcher implements Observer<VCEvent>, EventDispatcher {
+public interface VCEventDispatcher extends EventDispatcher {
 
-    @Override
-    public void update(VCEvent message) {
-        throw new UnsupportedOperationException("Generic VC Event not supported");
-    }
-
-    public void update(VcJoinEvent message){
+    default void dispatch(VcJoinEvent message){
         throw new UnsupportedOperationException("Join Event not supported");
     }
 
-    public void update(DisconnectionEvent message){
+    default void dispatch(DisconnectionEvent message){
         throw new UnsupportedOperationException("Disconnection event not supported");
     }
 
-    public void update(ChosenEffectEvent message){
+    default void dispatch(ChosenEffectEvent message){
         throw new UnsupportedOperationException("ChosenEffect event not supported");
     }
 
-    public void update(VcReconnectionEvent message){
+    default void dispatch(VcReconnectionEvent message){
         throw new UnsupportedOperationException("Reconnection event not supported");
     }
 
-    public void update (DefineTeleportPositionEvent message){
+    default void dispatch (DefineTeleportPositionEvent message){
         throw new UnsupportedOperationException("DefineTeleportPosition event not supported");
     }
 
-    public void update (ReloadEvent message){
+    default void dispatch (ReloadEvent message){
         throw new UnsupportedOperationException("Reload event not supported");
     }
 
-    public void update (MoveEvent message){
+    default void dispatch (MoveEvent message){
         throw new UnsupportedOperationException("Move event not supported");
     }
 
-    public void update (GrabEvent message){
+    default void dispatch (GrabEvent message){
         throw new UnsupportedOperationException("Grab event not supported");
     }
 
-    public void update (ChosenTargetAndEffectEvent message){
+    default void dispatch (ChosenTargetAndEffectEvent message){
         throw new UnsupportedOperationException("Chosen Target Event not supported");
     }
 
-    public void update (ChosenWeaponEvent message){
+    default void dispatch (ChosenWeaponEvent message){
         throw new UnsupportedOperationException("Chosen Weapon Event not supported");
     }
 
-    public void update (SpawnEvent message){
+    default void dispatch (SpawnEvent message){
         throw new UnsupportedOperationException("Respawn Event not supported");
     }
 
-    public void update (PowerUpUsageEvent message){
+    default void dispatch (PowerUpUsageEvent message){
         throw new UnsupportedOperationException("PowerUp Usage Event not supported");
     }
 
-    public void update (ActionEvent message){
+    default void dispatch (ActionEvent message){
         throw new UnsupportedOperationException("ActionEvent not supported");
     }
 }

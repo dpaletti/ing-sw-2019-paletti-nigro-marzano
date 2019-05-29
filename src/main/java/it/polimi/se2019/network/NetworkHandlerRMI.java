@@ -2,11 +2,9 @@ package it.polimi.se2019.network;
 
 import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.VcJoinEvent;
 
-import java.io.Serializable;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -15,9 +13,6 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterface {
     private transient ServerInterface gameServer;
-
-    private transient Dispatcher dispatcher = new Dispatcher();
-
 
     public NetworkHandlerRMI(Client client){
         super(client);
@@ -52,22 +47,18 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
         }
     }
 
-    private class Dispatcher extends VCEventDispatcher implements Serializable {
-
-
-        @Override
-        public void update(VcJoinEvent message){
-            submit(message);
-        }
-
+    @Override
+    public void dispatch(VcJoinEvent message){
+        submit(message);
     }
+
 
     @Override
     public void update(Event message) {
         try {
-            message.handle(dispatcher);
+            message.handle(this);
         }catch (UnsupportedOperationException e){
-            Log.severe(e.getMessage());
+            Log.fine("Ignored " + e.getMessage());
         }
     }
 

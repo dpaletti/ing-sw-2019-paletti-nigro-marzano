@@ -4,7 +4,6 @@ import it.polimi.se2019.model.Game;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.network.Settings;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 import it.polimi.se2019.view.vc_events.VcJoinEvent;
@@ -24,8 +23,6 @@ public class MatchMakingController extends Controller {
     private AtomicBoolean timerRunning = new AtomicBoolean(false);
     private List<String> usernames = new CopyOnWriteArrayList<>();
     private Thread timer;
-    private Dispatcher dispatcher = new Dispatcher();
-
 
     public MatchMakingController(Game model, Server server, int roomNumber){
         super(model, server, roomNumber);
@@ -36,16 +33,16 @@ public class MatchMakingController extends Controller {
     public void update(VCEvent message)
     {
         try {
-            message.handle(dispatcher);
+            message.handle(this);
         }catch (UnsupportedOperationException e){
             //this is the only controller registered on matchMaking thus it cannot receive unsupported events
+            Log.severe("Received unsupported event " + message);
             throw new UnsupportedOperationException("MatchMaking controller: " + e.getMessage(), e);
         }
     }
 
-    private class Dispatcher extends VCEventDispatcher {
         @Override
-        public void update(VcJoinEvent message) {
+        public void dispatch(VcJoinEvent message) {
             int period = Settings.MATCH_MAKING_TIMER/10;
             usernames.add(message.getUsername());
             model.newPlayerInMatchMaking(message.getSource(), message.getUsername());
@@ -79,7 +76,7 @@ public class MatchMakingController extends Controller {
         }
 
         @Override
-        public void update(DisconnectionEvent disconnectionEvent) {
+        public void dispatch(DisconnectionEvent disconnectionEvent) {
             model.usernameDeletion(disconnectionEvent.getSource());
             if (usernames.remove(disconnectionEvent.getSource())) {
 
@@ -96,10 +93,9 @@ public class MatchMakingController extends Controller {
         }
 
         @Override
-        public void update(VcReconnectionEvent message) {
+        public void dispatch(VcReconnectionEvent message) {
             model.playerReconnection(message.getSource(), message.getOldToken(), true);
         }
-    }
 
 
     public int getPlayerCount() {

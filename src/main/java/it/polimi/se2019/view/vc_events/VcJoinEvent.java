@@ -17,6 +17,6 @@ public class VcJoinEvent extends VCEvent {
 
     @Override
     public void handle(VCEventDispatcher dispatcher) {
-        dispatcher.update(this);
+        dispatcher.dispatch(this);
     }
 }

@@ -20,6 +20,6 @@ public class ReloadEvent extends VCEvent {
 
     @Override
     public void handle(VCEventDispatcher dispatcher) {
-        dispatcher.update(this);
+        dispatcher.dispatch(this);
     }
 }

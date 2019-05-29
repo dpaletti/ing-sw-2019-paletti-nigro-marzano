@@ -11,6 +11,6 @@ public class FinalFrenzyStartingEvent extends MVEvent { //notifies all users tha
 
     @Override
     public void handle(MVEventDispatcher dispatcher) {
-        dispatcher.update(this);
+        dispatcher.dispatch(this);
     }
 }

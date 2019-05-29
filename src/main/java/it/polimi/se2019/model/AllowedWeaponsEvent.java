@@ -1,6 +1,5 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.model.mv_events.AllowedMovementsEvent;
 import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.view.MVEvent;
 
@@ -17,6 +16,6 @@ public class AllowedWeaponsEvent extends MVEvent {
 
     @Override
     public void handle(MVEventDispatcher dispatcher) {
-        dispatcher.update(this);
+        dispatcher.dispatch(this);
     }
 }

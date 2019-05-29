@@ -1,93 +1,92 @@
 package it.polimi.se2019.utility;
 
+import it.polimi.se2019.model.AllowedWeaponsEvent;
 import it.polimi.se2019.model.mv_events.*;
-import it.polimi.se2019.view.MVEvent;
 
 
-public class MVEventDispatcher implements Observer<MVEvent>, EventDispatcher {
+public interface MVEventDispatcher extends EventDispatcher {
 
-    @Override
-    public void update(MVEvent message) {
-        throw new UnsupportedOperationException("Generic MVEvent not supported");
-    }
-
-    public void update(EffectToApplyEvent message){
+    default void dispatch(EffectToApplyEvent message){
         throw new UnsupportedOperationException("EffectToApplyEvent not supported");
     }
 
-    public void update(FigureToAttackEvent message){
+    default void dispatch(FigureToAttackEvent message){
         throw new UnsupportedOperationException("FigureToAttackEvent not supported");
     }
 
-    public void update(NotEnoughAmmoEvent message){
+    default void dispatch(NotEnoughAmmoEvent message){
         throw new UnsupportedOperationException("NotEnoughAmmoEvent not supported");
     }
 
-    public void update(TeleportEvent message){
+    default void dispatch(TeleportEvent message){
         throw new UnsupportedOperationException("TeleportEvent not supported");
     }
 
-    public void update(WeaponToGrabEvent message){
+    default void dispatch(WeaponToGrabEvent message){
         throw new UnsupportedOperationException("WeaponToGrabEvent not supported");
     }
 
-    public void update(WeaponToLeaveEvent message){
+    default void dispatch(WeaponToLeaveEvent message){
         throw new UnsupportedOperationException("WeaponToLeaveEvent not supported");
     }
 
-    public void update(UsernameDeletionEvent message){
+    default void dispatch(UsernameDeletionEvent message){
         throw new UnsupportedOperationException("UsernameDeletionEvent not supported");
     }
 
-    public void update(MatchMakingEndEvent message){
+    default void dispatch(MatchMakingEndEvent message){
         throw new UnsupportedOperationException("MatchMakingEndEvent not supported");
     }
 
-    public void update(HandshakeEndEvent message){
+    default void dispatch(HandshakeEndEvent message){
         throw new UnsupportedOperationException("HandshakeEndEvent not supported");
     }
 
-    public void update(MvJoinEvent message){
+    default void dispatch(MvJoinEvent message){
         throw new UnsupportedOperationException("MvJoinEvent not supported");
     }
 
-    public void update(ConnectionRefusedEvent message){
+    default void dispatch(ConnectionRefusedEvent message){
         throw new UnsupportedOperationException("ConnectionRefusedEvent not supported");
     }
 
-    public void update(MvReconnectionEvent message){
+    default void dispatch(MvReconnectionEvent message){
         throw new UnsupportedOperationException("MvReconnectionEvent not supported");
     }
 
-    public void update(SyncEvent message){
+    default void dispatch(SyncEvent message){
         throw new UnsupportedOperationException("SyncEvent not supported");
     }
 
-    public void update(TimerEvent message){
+    default void dispatch(TimerEvent message){
         throw new UnsupportedOperationException("TimerEvent not supported");
     }
 
-    public void update (FinalFrenzyStartingEvent message){
+    default void dispatch (FinalFrenzyStartingEvent message){
         throw new UnsupportedOperationException("FinalFrenzyStartingEvent not supported");
     }
 
-    public void update (DeathEvent message){
+    default void dispatch (DeathEvent message){
         throw new UnsupportedOperationException("DeathEvent not supported");
     }
 
-    public void update (MoveEvent message){
+    default void dispatch (MoveEvent message){
         throw new UnsupportedOperationException("MoveEvent not supported");
     }
 
-    public void update (TurnEvent message){
+    default void dispatch (TurnEvent message){
         throw new UnsupportedOperationException("TurnEvent not supported");
     }
 
-    public void update (StartFirstTurnEvent message){
+    default void dispatch (StartFirstTurnEvent message){
         throw new UnsupportedOperationException("StartFirstTurnEvent not supported");
     }
 
-    public void update (AllowedMovementsEvent message){
+    default void dispatch (AllowedMovementsEvent message){
         throw new UnsupportedOperationException("Allowed Movements Event not supported");
+    }
+
+    default void dispatch(AllowedWeaponsEvent message){
+        throw new UnsupportedOperationException("AllowedWeaponsEvent not supported");
     }
 }

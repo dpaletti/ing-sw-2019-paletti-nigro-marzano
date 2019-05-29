@@ -14,6 +14,6 @@ public class MoveEvent extends MVEvent { //notifies user when movement takes pla
 
     @Override
     public void handle(MVEventDispatcher dispatcher) {
-        dispatcher.update(this);
+        dispatcher.dispatch(this);
     }
 }

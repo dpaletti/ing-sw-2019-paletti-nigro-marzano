@@ -11,6 +11,6 @@ public class GrabEvent extends VCEvent {
 
     @Override
     public void handle(VCEventDispatcher dispatcher) {
-        dispatcher.update(this);
+        dispatcher.dispatch(this);
     }
 }

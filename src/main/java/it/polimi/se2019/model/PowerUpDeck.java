@@ -1,15 +1,15 @@
 package it.polimi.se2019.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class PowerUpDeck implements Deck {
-    private List<PowerUp> deck;
+    private List<PowerUp> deck = new ArrayList<>();
 
-    @Override
-    public void createDeck() {
-       deck.addAll(CardHelper.getInstance().getAllPowerUp());
+    public PowerUpDeck(){
+        deck.addAll(CardHelper.getInstance().getAllPowerUp());
     }
 
     @Override

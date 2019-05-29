@@ -69,7 +69,7 @@ public class Client {
 
         username = in.nextLine();
 
-        while (usernames.contains(username)) {
+        while (usernames.contains(username) && username.length() > Settings.MAX_USERNAME_LENGTH) {
             Log.input("Choose another username please, '" + username + "' already in use");
             username = in.nextLine();
         }

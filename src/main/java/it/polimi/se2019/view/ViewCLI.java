@@ -7,7 +7,6 @@ import it.polimi.se2019.network.Client;
 import java.util.List;
 
 public class ViewCLI extends View {
-    private Dispatcher dispatcher = new Dispatcher();
 
     public ViewCLI(Client client){
         super(client);
@@ -23,18 +22,14 @@ public class ViewCLI extends View {
 
     }
 
-    private class Dispatcher extends CommonDispatcher {
 
         @Override
-        public void update(MatchMakingEndEvent message){
+        public void dispatch(MatchMakingEndEvent message){
             //TODO stuff
         }
 
-
-    }
-
     @Override
     public void update(MVEvent message) {
-        message.handle(dispatcher);
+        message.handle(this);
     }
 }

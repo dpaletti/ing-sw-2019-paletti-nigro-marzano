@@ -4,24 +4,33 @@ import it.polimi.se2019.utility.Event;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 
 public class GuiControllerBoard implements GuiController {
 
     @FXML
     private GridPane board;
-
     @FXML
     private ImageView boardLeft;
-
     @FXML
     private ImageView boardRight;
-
     @FXML
-    private Pane leftRoot;
-
+    private ImageView topRedSpawn;
     @FXML
-    private Pane rightRoot;
+    private ImageView middleRedSpawn;
+    @FXML
+    private ImageView bottomRedSpawn;
+    @FXML
+    private ImageView leftBlueSpawn;
+    @FXML
+    private ImageView middleBlueSpawn;
+    @FXML
+    private ImageView rightBlueSpawn;
+    @FXML
+    private ImageView topYellowSpawn;
+    @FXML
+    private ImageView middleYellowSpawn;
+    @FXML
+    private ImageView bottomYellowSpawn;
 
     private Dispatcher dispatcher = new Dispatcher();
 
