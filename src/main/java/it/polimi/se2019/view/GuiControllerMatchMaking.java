@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,11 +80,12 @@ public class GuiControllerMatchMaking implements Initializable, GuiController {
         @Override
         public void dispatch(GuiCloseMatchMaking message) {
             currentStage.close();
-            FXMLLoader tableLoader = new FXMLLoader(MatchMakingGui.class.getClassLoader().getResource("fxml/table.fxml"));
-            FXMLLoader boardLoader = new FXMLLoader(MatchMakingGui.class.getClassLoader().getResource("fxml/board.fxml"));
-            FXMLLoader weaponLoader = new FXMLLoader(MatchMakingGui.class.getClassLoader().getResource("fxml/weapon.fxml"));
-            FXMLLoader powerupLoader = new FXMLLoader(MatchMakingGui.class.getClassLoader().getResource("fxml/powerup.fxml"));
+
             try {
+                 FXMLLoader tableLoader = new FXMLLoader(Paths.get("files/fxml/table.fxml").toUri().toURL());
+            FXMLLoader boardLoader = new FXMLLoader(Paths.get("files/fxml/board.fxml").toUri().toURL());
+            FXMLLoader weaponLoader = new FXMLLoader(Paths.get("files/fxml/weapon.fxml").toUri().toURL());
+            FXMLLoader powerupLoader = new FXMLLoader(Paths.get("files/fxml/powerup.fxml").toUri().toURL());
                 GridPane tableGrid = tableLoader.load();
                 GridPane boardGrid = boardLoader.load();
                 GridPane weaponGrid = weaponLoader.load();

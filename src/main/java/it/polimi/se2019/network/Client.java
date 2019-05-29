@@ -156,8 +156,8 @@ public class Client {
 
         Client client = new Client();
         try {
-            TOKEN_FILE_PATH = Paths.get(Client.class.getClassLoader().getResource("config/token").getPath());
-            USERNAME_FILE_PATH = Paths.get(Client.class.getClassLoader().getResource("config/username").getPath());
+            TOKEN_FILE_PATH = Paths.get("files/config/token");
+            USERNAME_FILE_PATH = Paths.get("files/config/token");
         }catch (NullPointerException e){
             Log.severe("Could not find files for token and username");
         }
