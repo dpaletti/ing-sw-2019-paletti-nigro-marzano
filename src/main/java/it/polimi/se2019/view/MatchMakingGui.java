@@ -6,12 +6,14 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import java.nio.file.Paths;
+
 
 public class MatchMakingGui extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(MatchMakingGui.class.getClassLoader().getResource("fxml/match_making.fxml"));
+        FXMLLoader loader = new FXMLLoader(Paths.get("files/fxml/match_making.fxml").toUri().toURL());
         AnchorPane anchorPane = loader.load();
 
         Scene scene = new Scene(anchorPane);

@@ -6,16 +6,18 @@ import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+import java.nio.file.Paths;
+
 
 public class MatchGui extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        FXMLLoader tableLoader = new FXMLLoader(MatchMakingGui.class.getClassLoader().getResource("fxml/table.fxml"));
-        FXMLLoader boardLoader = new FXMLLoader(MatchMakingGui.class.getClassLoader().getResource("fxml/board.fxml"));
-        FXMLLoader weaponLoader = new FXMLLoader(MatchMakingGui.class.getClassLoader().getResource("fxml/weapon.fxml"));
-        FXMLLoader powerupLoader = new FXMLLoader(MatchMakingGui.class.getClassLoader().getResource("fxml/powerup.fxml"));
+        FXMLLoader tableLoader = new FXMLLoader(Paths.get("files/fxml/table.fxml").toUri().toURL());
+        FXMLLoader boardLoader = new FXMLLoader(Paths.get("files/fxml/board.fxml").toUri().toURL());
+        FXMLLoader weaponLoader = new FXMLLoader(Paths.get("files/fxml/weapon.fxml").toUri().toURL());
+        FXMLLoader powerupLoader = new FXMLLoader(Paths.get("files/fxml/powerup.fxml").toUri().toURL());
         GridPane tableGrid = tableLoader.load();
         GridPane boardGrid = boardLoader.load();
         GridPane weaponGrid = weaponLoader.load();
