@@ -1,15 +1,18 @@
 package it.polimi.se2019.model.mv_events;
 
-import it.polimi.se2019.model.Point;
 import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.view.MVEvent;
 
-public class MoveEvent extends MVEvent { //notifies user when movement takes place
-    Point finalPosition;
+public class PausedPlayerEvent extends MVEvent {
+    String pausedPlayer;
 
-    public MoveEvent (String destination, Point finalPosition){
+    public PausedPlayerEvent (String destination, String pausedPlayer){
         super(destination);
-        this.finalPosition=finalPosition;
+        this.pausedPlayer= pausedPlayer;
+    }
+
+    public String getPausedPlayer() {
+        return pausedPlayer;
     }
 
     @Override

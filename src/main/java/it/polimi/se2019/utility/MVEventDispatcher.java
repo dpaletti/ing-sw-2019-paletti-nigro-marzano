@@ -70,7 +70,7 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("DeathEvent not supported");
     }
 
-    default void dispatch (MoveEvent message){
+    default void dispatch (MVMoveEvent message){
         throw new UnsupportedOperationException("MoveEvent not supported");
     }
 
@@ -86,7 +86,23 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("Allowed Movements Event not supported");
     }
 
+    default void dispatch (PowerUpToLeaveEvent message){
+        throw new UnsupportedOperationException("PowerUpToLeave Event not supported");
+    }
+
     default void dispatch(AllowedWeaponsEvent message){
         throw new UnsupportedOperationException("AllowedWeaponsEvent not supported");
+    }
+
+    default void dispatch(UnpausedPlayerEvent message) {
+        throw new UnsupportedOperationException("UnpausedPlayerEvent not supported");
+    }
+
+    default void dispatch(PausedPlayerEvent message){
+        throw new UnsupportedOperationException("PausedPlayerEvent not supported");
+    }
+
+    default void dispatch (UpdatePointsEvent message){
+        throw new UnsupportedOperationException("UpdatePointEvent not supported");
     }
 }

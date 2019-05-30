@@ -10,12 +10,11 @@ import java.util.*;
 
 public class Game extends Observable<MVEvent> {
     private GameMap gameMap;
-    private Boolean finalFrenzy;
+    private boolean finalFrenzy;
     private KillshotTrack killshotTrack;
     private Deck weaponDeck;
     private Deck powerUpDeck;
     private Deck lootDeck;
-    private static Game instance=null;
     private List<Player> players= new ArrayList<>();
     private List<Turn> turns;
     private BiSet<FigureColour, String> userLookup = new BiSet<>();
@@ -24,7 +23,7 @@ public class Game extends Observable<MVEvent> {
 
     // TODO Mapping between figures and usernames coming from controller
 
-    private Game(){
+    public Game(){
         weaponDeck= new WeaponDeck();
         powerUpDeck= new PowerUpDeck();
         //lootDeck= new LootDeck();
@@ -57,7 +56,8 @@ public class Game extends Observable<MVEvent> {
         List<String> lootCards= new ArrayList<>();
         for (String userCounter: usernames){
             userLookup.add(new Pair<>(FigureColour.values()[colourCounter], userCounter));
-            players.add(new Player(new Figure(FigureColour.values()[colourCounter], new Point(-1, -1))));
+            players.add(new Player(new Figure(FigureColour.values()[colourCounter]), this));
+
             colourCounter++;
         }
         if (((Integer) usernames.size()).equals(3)){
@@ -100,27 +100,30 @@ public class Game extends Observable<MVEvent> {
         notify(new StartTurnEvent(playing));
     }
 
-    public void pausePlayer(String username){
-        //When a player disconnects or times out while playing needs to be paused
-        //upon reconnection it will be un-paused
-        //throws exception when pausing an already paused player
-        //TODO implement
+    public void endTurn (String username){
+        Player player= userToPlayer(username);
+        player.endTurn();
     }
 
-    public void unpausePlayer(String username){
-        //unpauses paused player
-        //throws exception when unpausing an already unpaused player
-        //TODO implement
+    public void pausePlayer (String username){
+        Player player= userToPlayer(username);
+        player.pause();
     }
 
-    public static Game getInstance() {
-        if (instance==null){
-            instance= new Game();
-        }
-        return instance;
+    public void pausedPlayer (Player pausedPlayer){
+        notify(new PausedPlayerEvent("*", colourToUser(pausedPlayer.getFigure().getColour())));
     }
 
-    public Boolean getFinalFrenzy() {
+    public void unpausePlayer (String username){
+        Player player= userToPlayer(username);
+        player.unpause();
+    }
+
+    public void unpausedPlayer (Player unpausedPlayer){
+        notify(new UnpausedPlayerEvent("*", colourToUser(unpausedPlayer.getFigure().getColour())));
+    }
+
+    public boolean getFinalFrenzy() {
         return finalFrenzy;
     }
 
@@ -174,17 +177,8 @@ public class Game extends Observable<MVEvent> {
         this.weaponDeck = weaponDeck;
     }
 
-    public static void setInstance(Game instance) {
-        Game.instance = instance;
-    }
-
     public void setPlayers(List<Player> players) {
         this.players = players;
-    }
-
-
-    public void sendMessage (MVEvent message){
-        notify(message);
     }
 
     public Player colourToPlayer (FigureColour figureColour){
@@ -208,15 +202,19 @@ public class Game extends Observable<MVEvent> {
         return CardHelper.getInstance().findWeaponByName(weaponName);
     }
 
-    public PowerUp nameToPowerUp (String powerUpName, AmmoColour powerUpColour){
-        return CardHelper.getInstance().findPowerUpByName(powerUpName, powerUpColour);
+    public PowerUp nameToPowerUp (String powerUpName){
+        return CardHelper.getInstance().findPowerUpByName(powerUpName);
+    }
+
+    public LootCard nameToLootCard (String lootCardName){
+        return CardHelper.getInstance().findLootCardByName(lootCardName);
     }
 
     public void deathHandler(Player player){
         player.calculatePoints(player);
         updateKillshotTrack(player);
         player.setHp(null);
-        notify(new DeathEvent(colourToUser(player.getFigure().getColour()), player.getHp().get(10).getColour().toString()));
+        notify(new DeathEvent("*",colourToUser(player.getFigure().getColour()) , colourToUser(player.getHp().get(10).getColour())));
         if (killshotTrack.getNumberOfSkulls().equals(killshotTrack.getKillshot().size())){
             //finalFrenzyTurn: change status of players, change moves
         }
@@ -228,7 +226,7 @@ public class Game extends Observable<MVEvent> {
     
      private void updateKillshotTrack(Player deadPlayer){
         FigureColour killer= deadPlayer.getHp().get(10).getColour(); //the 11th shot causes the death of the figure
-         Boolean overkill= false;
+         boolean overkill= false;
          if (deadPlayer.getHp().size()==12){
              overkill= true; //if a 12th element is present in the list, overkill
              colourToPlayer(killer).addMark(deadPlayer.getFigure().getColour()); //overkiller receives a mark from deadplayer
@@ -248,7 +246,7 @@ public class Game extends Observable<MVEvent> {
 
      }
 
-    //exposed methods, used by controller
+    //exposed methods, used for MVEvents or VCEvents
 
     public void allowedMovements (String username, int radius){
         Player playing= userToPlayer(username);
@@ -288,9 +286,28 @@ public class Game extends Observable<MVEvent> {
         playerRunning.run(destination);
     }
 
-    public void grab (String username){
+    public void playerMovement (Player playerRunning, Point finalPosition){
+        notify(new MVMoveEvent("*", colourToUser(playerRunning.getFigure().getColour()), finalPosition));
+    }
+
+    public void grab (String username, String grabbed){
         Player playerGrabbing= userToPlayer(username);
-        playerGrabbing.grabStuff();
+        Card grabbedCard= null;
+        for (Weapon weapon: CardHelper.getInstance().getAllWeapons()){
+            if (weapon.getName().equalsIgnoreCase(grabbed)){
+                grabbedCard= nameToWeapon(grabbed);
+                break;
+            }
+        }
+        if (grabbedCard==null){
+            for (LootCard lootCard: CardHelper.getInstance().getAllLootCards()){
+                if (lootCard.getName().equalsIgnoreCase(grabbed)){
+                    grabbedCard= nameToLootCard(grabbed);
+                }
+            }
+        }
+        if (grabbedCard==null) throw new NullPointerException("This card is not grabbable");
+        playerGrabbing.grabStuff(grabbedCard);
     }
 
     public void shoot (String username, String weapon, ArrayList<String> effects, ArrayList<ArrayList<String>> targetNames){
@@ -304,19 +321,56 @@ public class Game extends Observable<MVEvent> {
         }
     }
 
-    public void spawn (String username, AmmoColour spawnColour){
+    public void spawn (String username, AmmoColour spawnColour, String powerUpName){
         Player spawning= userToPlayer(username);
+        PowerUp drawnPowerUp= nameToPowerUp(powerUpName);
         for (Tile tile: GameMap.getTiles()){
-            if (tile.getColour().equals(spawnColour)&&tile.getTileType().equals(TileType.SPAWNTILE)){
+            if (tile.getColour().toString().equals(spawnColour.toString())&&tile.getTileType().equals(TileType.SPAWNTILE)){
                 spawning.run(tile.position);
             }
         }
-        notify(new MoveEvent("*", spawning.getFigure().getPosition()));
+        if (drawnPowerUp!=null){
+            spawning.drawPowerUp(drawnPowerUp);
+        }
+        notify(new MVMoveEvent("*", username, spawning.getFigure().getPosition()));
+        notify(new StartTurnEvent(username));
     }
 
-    public void usePowerUp (String username, String powerUpName, AmmoColour powerUpColour){
+    public void usePowerUp (String username, String powerUpName){
         Player player= userToPlayer(username);
-        PowerUp powerUp= nameToPowerUp(powerUpName, powerUpColour);
+        PowerUp powerUp= nameToPowerUp(powerUpName);
         player.usePowerUp(powerUp);
+    }
+
+    public void chosePowerUpToDiscard (Player player, List<PowerUp> powerUps){
+        String username= colourToUser(player.getFigure().getColour());
+        List<String> powerUpsToDiscard= new ArrayList<>();
+        for (PowerUp powerUp: powerUps){
+            powerUpsToDiscard.add(powerUp.getName());
+        }
+        notify(new PowerUpToLeaveEvent(username, powerUpsToDiscard));
+    }
+
+    public void discardPowerUp (String username, String powerUpName){
+        Player playing= userToPlayer(username);
+        PowerUp powerUpToDiscard= nameToPowerUp(powerUpName);
+        playing.discardPowerUp(powerUpToDiscard);
+    }
+
+    public void discardedPowerUp (Player player, PowerUp drawnPowerUp, PowerUp discardedPowerUp){
+        String username= colourToUser(player.getFigure().getColour());
+        notify(new DiscardedPowerUpEvent("*", username, drawnPowerUp.getName(), discardedPowerUp.getName()));
+    }
+
+    public void attackOnPlayer (Player attacked, Player attacker){
+        notify(new UpdateHpEvent("*", colourToUser(attacked.getFigure().getColour()), colourToUser(attacker.getFigure().getColour())));
+    }
+
+    public void markOnPlayer (Player marked, Player marker){
+        notify(new UpdateMarkEvent("*", colourToUser(marked.getFigure().getColour()), colourToUser(marker.getFigure().getColour())));
+    }
+
+    public void deathHandler (List<Integer> points){
+        //check other method, shrink
     }
 }

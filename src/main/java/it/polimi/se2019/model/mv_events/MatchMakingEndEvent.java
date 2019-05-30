@@ -47,7 +47,7 @@ public class MatchMakingEndEvent extends MVEvent {
         return new ArrayList<>(weaponSpots);
     }
 
-    public ArrayList<String> getLootCards() {
+    public List<String> getLootCards() {
         return new ArrayList<>(lootCards);
     }
 

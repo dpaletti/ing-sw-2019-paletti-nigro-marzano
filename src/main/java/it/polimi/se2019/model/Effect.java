@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Effect {
+
+
     private Integer priority;
     private TargetSpecification targetSpecification;
     private List<Action> actions;

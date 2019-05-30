@@ -27,11 +27,11 @@ public class TestCardHelper {
 
     @Test
     public void testFindPowerUpByName(){
-        assertEquals(powerUp.getName(),CardHelper.getInstance().findPowerUpByName("Newton",AmmoColour.BLUE).getName());
+        assertEquals(powerUp.getName(),CardHelper.getInstance().findPowerUpByName("Newton").getName());
     }
 
     @Test(expected = NullPointerException.class)
     public void testFindPowerUpByNameException(){
-        PowerUp secondPowerUp= CardHelper.getInstance().findPowerUpByName("Lulic",AmmoColour.BLUE);
+        PowerUp secondPowerUp= CardHelper.getInstance().findPowerUpByName("Lulic");
     }
 }

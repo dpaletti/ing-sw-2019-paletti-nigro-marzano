@@ -4,16 +4,16 @@ import it.polimi.se2019.model.Point;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
 
-public class MoveEvent extends VCEvent {
-    private Point destionation;
+public class VCMoveEvent extends VCEvent {
+    private Point destination;
 
-    public MoveEvent (String source, Point destionation){
+    public VCMoveEvent(String source, Point destination){
         super(source);
-        this.destionation=destionation;
+        this.destination = destination;
     }
 
-    public Point getDestionation() {
-        return destionation;
+    public Point getDestination() {
+        return destination;
     }
 
     @Override

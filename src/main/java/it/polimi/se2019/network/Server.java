@@ -78,7 +78,7 @@ public class Server implements ServerInterface {
     }
 
     private void startServer() {
-        Game model = Game.getInstance();
+        Game model = new Game();
         Controller controller = new MatchMakingController(model, this, roomNumber);
         virtualViews.add(new VirtualView(roomNumber, this));
 

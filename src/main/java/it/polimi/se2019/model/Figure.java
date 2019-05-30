@@ -14,9 +14,9 @@ public class Figure {
     private Player player;
     private Point position;
 
-    public Figure (FigureColour figureColour, Point position){
+    public Figure (FigureColour figureColour){
         this.colour= figureColour;
-        this.position= position;
+        position= new Point (-1, -1);
     }
 
     public Point getPosition() {
@@ -31,9 +31,10 @@ public class Figure {
         return tile;
     }
 
-    public Player getPlayer() {
-        return player;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
+
 
     public void damage(Figure target){
         target.player.addTear(colour);
@@ -79,7 +80,7 @@ public class Figure {
             position=newPosition;
             tile=GameMap.getMap().get(newPosition);
         }
-    }
+    } //MVEvent to notify final position to all users
 
     public void move(Figure target, Direction direction){
         Point newPosition= new Point(target.tile.getPosition().getX(), target.tile.getPosition().getY());
@@ -103,7 +104,7 @@ public class Figure {
             target.position = newPosition;
             target.tile = GameMap.getMap().get(newPosition);
         }
-    }
+    } //MVEvent to notify final position to all users
 
     public void teleport (Point teleportPosition){ //only called in case of Teleport Event
         if (boundaryChecker(this, teleportPosition)){
@@ -362,9 +363,7 @@ public class Figure {
         return targetSet;
     }
 
-    //missing events
-
-    public void grab(){
+    public void grab(Card grabbed){ //TODO: modify grab with parameter (grabbed card)
         if (tile.getTileType()==TileType.LOOTTILE) { //when on a Loot Tile, adds grabbed ammo to usable ammo making sure the number of ammo of a colour does not exceed 3
             int ammoOfSelectedColour=0;
             for (Ammo lootCounter : tile.getLootCard().getAmmo()) {
@@ -386,9 +385,6 @@ public class Figure {
             availableWeapons.add(tile.getWeaponSpot().getFirstWeapon().getName());
             availableWeapons.add(tile.getWeaponSpot().getSecondWeapon().getName());
             availableWeapons.add(tile.getWeaponSpot().getThirdWeapon().getName());
-            WeaponToGrabEvent weaponToGrabEvent=new WeaponToGrabEvent(Game.getInstance().colourToUser(colour));
-            weaponToGrabEvent.setAvailableWeapons(availableWeapons);
-            Game.getInstance().sendMessage(weaponToGrabEvent);
             // TODO: vc_events: a Weapon is returned and assigned to selectedWeapon
 
             if (player.getFirstWeapon()==null){
@@ -403,13 +399,7 @@ public class Figure {
             }
 
             else {
-                WeaponToLeaveEvent weaponToLeaveEvent=new WeaponToLeaveEvent(Game.getInstance().colourToUser(colour));
-                Set<String> weaponsOwned=new HashSet<>();
-                weaponsOwned.add(player.getFirstWeapon().getName());
-                weaponsOwned.add(player.getSecondWeapon().getName());
-                weaponsOwned.add(player.getThirdWeapon().getName());
-                weaponToLeaveEvent.setWeaponsOwned(weaponsOwned);
-                Game.getInstance().sendMessage(weaponToLeaveEvent);
+
                 //TODO: vc_events: a weapon is returned and selectedWeapon is assigned to free weapon slot
             }
         }
@@ -428,12 +418,11 @@ public class Figure {
         }
         if(enoughAmmoForReload==weapon.getPrice().size()){  //in case player has enough ammo to pay for the reload
             weapon.setLoaded(true);
-            Set<Ammo> ammo= player.getUsableAmmo();
-            player.setUsableAmmo(ammo);
+            player.useAmmo(weapon.getPrice());
         }
         else{
             NotEnoughAmmoEvent notEnoughAmmoEvent=null;
-            Game.getInstance().sendMessage(notEnoughAmmoEvent); //not enough ammo available to reload, want to use PowerUps?
+             //not enough ammo available to reload, want to use PowerUps?
             //TODO: VCEvent: no, end reload/yes, use selectedPowerUp to pay
             PowerUp selectedPowerUp=null;
             player.sellPowerUp(selectedPowerUp);
@@ -447,7 +436,7 @@ public class Figure {
         Set<Pair<Effect, Set<Figure>>> targetSet=new HashSet<>();
         Pair <Effect, Set<Figure>> effectToTargets;
 
-        Set<Player> players=new HashSet<>(Game.getInstance().getPlayers());
+        Set<Player> players=new HashSet<>(player.getAllPlayers());
         Set<Figure> figures=new HashSet<>();
         for(Player playerCounter: players){
             figures.add(playerCounter.getFigure());
@@ -469,8 +458,8 @@ public class Figure {
                         figuresInTargetSet = seenFigures;
                         break;
                     case 2: //figures my previous target can see
-                        int indexOfCurrentPlayer= Game.getInstance().getPlayers().indexOf(player);
-                        Set<Figure> previousTargets= new HashSet<>(Game.getInstance().getTurns().get(indexOfCurrentPlayer).getFirstTargetSet());
+                        int indexOfCurrentPlayer= player.getAllPlayers().indexOf(player);
+                        Set<Figure> previousTargets= new HashSet<>(); //Game.getInstance().getTurns().get(indexOfCurrentPlayer).getFirstTargetSet()
                         for (Figure figureCounter: previousTargets)
                         {
                             figuresInTargetSet.addAll(visibilitySet(figureCounter));

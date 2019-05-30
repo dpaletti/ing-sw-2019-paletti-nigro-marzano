@@ -1,5 +1,6 @@
 package it.polimi.se2019.utility;
 
+import it.polimi.se2019.model.mv_events.EndOfTurnEvent;
 import it.polimi.se2019.view.vc_events.*;
 
 public interface VCEventDispatcher extends EventDispatcher {
@@ -28,7 +29,7 @@ public interface VCEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("Reload event not supported");
     }
 
-    default void dispatch (MoveEvent message){
+    default void dispatch (VCMoveEvent message){
         throw new UnsupportedOperationException("Move event not supported");
     }
 
@@ -54,5 +55,13 @@ public interface VCEventDispatcher extends EventDispatcher {
 
     default void dispatch (ActionEvent message){
         throw new UnsupportedOperationException("ActionEvent not supported");
+    }
+
+    default void dispatch (DiscardedPowerUpEvent message){
+        throw new UnsupportedOperationException("Discarded PowerUp Event not supported");
+    }
+
+    default void dispatch (EndOfTurnEvent message){
+        throw new UnsupportedOperationException("EndOfTurnEvent not supported");
     }
 }

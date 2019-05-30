@@ -9,12 +9,20 @@ public abstract class Card {
     private Set<Ammo> price;
     private Set<WeaponEffect> weaponEffects;
     private String name;
-    private Integer maxheight;
+    private Integer maxHeight;
     private Set<Set<String>> invalidCombinations;
     private GraphNode<Effect> staticDefinition= new GraphNode<>();
 
-    public Integer getMaxheight() {
-        return maxheight;
+    public Card (String name){
+        this.name= name;
+    }
+
+    public Card (String name, AmmoColour ammoColour){
+        this.name= name;
+        this.cardColour= new Ammo(ammoColour);
+    }
+    public Integer getMaxHeight() {
+        return maxHeight;
     }
 
     public String getName() {
@@ -51,7 +59,7 @@ public abstract class Card {
 
     public void generateGraph(){
         if(staticDefinition.getChildren().isEmpty()) {
-            generateCombinations(generateAllEffectsSet(), staticDefinition, maxheight);
+            generateCombinations(generateAllEffectsSet(), staticDefinition, maxHeight);
             eliminateInvalidCombinations();
         }else{
             throw new UnsupportedOperationException("static definition has been generated");

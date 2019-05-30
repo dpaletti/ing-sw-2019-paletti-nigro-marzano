@@ -1,12 +1,13 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.model.mv_events.MoveEvent;
+import it.polimi.se2019.model.mv_events.MVMoveEvent;
 import it.polimi.se2019.utility.Observable;
 
 import java.util.*;
 
 public class Player extends Observable<Action> {
     private Figure figure;
+    private boolean isPaused= false;
     private List<Tear> hp= new ArrayList<>();
     private PlayerDamage healthState= new Healthy();
     private Set<Tear> marks= new HashSet<>();
@@ -16,33 +17,46 @@ public class Player extends Observable<Action> {
     private PowerUp firstPowerUp;
     private PowerUp secondPowerUp;
     private PowerUp thirdPowerUp;
+    private PowerUp temporaryPowerUp= null;
     private Integer points= 0;
     private Set<Ammo> usableAmmo= new HashSet<>();
     private Set<Ammo> unusableAmmo= new HashSet<>();
     private TurnMemory turnMemory;
     private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1));
+    private Game game;
 
-    public Player (Figure figure){
-        this.figure=figure;
+    public Player (Figure figure, Game game){
+        this.figure= figure;
+        this.game= game;
         for (AmmoColour ammoColour: AmmoColour.values()){
             for (int i=0; i<3; i++){
                 usableAmmo.add(new Ammo(ammoColour));
             }
         }
+        this.figure.setPlayer(this);
     }
 
-    public void unpause(){
-        //TODO implement
-        //a paused player can be resurrect if it timed out
-        //probably mv_events adhoc
+    public List<Player> getAllPlayers (){
+      return game.getPlayers();
+    }
+
+    public void unpause (){
+        if (!isPaused){
+            throw new UnsupportedOperationException("This player is already unpaused");
+        }
+        isPaused= false;
+        game.unpausedPlayer(this);
     }
 
     public void pause(){
-        //TODO implement
-        //players that disconnect should be considered paused
-        //some players may simply time out
-        //probably mv_events adhoc
+        if (isPaused){
+            throw new UnsupportedOperationException("This player is already paused");
+        }
+        isPaused= true;
+        game.pausedPlayer(this);
     }
+
+
 
     public Weapon getThirdWeapon() {
         return thirdWeapon;
@@ -62,10 +76,6 @@ public class Player extends Observable<Action> {
 
     public PlayerDamage getHealthState() {
         return healthState;
-    }
-
-    public Integer getPoints() {
-        return points;
     }
 
     public PowerUp getFirstPowerUp() {
@@ -102,6 +112,10 @@ public class Player extends Observable<Action> {
         return pointsToAssign;
     }
 
+    public PowerUp getTemporaryPowerUp() {
+        return temporaryPowerUp;
+    }
+
     public void setThirdWeapon(Weapon thirdWeapon) {
         this.thirdWeapon = thirdWeapon;
     }
@@ -134,10 +148,6 @@ public class Player extends Observable<Action> {
         this.marks = marks;
     }
 
-    public void setPoints(Integer points) {
-        this.points = points;
-    }
-
     public void setSecondPowerUp(PowerUp secondPowerUp) {
         this.secondPowerUp = secondPowerUp;
     }
@@ -146,17 +156,15 @@ public class Player extends Observable<Action> {
         this.thirdPowerUp = thirdPowerUp;
     }
 
-    public void setUnusableAmmo(Set<Ammo> unusableAmmo) {
-        this.unusableAmmo = unusableAmmo;
-    }
-
-    public void setUsableAmmo(Set<Ammo> usableAmmo) {
-        this.usableAmmo = usableAmmo;
-    }
-
     public void setTurnMemory(TurnMemory turnMemory) {
         this.turnMemory = turnMemory;
     }
+
+    public void setTemporaryPowerUp(PowerUp temporaryPowerUp) {
+        this.temporaryPowerUp = temporaryPowerUp;
+    }
+
+
 
     public Set<Weapon> showWeapons (){
         Set<Weapon> weapons= new HashSet<>();
@@ -166,52 +174,59 @@ public class Player extends Observable<Action> {
         return weapons;
     }
 
-    public GraphNode<Effect> showWeapon(Weapon weapon){
+    public GraphNode<Effect> showWeapon (Weapon weapon){
         return(weapon.getStaticDefinition());
-        }
+        } //to be deleted
 
     public void useWeapon(Weapon weapon, Player target, String effectName){
-        Effect effect= Game.getInstance().getEffectMap().get(effectName);
+        Effect effect= game.getEffectMap().get(effectName);
         target.getFigure().shoot(effect, getFigure().getColour());
         weapon.setLoaded(false);
     }
 
-    public void moveFigure(Direction direction){
+    public void moveFigure (Direction direction){
         figure.move(direction);
-    }
+    } //used by weapons
 
-    public void moveFigure(Direction direction, Figure target){
+    public void moveFigure (Direction direction, Figure target){
         figure.move(target, direction);
-    }
+    } //used by weapons
 
     public void teleport (Point position){
         figure.teleport(position);
-        String user= Game.getInstance().colourToUser(figure.getColour());
-        Game.getInstance().sendMessage(new MoveEvent(user, position));
+        game.playerMovement(this, position);
     }
 
     public void run (Point destination) {
         figure.run(destination);
-        String user= Game.getInstance().colourToUser(figure.getColour());
-        Game.getInstance().sendMessage(new MoveEvent(user, destination));
+        game.playerMovement(this, destination);
     }
 
-    public void grabStuff(){
-        figure.grab();
+    public void grabStuff(Card grabbed){
+        figure.grab(grabbed);
     }
 
-    public void endTurn(){
-
+    public void endTurn (){
+        //check whether anything else can be added to this method
         updateTurn();
-    } //TODO: endTurn sends an event to the virtual view, modifies turns in Game
+    }
 
     public void reload(Weapon weapon){
         figure.reload(weapon);
     }
 
     public void usePowerUp (PowerUp powerUp){
-        //TODO: implement
-        // powerUp is discarded after usage
+        //TODO: use power up
+        deletePowerUp(powerUp);
+    }
+
+    //MASSI: finally changed the powerUp structure, method getPowerUpName->getName, method getColour->getCardColour.getColour
+    public void sellPowerUp (PowerUp powerUp){
+        usableAmmo.add(new Ammo(powerUp.getCardColour().getColour()));
+        deletePowerUp(powerUp);
+    }
+
+    public void deletePowerUp (PowerUp powerUp){
         if (powerUp.equals(firstPowerUp)){
             firstPowerUp=null;
         }
@@ -221,31 +236,18 @@ public class Player extends Observable<Action> {
         else if (powerUp.equals(thirdPowerUp)){
             thirdPowerUp=null;
         }
+        game.discardedPowerUp(this, null, powerUp);
     }
-
-    //MASSI: finally changed the powerUp structure, method getPowerUpName->getName, method getColour->getCardColour.getColour
-    void sellPowerUp (PowerUp powerUp){
-        Ammo powerUpToSell= new Ammo(powerUp.getCardColour().getColour());
-        usableAmmo.add(powerUpToSell);
-        if (powerUp.getName().equals(firstPowerUp.getName())){
-            firstPowerUp=null;
-        }
-        else if (powerUp.getName().equals(secondPowerUp.getName())){
-            secondPowerUp=null;
-        }
-        else if (powerUp.getName().equals(thirdPowerUp.getName())){
-            thirdPowerUp=null;
-        }
-    }
-
     void addTear (FigureColour figureColour){
         Tear tear= new Tear(figureColour);
         hp.add(tear);
+        game.attackOnPlayer(this, game.colourToPlayer(figureColour));
     }
 
     void addMark (FigureColour figureColour){
         Tear tear= new Tear(figureColour);
         marks.add(tear);
+        game.markOnPlayer(this, game.colourToPlayer(figureColour));
     }
 
     void updatePlayerDamage (){
@@ -253,28 +255,28 @@ public class Player extends Observable<Action> {
             healthState= healthState.findNextHealthState();
         }
         if (hp.size()>=10){
-            if (Game.getInstance().getKillshotTrack().getNumberOfSkulls().equals(Game.getInstance().getKillshotTrack().getKillshot().size())){
-                Game.getInstance().finalFrenzyDeathHandler(this);
+            if (game.getKillshotTrack().getNumberOfSkulls().equals(game.getKillshotTrack().getKillshot().size())){
+                game.finalFrenzyDeathHandler(this);
             }
             else {
-                Game.getInstance().deathHandler(this);
+                game.deathHandler(this);
             }
         }
     }
 
     public void updateTurn (){ //only called from player and accessed from Figure
-        Game.getInstance().updateTurns(this, turnMemory);
+        game.updateTurns(this, turnMemory);
         turnMemory.clear();
     }
 
 
     public void calculatePoints(Player deadPlayer){
         FigureColour figureColour= deadPlayer.hp.get(0).getColour();
-        Player firstShooter= Game.getInstance().colourToPlayer(figureColour);
+        Player firstShooter= game.colourToPlayer(figureColour);
         firstShooter.points++;
 
         Map<FigureColour, Integer> tags= new HashMap<>();
-        for (Player player: Game.getInstance().getPlayers()){
+        for (Player player: game.getPlayers()){
             tags.put(player.getFigure().getColour(), 0);
         }
         for(Tear tear: deadPlayer.getHp()){
@@ -298,11 +300,11 @@ public class Player extends Observable<Action> {
                 if (entry.getValue()==maximumHits){
                     localBestShooters.add(entry.getKey());
                 }
-                Player localBestPlayer= Game.getInstance().colourToPlayer(localBestShooters.get(0));
+                Player localBestPlayer= game.colourToPlayer(localBestShooters.get(0));
                 localBestPlayer.points=localBestPlayer.points+pointsToAssign.get(counter);
                 localBestShooters.remove(0);
                     for (FigureColour localBestShooter : localBestShooters) {
-                        localBestPlayer = Game.getInstance().colourToPlayer(localBestShooter);
+                        localBestPlayer = game.colourToPlayer(localBestShooter);
                         localBestPlayer.points = localBestPlayer.points + pointsToAssign.get(counter+1);
                         counter++;
                     }
@@ -314,7 +316,7 @@ public class Player extends Observable<Action> {
     public void finalFrenzyCalculatePoints (Player deadPlayer){
         List<Integer> finalFrenzyPoints= new ArrayList<>(Arrays.asList(2, 1, 1, 1));
         Map<FigureColour, Integer> tags= new HashMap<>();
-        for (Player player: Game.getInstance().getPlayers()){
+        for (Player player: game.getPlayers()){
             tags.put(player.getFigure().getColour(), 0);
         }
         for(Tear tear: deadPlayer.getHp()){
@@ -337,18 +339,65 @@ public class Player extends Observable<Action> {
                 if (entry.getValue()==maximumHits){
                     localBestFrenzyShooters.add(entry.getKey());
                 }
-                Player localBestFrenzyPlayer= Game.getInstance().colourToPlayer(localBestFrenzyShooters.get(0));
+                Player localBestFrenzyPlayer= game.colourToPlayer(localBestFrenzyShooters.get(0));
                 localBestFrenzyPlayer.points= localBestFrenzyPlayer.points+finalFrenzyPoints.get(counter);
                 for (FigureColour localBestShooter: localBestFrenzyShooters){
-                    localBestFrenzyPlayer= Game.getInstance().colourToPlayer(localBestShooter);
+                    localBestFrenzyPlayer= game.colourToPlayer(localBestShooter);
                     localBestFrenzyPlayer.points=localBestFrenzyPlayer.points+finalFrenzyPoints.get(counter+1);
                     counter++;
                 }
             }
         }
+        //game.deathHandler();
     }
 
     public void updatePointsToAssign (){
         pointsToAssign.remove(0);
+    }
+
+    public void drawPowerUp (PowerUp powerUp){
+        if (temporaryPowerUp!=null){
+            throw new IllegalStateException("Discard a powerUp before drawing");
+        }
+        if (firstPowerUp==null) firstPowerUp= powerUp;
+        else if (secondPowerUp==null) secondPowerUp= powerUp;
+        else if (thirdPowerUp==null) thirdPowerUp= powerUp;
+        else {
+            temporaryPowerUp= powerUp;
+            List<PowerUp> powerUps= new ArrayList<>();
+            powerUps.add(firstPowerUp);
+            powerUps.add(secondPowerUp);
+            powerUps.add(thirdPowerUp);
+            powerUps.add(powerUp);
+            game.chosePowerUpToDiscard(this, powerUps);
+        }
+    }
+
+    public void discardPowerUp (PowerUp powerUp){
+        PowerUp powerUpToAdd= new PowerUp(temporaryPowerUp.getName(), temporaryPowerUp.getCardColour().getColour());
+        temporaryPowerUp=null;
+        PowerUp discardedPowerUp= new PowerUp(powerUpToAdd.getName(), powerUpToAdd.getCardColour().getColour());
+
+        if (powerUp.equals(firstPowerUp)){
+            discardedPowerUp= new PowerUp(firstPowerUp.getName(), firstPowerUp.getCardColour().getColour());
+            firstPowerUp=powerUpToAdd;
+        }
+        else if (powerUp.equals(secondPowerUp)){
+            discardedPowerUp= new PowerUp(secondPowerUp.getName(), secondPowerUp.getCardColour().getColour());
+            secondPowerUp=powerUpToAdd;
+        }
+        else if (powerUp.equals(thirdPowerUp)){
+            discardedPowerUp= new PowerUp(thirdPowerUp.getName(), thirdPowerUp.getCardColour().getColour());
+            thirdPowerUp=powerUpToAdd;
+        }
+        else if (!powerUp.equals(powerUpToAdd)){
+            throw new NullPointerException("The powerUp with this name cannot be discarded");
+        }
+        game.discardedPowerUp(this, powerUpToAdd, discardedPowerUp);
+    }
+
+    public void useAmmo (Set<Ammo> usedAmmo){
+        usableAmmo.removeAll(usedAmmo);
+        unusableAmmo.addAll(usedAmmo);
     }
 }

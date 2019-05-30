@@ -1,7 +1,10 @@
 package it.polimi.se2019.model;
 
 public class Weapon extends Card{
-    private Weapon(){}
+
+    private Weapon(String name, AmmoColour ammoColour){
+        super(name, ammoColour);
+    }
 
     private Boolean loaded;
 
