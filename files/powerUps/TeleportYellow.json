@@ -39,7 +39,8 @@
 			]
 		}
 	],
-	"name": "Teleport",
-    "maxheight": 1,
+	"name": "TeleportYellow",
+    "maxHeight": 1,
+	"constraint": "onTurn",
     "invalidCombinations":[]
 }

@@ -148,7 +148,9 @@
         }
     ],
     "name": "PlasmaGun",
-    "maxheight": 3,
+    "maxHeight": 3,
+    "constraint": "",
+    "invalidEliminationFlag": 0,
     "invalidCombinations": [
         [
             "B2"

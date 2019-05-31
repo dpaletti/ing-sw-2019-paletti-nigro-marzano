@@ -139,7 +139,9 @@
         }
     ],
     "name": "Shockwave",
-    "maxheight": 3,
+    "maxHeight": 3,
+    "constraint": "",
+    "invalidEliminationFlag": 0,
     "invalidCombinations": [
         [
 			"E1"

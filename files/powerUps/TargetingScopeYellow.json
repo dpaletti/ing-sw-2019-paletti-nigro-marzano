@@ -111,7 +111,8 @@
 			]
 		}
 	],
-	"name": "Targeting Scope",
-    "maxheight": 1,
+	"name": "TargetingScopeYellow",
+    "maxHeight": 1,
+	"constraint": "onAttack",
     "invalidCombinations":[]
 }

@@ -14,23 +14,9 @@ import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 public class TurnController extends Controller {
-    private Semaphore sem = new Semaphore(1, true);
     private ArrayList<String> effects= new ArrayList<>();
     private ArrayList<ArrayList<String>> targets= new ArrayList<>();
 
-    public class TargetListener implements Runnable{
-
-        @Override
-        public void run() {
-            try {
-                sem.acquire();
-            } catch (InterruptedException e){
-                Log.severe(e.getMessage());
-                Thread.currentThread().interrupt();
-            }
-
-        }
-    }
     public TurnController (Game model, Server server, int roomNumber){
         super(model, server, roomNumber);
         //turn controller is registered to virtualView in closeMatchMaking() inside MatchMaking controller
@@ -71,23 +57,8 @@ public class TurnController extends Controller {
         public void dispatch(ChosenTargetAndEffectEvent message) {
             effects= message.getEffectNames();
             targets= message.getTargetNames();
-            sem.release();
         }
 
-        @Override
-        public void dispatch(ChosenWeaponEvent message) {
-            ArrayList<String> effect= new ArrayList<>(); //acquired from ChosenEffectEvent
-            ArrayList<ArrayList<String>> target= new ArrayList<>(); //acquired from ChosenTargetAndEffectEvent
-            Thread listener = new Thread(new TargetListener());
-            listener.start();
-            try {
-                sem.acquire();
-            } catch (InterruptedException e){
-                Log.severe(e.getMessage());
-                Thread.currentThread().interrupt();
-            }
-            model.shoot(message.getSource(), message.getWeapon(), effect, target);
-        }
 
         @Override
         public void dispatch(SpawnEvent message) {

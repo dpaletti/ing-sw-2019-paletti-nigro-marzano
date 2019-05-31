@@ -54,7 +54,7 @@ public interface VCEventDispatcher extends EventDispatcher {
     }
 
     default void dispatch (ActionEvent message){
-        throw new UnsupportedOperationException("ActionEvent not supported");
+        throw new UnsupportedOperationException("MVSelectionEvent not supported");
     }
 
     default void dispatch (DiscardedPowerUpEvent message){
@@ -63,5 +63,13 @@ public interface VCEventDispatcher extends EventDispatcher {
 
     default void dispatch (EndOfTurnEvent message){
         throw new UnsupportedOperationException("EndOfTurnEvent not supported");
+    }
+
+    default void dispatch (ShootEvent message){
+        throw new UnsupportedOperationException("ShootEvent not supported");
+    }
+
+    default void dispatch (VCSelectionEvent message) {
+        throw new UnsupportedOperationException("VCSelectionEvent not supported");
     }
 }

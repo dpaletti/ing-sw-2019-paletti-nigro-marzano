@@ -14,7 +14,6 @@ public class CardHelper {
     private static Set<PowerUp> allPowerUp= new HashSet<>();
     private static Set<LootCard> allLootCards= new HashSet<>();
     private CardHelper(){
-        Log.fine( Paths.get("files/powerUps").toFile().list().toString());
         for (String name : Paths.get( "files/weapons").toFile().list()) {
                 allWeapons.add((Factory.createWeapon(Paths.get("files/weapons/".concat(name)).toString())));
         }

@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,15 +26,16 @@ public class TestFactory {
 
     @Test
     public void TestCreateWeapon(){
-        Weapon Cyberblade= Factory.createWeapon(Weapon.class.getClassLoader().getResource("weapons/Cyberblade.json").getPath());
-        assertEquals("Cyberblade" , Cyberblade.getName());
-        assertEquals(invalidCombinations, Cyberblade.getInvalidCombinations());
+        Weapon cyberblade= Factory.createWeapon(Paths.get("files/weapons/Cyberblade.json").toString());
+        System.out.println(cyberblade.getMaxHeight());
+        assertEquals("Cyberblade" , cyberblade.getName());
+        assertEquals(invalidCombinations, cyberblade.getInvalidCombinations());
     }
 
    @Test
    public void TestCreatePowerUp(){
-        PowerUp teleportRed= Factory.createPowerUp(PowerUp.class.getClassLoader().getResource("powerUps/TeleportRed.json").getPath());
-        assertEquals("Teleport",teleportRed.getName());
+        PowerUp teleportRed= Factory.createPowerUp(Paths.get("files/powerUps/TeleportRed.json").toString());
+        assertEquals("TeleportRed",teleportRed.getName());
         assertEquals(cardColour.getColour(), teleportRed.getCardColour().getColour());
    }
 

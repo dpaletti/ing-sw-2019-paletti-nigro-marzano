@@ -1,11 +1,9 @@
 package it.polimi.se2019.model;
 
 import it.polimi.se2019.model.mv_events.*;
-import it.polimi.se2019.utility.Pair;
+import it.polimi.se2019.utility.Point;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class Figure {
@@ -31,10 +29,13 @@ public class Figure {
         return tile;
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
     public void setPlayer(Player player) {
         this.player = player;
     }
-
 
     public void damage(Figure target){
         target.player.addTear(colour);
@@ -78,7 +79,7 @@ public class Figure {
         }
         if (boundaryChecker(this, newPosition)){
             position=newPosition;
-            tile=GameMap.getMap().get(newPosition);
+            tile=player.getGameMap().getMap().get(newPosition);
         }
     } //MVEvent to notify final position to all users
 
@@ -102,21 +103,21 @@ public class Figure {
         }
         if (boundaryChecker(target, newPosition)) {
             target.position = newPosition;
-            target.tile = GameMap.getMap().get(newPosition);
+            target.tile = player.getGameMap().getMap().get(newPosition);
         }
     } //MVEvent to notify final position to all users
 
     public void teleport (Point teleportPosition){ //only called in case of Teleport Event
         if (boundaryChecker(this, teleportPosition)){
             position= teleportPosition;
-            tile=GameMap.getMap().get(position);
+            tile=player.getGameMap().getMap().get(position);
         }
     }
 
     public void run (Point destination){
-        if ((findDistance(destination)<=3)&&(boundaryChecker(this, destination))){
+        if ((destination.getDistance(tile.position)<=3)&&(boundaryChecker(this, destination))){
             position=destination;
-            tile=GameMap.getMap().get(position);
+            tile=player.getGameMap().getMap().get(position);
         }
     }
 
@@ -127,143 +128,6 @@ public class Figure {
 
     }
 
-    private Set<Figure> visibilitySet (){
-        Set<Figure> visibleFigures=new HashSet<>();
-        Set<Point> positions= new HashSet<>();
-        Point northernDoor= position;
-        Point southernDoor= position;
-        Point easternDoor= position;
-        Point westernDoor= position;
-
-        for (Tile tileCounter: GameMap.getTiles()){
-            if(tileCounter.getColour().equals(tile.getColour())){
-                visibleFigures.addAll(tileCounter.getFigures());
-            }
-        }
-        if (tile.getDoors().get(Direction.NORTH)){
-            northernDoor.setY(tile.position.getY()+1);
-            positions.add(northernDoor);
-        }
-        if (tile.getDoors().get(Direction.SOUTH)){
-            southernDoor.setY(tile.position.getY()-1);
-            positions.add(southernDoor);
-        }
-        if (tile.getDoors().get(Direction.EAST)){
-            easternDoor.setX(tile.position.getX()+1);
-            positions.add(easternDoor);
-        }
-        if (tile.getDoors().get(Direction.WEST)){
-            westernDoor.setX(tile.position.getX()-1);
-            positions.add(westernDoor);
-        }
-        for (Point positionCounter: positions){
-            visibleFigures.addAll(GameMap.getMap().get(positionCounter).getFigures());
-        }
-        return visibleFigures;
-    }
-
-    private Set<Figure> visibilitySet (Figure targetFigure){
-        Set<Figure> visibleFigures=new HashSet<>();
-        Set<Point> positions= new HashSet<>();
-        Point northernDoor= targetFigure.position;
-        Point southernDoor= targetFigure.position;
-        Point easternDoor= targetFigure.position;
-        Point westernDoor= targetFigure.position;
-
-        for (Tile tileCounter: GameMap.getTiles()){
-            if(tileCounter.getColour().equals(targetFigure.tile.getColour())){
-                visibleFigures.addAll(tileCounter.getFigures());
-            }
-        }
-        if (targetFigure.tile.getDoors().get(Direction.NORTH)){
-            northernDoor.setY(targetFigure.tile.position.getY()+1);
-            positions.add(northernDoor);
-        }
-        if (targetFigure.tile.getDoors().get(Direction.SOUTH)){
-            southernDoor.setY(targetFigure.tile.position.getY()-1);
-            positions.add(southernDoor);
-        }
-        if (targetFigure.tile.getDoors().get(Direction.EAST)){
-            easternDoor.setX(targetFigure.tile.position.getX()+1);
-            positions.add(easternDoor);
-        }
-        if (targetFigure.tile.getDoors().get(Direction.WEST)){
-            westernDoor.setX(targetFigure.tile.position.getX()-1);
-            positions.add(westernDoor);
-        }
-        for (Point positionCounter: positions){
-            visibleFigures.addAll(GameMap.getMap().get(positionCounter).getFigures());
-        }
-        return visibleFigures;
-    }
-
-    private int findDistance (Point positionOfTarget){
-        return ((positionOfTarget.getX()-tile.getPosition().getX())+(positionOfTarget.getY()-tile.getPosition().getY()));
-    }
-
-    private Set <Figure> areaSelectionForFigures (Set<Figure> figuresInTargetSet, Integer innerRadius, Integer outerRadius){
-        Set<Figure> targetSet=new HashSet<>();
-        int value=0;
-        if (innerRadius== 0 && outerRadius== 0) {
-            targetSet.add(this);
-            value=2;
-        }
-        else if (innerRadius == -2 && outerRadius == -2) {
-            targetSet= visibilitySet();
-            value=1;
-        }
-        else if (innerRadius == -3 && outerRadius == -3) {
-            for (Figure figureCounter : figuresInTargetSet) {
-                if (figureCounter.tile.getColour().equals(tile.getColour())) {
-                    targetSet.add(figureCounter);
-                    value=0;
-                }
-            }
-        }
-        else if (outerRadius != -1 && innerRadius != -1) {
-            for(Figure figureCounter: figuresInTargetSet){
-                if (figureCounter.findDistance(figureCounter.position)<innerRadius||figureCounter.findDistance(figureCounter.position)>outerRadius){
-                    targetSet.add(figureCounter);
-                    value=0;
-                }
-            }
-        }
-
-        targetSet= targetSetUpdater(figuresInTargetSet, targetSet, value);
-        return targetSet;
-    }
-
-    private Set <Tile> areaSelectionForTiles (Set<Tile> tilesInTargetSet, Integer innerRadius, Integer outerRadius){
-        Set<Tile> targetSet=new HashSet<>();
-        int value= 0;
-        if (innerRadius== 0 && outerRadius== 0) {
-            targetSet.add(this.tile);
-            value=2;
-        }
-        else if (innerRadius == -2 && outerRadius == -2) {
-            targetSet= tile.visibleTiles();
-            value=1;
-        }
-        else if (innerRadius == -3 && outerRadius == -3) {
-            for (Tile tileCounter : tilesInTargetSet) {
-                if (tileCounter.colour.equals(tile.getColour())) {
-                    targetSet.add(tileCounter);
-                    value=0;
-                }
-            }
-        }
-        else if (outerRadius != -1 && innerRadius != -1) {
-            for(Tile tileCounter: tilesInTargetSet){
-                if (tileCounter.findDistance(tileCounter.position)<innerRadius||tileCounter.findDistance(tileCounter.position)>outerRadius){
-                    targetSet.add(tileCounter);
-                    value=0;
-                }
-            }
-        }
-
-        targetSet= tileSetUpdater(tilesInTargetSet, targetSet, value);
-        return targetSet;
-    }
 
     private Set<Figure> targetSetUpdater (Set<Figure> originalTargetSet, Set<Figure> resultTargetSet, Integer value){
         switch (value){
@@ -310,10 +174,10 @@ public class Figure {
     }
 
     private Boolean boundaryChecker (Figure figureToMove, Point newPosition){
-        if (!GameMap.checkBoundaries(newPosition)){
+        if (!player.getGameMap().checkBoundaries(newPosition)){
             return (false);
         }
-        if (GameMap.getMap().get(newPosition).getColour().equals(figureToMove.tile.colour)){ //same room, figure can be moved
+        if (player.getGameMap().getMap().get(newPosition).getColour().equals(figureToMove.tile.colour)){ //same room, figure can be moved
             return (true);
         }
         else { //not same room, check if door
@@ -348,19 +212,6 @@ public class Figure {
             }
         }
         return (false);
-    }
-
-
-    private Set<Tile> tilesOfSelectedEffect(String effectName){
-        Set<Tile> targetSet=new HashSet<>();
-        targetSet.addAll(player.getTurnMemory().mapEffectToTiles(effectName));
-        return targetSet;
-    }
-
-    private Set<Figure> targetsOfSelectedEffect(String effectName){
-        Set<Figure> targetSet=new HashSet<>();
-        targetSet.addAll(player.getTurnMemory().mapEffectToTargets(effectName));
-        return targetSet;
     }
 
     public void grab(Card grabbed){ //TODO: modify grab with parameter (grabbed card)
@@ -431,105 +282,6 @@ public class Figure {
     }
 
     //to fix
-
-    public Set<Pair<Effect, Set<Figure>>> generateWeaponEffect (GraphNode<Effect> node){
-        Set<Pair<Effect, Set<Figure>>> targetSet=new HashSet<>();
-        Pair <Effect, Set<Figure>> effectToTargets;
-
-        Set<Player> players=new HashSet<>(player.getAllPlayers());
-        Set<Figure> figures=new HashSet<>();
-        for(Player playerCounter: players){
-            figures.add(playerCounter.getFigure());
-        }
-        Set<Figure> seenFigures=visibilitySet();
-        Set<Tile> seenTiles=tile.visibleTiles();
-        for (Effect effectCounter: node.getNode()){
-            Set<Figure> figuresInTargetSet= new HashSet<>();
-            if(!effectCounter.getTargetSpecification().getTile()) { //target is a figure
-
-                switch (effectCounter.getTargetSpecification().getVisible()) {
-                    case -1:
-                        figuresInTargetSet = figures;
-                        break;
-                    case 0:
-                        figuresInTargetSet= targetSetUpdater(figures, seenFigures, 0);
-                        break;
-                    case 1:
-                        figuresInTargetSet = seenFigures;
-                        break;
-                    case 2: //figures my previous target can see
-                        int indexOfCurrentPlayer= player.getAllPlayers().indexOf(player);
-                        Set<Figure> previousTargets= new HashSet<>(); //Game.getInstance().getTurns().get(indexOfCurrentPlayer).getFirstTargetSet()
-                        for (Figure figureCounter: previousTargets)
-                        {
-                            figuresInTargetSet.addAll(visibilitySet(figureCounter));
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                if (effectCounter.getTargetSpecification().getDifferent().getFirst()){
-                    figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter.getName()), 0);
-                }
-
-                figuresInTargetSet= areaSelectionForFigures(figuresInTargetSet, effectCounter.getTargetSpecification().getRadiusBetween().getFirst(), effectCounter.getTargetSpecification().getRadiusBetween().getSecond());
-                if (effectCounter.getTargetSpecification().getPrevious().getFirst()){
-                    figuresInTargetSet= targetSetUpdater(figuresInTargetSet, targetsOfSelectedEffect(effectCounter.getName()), 1);
-                }
-
-            }
-            else { //target is a tile
-                Set<Tile> tilesInTargetSet=new HashSet<>(GameMap.getTiles());
-                switch (effectCounter.getTargetSpecification().getVisible()){ //same as figures
-                    case -1:
-                        break;
-                    case 0:
-                        tilesInTargetSet= GameMap.getTiles();
-                        tilesInTargetSet= tileSetUpdater(tilesInTargetSet, seenTiles, 0);
-                        break;
-                    case 1:
-                        tilesInTargetSet= seenTiles;
-                        break;
-                    case 2:
-                        break;
-                    default:
-                        break;
-                }
-                if(effectCounter.getTargetSpecification().getDifferent().getFirst()){
-                    tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter.getName()), 0);
-                }
-                else {
-                    tilesInTargetSet= tileSetUpdater(tilesInTargetSet, tilesOfSelectedEffect(effectCounter.getName()), 1);
-                }
-
-                switch (effectCounter.getTargetSpecification().getEnlarge()){
-                    case -1: //selects whole room
-                        for(Tile sameRoomCounter: GameMap.getTiles()){
-                            if(!tile.getColour().equals(sameRoomCounter.getColour())){
-                                tilesInTargetSet.remove(sameRoomCounter);
-                            }
-                        }
-                        break;
-                    case -2: //TODO: enlarges in specified direction
-                        break;
-                        default: //Enlarge value specifies radius to enlarge area of action, must be >0
-                            break;
-                }
-                if (effectCounter.getTargetSpecification().getArea()){ //Area weapon, targetset=figures on all selected tiles (player does not chose this)
-                    //TODO: call a method that signals all figures in targetSet must be targeted by the effect or add flag to returned value
-                }
-
-                tilesInTargetSet= areaSelectionForTiles(tilesInTargetSet, effectCounter.getTargetSpecification().getRadiusBetween().getFirst(), effectCounter.getTargetSpecification().getRadiusBetween().getSecond());
-
-                for (Tile tileCounter: tilesInTargetSet){ //converts tiles in figures to hit
-                    figuresInTargetSet.addAll(tileCounter.getFigures());
-                }
-            }
-            effectToTargets= new Pair<>(effectCounter, figuresInTargetSet);
-            targetSet.add(effectToTargets);
-        }
-        return targetSet;
-    } //missing previous
 
     public void shoot (Effect effect, FigureColour figureColour){
         for (Action action: effect.getActions()){

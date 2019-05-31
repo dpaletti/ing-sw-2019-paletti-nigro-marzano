@@ -12,6 +12,7 @@ public abstract class Card {
     private Integer maxHeight;
     private Set<Set<String>> invalidCombinations;
     private GraphNode<Effect> staticDefinition= new GraphNode<>();
+    private int invalidEliminationFlag;
 
     public Card (String name){
         this.name= name;
@@ -38,7 +39,14 @@ public abstract class Card {
     }
 
     public GraphNode<Effect> getStaticDefinition() {
-        return staticDefinition;
+        if(staticDefinition==null) {
+            staticDefinition= new GraphNode<>();
+            generateCombinations(generateAllEffectsSet(), staticDefinition, maxHeight);
+            eliminateInvalidCombinations();
+            return staticDefinition;
+        }else{
+            return staticDefinition;
+        }
     }
 
     public Set<Ammo> getPrice() {
@@ -49,7 +57,7 @@ public abstract class Card {
         return invalidCombinations;
     }
 
-    private Set<Effect> generateAllEffectsSet(){
+    public Set<Effect> generateAllEffectsSet(){
         Set<Effect> allEffects= new HashSet<>();
         for (WeaponEffect weaponEffect: weaponEffects){
             allEffects.addAll(weaponEffect.getEffects());
@@ -57,57 +65,46 @@ public abstract class Card {
         return allEffects;
     }
 
-    public void generateGraph(){
-        if(staticDefinition.getChildren().isEmpty()) {
-            generateCombinations(generateAllEffectsSet(), staticDefinition, maxHeight);
-            eliminateInvalidCombinations();
-        }else{
-            throw new UnsupportedOperationException("static definition has been generated");
-        }
-    }
-
     private void generateCombinations(Set<Effect> effects, GraphNode<Effect> radix, int maxheight){
-        try{
-            for (Effect effect : effects){
-                //The radix is the "root" node of the graph
-                if(radix.getNode().isEmpty()){
-                    Set<Effect> childEffects= new HashSet<>();
-                    childEffects.add(effect);
-                    GraphNode<Effect> child =radix.insert(childEffects);
-                    Set<Effect> newSet= new HashSet<>(effects);
+        if (maxheight==0){
+            return;
+        }
+        for (Effect effect : effects) {
+            //The radix is the "root" node of the graph
+            if (radix.getNode().isEmpty()) {
+                Set<Effect> childEffects = new HashSet<>();
+                childEffects.add(effect);
+                GraphNode<Effect> child = radix.insert(childEffects);
+                Set<Effect> newSet = new HashSet<>(effects);
+                newSet.remove(effect);
+                generateCombinations(newSet, child, maxheight - 1);
+            } else {
+                //The radix is not the "root" node of the graph, so i have to check for repetitions in the graph
+                //All the effects from the radix are inserted in the child
+                Set<Effect> childEffects = new HashSet<>(radix.getNode());
+                //Now the effect from the effects is added to childEffects
+                childEffects.add(effect);
+                //If a node with childEffect does not exist i can create it
+                if (!radix.getRoot().isIn(childEffects)) {
+                    GraphNode<Effect> child = radix.insert(childEffects);
+                    //Creating another Set without the effect used
+                    Set<Effect> newSet = new HashSet<>(effects);
                     newSet.remove(effect);
-                    generateCombinations(newSet,child,maxheight-1);
-                }else{
-                    //The radix is not the "root" node of the graph, so i have to check for repetitions in the graph
-                    //All the effects from the radix are inserted in the child
-                    Set<Effect> childEffects= new HashSet<>(radix.getNode());
-                    //Now the effect from the effects is added to childEffects
-                    childEffects.add(effect);
-                    //If a node with childEffect does not exist i can create it
-                    if(!radix.getRoot().isIn(childEffects)){
-                        GraphNode<Effect> child=radix.insert(childEffects);
-                        //Creating another Set without the effect used
-                        Set<Effect> newSet= new HashSet<>(effects);
-                        newSet.remove(effect);
-                        generateCombinations(newSet,child,maxheight-1);
-                    }else{
-                        try {
-                            radix.addChild(radix.getRoot().getGraphNode(childEffects));
-                        }catch (NullPointerException e){
-                            //Can't throw an exception here the control was did in the previous if
-                        }
-
+                    generateCombinations(newSet, child, maxheight - 1);
+                } else {
+                    try {
+                        radix.addChild(radix.getRoot().getGraphNode(childEffects));
+                    } catch (NullPointerException e) {
+                        Log.severe("Null pointer exception in getGraphNode");
                     }
                 }
-
             }
-        }catch (NullPointerException e){
-            Log.severe("NullPointer on the Effect Set");
+
         }
     }
 
     //This method builds an invalidCombination Set<Set<Effect>> from a Set<Set<String>>
-    private Set<Set<Effect>> buildInvalidSets(){
+    public Set<Set<Effect>> buildInvalidSets(){
         Set<Set<Effect>> obj= new HashSet<>();
         for(Set<String> combination : invalidCombinations){
             Set<Effect> newSet= new HashSet<>();
@@ -115,7 +112,7 @@ public abstract class Card {
                 try {
                     newSet.add(getEffect(effectName));
                 }catch (ClassNotFoundException e){
-                    Log.severe("One of the string in the invalidCombinations was not found in the WeaponEffects");
+                    Log.severe(e.getMessage());
                 }
             }
             obj.add(newSet);
@@ -130,12 +127,24 @@ public abstract class Card {
                 return e;
             }
         }
-        throw  new ClassNotFoundException("There is not such effect in the weapon");
+        throw  new ClassNotFoundException("There is not such effect in the weapon "+stringName);
     }
 
     //This method eliminates the invalidCombination of the weapon from the staticDefinition graph
     private void eliminateInvalidCombinations(){
-        staticDefinition.removeAll(getInvalidNodes());
+        if(invalidEliminationFlag==0) {
+            for (GraphNode<Effect> node : getInvalidNodes()) {
+                if (node.getNode().size() == 1) {
+                    staticDefinition.remove(node);
+                } else {
+                    staticDefinition.removeAll(staticDefinition.getSimilarNodes(node));
+                }
+            }
+        }else if(invalidEliminationFlag==1){
+            staticDefinition.removeAll(getInvalidNodes());
+        }else {
+            throw new IllegalArgumentException("Bad setting of invalidEliminationFlag");
+        }
     }
 
     private Set<GraphNode<Effect>> getInvalidNodes(){

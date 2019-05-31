@@ -1,4 +1,4 @@
-package it.polimi.se2019.model;
+package it.polimi.se2019.utility;
 
 import java.io.Serializable;
 
@@ -27,5 +27,9 @@ public class Point implements Serializable {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public int getDistance (Point centre){
+        return (Math.abs((centre.getX()-x)+(centre.getY()-y)));
     }
 }

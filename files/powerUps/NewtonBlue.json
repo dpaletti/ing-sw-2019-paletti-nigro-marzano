@@ -67,7 +67,8 @@
 			]
 		}
 	],
-	"name": "Newton",
-    "maxheight": 1,
+	"name": "NewtonBlue",
+    "maxHeight": 1,
+	"constraint": "onTurn",
     "invalidCombinations":[]
 }

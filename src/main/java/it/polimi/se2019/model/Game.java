@@ -4,6 +4,7 @@ import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.utility.BiSet;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Pair;
+import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.MVEvent;
 
 import java.util.*;
@@ -121,6 +122,10 @@ public class Game extends Observable<MVEvent> {
 
     public void unpausedPlayer (Player unpausedPlayer){
         notify(new UnpausedPlayerEvent("*", colourToUser(unpausedPlayer.getFigure().getColour())));
+    }
+
+    public Tile getTile (Point position){
+        return gameMap.getMap().get(position);
     }
 
     public boolean getFinalFrenzy() {
@@ -310,9 +315,32 @@ public class Game extends Observable<MVEvent> {
         playerGrabbing.grabStuff(grabbedCard);
     }
 
-    public void shoot (String username, String weapon, ArrayList<String> effects, ArrayList<ArrayList<String>> targetNames){
+    public void sendAvailableWeapons (String username){
+        Player shooting= userToPlayer(username);
+        List<String> availableWeapons= new ArrayList<>();
+        for (Weapon weapon: shooting.showWeapons()){
+            availableWeapons.add(weapon.getName());
+        }
+        notify(new AvailableWeaponsEvent(username, availableWeapons));
+    }
+
+    public void sendPossibleEffects (String username, String weaponName){
+        Weapon weapon= nameToWeapon(weaponName);
+
+        notify(new PossibleEffectsEvent(username,
+                weaponName,
+                weapon.getCardColour().getColour().toString(),
+                weapon.getWeaponType()));
+    }
+
+    public Set<WeaponEffect> getWeaponEffects (String weapon){
+        return nameToWeapon(weapon).getWeaponEffects();
+    }
+
+
+    public void shoot (String username, String weapon, List<String> effects, List<List<String>> targetNames){
         Player shooter= userToPlayer(username);
-        for (ArrayList<String> targetCounter: targetNames){
+        for (List<String> targetCounter: targetNames){
             int actionIndex= targetNames.indexOf(targetCounter);
             for (String counter: targetCounter){
                 Player target= userToPlayer(counter);
@@ -324,7 +352,7 @@ public class Game extends Observable<MVEvent> {
     public void spawn (String username, AmmoColour spawnColour, String powerUpName){
         Player spawning= userToPlayer(username);
         PowerUp drawnPowerUp= nameToPowerUp(powerUpName);
-        for (Tile tile: GameMap.getTiles()){
+        for (Tile tile: gameMap.getTiles()){
             if (tile.getColour().toString().equals(spawnColour.toString())&&tile.getTileType().equals(TileType.SPAWNTILE)){
                 spawning.run(tile.position);
             }

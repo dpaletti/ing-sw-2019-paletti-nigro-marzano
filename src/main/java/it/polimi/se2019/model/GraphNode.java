@@ -1,11 +1,18 @@
 package it.polimi.se2019.model;
+import it.polimi.se2019.utility.GraphSearch;
+import it.polimi.se2019.utility.Log;
+
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class GraphNode<T> {
     private Set<GraphNode<T>> children= new HashSet<>();
     private Set<T> node= new HashSet<>();
     private Set<GraphNode<T>> parents= new HashSet<>();
+    public boolean visited=false;
+    private GraphSearch<T> search=new GraphSearch<>();
 
     public void addChild(GraphNode<T> child){
         children.add(child);
@@ -48,33 +55,18 @@ public class GraphNode<T> {
 
     //This method takes in input a generic object T and returns 1 if the object is in a subgraph of the graphnode
     public boolean isIn(Set<T> tSet){
-        if(node.equals(tSet)){
-            return true;
-        }else{
-            while(children.iterator().hasNext()){
-                return children.iterator().next().isIn(tSet);
-            }
-        }
-        return false;
+        search.dfs(tSet,this);
+        return !search.found.isEmpty();
+
     }
 
     //Returns the graphNode with the input set as a node if that is in the subgraph of the graphnode, returns null otherwise
-    public GraphNode<T> getGraphNode(Set<T> tSet){
-        if(node.equals(tSet)){
-            return this;
-        }else if(!children.isEmpty()) {
-            for (GraphNode<T> graphNode : children) {
-                try {
-                    return graphNode.getGraphNode(tSet);
-                }catch (NullPointerException e){
-                    /*Cathing this exception to let the search of the node continue, if there isn't such node, at last will be thrown the exception anyway*/
-                }
-            }
-        }
-        throw new NullPointerException();
-
+    public GraphNode<T> getGraphNode(Set<T> tSet) {
+        GraphSearch<T> search=new GraphSearch<>();
+        search.dfs(tSet, this);
+        System.out.println(search.found);
+        return search.found;
     }
-
 
     //This method takes in a Set<T> and creates a child of the node with that as node and returns it
     public GraphNode<T> insert(Set<T> tSet){
@@ -85,8 +77,8 @@ public class GraphNode<T> {
     }
     //Safely removed a node
     public void remove (GraphNode<T> graphNode){
-        graphNode.getParents().forEach( parent -> parent.getChildren().removeIf(child -> (child.equals(graphNode))));
-        graphNode.getChildren().forEach(child -> child.getParents().removeIf(parent -> (parent.equals(graphNode))));
+        graphNode.getParents().forEach( parent -> parent.getChildren().remove(graphNode));
+        graphNode.getChildren().forEach(child -> child.getParents().remove(graphNode));
     }
 
     public void removeAll(Set<GraphNode<T>> set){
@@ -107,6 +99,27 @@ public class GraphNode<T> {
 
     public boolean isEmpty(){
         return node.isEmpty();
+    }
+
+    //This method returns a set of graphnodes where all of the graphnodes contain the node of the input
+    public Set<GraphNode<T>> getSimilarNodes(GraphNode<T> graphNode){
+        Set<GraphNode<T>> set= new HashSet<>();
+        for(GraphNode<T> child: getChildren()){
+            if(child.getNode().containsAll(graphNode.getNode())){
+                set.add(child);
+            }
+            set.addAll(child.getSimilarNodes(graphNode));
+        }
+        return set;
+    }
+
+    @Override
+    public String toString() {
+        String nodeString="";
+        for (T t: node){
+            nodeString=nodeString.concat(t.toString());
+        }
+        return nodeString;
     }
 
 }

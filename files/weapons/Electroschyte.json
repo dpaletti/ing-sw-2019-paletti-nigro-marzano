@@ -85,6 +85,8 @@
         }
     ],
     "name": "Electroschyte",
-    "maxheight": 1,
+    "maxHeight": 1,
+    "constraint": "",
+    "invalidEliminationFlag": 0,
     "invalidCombinations": []
 }

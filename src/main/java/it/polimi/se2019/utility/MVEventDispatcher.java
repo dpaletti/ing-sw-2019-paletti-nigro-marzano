@@ -6,8 +6,8 @@ import it.polimi.se2019.model.mv_events.*;
 
 public interface MVEventDispatcher extends EventDispatcher {
 
-    default void dispatch(EffectToApplyEvent message){
-        throw new UnsupportedOperationException("EffectToApplyEvent not supported");
+    default void dispatch(MVSelectionEvent message){
+        throw new UnsupportedOperationException("MVSelectionEvent not supported");
     }
 
     default void dispatch(FigureToAttackEvent message){
@@ -105,4 +105,9 @@ public interface MVEventDispatcher extends EventDispatcher {
     default void dispatch (UpdatePointsEvent message){
         throw new UnsupportedOperationException("UpdatePointEvent not supported");
     }
+
+    default void dispatch (WeaponEffectsEvent message){
+        throw new UnsupportedOperationException("WeaponEffectsEvent not supported");
+    }
+
 }

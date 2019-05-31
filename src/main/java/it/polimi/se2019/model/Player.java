@@ -1,7 +1,7 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.model.mv_events.MVMoveEvent;
 import it.polimi.se2019.utility.Observable;
+import it.polimi.se2019.utility.Point;
 
 import java.util.*;
 
@@ -40,6 +40,10 @@ public class Player extends Observable<Action> {
       return game.getPlayers();
     }
 
+    public GameMap getGameMap (){
+        return game.getGameMap();
+    }
+
     public void unpause (){
         if (!isPaused){
             throw new UnsupportedOperationException("This player is already unpaused");
@@ -57,6 +61,15 @@ public class Player extends Observable<Action> {
     }
 
 
+    public Integer getPoints() { return points; }
+
+    public void setPoints(Integer points) {
+        this.points = points;
+    }
+
+    public void setUsableAmmo(Set<Ammo> usableAmmo) {
+        this.usableAmmo = usableAmmo;
+    }
 
     public Weapon getThirdWeapon() {
         return thirdWeapon;

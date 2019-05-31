@@ -145,7 +145,9 @@
         }
     ],
     "name": "Zx2",
-    "maxheight": 3,
+    "maxHeight": 3,
+    "constraint": "",
+    "invalidEliminationFlag": 1,
     "invalidCombinations": [
 		[
 			"M1"
@@ -164,6 +166,28 @@
 		[
 			"B1",
 			"E1"
-		]
+		],
+        [
+            "B2",
+            "M1"
+        ],
+        [
+            "B1",
+            "E1",
+            "B2"
+        ],
+        [
+            "B1",
+            "B2",
+            "M1"
+        ],
+        [
+            "B1",
+            "E2"
+        ],
+        [
+            "B1",
+            "E2"
+        ]
     ]
 }

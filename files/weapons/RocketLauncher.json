@@ -1,3 +1,4 @@
+//TODO: The target of the first effect has to be in the targeset of E2, find a way to add it
 {
 	"type": "it.polimi.se2019.model.Weapon",
     "cardColour": {
@@ -150,9 +151,39 @@
             "name": "withFragmentingWarhead",
             "effects": [
                 {
-                    "priority": 2,
+                  "priority": 2,
+                  "targetSpecification": {
+                    "tile": true,
+                    "different": {
+                      "first": false,
+                      "second": []
+                    },
+                    "previous":{
+                      "first": true,
+                      "second": [
+                        "B1"
+                      ]
+                    },
+                    "radiusBetween": {
+                      "first": -1,
+                      "second": -1
+                    },
+                    "visible": -1,
+                    "enlarge": 0,
+                    "area": true
+                  },
+                  "actions": [],
+                  "name": "E2",
+                  "price": [
+                    {
+                      "colour": "YELLOW"
+                    }
+                  ]
+                },
+                {
+                    "priority": 1,
                     "targetSpecification": {
-                       "tile": true,
+                       "tile": false,
                         "different": {
                             "first": false,
                             "second": []
@@ -160,7 +191,8 @@
 						"previous":{
 							"first": true,
 							"second": [
-								"B1"
+								"B1",
+                                "E2"
 							]
 						},
                         "radiusBetween": {
@@ -177,21 +209,19 @@
                         "value": 1
                       }
                     ],
-                    "name": "E2",
-                    "price": [
-                        {
-                            "colour": "YELLOW"
-                        }
-                    ]
+                    "name": "M1",
+                    "price": []
                 }
             ]
         }
     ],
     "name": "RocketLauncher",
-    "maxheight": 3,
+    "maxHeight": 4,
+    "constraint": "",
+    "invalidEliminationFlag": 1,
     "invalidCombinations": [
         [
-            "B2"
+          "B2"
         ],
         [
            "B3"
@@ -205,6 +235,14 @@
 		],
 		[
 			"E2"
-		]
+		],
+        [
+          "B1",
+          "M1"
+        ],
+        [
+          "B1",
+          "E2"
+        ]
     ]
 }

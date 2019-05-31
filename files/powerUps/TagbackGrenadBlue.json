@@ -39,7 +39,8 @@
 			]
 		}
 	],
-	"name": "Tagback Grenade",
-    "maxheight": 1,
+	"name": "TagbackGrenadeBlue",
+    "maxHeight": 1,
+	"constraint": "onDamage",
     "invalidCombinations":[]
 }

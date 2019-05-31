@@ -1,6 +1,6 @@
 package it.polimi.se2019.view.vc_events;
 
-import it.polimi.se2019.model.Point;
+import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
 

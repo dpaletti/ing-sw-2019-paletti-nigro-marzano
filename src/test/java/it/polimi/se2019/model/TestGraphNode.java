@@ -1,5 +1,6 @@
 package it.polimi.se2019.model;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,6 +11,7 @@ public class TestGraphNode {
         private GraphNode<String> child= new GraphNode<>();
         private GraphNode<String> parent= new GraphNode<>();
         private Set<String> stringSet= new HashSet<>();
+
 
         @Test
         public void testAddChild(){
@@ -124,7 +126,6 @@ public class TestGraphNode {
          parent.removeAll(set);
          assertTrue(!parent.isIn(stringSet));
      }
-
 
 
 }

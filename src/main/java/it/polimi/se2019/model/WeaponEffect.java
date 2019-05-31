@@ -5,6 +5,7 @@ import java.util.Set;
 public class WeaponEffect {
     private String name;
     private Set<Effect> effects;
+    private String effectPosition;
 
     public Set<Effect> getEffects() {
         return effects;
@@ -14,4 +15,7 @@ public class WeaponEffect {
         return name;
     }
 
+    public String getEffectPosition() {
+        return effectPosition;
+    }
 }

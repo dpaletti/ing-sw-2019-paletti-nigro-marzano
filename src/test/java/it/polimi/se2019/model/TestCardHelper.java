@@ -16,7 +16,7 @@ public class TestCardHelper {
     @Before
     public void setup(){
         weapon=Factory.createWeapon(Paths.get("files/weapons/Cyberblade.json").toString());
-        powerUp=Factory.createPowerUp(Paths.get("files/weapons/NewtonBlue.json").toString());
+        powerUp=Factory.createPowerUp(Paths.get("files/powerUps/NewtonBlue.json").toString());
     }
 
     @Test
@@ -30,7 +30,6 @@ public class TestCardHelper {
    }
 
    //TODO check why this does not work.
-    @Ignore
     @Test
     public void testFindPowerUpByName(){
         assertEquals(powerUp.getName(),CardHelper.getInstance().findPowerUpByName("Newton").getName());

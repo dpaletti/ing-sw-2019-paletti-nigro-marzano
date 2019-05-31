@@ -91,7 +91,9 @@
         }
     ],
     "name": "LockRifle",
-    "maxheight": 2,
+    "maxHeight": 2,
+    "constraint": "",
+    "invalidEliminationFlag": 0,
     "invalidCombinations": [
 		[
 			"E1"

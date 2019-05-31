@@ -1,3 +1,4 @@
+//TODO Check why the eliminate combination does'nt work only with B1M1
 {
 	"type": "it.polimi.se2019.model.Weapon",
     "cardColour": {
@@ -123,13 +124,19 @@
         }
     ],
     "name": "Thor",
-    "maxheight": 3,
+    "maxHeight": 3,
+    "constraint": "",
+    "invalidEliminationFlag": 1,
     "invalidCombinations": [
 		[
 			"M1"
 		],
 		[
 			"E1"
-		]
+		],
+        [
+            "B1",
+            "M1"
+        ]
 	]
 }

@@ -229,6 +229,8 @@
         }
     ],
     "name": "TractorBeam",
-    "maxheight": 1,
+    "maxHeight": 1,
+    "invalidEliminationFlag": 0,
+    "constraint": "",
     "invalidCombinations": []
 }
