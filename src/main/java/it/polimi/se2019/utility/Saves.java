@@ -46,20 +46,40 @@ public class Saves {
             fileChannel.write(ByteBuffer.wrap(file.getBytes(Charset.defaultCharset())));
 
 
-        }catch (IOException e){
+        }catch (IOException e) {
             Log.severe("File not found");
         }
-
 
     }
 
     public static String saveUser(Player player,String user,String file){
         Pattern pattern= Pattern.compile(user+":"+StateEncoder.getEncodedFigureColour(player.getFigure().getColour())+";(B|Y|G|V|M)*{0,12};(B|Y|G|V|M)*{0,15};\\d*{0,2};\\d;\\w*{0,30};\\w*{0,30};\\w*{0,30};" +
                 "\\w*{0,3}(B|Y|R);\\w*{0,3}(B|Y|R);\\w*{0,3}(B|Y|R);\\d*{0,3};R\\d,B\\d,Y\\d;\\d,\\d"+System.lineSeparator());
-        Matcher matcher= pattern.matcher(file);
-        return matcher.replaceAll(StateEncoder.getEncodedUser(player,user));
+        return pattern.matcher(file).replaceAll(StateEncoder.getEncodedUser(player,user));
 
     }
 
+    public static String saveTile(Tile tile,String file){
+        if (tile.getTileType().equals(TileType.SPAWNTILE)){
+            Pattern pattern=Pattern.compile("\\("+tile.getPosition().getX()+","+tile.getPosition().getY()+"\\)\\w+{1,30}," +
+                    "\\w+{1,30},\\w+{1,30};");
+           return pattern.matcher(file).replaceAll(StateEncoder.getEncodedTile(tile));
+        }
+        //If the Tile is a LootTile then i use another Pattern
+        Pattern pattern=Pattern.compile("\\("+tile.getPosition().getX()+","+tile.getPosition().getY()+"\\)\\d*{0,3};");
+        return pattern.matcher(file).replaceAll(StateEncoder.getEncodedTile(tile));
+
+    }
+
+    public static String getBoardToChange(String file){
+        Pattern patternBoard=Pattern.compile("<Board><*>");
+        return patternBoard.matcher(file).group();
+    }
+
+    //This method saves a weapon on a weaponSpot, it needs the oldWeapon and the newWeapon to make the change,
+    public static String saveWeapon(Weapon oldWeapon,Weapon newWeapon,String file){
+        Pattern patternWeapon= Pattern.compile(oldWeapon.getName());
+        return patternWeapon.matcher(getBoardToChange(file)).replaceAll(newWeapon.getName());
+    }
 
 }

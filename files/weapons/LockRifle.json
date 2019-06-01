@@ -14,6 +14,10 @@
     "weaponEffects": [
         {
             "name": "basicEffect",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight": 2,
             "effects": [
                 {
                     "priority": 3,
@@ -45,15 +49,20 @@
                            "value": 1
                        }
                     ],
-                    "name": "B1"
+                    "name": "B1",
+                    "invalidEffects":[]
                 }
             ]
         },
         {
             "name": "withSecondLock",
+            "priority": 2,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight": 2,
             "effects": [
                             {
-                                "priority": 2,
+                                "priority": 3,
                                 "targetSpecification": {
                                     "tile": false,
                                     "different": {
@@ -85,18 +94,12 @@
                                         "colour": "RED"
                                     }
                                 ],
-                                "name": "E1"
+                                "name": "B2",
+                                "invalidEffects":[]
                           }      
             ]
         }
     ],
     "name": "LockRifle",
-    "maxHeight": 2,
-    "constraint": "",
-    "invalidEliminationFlag": 0,
-    "invalidCombinations": [
-		[
-			"E1"
-		]
-	]
+    "maxHeight": 2
 }

@@ -2,20 +2,15 @@ package it.polimi.se2019.model;
 
 import java.util.Set;
 
-public class WeaponEffect {
-    private String name;
-    private Set<Effect> effects;
-    private String effectPosition;
+public class WeaponEffect extends GenericWeaponEffect {
+    private Set<PartialWeaponEffect> effects;
 
-    public Set<Effect> getEffects() {
+    public Set<PartialWeaponEffect> getEffects() {
         return effects;
     }
 
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
-    }
-
-    public String getEffectPosition() {
-        return effectPosition;
     }
 }

@@ -1,4 +1,4 @@
-//TODO: The target of the first effect has to be in the targeset of E2, find a way to add it
+
 {
 	"type": "it.polimi.se2019.model.Weapon",
     "cardColour": {
@@ -15,6 +15,10 @@
     "weaponEffects": [
         {
             "name": "basicEffect",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight":2,
             "effects": [
                 {
                     "priority": 3,
@@ -42,7 +46,8 @@
                         "value": 2
                       }
                     ],
-                    "name": "B1"
+                    "name": "B1",
+                    "invalidEffects":[]
                 },
                 {
                     "priority": 2,
@@ -72,12 +77,21 @@
                         "value": 1
                       }
                     ],
-                    "name": "E1"
+                    "name": "E1",
+                   "invalidEffects":[]
                 }
             ]
         },
         {
             "name": "withRocketJump",
+            "invalidEffects":[],
+            "priority": 3,
+            "price": [
+              {
+                "colour": "BLUE"
+              }
+            ],
+            "maxHeight": 1,
             "effects": [
                 {
                     "priority": 3,
@@ -106,11 +120,7 @@
                       }
                     ],
                     "name": "B2",
-                    "price": [
-                        {
-                            "colour": "BLUE"
-                        }
-                    ]
+                    "invalidEffects":[]
                 },
                 {
                     "priority": 3,
@@ -139,51 +149,25 @@
                       }
                     ],
                     "name": "B3",
-                    "price": [
-                        {
-                            "colour": "BLUE"
-                        }
-                    ]
+                    "invalidEffects":[]
                 }
             ]
         },
         {
             "name": "withFragmentingWarhead",
+            "invalidEffects":[],
+            "priority": 3,
+            "price": [
+              {
+                "colour": "YELLOW"
+              }
+            ],
+            "maxHeight": 1,
             "effects": [
                 {
-                  "priority": 2,
-                  "targetSpecification": {
-                    "tile": true,
-                    "different": {
-                      "first": false,
-                      "second": []
-                    },
-                    "previous":{
-                      "first": true,
-                      "second": [
-                        "B1"
-                      ]
-                    },
-                    "radiusBetween": {
-                      "first": -1,
-                      "second": -1
-                    },
-                    "visible": -1,
-                    "enlarge": 0,
-                    "area": true
-                  },
-                  "actions": [],
-                  "name": "E2",
-                  "price": [
-                    {
-                      "colour": "YELLOW"
-                    }
-                  ]
-                },
-                {
-                    "priority": 1,
+                    "priority": 3,
                     "targetSpecification": {
-                       "tile": false,
+                       "tile": true,
                         "different": {
                             "first": false,
                             "second": []
@@ -191,8 +175,7 @@
 						"previous":{
 							"first": true,
 							"second": [
-								"B1",
-                                "E2"
+								"B1"
 							]
 						},
                         "radiusBetween": {
@@ -203,46 +186,47 @@
                         "enlarge": 0,
                         "area": true
                     },
-                    "actions": [
-                      {
-                        "actionType": "DAMAGE",
-                        "value": 1
-                      }
-                    ],
-                    "name": "M1",
-                    "price": []
+                    "actions": [],
+                    "name": "B4",
+                    "price": [],
+                    "invalidEffects":[]
+                },
+                {
+                  "priority": 2,
+                  "targetSpecification": {
+                    "tile": false,
+                    "different": {
+                      "first": false,
+                      "second": []
+                    },
+                    "previous":{
+                      "first": true,
+                      "second": [
+                        "B1",
+                        "B4"
+                      ]
+                    },
+                    "radiusBetween": {
+                      "first": -1,
+                      "second": -1
+                    },
+                    "visible": -1,
+                    "enlarge": 0,
+                    "area": true
+                  },
+                  "actions": [
+                    {
+                      "actionType": "DAMAGE",
+                      "value": 1
+                    }
+                  ],
+                  "name": "E2",
+                  "price": [],
+                  "invalidEffects":[]
                 }
             ]
         }
     ],
     "name": "RocketLauncher",
-    "maxHeight": 4,
-    "constraint": "",
-    "invalidEliminationFlag": 1,
-    "invalidCombinations": [
-        [
-          "B2"
-        ],
-        [
-           "B3"
-        ],
-        [
-            "B2",
-            "B3"
-        ],
-		[
-			"E1"
-		],
-		[
-			"E2"
-		],
-        [
-          "B1",
-          "M1"
-        ],
-        [
-          "B1",
-          "E2"
-        ]
-    ]
+    "maxHeight": 4
 }

@@ -187,13 +187,11 @@ public class Player extends Observable<Action> {
         return weapons;
     }
 
-    public GraphNode<Effect> showWeapon (Weapon weapon){
-        return(weapon.getStaticDefinition());
-        } //to be deleted
 
+    //TODO commented cause shoot problems
     public void useWeapon(Weapon weapon, Player target, String effectName){
-        Effect effect= game.getEffectMap().get(effectName);
-        target.getFigure().shoot(effect, getFigure().getColour());
+        PartialWeaponEffect partialWeaponEffect = game.getEffectMap().get(effectName);
+        /*target.getFigure().shoot(partialWeaponEffect, getFigure().getColour());*/
         weapon.setLoaded(false);
     }
 

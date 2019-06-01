@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.partialWeaponEffect.GaussianBlur?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -11,9 +11,9 @@
 <AnchorPane fx:id="anchorPane" prefHeight="401.0" prefWidth="570.0" stylesheets="@../css/match.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerMatchMaking">
       <ImageView fitHeight="401.0" fitWidth="570.0" pickOnBounds="true" preserveRatio="true" smooth="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <Image url="@../assets/adrenalina_part.png" />
-         <effect>
+         <partialWeaponEffect>
             <GaussianBlur radius="8.46" />
-         </effect>
+         </partialWeaponEffect>
       </ImageView>
       <Label alignment="CENTER" layoutX="25.0" layoutY="14.0" prefHeight="59.0" prefWidth="335.0" stylesheets="@../css/match.css" text="Match Making" AnchorPane.bottomAnchor="328.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="210.0" AnchorPane.topAnchor="14.0">
          <font>

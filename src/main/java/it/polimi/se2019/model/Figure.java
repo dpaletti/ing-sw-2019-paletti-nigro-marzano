@@ -283,9 +283,9 @@ public class Figure {
 
     //to fix
 
-    public void shoot (Effect effect, FigureColour figureColour){
-        for (Action action: effect.getActions()){
+    /*public void shoot (PartialWeaponEffect partialWeaponEffect, FigureColour figureColour){
+        for (Action action: partialWeaponEffect.getActions()){
 
         }
-    }
+    }*/
 }

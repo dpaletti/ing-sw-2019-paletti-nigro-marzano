@@ -14,6 +14,10 @@
   "weaponEffects": [
     {
       "name": "basicEffect",
+      "priority": 3,
+      "price": [],
+      "maxHeight":2,
+      "invalidEffects": [],
       "effects": [
         {
           "priority": 3,
@@ -41,7 +45,8 @@
               "value": 1
             }
           ],
-          "name": "B1"
+          "name": "B1",
+          "invalidEffects": []
         },
         {
           "priority": 2,
@@ -71,15 +76,24 @@
               "value": 1
             }
           ],
-          "name": "E1"
+          "name": "E1",
+          "invalidEffects": []
         }
       ]
     },
     {
       "name": "withAdditionalDamage",
+      "priority": 2,
+      "price": [
+        {
+          "colour": "YELLOW"
+        }
+      ],
+      "maxHeight":1,
+      "invalidEffects":[],
       "effects": [
         {
-          "priority": 1,
+          "priority": 3,
           "targetSpecification": {
             "tile": false,
             "different": {
@@ -107,26 +121,30 @@
               "value": 1
             }
           ],
-          "price": [
-            {
-              "colour": "YELLOW"
-            }
-          ],
-          "name": "M1"
+          "name": "B2",
+          "invalidEffects": []
         }
       ]
     },
     {
       "name": "withTurretTripod",
+      "priority": 2,
+      "price": [
+        {
+          "colour": "BLUE"
+        }
+      ],
+      "maxHeight":3,
+      "invalidEffects": [],
       "effects": [
         {
-          "priority": 0,
+          "priority": 3,
           "targetSpecification": {
             "tile": false,
             "different": {
               "first": true,
               "second": [
-                "M1"
+                "B2"
               ]
             },
             "previous": {
@@ -150,22 +168,46 @@
               "value": 1
             }
           ],
-          "price": [
+          "name": "B4",
+          "invalidEffects": []
+        },
+        {
+          "priority": 3,
+          "targetSpecification": {
+            "tile": false,
+            "different": {
+              "first": true,
+              "second": [
+                "B1",
+                "E1"
+              ]
+            },
+            "previous": {
+              "first": true,
+              "second": []
+            },
+            "radiusBetween": {
+              "first": -2,
+              "second": -2
+            },
+            "visible": 1,
+            "enlarge": 0,
+            "area": false
+          },
+          "actions": [
             {
-              "colour": "YELLOW"
+              "actionType": "DAMAGE",
+              "value": 1
             }
           ],
-          "name": "M1"
+          "name": "B3",
+          "invalidEffects": [
+            "B4"
+          ]
         }
       ]
     }
   ],
-  "name": "LockRifle",
-  "maxHeight": 2,
-  "constraint": "",
-  "invalidCombinations": [
-    [
-      "E1"
-    ]
-  ]
+  "name": "MachineGun",
+  "maxHeight": 3
 }

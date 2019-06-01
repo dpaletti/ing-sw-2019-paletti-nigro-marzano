@@ -40,14 +40,7 @@ public class WeaponController extends Controller {
 
     @Override
     public void dispatch(ChosenEffectEvent message) {
-        WeaponEffect weaponEffect;
-        for (WeaponEffect w:  model.getWeaponEffects(message.getWeapon())){
-            if (w.getEffectPosition().equals(message.getEffectPosition())){
-                weaponEffect= w;
-                break;
-            }
-        }
-
+        Weapon weapon= model.nameToWeapon(message.getWeapon());
     }
 
     private Set<Player> visiblePlayer (Player player){
@@ -154,4 +147,8 @@ public class WeaponController extends Controller {
     private <T> Set<T> previous (Set<T> previousTargets){
         return previousTargets;
     }
+
+    /*private Set<Player> generateTargetSet (PartialWeaponEffect effect){
+
+    }*/
 }

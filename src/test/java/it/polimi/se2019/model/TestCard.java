@@ -1,14 +1,9 @@
 package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Factory;
-import it.polimi.se2019.utility.GraphSearch;
-import it.polimi.se2019.utility.Log;
 import org.junit.Test;
-import static junit.framework.TestCase.*;
 
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
 
 public class TestCard {
     private Weapon cyberblade= Factory.createWeapon(Paths.get("files/weapons/Cyberblade.json").toString());
@@ -30,31 +25,34 @@ public class TestCard {
     private Weapon tractorBeam= Factory.createWeapon(Paths.get("files/weapons/TractorBeam.json").toString());
     private Weapon whisper= Factory.createWeapon(Paths.get("files/weapons/Whisper.json").toString());
     private Weapon zx2= Factory.createWeapon(Paths.get("files/weapons/Zx2.json").toString());
+    private Weapon machineGun= Factory.createWeapon(Paths.get("files/weapons/machineGun.json").toString());
 
 
-    @Test
+
+    /*@Test
     public void testGetStaticDefinition(){
-        Set<GraphNode<Effect>> children=cyberblade.getStaticDefinition().getChildren();
+        Set<GraphNode<PartialWeaponEffect>> children=cyberblade.getStaticDefinition().getChildren();
         Set<String> stringSet= new HashSet<>();
         stringSet.add("B1");
         Set<String> effectNames= new HashSet<>();
-        for(GraphNode<Effect> node: children){
+        for(GraphNode<PartialWeaponEffect> node: children){
             assertEquals(1, node.getNode().size());
             effectNames.add(node.getNode().iterator().next().getName());
         }
         assertEquals(stringSet,effectNames);
-    }
+    }*/
 
     @Test
     public void testPrintGraph(){
-        /*for (Set<String> stringSet: rocketLauncher.getInvalidCombinations()){
-            for(String string: stringSet){
-                System.out.print(string+"|");
+        for (GraphNode<GraphWeaponEffect> graphWeaponEffectGraphNode: rocketLauncher.getStaticDefinition()){
+           System.out.println(graphWeaponEffectGraphNode);
+            for (GraphNode<PartialWeaponEffect> p: graphWeaponEffectGraphNode.getKey().getEffectGraph()){
+                System.out.print(p+"|");
             }
-            System.out.print(System.lineSeparator());
-        }*/
-        GraphSearch<Effect> search= new GraphSearch<>();
-        search.print(thor.getStaticDefinition());
+            System.out.println();
+        }
+
+
     }
 
 

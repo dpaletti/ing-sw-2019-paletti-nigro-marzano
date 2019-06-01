@@ -19,7 +19,7 @@ public class Game extends Observable<MVEvent> {
     private List<Player> players= new ArrayList<>();
     private List<Turn> turns;
     private BiSet<FigureColour, String> userLookup = new BiSet<>();
-    private Map<String, Effect> effectMap; //getEffect in Card class
+    private Map<String, PartialWeaponEffect> effectMap; //getEffect in Card class
     private Random randomConfig= new Random();
 
     // TODO Mapping between figures and usernames coming from controller
@@ -154,7 +154,7 @@ public class Game extends Observable<MVEvent> {
 
     public List<Turn> getTurns() { return turns; }
 
-    public Map<String, Effect> getEffectMap() {
+    public Map<String, PartialWeaponEffect> getEffectMap() {
         return effectMap;
     }
 
@@ -333,8 +333,8 @@ public class Game extends Observable<MVEvent> {
                 weapon.getWeaponType()));
     }
 
-    public Set<WeaponEffect> getWeaponEffects (String weapon){
-        return nameToWeapon(weapon).getWeaponEffects();
+    public GraphNode<GraphWeaponEffect> getWeaponEffects (String weapon){
+        return nameToWeapon(weapon).getWeapon();
     }
 
 

@@ -119,32 +119,39 @@ public class StateEncoder {
         return pattern.matcher(file).replaceAll(getEncodedUser(player,user)+"&");
     }
 
-    /*//TODO Wait till GameMap is not a static class then modify
+    //TODO Wait till GameMap is not a static class then modify
     public static String getEncodedBoard(GameMap map){
-        return map.getConfig().toString()+ getEncodedMap(map.) ;
-    }*/
+        return map.getConfig().toString()+ getEncodedTiles(map.getTiles()) ;
+    }
 
-    public static String getEncodedMap(Map<Point,Tile> map){
+    // Example of encoded map: (2,2)34;(2,1)LockRifle,Cyberblade,Furnace; ...
+    public static String getEncodedTiles(Set<Tile> tiles){
         String tempString="";
-        for(Point point: map.keySet()){
-            tempString=tempString.concat("("+point.getX()+","+point.getY()+")");
-            Tile tempTile=map.get(point);
-            if (tempTile.getTileType().equals(TileType.SPAWNTILE)){
-               WeaponSpot weaponSpot=tempTile.getWeaponSpot();
-               tempString=tempString.concat(
-                       weaponSpot.getFirstWeapon()+","+
-                       weaponSpot.getSecondWeapon()+","+
-                       weaponSpot.getThirdWeapon() + ";");
-            }else if (tempTile.getTileType().equals(TileType.LOOTTILE)){
-                //TODO After the LootCard commit add the number of the lootCard
-            }
+        for (Tile tile: tiles){
+            tempString=tempString.concat(getEncodedTile(tile));
         }
         return tempString;
     }
 
-    /*public static String addBoard(GameMap map,String file){
-        Pattern
-    }*/
+    public static String getEncodedTile(Tile tile){
+        String tempString="";
+        tempString=tempString.concat("("+tile.getPosition().getX()+","+tile.getPosition().getY()+")");
+        if (tile.getTileType().equals(TileType.SPAWNTILE)){
+            WeaponSpot weaponSpot=tile.getWeaponSpot();
+            tempString=tempString.concat(
+                    weaponSpot.getFirstWeapon()+","+
+                            weaponSpot.getSecondWeapon()+","+
+                            weaponSpot.getThirdWeapon() + ";");
+        }else if (tile.getTileType().equals(TileType.LOOTTILE)){
+            tempString=tempString.concat(tile.getLootCard().getName()+ ";");
+        }
+        return tempString;
+    }
+
+    public static String addBoard(GameMap map,String file){
+        Pattern pattern= Pattern.compile("£");
+        return pattern.matcher(file).replaceAll(getEncodedBoard(map)+"£");
+    }
 
     public static String addLastUser(String user,String file){
         Pattern pattern= Pattern.compile("@");
