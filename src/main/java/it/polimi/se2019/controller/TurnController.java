@@ -34,31 +34,22 @@ public class TurnController extends Controller {
     }
 
         @Override
-        public void dispatch(DefineTeleportPositionEvent message) {
-            model.teleportPlayer(message.getSource(), message.getTeleportPosition());
-        }
-
-        @Override
         public void dispatch(ReloadEvent message) {
             model.reloadWeapon(message.getSource(), message.getWeaponName());
         }
 
         @Override
         public void dispatch(VCMoveEvent message) {
-            model.run(message.getSource(), message.getDestination());
+            if (message.getIsTeleport()){model.teleportPlayer(message.getSource(), message.getDestination()); }
+             else {
+                 model.run(message.getSource(), message.getDestination());
+             }
         }
 
         @Override
         public void dispatch(GrabEvent message) {
             model.grab(message.getSource(), message.getGrabbed());
         }
-
-        @Override
-        public void dispatch(ChosenTargetAndEffectEvent message) {
-            effects= message.getEffectNames();
-            targets= message.getTargetNames();
-        }
-
 
         @Override
         public void dispatch(SpawnEvent message) {
@@ -90,11 +81,6 @@ public class TurnController extends Controller {
             else if (message.getAction().equalsIgnoreCase("frenzyMoveAndGrab")) model.allowedMovements(message.getSource(), 1);
             else if (message.getAction().equalsIgnoreCase("moveTwiceGrabShoot")) model.allowedMovements(message.getSource(), 2);
             else if (message.getAction().equalsIgnoreCase("moveThriceAndShoot")) model.allowedMovements(message.getSource(), 3);
-        }
-
-        @Override
-        public void dispatch(ChosenEffectEvent message) {
-            //TODO: method to calculate possible targets
         }
 
     @Override

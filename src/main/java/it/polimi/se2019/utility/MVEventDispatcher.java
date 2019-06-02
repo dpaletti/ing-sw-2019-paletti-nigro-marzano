@@ -66,8 +66,8 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("FinalFrenzyStartingEvent not supported");
     }
 
-    default void dispatch (DeathEvent message){
-        throw new UnsupportedOperationException("DeathEvent not supported");
+    default void dispatch (MVDeathEvent message){
+        throw new UnsupportedOperationException("MVDeathEvent not supported");
     }
 
     default void dispatch (MVMoveEvent message){

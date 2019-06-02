@@ -21,10 +21,6 @@ public interface VCEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("Reconnection event not supported");
     }
 
-    default void dispatch (DefineTeleportPositionEvent message){
-        throw new UnsupportedOperationException("DefineTeleportPosition event not supported");
-    }
-
     default void dispatch (ReloadEvent message){
         throw new UnsupportedOperationException("Reload event not supported");
     }
@@ -35,10 +31,6 @@ public interface VCEventDispatcher extends EventDispatcher {
 
     default void dispatch (GrabEvent message){
         throw new UnsupportedOperationException("Grab event not supported");
-    }
-
-    default void dispatch (ChosenTargetAndEffectEvent message){
-        throw new UnsupportedOperationException("Chosen Target Event not supported");
     }
 
     default void dispatch (ChosenWeaponEvent message){
@@ -71,5 +63,9 @@ public interface VCEventDispatcher extends EventDispatcher {
 
     default void dispatch (VCSelectionEvent message) {
         throw new UnsupportedOperationException("VCSelectionEvent not supported");
+    }
+
+    default void dispatch (VCDeathEvent message){
+        throw new UnsupportedOperationException("VCDeathEvent not supported");
     }
 }

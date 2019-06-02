@@ -18,6 +18,7 @@ public class WeaponController extends Controller {
     public WeaponController (Server server, int roomNumber, Game model){
         super(model, server, roomNumber);
     }
+    
     @Override
     public void update(VCEvent message) {
         try {
@@ -42,7 +43,7 @@ public class WeaponController extends Controller {
     public void dispatch(ChosenEffectEvent message) {
         WeaponEffect weaponEffect;
         for (WeaponEffect w:  model.getWeaponEffects(message.getWeapon())){
-            if (w.getEffectPosition().equals(message.getEffectPosition())){
+            if (w.getEffectPosition().equals(message.getEffectName())){
                 weaponEffect= w;
                 break;
             }

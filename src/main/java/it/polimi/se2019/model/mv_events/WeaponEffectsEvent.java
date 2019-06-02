@@ -7,15 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WeaponEffectsEvent extends MVEvent {
-    private ArrayList<String> weaponEffectsPositions; //position of box on the card
-
-    public WeaponEffectsEvent (String destination, List<String> weaponEffectsPositions){
+    private ArrayList<String> weaponEffects; //names of available effects of the weapon
+    public WeaponEffectsEvent (String destination, List<String> weaponEffects){
         super(destination);
-        this.weaponEffectsPositions= new ArrayList<>(weaponEffectsPositions);
+        this.weaponEffects= new ArrayList<>(weaponEffects);
     }
 
-    public List<String> getWeaponEffectsPositions() {
-        return weaponEffectsPositions;
+    public List<String> getWeaponEffects() {
+        return weaponEffects;
     }
 
     @Override
