@@ -10,6 +10,7 @@ public class Player extends Observable<Action> {
     private boolean isPaused= false;
     private List<Tear> hp= new ArrayList<>();
     private PlayerDamage healthState= new Healthy();
+    private PlayerValue playerValue= new NoDeaths();
     private Set<Tear> marks= new HashSet<>();
     private Weapon firstWeapon;
     private Weapon secondWeapon;
@@ -22,7 +23,8 @@ public class Player extends Observable<Action> {
     private Set<Ammo> usableAmmo= new HashSet<>();
     private Set<Ammo> unusableAmmo= new HashSet<>();
     private TurnMemory turnMemory;
-    private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1));
+    private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1, 1, 1));
+    private List <Integer> frenzyPointsToAssign= new ArrayList<>(Arrays.asList(2, 1, 1, 1, 1));
     private Game game;
 
     public Player (Figure figure, Game game){
@@ -118,7 +120,7 @@ public class Player extends Observable<Action> {
     }
 
     public TurnMemory getTurnMemory() {
-        return new TurnMemory(turnMemory);
+        return turnMemory;
     }
 
     public List<Integer> getPointsToAssign() {
@@ -127,6 +129,10 @@ public class Player extends Observable<Action> {
 
     public PowerUp getTemporaryPowerUp() {
         return temporaryPowerUp;
+    }
+
+    public PlayerValue getPlayerValue() {
+        return playerValue;
     }
 
     public void setThirdWeapon(Weapon thirdWeapon) {
@@ -187,11 +193,13 @@ public class Player extends Observable<Action> {
         return weapons;
     }
 
+    public GraphNode<Effect> showWeapon (Weapon weapon){
+        return(weapon.getStaticDefinition());
+        } //to be deleted
 
-    //TODO commented cause shoot problems
     public void useWeapon(Weapon weapon, Player target, String effectName){
-        PartialWeaponEffect partialWeaponEffect = game.getEffectMap().get(effectName);
-        /*target.getFigure().shoot(partialWeaponEffect, getFigure().getColour());*/
+        Effect effect= game.getEffectMap().get(effectName);
+        target.getFigure().shoot(effect, getFigure().getColour());
         weapon.setLoaded(false);
     }
 
@@ -215,6 +223,11 @@ public class Player extends Observable<Action> {
 
     public void grabStuff(Card grabbed){
         figure.grab(grabbed);
+    }
+
+    public void endTurn (){
+        //check whether anything else can be added to this method
+        updateTurn();
     }
 
     public void reload(Weapon weapon){
@@ -261,99 +274,17 @@ public class Player extends Observable<Action> {
             healthState= healthState.findNextHealthState();
         }
         if (hp.size()>=10){
-            if (game.getKillshotTrack().getNumberOfSkulls().equals(game.getKillshotTrack().getKillshot().size())){
-                game.finalFrenzyDeathHandler(this);
-            }
-            else {
                 game.deathHandler(this);
-            }
         }
     }
 
-
-    public void calculatePoints(Player deadPlayer){
-        FigureColour figureColour= deadPlayer.hp.get(0).getColour();
-        Player firstShooter= game.colourToPlayer(figureColour);
-        firstShooter.points++;
-
-        Map<FigureColour, Integer> tags= new HashMap<>();
-        for (Player player: game.getPlayers()){
-            tags.put(player.getFigure().getColour(), 0);
-        }
-        for(Tear tear: deadPlayer.getHp()){
-            tags.put(tear.getColour(), tags.get(tear.getColour())+1);
-        }
-        for (Map.Entry entry: tags.entrySet()){
-            if (entry.getValue().equals(0)){
-                tags.remove(entry.getKey());
-            }
-        }
-
-        List <FigureColour> localBestShooters= new ArrayList<>();
-        int maximumHits=0;
-        for (int counter=0; counter<pointsToAssign.size(); counter++){
-            for (Map.Entry<FigureColour, Integer> entry: tags.entrySet()){
-                if (maximumHits==0 || entry.getValue()>maximumHits){
-                    maximumHits=entry.getValue();
-                    localBestShooters.clear();
-                    localBestShooters.add(entry.getKey());
-                }
-                if (entry.getValue()==maximumHits){
-                    localBestShooters.add(entry.getKey());
-                }
-                Player localBestPlayer= game.colourToPlayer(localBestShooters.get(0));
-                localBestPlayer.points=localBestPlayer.points+pointsToAssign.get(counter);
-                localBestShooters.remove(0);
-                    for (FigureColour localBestShooter : localBestShooters) {
-                        localBestPlayer = game.colourToPlayer(localBestShooter);
-                        localBestPlayer.points = localBestPlayer.points + pointsToAssign.get(counter+1);
-                        counter++;
-                    }
-            }
-        }
-        updatePointsToAssign();
-    }
-
-    public void finalFrenzyCalculatePoints (Player deadPlayer){
-        List<Integer> finalFrenzyPoints= new ArrayList<>(Arrays.asList(2, 1, 1, 1));
-        Map<FigureColour, Integer> tags= new HashMap<>();
-        for (Player player: game.getPlayers()){
-            tags.put(player.getFigure().getColour(), 0);
-        }
-        for(Tear tear: deadPlayer.getHp()){
-            tags.put(tear.getColour(), tags.get(tear.getColour())+1);
-        }
-        for (Map.Entry entry: tags.entrySet()){
-            if (entry.getValue().equals(0)){
-                tags.remove(entry.getKey());
-            }
-        }
-        List <FigureColour> localBestFrenzyShooters= new ArrayList<>();
-        int maximumHits=0;
-        for (int counter=0; counter<finalFrenzyPoints.size(); counter++){
-            for (Map.Entry<FigureColour, Integer> entry: tags.entrySet()){
-                if (maximumHits==0 || entry.getValue()>maximumHits){
-                    maximumHits=entry.getValue();
-                    localBestFrenzyShooters.clear();
-                    localBestFrenzyShooters.add(entry.getKey());
-                }
-                if (entry.getValue()==maximumHits){
-                    localBestFrenzyShooters.add(entry.getKey());
-                }
-                Player localBestFrenzyPlayer= game.colourToPlayer(localBestFrenzyShooters.get(0));
-                localBestFrenzyPlayer.points= localBestFrenzyPlayer.points+finalFrenzyPoints.get(counter);
-                for (FigureColour localBestShooter: localBestFrenzyShooters){
-                    localBestFrenzyPlayer= game.colourToPlayer(localBestShooter);
-                    localBestFrenzyPlayer.points=localBestFrenzyPlayer.points+finalFrenzyPoints.get(counter+1);
-                    counter++;
-                }
-            }
-        }
-        //game.deathHandler();
+    public void updateTurn (){ //only called from player and accessed from Figure
+        game.updateTurns(this, turnMemory);
+        turnMemory.clear();
     }
 
     public void updatePointsToAssign (){
-        pointsToAssign.remove(0);
+        playerValue= playerValue.getNextPlayerValue();
     }
 
     public void drawPowerUp (PowerUp powerUp){

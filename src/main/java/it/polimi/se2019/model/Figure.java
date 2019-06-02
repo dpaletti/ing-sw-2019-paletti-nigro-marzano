@@ -78,10 +78,13 @@ public class Figure {
                     break;
         }
         if (boundaryChecker(this, newPosition)){
-            position=newPosition;
+            position= newPosition;
             tile=player.getGameMap().getMap().get(newPosition);
         }
-    } //MVEvent to notify final position to all users
+        else {
+            throw new UnsupportedOperationException("The selected position is out of bounds");
+        }
+    }
 
     public void move(Figure target, Direction direction){
         Point newPosition= new Point(target.tile.getPosition().getX(), target.tile.getPosition().getY());

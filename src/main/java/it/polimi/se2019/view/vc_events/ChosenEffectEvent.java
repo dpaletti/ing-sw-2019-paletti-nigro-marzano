@@ -6,12 +6,12 @@ import it.polimi.se2019.view.VCEvent;
 import java.util.List;
 
 public class ChosenEffectEvent extends VCEvent {
-    private String effectPosition;
+    private String effectName;
     private String weapon;
 
-    public ChosenEffectEvent (String source, String effectPosition, String weapon){
+    public ChosenEffectEvent (String source, String effectName, String weapon){
         super(source);
-        this.effectPosition= effectPosition;
+        this.effectName= effectName;
         this.weapon= weapon;
     }
 
@@ -20,8 +20,8 @@ public class ChosenEffectEvent extends VCEvent {
         dispatcher.dispatch(this);
     }
 
-    public String getEffectPosition() {
-        return effectPosition;
+    public String getEffectName() {
+        return effectName;
     }
 
     public String getWeapon() {

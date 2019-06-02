@@ -1,17 +1,15 @@
 package it.polimi.se2019.model;
 
 import it.polimi.se2019.model.mv_events.*;
-import it.polimi.se2019.utility.BiSet;
+import it.polimi.se2019.utility.*;
 import it.polimi.se2019.utility.Observable;
-import it.polimi.se2019.utility.Pair;
-import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.MVEvent;
 
 import java.util.*;
 
 public class Game extends Observable<MVEvent> {
     private GameMap gameMap;
-    private boolean finalFrenzy;
+    private boolean finalFrenzy= true;
     private KillshotTrack killshotTrack;
     private Deck weaponDeck;
     private Deck powerUpDeck;
@@ -26,7 +24,7 @@ public class Game extends Observable<MVEvent> {
     public Game(){
         weaponDeck= new WeaponDeck();
         powerUpDeck= new PowerUpDeck();
-        //lootDeck= new LootDeck();
+        lootDeck= new LootDeck();
         observers = new ArrayList<>();
     }
 
@@ -182,9 +180,13 @@ public class Game extends Observable<MVEvent> {
         this.players = players;
     }
 
+    public void setUserLookup(BiSet<FigureColour, String> userLookup) {
+        this.userLookup = userLookup;
+    }
+
     public Player colourToPlayer (FigureColour figureColour){
         for (Player playerCounter: players){
-            if (playerCounter.getFigure().getColour().equals(figureColour)){
+            if (figureColour.equals(playerCounter.getFigure().getColour())){
                 return playerCounter;
             }
         }
@@ -211,42 +213,31 @@ public class Game extends Observable<MVEvent> {
         return CardHelper.getInstance().findLootCardByName(lootCardName);
     }
 
-    public void deathHandler(Player player){
-        player.calculatePoints(player);
-        updateKillshotTrack(player);
-        player.setHp(null);
-        notify(new DeathEvent("*",colourToUser(player.getFigure().getColour()) , colourToUser(player.getHp().get(10).getColour())));
-        if (killshotTrack.getNumberOfSkulls().equals(killshotTrack.getKillshot().size())){
-            //finalFrenzyTurn: change status of players, change moves
-        }
+    public List<Tear> getHp (String username){
+        return userToPlayer(username).getHp();
     }
 
-    public void finalFrenzyDeathHandler (Player player){
-        player.finalFrenzyCalculatePoints(player);
+    public void deathHandler (Player deadPlayer){
+        notify(new MVDeathEvent("*",
+                colourToUser(deadPlayer.getFigure().getColour()),
+                colourToUser(deadPlayer.getHp().get(10).getColour())));
     }
-    
-     private void updateKillshotTrack(Player deadPlayer){
-        FigureColour killer= deadPlayer.getHp().get(10).getColour(); //the 11th shot causes the death of the figure
-         boolean overkill= false;
-         if (deadPlayer.getHp().size()==12){
-             overkill= true; //if a 12th element is present in the list, overkill
-             colourToPlayer(killer).addMark(deadPlayer.getFigure().getColour()); //overkiller receives a mark from deadplayer
-         }
+
+     public void updateKillshotTrack(FigureColour killer, boolean overkill){
         killshotTrack.addKillshot(killer, overkill);
-         if (killshotTrack.getKillshot().size()==killshotTrack.getNumberOfSkulls()){
+         if (killshotTrack.getKillshot().size()==killshotTrack.getNumberOfSkulls())
              notify(new FinalFrenzyStartingEvent("*"));
-             finalFrenzy();
-         }
      }
 
      public TurnMemory getTurnMemory (Player player){
         return player.getTurnMemory();
      }
 
-     public void finalFrenzy (){
-
+     public ArrayList<Integer> getPointsToAssign (String username){
+        Player player = userToPlayer(username);
+        int index = player.getPointsToAssign().indexOf(player.getPlayerValue().getMaxValue());
+        return new ArrayList<>(player.getPointsToAssign().subList(index, player.getPointsToAssign().size()));
      }
-
     //exposed methods, used for MVEvents or VCEvents
 
     public void allowedMovements (String username, int radius){
@@ -394,7 +385,9 @@ public class Game extends Observable<MVEvent> {
         notify(new UpdateMarkEvent("*", colourToUser(marked.getFigure().getColour()), colourToUser(marker.getFigure().getColour())));
     }
 
-    public void deathHandler (List<Integer> points){
-        //check other method, shrink
+    public void updatePoints (String username, int points){
+        userToPlayer(username).setPoints(userToPlayer(username).getPoints()+points);
+        notify(new UpdatePointsEvent(username, userToPlayer(username).getPoints()));
     }
+
 }

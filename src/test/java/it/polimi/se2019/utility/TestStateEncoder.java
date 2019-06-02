@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import sun.jvm.hotspot.oops.Mark;
+//import sun.jvm.hotspot.oops.Mark;
 import static junit.framework.TestCase.*;
 
 import java.util.ArrayList;
