@@ -25,5 +25,14 @@ public interface GuiDispatcher extends EventDispatcher {
     default void dispatch(GuiInitialize message){
         throw new UnsupportedOperationException("GuiInitialized Unsupported");
     }
+    default void dispatch(GuiRegistrationEvent message){
+        throw new UnsupportedOperationException("GuiRegistrationEvent unsupported");
+    }
+    default void dispatch(GuiHighlightTileEvent message){
+        throw new UnsupportedOperationException("GuiHighlightTileEvent unsupported");
+    }
+    default void dispatch(GuiMoveFigure message){
+        throw new UnsupportedOperationException("GuiMoveFigureEvent unsupported");
+    }
 
 }

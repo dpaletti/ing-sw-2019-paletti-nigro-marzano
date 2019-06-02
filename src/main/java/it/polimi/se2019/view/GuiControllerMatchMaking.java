@@ -1,7 +1,6 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.network.Settings;
-import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.gui_events.*;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,7 +20,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GuiControllerMatchMaking implements Initializable, GuiController {
+public class GuiControllerMatchMaking extends GuiController implements Initializable{
     @FXML
     private VBox usernames;
     @FXML
@@ -39,6 +38,7 @@ public class GuiControllerMatchMaking implements Initializable, GuiController {
 
     private SimpleStringProperty timerValue = new SimpleStringProperty(((Integer) Settings.MATCH_MAKING_TIMER).toString());
 
+        @Override
         public void dispatch(GuiAddPlayer message) {
             missingPlayers--;
             currentStage = (Stage) anchorPane.getScene().getWindow();
@@ -79,38 +79,31 @@ public class GuiControllerMatchMaking implements Initializable, GuiController {
 
         @Override
         public void dispatch(GuiCloseMatchMaking message) {
-            currentStage.close();
-
+            viewGUI.closeMatchMaking();
             try {
-                 FXMLLoader tableLoader = new FXMLLoader(Paths.get("files/fxml/table.fxml").toUri().toURL());
-            FXMLLoader boardLoader = new FXMLLoader(Paths.get("files/fxml/board.fxml").toUri().toURL());
-            FXMLLoader weaponLoader = new FXMLLoader(Paths.get("files/fxml/weapon.fxml").toUri().toURL());
-            FXMLLoader powerupLoader = new FXMLLoader(Paths.get("files/fxml/powerup.fxml").toUri().toURL());
+                currentStage.close();
+                FXMLLoader tableLoader = new FXMLLoader(Paths.get("files/fxml/table.fxml").toUri().toURL());
+                FXMLLoader boardLoader = new FXMLLoader(Paths.get("files/fxml/board.fxml").toUri().toURL());
+                FXMLLoader weaponLoader = new FXMLLoader(Paths.get("files/fxml/weapon.fxml").toUri().toURL());
+                FXMLLoader powerupLoader = new FXMLLoader(Paths.get("files/fxml/powerup.fxml").toUri().toURL());
+                FXMLLoader mapLoader = new FXMLLoader(Paths.get("files/fxml/map.fxml").toUri().toURL());
                 GridPane tableGrid = tableLoader.load();
                 GridPane boardGrid = boardLoader.load();
                 GridPane weaponGrid = weaponLoader.load();
                 GridPane powerupGrid = powerupLoader.load();
-                tableGrid.getChildren().addAll(boardGrid, weaponGrid, powerupGrid);
+                GridPane mapGrid = mapLoader.load();
+                tableGrid.getChildren().addAll(boardGrid, weaponGrid, powerupGrid, mapGrid);
                 Scene scene = new Scene(tableGrid);
 
                 currentStage.setTitle("Adrenaline");
                 currentStage.setScene(scene);
                 currentStage.setResizable(false);
                 currentStage.setMaximized(true);
-
-                currentStage.show();
+                new Thread(currentStage::show).start();
             }catch (IOException e){
-               Log.severe("Could not correctly load FXML files " + e.getMessage());
+                Log.severe("Load error " + e.getMessage());
             }
         }
 
-    @Override
-    public void update(Event message) {
-        try {
 
-            ensureJavaFXThread(() -> message.handle(this));
-        }catch (UnsupportedOperationException e){
-            Log.fine("ignored " + message);
-        }
-    }
 }

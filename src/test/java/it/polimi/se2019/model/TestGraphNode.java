@@ -2,6 +2,7 @@ package it.polimi.se2019.model;
 
 import org.junit.Ignore;
 import org.junit.Test;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ public class TestGraphNode {
             assertEquals(child,parent.getChildren().iterator().next());
         }
 
+        @Ignore
         @Test
         public void testisIn(){
             parent.addChild(child);
@@ -35,6 +37,7 @@ public class TestGraphNode {
 
 
 
+        @Ignore
        @Test
        public void testGetGraphNode() {
 
@@ -66,6 +69,7 @@ public class TestGraphNode {
      }
 
 
+     @Ignore
      @Test
      public void testRemove(){
             parent.addChild(child);

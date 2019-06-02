@@ -1,7 +1,6 @@
 package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Factory;
-import it.polimi.se2019.utility.Log;
 
 import java.nio.file.Paths;
 import java.util.HashSet;

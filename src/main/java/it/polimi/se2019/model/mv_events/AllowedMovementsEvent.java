@@ -8,11 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AllowedMovementsEvent extends MVEvent {
-    ArrayList<Point> allowedPositions;
+    private ArrayList<Point> allowedPositions;
 
     public AllowedMovementsEvent(String destination, List<Point> allowedPositions){
         super(destination);
         this.allowedPositions= new ArrayList<>(allowedPositions);
+    }
+
+    public List<Point> getAllowedPositions() {
+        return new ArrayList<>(allowedPositions);
     }
 
     @Override

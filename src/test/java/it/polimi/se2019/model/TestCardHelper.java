@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class TestCardHelper {
     private Weapon weapon;
     private PowerUp powerUp;

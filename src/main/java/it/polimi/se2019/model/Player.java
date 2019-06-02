@@ -193,15 +193,7 @@ public class Player extends Observable<Action> {
         return weapons;
     }
 
-    public GraphNode<Effect> showWeapon (Weapon weapon){
-        return(weapon.getStaticDefinition());
-        } //to be deleted
 
-    public void useWeapon(Weapon weapon, Player target, String effectName){
-        Effect effect= game.getEffectMap().get(effectName);
-        target.getFigure().shoot(effect, getFigure().getColour());
-        weapon.setLoaded(false);
-    }
 
     public void moveFigure (Direction direction){
         figure.move(direction);
@@ -225,10 +217,6 @@ public class Player extends Observable<Action> {
         figure.grab(grabbed);
     }
 
-    public void endTurn (){
-        //check whether anything else can be added to this method
-        updateTurn();
-    }
 
     public void reload(Weapon weapon){
         figure.reload(weapon);
@@ -278,10 +266,6 @@ public class Player extends Observable<Action> {
         }
     }
 
-    public void updateTurn (){ //only called from player and accessed from Figure
-        game.updateTurns(this, turnMemory);
-        turnMemory.clear();
-    }
 
     public void updatePointsToAssign (){
         playerValue= playerValue.getNextPlayerValue();

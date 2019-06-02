@@ -1,25 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
 
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<GridPane hgap="10.0" GridPane.columnIndex="5" GridPane.rowIndex="3" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerPowerUp">
+<GridPane hgap="10.0" GridPane.columnIndex="5" GridPane.rowIndex="3" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerPowerUp">
     <columnConstraints>
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
     </columnConstraints>
     <ImageView fx:id="powerupFirst" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
-        <Image url="@../assets/cards/AD_powerups_IT_025.png" />
     </ImageView>
     <ImageView fx:id="powerupSecond" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
-        <Image url="@../assets/cards/AD_powerups_IT_023.png" />
     </ImageView>
     <ImageView fx:id="powerupThird" fitHeight="203.0" fitWidth="116.0" layoutX="10.0" layoutY="10.0" preserveRatio="true" GridPane.columnIndex="2">
-        <image>
-            <Image url="@../assets/cards/AD_powerups_IT_025.png" />
-        </image>
     </ImageView>
+   <Pane prefHeight="200.0" prefWidth="47.0">
+      <children>
+         <ImageView fx:id="ammoLeft" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true">
+         </ImageView>
+         <ImageView fx:id="effectLeft" fitHeight="48.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true">
+         </ImageView>
+      </children>
+   </Pane>
+   <Pane prefHeight="200.0" prefWidth="86.0" GridPane.columnIndex="1">
+      <children>
+         <ImageView fx:id="ammoMiddle" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true">
+         </ImageView>
+         <ImageView fx:id="effectMiddle" fitHeight="49.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true">
+         </ImageView>
+      </children>
+   </Pane>
+   <Pane prefHeight="200.0" prefWidth="0.0" GridPane.columnIndex="2">
+      <children>
+         <ImageView fx:id="ammoRight" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true">
+         </ImageView>
+         <ImageView fx:id="effectRight" fitHeight="48.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true">
+         </ImageView>
+      </children>
+   </Pane>
     <rowConstraints>
         <RowConstraints />
     </rowConstraints>

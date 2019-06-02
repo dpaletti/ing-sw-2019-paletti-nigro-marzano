@@ -1,11 +1,10 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.utility.Event;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
-public class GuiControllerBoard implements GuiController {
+public class GuiControllerBoard extends GuiController {
 
     @FXML
     private GridPane board;
@@ -32,14 +31,7 @@ public class GuiControllerBoard implements GuiController {
     @FXML
     private ImageView bottomYellowSpawn;
 
-    private Dispatcher dispatcher = new Dispatcher();
+    public void test(){
 
-    @Override
-    public void update(Event message) {
-        message.handle(dispatcher);
-    }
-
-    private class Dispatcher implements GuiDispatcher{
-        //TODO
     }
 }

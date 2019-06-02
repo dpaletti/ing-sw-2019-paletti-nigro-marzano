@@ -1,11 +1,14 @@
 package it.polimi.se2019.model;
 
+import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
+@Ignore
 public class TestAddTearFigure {
     @Test
     public void testAddTear (){

@@ -331,7 +331,7 @@ public class Game extends Observable<MVEvent> {
             int actionIndex= targetNames.indexOf(targetCounter);
             for (String counter: targetCounter){
                 Player target= userToPlayer(counter);
-                shooter.useWeapon(nameToWeapon(weapon), target, effects.get(actionIndex));
+                //shooter.useWeapon(nameToWeapon(weapon), target, effects.get(actionIndex));
             }
         }
     }

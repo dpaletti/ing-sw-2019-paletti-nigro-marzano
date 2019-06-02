@@ -1,19 +1,119 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.view.gui_events.GuiInitialize;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 
-public class GuiControllerTable implements GuiController {
-    //TODO disable frenzy regions and then activate them when needed
+public class GuiControllerTable extends GuiController {
+
 
     @FXML
-    private GridPane root;
+    private ImageView hp1;
+
+    @FXML
+    private ImageView hp2;
+
+    @FXML
+    private ImageView hp3;
+
+    @FXML
+    private ImageView hp4;
+
+    @FXML
+    private ImageView hp5;
+
+    @FXML
+    private ImageView hp6;
+
+    @FXML
+    private ImageView hp7;
+
+    @FXML
+    private ImageView hp8;
+
+    @FXML
+    private ImageView hp9;
+
+    @FXML
+    private ImageView hp10;
+
+    @FXML
+    private ImageView hp11;
+
+    @FXML
+    private ImageView hp12;
+
+    @FXML
+    private ImageView mark1;
+
+    @FXML
+    private ImageView mark2;
+
+    @FXML
+    private ImageView mark3;
+
+    @FXML
+    private ImageView mark4;
+
+    @FXML
+    private ImageView mark5;
+
+    @FXML
+    private ImageView mark6;
+
+    @FXML
+    private ImageView mark7;
+
+    @FXML
+    private ImageView mark8;
+
+    @FXML
+    private ImageView mark9;
+
+    @FXML
+    private ImageView mark10;
+
+    @FXML
+    private ImageView mark11;
+
+    @FXML
+    private ImageView mark12;
+
+    @FXML
+    private ImageView mark13;
+
+    @FXML
+    private ImageView mark14;
+
+    @FXML
+    private ImageView mark15;
+
+    @FXML
+    private ImageView skull8;
+
+    @FXML
+    private ImageView skull6;
+
+    @FXML
+    private ImageView skull2;
+
+    @FXML
+    private ImageView skull11;
+
+    @FXML
+    private ImageView skull12;
+
+    @FXML
+    private Button endTurn;
+
+    @FXML
+    private Button leave;
+
+    @FXML
+    private ImageView moveAndGrab;
 
     @FXML
     private Text redAmmo;
@@ -28,47 +128,18 @@ public class GuiControllerTable implements GuiController {
     private ImageView currentPlayer;
 
     @FXML
-    private Region run;
+    private ImageView run;
 
     @FXML
-    private Region moveGrab;
+    private ImageView shoot;
 
     @FXML
-    private Region shoot;
-
-    @FXML
-    private Region reload;
-
-    @FXML
-    private Region moveMoveGrab;
-
-    @FXML
-    private Region moveShoot;
-
-    @FXML
-    private Region moveReloadShoot;
-
-    @FXML
-    private Region runMove;
-
-    @FXML
-    private Region frenzyMoveMoveGrab;
-
-    @FXML
-    private Region moveMoveReloadShoot;
-
-    @FXML
-    private Region runGrab;
-
-    @Override
-    public void update(Event message) {
-        message.handle(this);
-    }
+    private ImageView reload;
 
         @Override
         public void dispatch(GuiInitialize message) {
-            root.getChildren().removeAll(frenzyMoveMoveGrab, moveMoveReloadShoot, runGrab, runMove, moveReloadShoot);
-    }
+        //TODO
+        }
 
     @FXML
     private void clickable(){

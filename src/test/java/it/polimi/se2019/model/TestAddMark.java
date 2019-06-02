@@ -1,9 +1,14 @@
 package it.polimi.se2019.model;
+
+import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
+
+@Ignore
 public class TestAddMark {
     @Test
     public void testAddMark (){
