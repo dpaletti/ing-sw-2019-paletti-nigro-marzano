@@ -11,6 +11,10 @@
     "weaponEffects": [
         {
             "name": "basicEffect",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight": 2,
             "effects": [
                 {
                     "priority": 3,
@@ -38,7 +42,8 @@
                             "value": 1
                         }
                     ],
-                    "name": "B1" 
+                    "name": "B1",
+                    "invalidEffects": []
                 },
                 {
                     "priority": 2,
@@ -68,15 +73,24 @@
                             "value": 1
                         }
                     ],
-                    "name": "E1" 
+                    "name": "E1",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "withExtraGrenade",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[
+                {
+                    "colour": "RED"
+                }
+            ],
+            "maxHeight": 1,
             "effects": [
                 {
-                    "priority": 2,
+                    "priority": 3,
                     "targetSpecification": {
                         "tile": true,
                         "different": {
@@ -101,26 +115,12 @@
                             "value": 1
                         }
                     ],
-                    "name": "E2",
-                    "price":[
-                        {
-                            "colour": "RED"
-                        }
-                    ]
+                    "name": "B2",
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "GrenadeLauncher",
-    "maxHeight": 3,
-    "constraint": "",
-    "invalidEliminationFlag": 0,
-    "invalidCombinations": [
-        [
-			"E2"
-        ],
-		[
-			"E1"
-		]
-    ]
+    "maxHeight": 3
 }

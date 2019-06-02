@@ -118,7 +118,7 @@ public class Player extends Observable<Action> {
     }
 
     public TurnMemory getTurnMemory() {
-        return turnMemory;
+        return new TurnMemory(turnMemory);
     }
 
     public List<Integer> getPointsToAssign() {
@@ -217,11 +217,6 @@ public class Player extends Observable<Action> {
         figure.grab(grabbed);
     }
 
-    public void endTurn (){
-        //check whether anything else can be added to this method
-        updateTurn();
-    }
-
     public void reload(Weapon weapon){
         figure.reload(weapon);
     }
@@ -273,11 +268,6 @@ public class Player extends Observable<Action> {
                 game.deathHandler(this);
             }
         }
-    }
-
-    public void updateTurn (){ //only called from player and accessed from Figure
-        game.updateTurns(this, turnMemory);
-        turnMemory.clear();
     }
 
 

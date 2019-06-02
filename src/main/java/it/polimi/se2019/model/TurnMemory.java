@@ -1,68 +1,50 @@
 package it.polimi.se2019.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TurnMemory {
-    private Turn turn;
-    private List<String> usedEffects;
-    private List<List<Tile>> shotTiles;
-    private List<List<Figure>> shotFigures;
+    private Map<String, List<Player>>  hitTargets= new HashMap<>();
+    private  Map<String, List<Tile>> hitTiles= new HashMap<>();
+    private String lastEffectUsed= "none";
 
-    public void turnMemory (Turn turn, List<String> usedEffects, List<List<Tile>> shotTiles, List<List<Figure>> shotFigures){
-        this.turn=turn;
-        this.shotFigures=shotFigures;
-        this.shotTiles=shotTiles;
-    }
-    public Turn getTurn() {
-        return turn;
+    public TurnMemory(Map<String, List<Player>> hitTargets, Map<String, List<Tile>> hitTiles) {
+
+        this.hitTargets = hitTargets;
+        this.hitTiles = hitTiles;
     }
 
-    public List<List<Figure>> getShotFigures() {
-        return shotFigures;
+    public TurnMemory (TurnMemory turnMemory){
+        this.hitTiles= turnMemory.getHitTiles();
+        this.hitTargets= turnMemory.getHitTargets();
     }
 
-    public List<List<Tile>> getShotTiles() {
-        return shotTiles;
+    public Map<String, List<Player>> getHitTargets() {
+        return new HashMap<>(hitTargets);
     }
 
-    public List<String> getUsedEffects() {
-        return usedEffects;
+    public Map<String, List<Tile>> getHitTiles() {
+        return new HashMap<>(hitTiles);
     }
 
-    public List<Figure> mapEffectToTargets (String effect){
-        int indexOfEffect= usedEffects.indexOf(effect);
-        return (shotFigures.get(indexOfEffect));
+    public String getLastEffectUsed() {
+        return lastEffectUsed;
     }
 
-    public List<Tile> mapEffectToTiles (String effect){
-        int indexOfEffect= usedEffects.indexOf(effect);
-        return (shotTiles.get(indexOfEffect));
+    public void hitPlayers (String partialWeaponEffect, List<Player> hitPlayers){
+        hitTargets.put(partialWeaponEffect, hitPlayers);
+        lastEffectUsed=partialWeaponEffect;
     }
 
-    public void setTurn(Turn turn) {
-        this.turn = turn;
+    public void hitTiles (String partialWeaponEffect, List<Tile> hitTiles){
+        this.hitTiles.put(partialWeaponEffect, hitTiles);
+        lastEffectUsed=partialWeaponEffect;
     }
 
-    public void setShotFigures(List<List<Figure>> shotFigures) {
-        this.shotFigures = shotFigures;
-    }
-
-    public void setShotTiles(List<List<Tile>> shotTiles) {
-        this.shotTiles = shotTiles;
-    }
-
-    public void setUsedEffects(List<String> usedEffects) {
-        this.usedEffects = usedEffects;
-    }
-
-
-    public void clear (){
-        turn.setFirstCombo(null);
-        turn.setSecondCombo(null);
-        turn.setFirstTargetSet(null);
-        turn.setSecondTargetSet(null);
-        usedEffects.clear();
-        shotTiles.clear();
-        shotFigures.clear();
+    public void end (){
+        hitTargets.clear();
+        hitTiles.clear();
+        lastEffectUsed= "none";
     }
 }

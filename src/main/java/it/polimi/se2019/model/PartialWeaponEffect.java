@@ -12,4 +12,8 @@ public class PartialWeaponEffect extends Effect{
     public String toString() {
         return name;
     }
+
+    public TargetSpecification getTargetSpecification() {
+        return new TargetSpecification(targetSpecification);
+    }
 }

@@ -10,7 +10,9 @@ import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
 import it.polimi.se2019.view.vc_events.ChosenWeaponEvent;
 import it.polimi.se2019.view.vc_events.ShootEvent;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class WeaponController extends Controller {
@@ -43,7 +45,7 @@ public class WeaponController extends Controller {
         Weapon weapon= model.nameToWeapon(message.getWeapon());
     }
 
-    private Set<Player> visiblePlayer (Player player){
+    private Set<Player> getVisiblePlayers(Player player){
         Set<Player> visiblePlayers= new HashSet<>();
 
         for (Player p: model.getPlayers()) {
@@ -54,7 +56,7 @@ public class WeaponController extends Controller {
         return visiblePlayers;
     }
 
-    private Set<Tile> visibleTile (Tile tile){
+    private Set<Tile> getVisibleTiles(Tile tile){
         Set<Tile> visibleTiles= new HashSet<>();
 
         for (Tile t: model.getGameMap().getTiles()) {
@@ -64,6 +66,29 @@ public class WeaponController extends Controller {
         visibleTiles.remove(tile);
         return visibleTiles;
     }
+
+    private Set<Player> handleVisibilePlayers (List<Player> targetSet, int visible, Player player){
+
+        if (visible==0) {
+            targetSet.removeAll(getVisiblePlayers(player));
+            return new HashSet<>(targetSet);
+        }
+
+        else if (visible==1){
+            List<Player> temp= new ArrayList<>(targetSet);
+            temp.removeAll(getVisiblePlayers(player));
+            targetSet.removeAll(temp);
+            return new HashSet<>(targetSet);
+        }
+
+        else if (visible==2)
+            return getVisiblePlayers
+                    (player.getTurnMemory().getHitTargets().
+                            get(player.getTurnMemory().getLastEffectUsed()).get(0));
+        return new HashSet<>();
+    }
+
+    //private Set<Tile> handleVisibleTiles (List<Tile> tileSet, int visible, Player player)
 
     private Set<RoomColour> visibleRooms (Tile tile){
         Set<RoomColour> visibleRooms= new HashSet<>();
@@ -108,7 +133,7 @@ public class WeaponController extends Controller {
     private Set<Tile> areaSelectionTile (Tile tile, int innerRadius, int outerRadius){
         Set<Tile> tiles= new HashSet<>();
         if (innerRadius==-2 && outerRadius==-2) //redundant because of tile switch in weapon declaration
-            return visibleTile(tile);
+            return getVisibleTiles(tile);
         if (innerRadius==-3 && outerRadius==-3){
             for (Tile t: model.getGameMap().getTiles()){
                 if (!t.getColour().equals(tile.getColour()))
@@ -148,7 +173,15 @@ public class WeaponController extends Controller {
         return previousTargets;
     }
 
-    /*private Set<Player> generateTargetSet (PartialWeaponEffect effect){
+    private List<Player> generateTargetSet (PartialWeaponEffect effect, Player player){
+        TargetSpecification targetSpecification= effect.getTargetSpecification();
+        List<Player> targetSet= model.getPlayers();
+        return null; //TODO
 
-    }*/
+    }
+
+    private Set<Player> handleTile (List<Player> targetSet, Player player, boolean tile){
+        //method to be implemented
+       return null;
+    }
 }

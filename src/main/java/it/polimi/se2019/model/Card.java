@@ -83,10 +83,10 @@ public abstract class Card {
             GraphWeaponEffect graphWeaponEffect= new GraphWeaponEffect(weaponEffect);
             graphWeaponEffects.add(graphWeaponEffect);
         }
-        generateGraph(graphWeaponEffects,staticDefinition,maxHeight);
+        generateGraph(graphWeaponEffects,staticDefinition,maxHeight,maxHeight);
    }
 
-    private void generateGraph(Set<GraphWeaponEffect> effectSet, GraphNode<GraphWeaponEffect> root, int maxHeight){
+    private void generateGraph(Set<GraphWeaponEffect> effectSet, GraphNode<GraphWeaponEffect> root, int maxHeight,int constantMaxHeight){
         if (maxHeight==0)
             return;
         int actualMax=0;
@@ -94,15 +94,16 @@ public abstract class Card {
             if (effect.priority > actualMax)
                 actualMax = effect.priority;
         }
-        Set<GraphWeaponEffect> tempSet= new HashSet<>(effectSet);
-        for (GraphWeaponEffect effect : tempSet) {
+        for (GraphWeaponEffect effect : effectSet) {
+            Set<GraphWeaponEffect> childrenSet= new HashSet<>(effectSet);
             if (effect.priority == actualMax) {
-                GraphNode<GraphWeaponEffect> node = new GraphNode<>(effect);
+                GraphNode<GraphWeaponEffect> node = new GraphNode<>(effect,constantMaxHeight-maxHeight+1);
                 root.addChild(node);
                 for (String string : effect.invalidEffects)
-                    effectSet.remove(getEffect(string, effectSet));
-                effectSet.remove(effect);
-                generateGraph(effectSet, node,maxHeight--);
+                    childrenSet.remove(getEffect(string, effectSet));
+                childrenSet.remove(effect);
+                int newHeight=maxHeight-1;
+                generateGraph(childrenSet, node,newHeight,constantMaxHeight);
             }
         }
     }
@@ -116,51 +117,9 @@ public abstract class Card {
         throw new NullPointerException("Can't find effect");
     }
 
-
-
-
-    //TODO this is the method to refactor
-   /* private void generateCombinations(Set<PartialWeaponEffect> partialWeaponEffects, GraphNode<PartialWeaponEffect> radix, int maxheight){
-        if (maxheight==0){
-            return;
-        }
-        for (PartialWeaponEffect partialWeaponEffect : partialWeaponEffects) {
-            //The radix is the "root" node of the graph
-            if (radix.getNode().isEmpty()) {
-                Set<PartialWeaponEffect> childPartialWeaponEffects = new HashSet<>();
-                childPartialWeaponEffects.add(partialWeaponEffect);
-                GraphNode<PartialWeaponEffect> child = radix.insert(childPartialWeaponEffects);
-                Set<PartialWeaponEffect> newSet = new HashSet<>(partialWeaponEffects);
-                newSet.remove(partialWeaponEffect);
-                generateCombinations(newSet, child, maxheight - 1);
-            } else {
-                //The radix is not the "root" node of the graph, so i have to check for repetitions in the graph
-                //All the partialWeaponEffects from the radix are inserted in the child
-                Set<PartialWeaponEffect> childPartialWeaponEffects = new HashSet<>(radix.getNode());
-                //Now the partialWeaponEffect from the partialWeaponEffects is added to childPartialWeaponEffects
-                childPartialWeaponEffects.add(partialWeaponEffect);
-                //If a node with childEffect does not exist i can create it
-                if (!radix.getRoot().isIn(childPartialWeaponEffects)) {
-                    GraphNode<PartialWeaponEffect> child = radix.insert(childPartialWeaponEffects);
-                    //Creating another Set without the partialWeaponEffect used
-                    Set<PartialWeaponEffect> newSet = new HashSet<>(partialWeaponEffects);
-                    newSet.remove(partialWeaponEffect);
-                    generateCombinations(newSet, child, maxheight - 1);
-                } else {
-                    try {
-                        radix.addChild(radix.getRoot().getGraphNode(childPartialWeaponEffects));
-                    } catch (NullPointerException e) {
-                        Log.severe("Null pointer exception in getGraphNode");
-                    }
-                }
-            }
-
-        }
-    }*/
-
    public GraphNode<GraphWeaponEffect> getStaticDefinition() {
         if(staticDefinition==null) {
-            staticDefinition= new GraphNode<>(null);
+            staticDefinition= new GraphNode<>(null,0);
             defineCard();
             return staticDefinition;
         }else{

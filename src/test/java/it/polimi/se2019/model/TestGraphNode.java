@@ -9,10 +9,8 @@ import static junit.framework.TestCase.*;
 
 
 public class TestGraphNode {
-    /*
-        private GraphNode<String> child= new GraphNode<>();
-        private GraphNode<String> parent= new GraphNode<>();
-        private Set<String> stringSet= new HashSet<>();
+        private GraphNode<String> child= new GraphNode<>("Acerbi",1);
+        private GraphNode<String> parent= new GraphNode<>( "Strakosha",0);
 
 
         @Test
@@ -28,16 +26,11 @@ public class TestGraphNode {
             assertEquals(parent,child.getParents().iterator().next());
             assertEquals(child,parent.getChildren().iterator().next());
         }
-/*
+
         @Test
         public void testisIn(){
-            stringSet.add("Lulic");
-            child.getNode().add("Lulic");
-            child.addParent(parent);
-            assertTrue(parent.isIn(stringSet));
-            stringSet.clear();
-            stringSet.add("71");
-            assertFalse(parent.isIn(stringSet));
+            parent.addChild(child);
+            assertTrue(parent.isIn("Lulic"));
         }
 
 
@@ -46,10 +39,8 @@ public class TestGraphNode {
        public void testGetGraphNode() {
 
            try {
-               stringSet.add("Lulic");
-               child.getKey().add("Lulic");
                child.addParent(parent);
-               assertEquals(child, parent.getGraphNode(stringSet));
+               assertEquals(child, parent.getGraphNode("Lulic"));
            } catch (NullPointerException c) {
                fail();
            }
@@ -57,24 +48,8 @@ public class TestGraphNode {
 
       @Test (expected = NullPointerException.class)
        public void testGetGraphNodeException(){
-            stringSet.add("71");
-            child.getNode().add("Lulic");
-            child.addParent(parent);
-            parent.getGraphNode(stringSet);
+            parent.getGraphNode("71");
       }
-
-       @Test
-        public void testInsert(){
-            stringSet.add("Lulic");
-            child= parent.insert(stringSet);
-            assertEquals("Lulic",child.getNode().iterator().next());
-            assertEquals(child,parent.getChildren().iterator().next());
-       }
-
-       @Test
-        public void testIsEmpty(){
-            assertEquals(true,parent.isEmpty());
-       }
 
        @Test
         public void testRemoveChild(){
@@ -93,10 +68,9 @@ public class TestGraphNode {
 
      @Test
      public void testRemove(){
-            stringSet.add("Lulic");
-            child=parent.insert(stringSet);
+            parent.addChild(child);
             try {
-                GraphNode<String> obj= parent.getGraphNode(stringSet);
+                GraphNode<String> obj= parent.getGraphNode("Lulic");
                 parent.remove(obj);
                 assertTrue(parent.getChildren().isEmpty());
             }catch (NullPointerException c){
@@ -115,14 +89,35 @@ public class TestGraphNode {
 
      @Test
      public void testRemoveAll(){
-         stringSet.add("Lulic");
-         child=parent.insert(stringSet);
+         parent.addChild(child);
          Set<GraphNode<String>> set= new HashSet<>();
          set.add(child);
          parent.removeAll(set);
-         assertTrue(!parent.isIn(stringSet));
+         assertTrue(!parent.isIn("Lulic"));
      }
-*/
+
+     @Test
+     public void testGetLayer(){
+            parent.addChild(child);
+            child.addChild(new GraphNode<>("71",2));
+            assertEquals("71",parent.getListLayer(2).iterator().next().getKey());
+     }
+
+    @Test
+    public void testToString(){
+        parent.addChild(child);
+        parent.addChild(new GraphNode<>("Luiz Felipe",1));
+        parent.addChild(new GraphNode<>("Radu",1));
+        child.addChild(new GraphNode<>("Romulo",2));
+        GraphNode<String> lucasLeiva= new GraphNode<>("Leiva",2);
+        child.addChild(lucasLeiva);
+        child.addChild(new GraphNode<>("Luis Alberto",2));
+        child.addChild(new GraphNode<>("Milinkovic-Savic",2));
+        child.addChild(new GraphNode<>("Lulic",2));
+        lucasLeiva.addChild(new GraphNode<>("Correa",3));
+        lucasLeiva.addChild(new GraphNode<>("Immobile",3));
+        System.out.print(parent.toString());
+    }
 
 }
 

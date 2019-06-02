@@ -44,15 +44,7 @@ public class TestCard {
 
     @Test
     public void testPrintGraph(){
-        for (GraphNode<GraphWeaponEffect> graphWeaponEffectGraphNode: rocketLauncher.getStaticDefinition()){
-           System.out.println(graphWeaponEffectGraphNode);
-            for (GraphNode<PartialWeaponEffect> p: graphWeaponEffectGraphNode.getKey().getEffectGraph()){
-                System.out.print(p+"|");
-            }
-            System.out.println();
-        }
-
-
+        System.out.print(rocketLauncher.getStaticDefinition());
     }
 
 

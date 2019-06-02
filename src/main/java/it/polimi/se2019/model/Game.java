@@ -17,7 +17,6 @@ public class Game extends Observable<MVEvent> {
     private Deck powerUpDeck;
     private Deck lootDeck;
     private List<Player> players= new ArrayList<>();
-    private List<Turn> turns;
     private BiSet<FigureColour, String> userLookup = new BiSet<>();
     private Map<String, PartialWeaponEffect> effectMap; //getEffect in Card class
     private Random randomConfig= new Random();
@@ -103,7 +102,6 @@ public class Game extends Observable<MVEvent> {
 
     public void endTurn (String username){
         Player player= userToPlayer(username);
-        player.endTurn();
     }
 
     public void pausePlayer (String username){
@@ -151,8 +149,6 @@ public class Game extends Observable<MVEvent> {
     }
 
     public List<Player> getPlayers() { return players; }
-
-    public List<Turn> getTurns() { return turns; }
 
     public Map<String, PartialWeaponEffect> getEffectMap() {
         return effectMap;
@@ -243,8 +239,8 @@ public class Game extends Observable<MVEvent> {
          }
      }
 
-     public void updateTurns(Player player, TurnMemory turnMemory){
-        turns.set(players.indexOf(player), turnMemory.getTurn());
+     public TurnMemory getTurnMemory (Player player){
+        return player.getTurnMemory();
      }
 
      public void finalFrenzy (){

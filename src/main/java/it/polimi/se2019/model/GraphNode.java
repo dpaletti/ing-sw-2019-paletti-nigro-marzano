@@ -6,8 +6,8 @@ public class GraphNode<T> implements Iterable<GraphNode<T>> {
     private Set<GraphNode<T>> children= new HashSet<>();
     private T key;
     private Set<GraphNode<T>> parents= new HashSet<>();
+    private int layer;
     public boolean visited=false;
-
 
     public Iterator<GraphNode<T>> iterator(){
         return new MyIterator();
@@ -74,8 +74,9 @@ public class GraphNode<T> implements Iterable<GraphNode<T>> {
             return iterator.next();
         }
     }
-    public GraphNode(T key) {
+    public GraphNode(T key,int layer) {
         this.key = key;
+        this.layer=layer;
     }
 
     public void addChild(GraphNode<T> child){
@@ -146,11 +147,45 @@ public class GraphNode<T> implements Iterable<GraphNode<T>> {
         parent.children.remove(this);
     }
 
+    public boolean isLeaf(){
+        if (this.getChildren().isEmpty())
+            return true;
+        return false;
+    }
+
+    public List<GraphNode<T>> getListLayer(int layer){
+        List<GraphNode<T>> list= new ArrayList<>();
+        for (GraphNode<T> g: this){
+            if (g.getLayer()==layer)
+                list.add(g);
+        }
+        return list;
+    }
+
+    public int getLayer() {
+        return layer;
+    }
+
     @Override
     public String toString() {
-        if (key==null)
-            return "root";
-       return key.toString();
+        String graph="\t\troot"+System.lineSeparator();
+        int i=1;
+        List<GraphNode<T>> list = getListLayer(i);
+        while (!list.isEmpty()) {
+            for (GraphNode<T> g : list) {
+                graph = graph.concat(g.getKey().toString());
+                graph=graph.concat("<");
+                for (GraphNode<T> p: g.getParents()){
+                    graph=graph.concat(p.getKey()+",");
+                }
+                graph=graph.concat(">\t");
+            }
+            i++;
+            list=getListLayer(i);
+            graph=graph.concat(System.lineSeparator());
+        }
+        return graph;
+
     }
 
 }

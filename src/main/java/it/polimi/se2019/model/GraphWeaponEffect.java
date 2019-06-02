@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class GraphWeaponEffect extends GenericWeaponEffect {
-    private GraphNode<PartialWeaponEffect> effectGraph=new GraphNode<>(null);
+    private GraphNode<PartialWeaponEffect> effectGraph=new GraphNode<>(null,0);
 
     public GraphNode<PartialWeaponEffect> getEffectGraph() {
         return effectGraph;
@@ -19,10 +19,10 @@ public class GraphWeaponEffect extends GenericWeaponEffect {
         this.name=weaponEffect.name;
         this.price=weaponEffect.price;
         this.maxHeight=weaponEffect.maxHeight;
-        generateGraphPartial(weaponEffect.getEffects(),effectGraph,this.maxHeight,weaponEffect.getEffects());
+        generateGraphPartial(weaponEffect.getEffects(),effectGraph,this.maxHeight,this.maxHeight);
     }
 
-    private void generateGraphPartial(Set<PartialWeaponEffect> effectSet, GraphNode<PartialWeaponEffect> root, int maxHeight,Set<PartialWeaponEffect> allEffects){
+    private void generateGraphPartial(Set<PartialWeaponEffect> effectSet, GraphNode<PartialWeaponEffect> root, int maxHeight,int constantMaxHeight){
         if (maxHeight==0)
             return;
         int actualMax=0;
@@ -30,18 +30,20 @@ public class GraphWeaponEffect extends GenericWeaponEffect {
             if (effect.priority > actualMax)
                 actualMax = effect.priority;
         }
-        Set<PartialWeaponEffect> tempSet=new HashSet<>(effectSet);
-        for (PartialWeaponEffect effect : tempSet) {
+        for (PartialWeaponEffect effect : effectSet) {
+            Set<PartialWeaponEffect> childrenSet= new HashSet<>(effectSet);
             if (effect.priority == actualMax) {
-                GraphNode<PartialWeaponEffect> node = new GraphNode<>(effect);
+                GraphNode<PartialWeaponEffect> node = new GraphNode<>(effect,constantMaxHeight-maxHeight);
                 root.addChild(node);
                 for (String string : effect.invalidEffects)
-                    effectSet.remove(getEffect(string,allEffects));
-                effectSet.remove(effect);
-                generateGraphPartial(effectSet, node,maxHeight--,allEffects);
+                    childrenSet.remove(getEffect(string, effectSet));
+                childrenSet.remove(effect);
+                generateGraphPartial(childrenSet, node,maxHeight--,constantMaxHeight);
             }
         }
     }
+
+
 
 
     private PartialWeaponEffect getEffect(String name,Set<PartialWeaponEffect> effectSet){
