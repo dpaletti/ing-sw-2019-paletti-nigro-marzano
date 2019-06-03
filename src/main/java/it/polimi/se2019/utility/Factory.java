@@ -12,9 +12,10 @@ import java.nio.file.Paths;
 public final class Factory {
     private Factory(){}
 
-    private static Card create(Path directory){
+    public static Card create(Path directory){
         try {
-            return (Card)JsonHandler.deserialize(new String(Files.readAllBytes(directory)));
+            return (Card) JsonHandler.deserialize(new String(Files.readAllBytes(directory)));
+
         }catch (NullPointerException e){
             Log.severe("Such directory does not exists");
         }catch (IOException e){

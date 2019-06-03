@@ -1,7 +1,8 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.utility.Factory;
+import it.polimi.se2019.utility.Log;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,12 +14,24 @@ public class CardHelper {
     private static Set<PowerUp> allPowerUp= new HashSet<>();
     private static Set<LootCard> allLootCards= new HashSet<>();
     private CardHelper(){
-        for (String name : Paths.get( "files/weapons").toFile().list()) {
-                allWeapons.add((Factory.createWeapon(Paths.get("files/weapons/".concat(name)).toString())));
-        }
-        for (String name : Paths.get("files/powerUps").toFile().list()) {
-                allPowerUp.add(Factory.createPowerUp(Paths.get("files/powerUps/".concat(name)).toString()));
-        }
+            for (String name : Paths.get("files/weapons").toFile().list()) {
+                try {
+                    allWeapons.add((new Weapon(Paths.get("files/weapons/".concat(name)).toString())));
+                }catch (IOException e){
+                    Log.severe("Could not find weapon");
+                }catch (ClassNotFoundException e){
+                    Log.severe("Could not find weapon class during deserialization");
+                }
+            }
+            for (String name : Paths.get("files/powerUps").toFile().list()) {
+                try {
+                    allPowerUp.add(new PowerUp(Paths.get("files/powerUps/".concat(name)).toString()));
+                }catch (IOException e){
+                    Log.severe("Could not find powerup");
+                }catch (ClassNotFoundException e){
+                    Log.severe("Could not find powerup class during deserialization");
+                }
+            }
         for (AmmoColour topAmmoColour: AmmoColour.values()){
             for (AmmoColour bottomAmmoColour: AmmoColour.values()){
                 if (!topAmmoColour.equals(bottomAmmoColour)) {

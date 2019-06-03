@@ -15,4 +15,6 @@ public abstract class Effect {
     public Set<String> getInvalidEffects() {
         return invalidEffects;
     }
+
+
 }

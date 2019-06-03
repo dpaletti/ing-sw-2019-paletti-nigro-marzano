@@ -1,19 +1,16 @@
 package it.polimi.se2019.model;
 
-public class Weapon extends Card{
-    private Boolean loaded;
-    private String weaponType;
+import java.io.IOException;
+
+public class Weapon extends Card implements Grabbable, Drawable{
+    private Boolean loaded = true;
 
     public Boolean getLoaded() {
         return loaded;
     }
 
-    public String getWeaponType() {
-        return weaponType;
-    }
-
-    private Weapon(String name, AmmoColour ammoColour){
-        super(name, ammoColour);
+    public Weapon (String path) throws IOException, ClassNotFoundException{
+            super(path);
     }
 
     public void setLoaded(Boolean loaded) {

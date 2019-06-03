@@ -11,18 +11,6 @@ public class Pair<T , S > {
         this.second = second;
     }
 
-    public void setFirst(T first){
-        if(first == (null))
-            throw new NullPointerException("Cannot have a null value in a pair");
-        this.first = first;
-    }
-
-    public void setSecond(S second) {
-        if(second == (null))
-            throw new NullPointerException("Cannot have a null value in a pair");
-        this.second = second;
-    }
-
     public T getFirst() {
         return first;
     }

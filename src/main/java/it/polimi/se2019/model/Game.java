@@ -22,9 +22,9 @@ public class Game extends Observable<MVEvent> {
     // TODO Mapping between figures and usernames coming from controller
 
     public Game(){
-        weaponDeck= new WeaponDeck();
-        powerUpDeck= new PowerUpDeck();
-        lootDeck= new LootDeck();
+        weaponDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllWeapons()));
+        powerUpDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllPowerUp()));
+        lootDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllLootCards()));
         observers = new ArrayList<>();
     }
 
@@ -72,11 +72,11 @@ public class Game extends Observable<MVEvent> {
             userToColour.put(userLookup.getSecond(player.getFigure().getColour()), player.getFigure().getColour());
         }
         for (int i=0; i<9; i++) {
-            weaponSpots.add(weaponDeck.draw().getName());
+            weaponSpots.add(((Weapon)weaponDeck.draw()).getName());
         }
         numberOfLootCards+=chosenConfig;
         for (int i=0; i<numberOfLootCards; i++){
-            lootCards.add(lootDeck.draw().getName());
+            lootCards.add(((LootCard)lootDeck.draw()).getName());
         }
         killshotTrack= new KillshotTrack(randomConfig.nextInt(4)+5);
 
@@ -84,8 +84,8 @@ public class Game extends Observable<MVEvent> {
     }
 
     public void startMatch(){
-        Card firstCard= powerUpDeck.draw();
-        Card secondCard= powerUpDeck.draw();
+        PowerUp firstCard= (PowerUp) powerUpDeck.draw();
+        PowerUp secondCard= (PowerUp) powerUpDeck.draw();
         notify(new StartFirstTurnEvent(colourToUser(players.get(0).getFigure().getColour()),
                 firstCard.getCardColour().toString(),
                 firstCard.getName(),
@@ -284,7 +284,7 @@ public class Game extends Observable<MVEvent> {
 
     public void grab (String username, String grabbed){
         Player playerGrabbing= userToPlayer(username);
-        Card grabbedCard= null;
+        Grabbable grabbedCard= null;
         for (Weapon weapon: CardHelper.getInstance().getAllWeapons()){
             if (weapon.getName().equalsIgnoreCase(grabbed)){
                 grabbedCard= nameToWeapon(grabbed);
@@ -317,11 +317,11 @@ public class Game extends Observable<MVEvent> {
         notify(new PossibleEffectsEvent(username,
                 weaponName,
                 weapon.getCardColour().getColour().toString(),
-                weapon.getWeaponType()));
+                weapon.getCardType()));
     }
 
     public GraphNode<GraphWeaponEffect> getWeaponEffects (String weapon){
-        return nameToWeapon(weapon).getWeapon();
+        return nameToWeapon(weapon).getDefinition();
     }
 
     public void spawn (String username, AmmoColour spawnColour, String powerUpName){
@@ -357,7 +357,7 @@ public class Game extends Observable<MVEvent> {
     public void discardPowerUp (String username, String powerUpName){
         Player playing= userToPlayer(username);
         PowerUp powerUpToDiscard= nameToPowerUp(powerUpName);
-        playing.discardPowerUp(powerUpToDiscard);
+        //playing.discardPowerUp(powerUpToDiscard); //TODO solve called method's todo
     }
 
     public void discardedPowerUp (Player player, PowerUp drawnPowerUp, PowerUp discardedPowerUp){

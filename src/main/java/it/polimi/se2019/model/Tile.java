@@ -2,11 +2,12 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Point;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class Tile {
+public abstract class Tile implements Targetable{
     protected RoomColour colour;
     protected Map<Direction, Boolean> doors;
     protected Set<Figure> figures;
@@ -94,5 +95,24 @@ public abstract class Tile {
     public void addTear(FigureColour figureColour){
         Tear tearToAdd= new Tear(figureColour);
         hp.add(tearToAdd);
+    }
+
+    @Override
+    public void hit(String partialWeaponEffect, List<? extends Targetable> hit, TurnMemory turnMemory) {
+        List<Tile> list = new ArrayList<>();
+        for(int i = 0; i < hit.size(); i++){
+            list.add((Tile) hit.get(0));
+        }
+        turnMemory.putTiles(partialWeaponEffect, list);
+        turnMemory.setLastEffectUsed(partialWeaponEffect);
+    }
+
+    @Override
+    public List<? extends Targetable> getByEffect(List<String> effects, TurnMemory turnMemory) {
+        List<Tile> hit= new ArrayList<>();
+        for (String s: effects){
+            hit.addAll(turnMemory.getHitTiles().get(s));
+        }
+        return hit;
     }
 }

@@ -5,7 +5,7 @@ import it.polimi.se2019.utility.Point;
 
 import java.util.*;
 
-public class Player extends Observable<Action> {
+public class Player extends Observable<Action> implements Targetable{
     private Figure figure;
     private boolean isPaused= false;
     private List<Tear> hp= new ArrayList<>();
@@ -36,6 +36,25 @@ public class Player extends Observable<Action> {
             }
         }
         this.figure.setPlayer(this);
+    }
+
+    @Override
+    public void hit(String partialWeaponEffect, List<? extends Targetable> hit, TurnMemory turnMemory) {
+        List<Player> list = new ArrayList<>();
+        for(int i = 0; i < hit.size(); i++){
+            list.add((Player) hit.get(0));
+        }
+        turnMemory.putPlayers(partialWeaponEffect, list);
+        turnMemory.setLastEffectUsed(partialWeaponEffect);
+    }
+
+    @Override
+    public List<? extends Targetable> getByEffect(List<String> effects, TurnMemory turnMemory) {
+        List<Player> hit= new ArrayList<>();
+        for (String s: effects){
+            hit.addAll(turnMemory.getHitTargets().get(s));
+        }
+        return hit;
     }
 
     public List<Player> getAllPlayers (){
@@ -213,7 +232,7 @@ public class Player extends Observable<Action> {
         game.playerMovement(this, destination);
     }
 
-    public void grabStuff(Card grabbed){
+    public void grabStuff(Grabbable grabbed){
         figure.grab(grabbed);
     }
 
@@ -289,7 +308,8 @@ public class Player extends Observable<Action> {
         }
     }
 
-    public void discardPowerUp (PowerUp powerUp){
+    //TODO check consistency, don't instantiate new powerups, temporary powerups may be null on first deferentiation
+    /*public void discardPowerUp (PowerUp powerUp){
         PowerUp powerUpToAdd= new PowerUp(temporaryPowerUp.getName(), temporaryPowerUp.getCardColour().getColour());
         temporaryPowerUp=null;
         PowerUp discardedPowerUp= new PowerUp(powerUpToAdd.getName(), powerUpToAdd.getCardColour().getColour());
@@ -310,7 +330,7 @@ public class Player extends Observable<Action> {
             throw new NullPointerException("The powerUp with this name cannot be discarded");
         }
         game.discardedPowerUp(this, powerUpToAdd, discardedPowerUp);
-    }
+    }*/
 
     public void useAmmo (Set<Ammo> usedAmmo){
         usableAmmo.removeAll(usedAmmo);

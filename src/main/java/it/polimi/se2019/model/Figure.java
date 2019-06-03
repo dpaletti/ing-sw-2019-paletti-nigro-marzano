@@ -60,23 +60,27 @@ public class Figure {
     }
 
     public void move(Direction direction){
-        Point newPosition= new Point(tile.getPosition().getX(), tile.getPosition().getY());
+        int x = tile.getPosition().getX();
+        int y = tile.getPosition().getY();
+        Point newPosition = null;
         switch (direction){
             case EAST:
-                newPosition.setX(newPosition.getX()+1);
+                newPosition = new Point(x + 1, y);
                 break;
             case WEST:
-                newPosition.setX(newPosition.getX()-1);
+                newPosition = new Point(x - 1, y);
                 break;
             case NORTH:
-                newPosition.setY(newPosition.getY()+1);
+                newPosition = new Point(x , y + 1);
                 break;
             case SOUTH:
-                newPosition.setY(newPosition.getY()-1);
+                newPosition = new Point(x , y - 1);
                 break;
                 default:
                     break;
         }
+        if(newPosition == (null))
+            throw new NullPointerException("Direction is neither NORTH nor SOUTH nor WEST nor EAST");
         if (boundaryChecker(this, newPosition)){
             position= newPosition;
             tile=player.getGameMap().getMap().get(newPosition);
@@ -87,23 +91,28 @@ public class Figure {
     }
 
     public void move(Figure target, Direction direction){
-        Point newPosition= new Point(target.tile.getPosition().getX(), target.tile.getPosition().getY());
+        //TODO delete code repetition
+        int x = target.tile.getPosition().getX();
+        int y = target.tile.getPosition().getY();
+        Point newPosition= null;
         switch (direction){
             case EAST:
-                newPosition.setY(newPosition.getY()+1);
+                newPosition = new Point(x, y + 1);
                 break;
             case WEST:
-                newPosition.setY(newPosition.getY()-1);
+                newPosition = new Point(x, y - 1);
                 break;
             case NORTH:
-                newPosition.setX(newPosition.getX()+1);
+                newPosition = new Point(x + 1, y);
                 break;
             case SOUTH:
-                newPosition.setX(newPosition.getX()-1);
+                newPosition = new Point(x - 1, y);
                 break;
                 default:
                     break;
         }
+        if (newPosition == (null))
+            throw new NullPointerException("Direction is neither NORTH nor SOUTH nor WEST nor EAST");
         if (boundaryChecker(target, newPosition)) {
             target.position = newPosition;
             target.tile = player.getGameMap().getMap().get(newPosition);
@@ -176,7 +185,8 @@ public class Figure {
         return originalTargetSet;
     }
 
-    private Boolean boundaryChecker (Figure figureToMove, Point newPosition){
+        private Boolean boundaryChecker (Figure figureToMove, Point newPosition){
+        //TODO point coordinates assignement has same logic that move() has, create a common function to reduce code repetition
         if (!player.getGameMap().checkBoundaries(newPosition)){
             return (false);
         }
@@ -184,29 +194,31 @@ public class Figure {
             return (true);
         }
         else { //not same room, check if door
-            Point positionCounter= figureToMove.position;
+            int x = figureToMove.position.getX();
+            int y = figureToMove.position.getY();
+            Point positionCounter= null;
             for (Direction directionCounter: Direction.values()){
                 if (figureToMove.tile.doors.get(directionCounter)){
                     if (directionCounter.equals(Direction.NORTH)){
-                        positionCounter.setY(positionCounter.getY()+1);
+                        positionCounter = new Point(x, y + 1);
                         if (positionCounter.equals(newPosition)){
                             return (true);
                         }
                     }
                     if (directionCounter.equals(Direction.SOUTH)){
-                        positionCounter.setY(positionCounter.getY()-1);
+                        positionCounter = new Point(x, y - 1);
                         if (positionCounter.equals(newPosition)){
                             return (true);
                         }
                     }
                     if (directionCounter.equals(Direction.EAST)){
-                        positionCounter.setX(positionCounter.getX()+1);
+                        positionCounter = new Point(x + 1, y);
                         if (positionCounter.equals(newPosition)){
                             return (true);
                         }
                     }
                     if (directionCounter.equals(Direction.WEST)){
-                        positionCounter.setX(positionCounter.getX()-1);
+                        positionCounter = new Point (x - 1, y);
                         if (positionCounter.equals(newPosition)){
                             return (true);
                         }
@@ -217,7 +229,7 @@ public class Figure {
         return (false);
     }
 
-    public void grab(Card grabbed){ //TODO: modify grab with parameter (grabbed card)
+    public void grab(Grabbable grabbed){ //TODO: modify grab with parameter (grabbed card)
         if (tile.getTileType()==TileType.LOOTTILE) { //when on a Loot Tile, adds grabbed ammo to usable ammo making sure the number of ammo of a colour does not exceed 3
             int ammoOfSelectedColour=0;
             for (Ammo lootCounter : tile.getLootCard().getAmmo()) {

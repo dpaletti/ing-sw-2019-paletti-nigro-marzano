@@ -21,14 +21,6 @@ public class Point implements Serializable {
     //TODO make it immutable and delete setters
     //instantiate new point instead of setting
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
     public int getDistance (Point centre){
         return (Math.abs((centre.getX()-x)+(centre.getY()-y)));
     }

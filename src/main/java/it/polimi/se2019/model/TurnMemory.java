@@ -29,17 +29,40 @@ public class TurnMemory {
         return new HashMap<>(hitTiles);
     }
 
+
+    public void putPlayers(String partialWeaponEffect, List<Player> hitPlayers){
+        hitTargets.put(partialWeaponEffect, hitPlayers);
+
+    }
+
+    public void putTiles(String partialWeaponEffect, List<Tile> hitTiles){
+        this.hitTiles.put(partialWeaponEffect, hitTiles);
+    }
+
+    public void setLastEffectUsed(String lastEffectUsed) {
+        this.lastEffectUsed = lastEffectUsed;
+    }
+
     public String getLastEffectUsed() {
         return lastEffectUsed;
     }
 
+
+    public void hit (String partialWeaponEffect, List<? extends Targetable> hitTargets, Targetable target){
+        target.hit(partialWeaponEffect, hitTargets, this);
+        lastEffectUsed=partialWeaponEffect;
+    }
+
+    public List<? extends Targetable> getByEffect(List<String> effects, Targetable target){ //NOSONAR
+        return target.getByEffect(effects, this);
+    }
+
+
     public void hitPlayers (String partialWeaponEffect, List<Player> hitPlayers){
-        hitTargets.put(partialWeaponEffect, hitPlayers);
         lastEffectUsed=partialWeaponEffect;
     }
 
     public void hitTiles (String partialWeaponEffect, List<Tile> hitTiles){
-        this.hitTiles.put(partialWeaponEffect, hitTiles);
         lastEffectUsed=partialWeaponEffect;
     }
 

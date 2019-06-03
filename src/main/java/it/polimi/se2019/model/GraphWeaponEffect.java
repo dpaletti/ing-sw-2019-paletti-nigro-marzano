@@ -1,10 +1,5 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.utility.Log;
-
-import java.util.HashSet;
-import java.util.Set;
-
 public class GraphWeaponEffect extends GenericWeaponEffect {
     private GraphNode<PartialWeaponEffect> effectGraph=new GraphNode<>(null,0);
 
@@ -13,46 +8,13 @@ public class GraphWeaponEffect extends GenericWeaponEffect {
     }
 
 
-    public GraphWeaponEffect(WeaponEffect weaponEffect){
+    public GraphWeaponEffect(WeaponEffect weaponEffect, Card card){
         this.priority=weaponEffect.priority;
         this.invalidEffects=weaponEffect.invalidEffects;
         this.name=weaponEffect.name;
         this.price=weaponEffect.price;
         this.maxHeight=weaponEffect.maxHeight;
-        generateGraphPartial(weaponEffect.getEffects(),effectGraph,this.maxHeight,this.maxHeight);
-    }
-
-    private void generateGraphPartial(Set<PartialWeaponEffect> effectSet, GraphNode<PartialWeaponEffect> root, int maxHeight,int constantMaxHeight){
-        if (maxHeight==0)
-            return;
-        int actualMax=0;
-        for (PartialWeaponEffect effect : effectSet) {
-            if (effect.priority > actualMax)
-                actualMax = effect.priority;
-        }
-        for (PartialWeaponEffect effect : effectSet) {
-            Set<PartialWeaponEffect> childrenSet= new HashSet<>(effectSet);
-            if (effect.priority == actualMax) {
-                GraphNode<PartialWeaponEffect> node = new GraphNode<>(effect,constantMaxHeight-maxHeight+1);
-                root.addChild(node);
-                for (String string : effect.invalidEffects)
-                    childrenSet.remove(getEffect(string, effectSet));
-                childrenSet.remove(effect);
-                int newHeight=maxHeight-1;
-                generateGraphPartial(childrenSet, node,newHeight,constantMaxHeight);
-            }
-        }
-    }
-
-
-
-
-    private PartialWeaponEffect getEffect(String name,Set<PartialWeaponEffect> effectSet){
-        for(PartialWeaponEffect effect: effectSet){
-            if (effect.getName().equals(name))
-                return effect;
-        }
-        throw new NullPointerException("Can't find effect");
+        card.generateGraph(weaponEffect.getEffects(), effectGraph, weaponEffect.maxHeight, weaponEffect.maxHeight);
     }
 
     @Override
