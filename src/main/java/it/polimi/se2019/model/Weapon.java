@@ -9,7 +9,7 @@ public class Weapon extends Card implements Grabbable, Drawable{
         return loaded;
     }
 
-    public Weapon (String path) throws IOException, ClassNotFoundException{
+    public Weapon (String path){
             super(path);
     }
 

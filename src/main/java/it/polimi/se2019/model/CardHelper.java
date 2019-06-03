@@ -15,22 +15,10 @@ public class CardHelper {
     private static Set<LootCard> allLootCards= new HashSet<>();
     private CardHelper(){
             for (String name : Paths.get("files/weapons").toFile().list()) {
-                try {
                     allWeapons.add((new Weapon(Paths.get("files/weapons/".concat(name)).toString())));
-                }catch (IOException e){
-                    Log.severe("Could not find weapon");
-                }catch (ClassNotFoundException e){
-                    Log.severe("Could not find weapon class during deserialization");
-                }
             }
             for (String name : Paths.get("files/powerUps").toFile().list()) {
-                try {
                     allPowerUp.add(new PowerUp(Paths.get("files/powerUps/".concat(name)).toString()));
-                }catch (IOException e){
-                    Log.severe("Could not find powerup");
-                }catch (ClassNotFoundException e){
-                    Log.severe("Could not find powerup class during deserialization");
-                }
             }
         for (AmmoColour topAmmoColour: AmmoColour.values()){
             for (AmmoColour bottomAmmoColour: AmmoColour.values()){

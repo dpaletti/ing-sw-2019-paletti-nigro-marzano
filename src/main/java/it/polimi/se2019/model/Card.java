@@ -1,6 +1,7 @@
 package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.JsonHandler;
+import it.polimi.se2019.utility.Log;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,19 +16,25 @@ public abstract class Card {
     protected String name;
     protected int maxHeight;
     protected String cardType;
-    private GraphNode<GraphWeaponEffect> staticDefinition;
+    private GraphNode<GraphWeaponEffect> staticDefinition=new GraphNode<>(null,0);
 
-    public Card(String path) throws IOException, ClassNotFoundException {
-        Card card = (Card) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get(path))));;
-        if(card == (null))
-            throw new NullPointerException("Card not found at this path");
-        this.cardColour = card.cardColour;
-        this.maxHeight = card.maxHeight;
-        this.name = card.name;
-        this.price = card.price;
-        this.weaponEffects = card.weaponEffects;
-        this.cardType = card.cardType;
-        defineCard();
+    public Card(String path) {
+        try {
+            Card card = (Card) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get(path))));
+            this.cardColour = card.cardColour;
+            this.maxHeight = card.maxHeight;
+            this.name = card.name;
+            this.price = card.price;
+            this.weaponEffects = card.weaponEffects;
+            this.cardType = card.cardType;
+            defineCard();
+        }catch (IOException c){
+            Log.severe("Card not found in given directory");
+        }catch (NullPointerException e){
+            Log.severe("Card not created");
+        }catch (ClassNotFoundException e){
+            Log.severe("Error in json file, type");
+        }
     }
 
 
@@ -63,10 +70,6 @@ public abstract class Card {
 
     public Set<Ammo> getPrice() {
         return price;
-    }
-
-    public GraphNode<GraphWeaponEffect> getStaticDefinition() {
-        return staticDefinition;
     }
 
     public <T extends Effect> void generateGraph(Set<T> effectSet, GraphNode<T> root, int maxHeight, int constantMaxHeight){
