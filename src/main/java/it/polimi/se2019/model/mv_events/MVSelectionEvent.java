@@ -11,12 +11,15 @@ import java.util.Set;
 public class MVSelectionEvent extends MVEvent { //Arlecchino
     private ArrayList<Point> tiles;
     private ArrayList<String> players;
+    private boolean isArea; //  if isArea is true, all tiles or players in the event must be attacked, else a subset can be selected
 
-    public MVSelectionEvent(String destination, List<Point> tiles, List<String> players){
+    public MVSelectionEvent(String destination, List<Point> tiles, List<String> players, boolean isArea){
         super(destination);
         this.players= new ArrayList<>(players);
         this.tiles= new ArrayList<>(tiles);
+        this.isArea= isArea;
     }
+
 
     @Override
     public void handle(MVEventDispatcher dispatcher) {
@@ -29,5 +32,9 @@ public class MVSelectionEvent extends MVEvent { //Arlecchino
 
     public List<String> getPlayers() {
         return players;
+    }
+
+    public boolean isArea() {
+        return isArea;
     }
 }
