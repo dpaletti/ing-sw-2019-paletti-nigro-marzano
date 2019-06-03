@@ -201,6 +201,10 @@ public class Game extends Observable<MVEvent> {
         return colourToPlayer(userLookup.getFirst(username));
     }
 
+    public String playerToUser (Player player){
+        return colourToUser(player.getFigure().getColour());
+    }
+
     public Weapon nameToWeapon (String weaponName){
         return CardHelper.getInstance().findWeaponByName(weaponName);
     }
@@ -318,6 +322,21 @@ public class Game extends Observable<MVEvent> {
                 weaponName,
                 weapon.getCardColour().getColour().toString(),
                 weapon.getCardType()));
+    }
+
+    public void sendPossibleTargets (String username, List<Player> players, List<Tile> tiles, boolean isArea){
+        List<String> usernames= new ArrayList<>();
+        List<Point> points= new ArrayList<>();
+
+        for (Player p: players){
+            usernames.add(playerToUser(p));
+        }
+
+        for (Tile t: tiles){
+            points.add(t.getPosition());
+        }
+
+        notify(new MVSelectionEvent(username, points, usernames, isArea));
     }
 
     public GraphNode<GraphWeaponEffect> getWeaponEffects (String weapon){
