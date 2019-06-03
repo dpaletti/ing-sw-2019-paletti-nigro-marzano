@@ -324,18 +324,6 @@ public class Game extends Observable<MVEvent> {
         return nameToWeapon(weapon).getWeapon();
     }
 
-
-    public void shoot (String username, String weapon, List<String> effects, List<List<String>> targetNames){
-        Player shooter= userToPlayer(username);
-        for (List<String> targetCounter: targetNames){
-            int actionIndex= targetNames.indexOf(targetCounter);
-            for (String counter: targetCounter){
-                Player target= userToPlayer(counter);
-                //shooter.useWeapon(nameToWeapon(weapon), target, effects.get(actionIndex));
-            }
-        }
-    }
-
     public void spawn (String username, AmmoColour spawnColour, String powerUpName){
         Player spawning= userToPlayer(username);
         PowerUp drawnPowerUp= nameToPowerUp(powerUpName);

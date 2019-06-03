@@ -1,25 +1,22 @@
-package it.polimi.se2019.controller;
-import it.polimi.se2019.model.*;
+package it.polimi.se2019.model;
+
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.BiSet;
 import it.polimi.se2019.utility.Pair;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import java.util.*;
-@RunWith(MockitoJUnitRunner.class)
-public class TestDeathController {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-    @Mock
-    private Server server;
+public class TestPlayer {
 
     private Game game= new Game();
-    private DeathController deathController= new DeathController(server, 1, game);
     private List<Integer> points= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1));
     private List<Player> players= new ArrayList<>();
     private List<FigureColour> figureColours= new ArrayList<>(Arrays.asList(FigureColour.BLUE, FigureColour.GREEN, FigureColour.GREY));
@@ -62,41 +59,25 @@ public class TestDeathController {
     }
 
     @Test
-    public void testSolveTies(){
+    public void testAddMark (){
+        Player player= new Player(new Figure(FigureColour.GREEN), game);
 
-        deathController.solveTies(points, figureColours, hp);
-        assertEquals((Integer) 8, blue.getPoints());
-        assertEquals((Integer) 6, green.getPoints());
+        Tear tear= new Tear(FigureColour.MAGENTA);
+        player.addMark(FigureColour.MAGENTA);
+
+        assertTrue(player.getMarks().contains(tear));
     }
 
     @Test
-    public void testCalculateHits(){
+    public void testAddTear (){
+        Player player= new Player(new Figure(FigureColour.BLUE), game);
+        List<Tear> finalHP = new ArrayList<>();
+        Tear tear= new Tear(FigureColour.GREEN);
+        finalHP.add(tear);
+        player.setHp(finalHP);
+        player.addTear(FigureColour.MAGENTA);
 
-        Map<FigureColour, Integer> leaderboard= new HashMap<>();
-        leaderboard.put(FigureColour.BLUE, 3);
-        leaderboard.put(FigureColour.GREEN, 3);
-        leaderboard.put(FigureColour.GREY, 2);
-        leaderboard.put(FigureColour.YELLOW, 3);
-        Map<FigureColour, Integer> calculatedLeaderboard= deathController.calculateHits(hp);
-
-        assertEquals(calculatedLeaderboard, leaderboard);
+        assertEquals(player.getHp().get(1), new Tear (FigureColour.MAGENTA));
     }
 
-    @Test
-    public void testOverkill(){
-
-    assertFalse(deathController.overkill(hp));
-    hp.add(new Tear(FigureColour.BLUE));
-    assertTrue(deathController.overkill(hp));
-    }
-
-    @Test
-    public void testAssignPoints(){
-
-        deathController.assignPoints("magenta", hp);
-        assertEquals(blue.getPoints(), (Integer) 9);
-        assertEquals(green.getPoints(), (Integer) 6);
-        assertEquals(yellow.getPoints(), (Integer) 4);
-        assertEquals(grey.getPoints(), (Integer) 2);
-    }
 }

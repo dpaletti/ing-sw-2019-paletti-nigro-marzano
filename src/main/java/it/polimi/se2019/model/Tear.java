@@ -1,5 +1,7 @@
 package it.polimi.se2019.model;
 
+import java.util.Objects;
+
 public class Tear {
     private FigureColour colour;
 
@@ -7,5 +9,21 @@ public class Tear {
 
     public FigureColour getColour() { return colour; }
 
-    public void setColour(FigureColour colour) { this.colour = colour; }
+    @Override
+    public String toString() {
+        return colour.toString()+"tear";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tear tear = (Tear) o;
+        return colour == tear.colour;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(colour);
+    }
 }

@@ -88,7 +88,9 @@ public class WeaponController extends Controller {
         return new HashSet<>();
     }
 
-    //private Set<Tile> handleVisibleTiles (List<Tile> tileSet, int visible, Player player)
+    /*private Set<Tile> handleVisibleTiles (List<Tile> tileSet, int visible, Player player){
+
+    }*/
 
     private Set<RoomColour> visibleRooms (Tile tile){
         Set<RoomColour> visibleRooms= new HashSet<>();
