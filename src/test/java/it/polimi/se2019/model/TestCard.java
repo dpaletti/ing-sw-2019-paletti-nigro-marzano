@@ -25,8 +25,8 @@ public class TestCard {
     private Weapon tractorBeam= Factory.createWeapon(Paths.get("files/weapons/TractorBeam.json").toString());
     private Weapon whisper= Factory.createWeapon(Paths.get("files/weapons/Whisper.json").toString());
     private Weapon zx2= Factory.createWeapon(Paths.get("files/weapons/Zx2.json").toString());
-    private Weapon machineGun= Factory.createWeapon(Paths.get("files/weapons/machineGun.json").toString());
-
+    private Weapon machineGun= Factory.createWeapon(Paths.get("files/weapons/MachineGun.json").toString());
+    private Weapon vortexCannon= Factory.createWeapon(Paths.get("files/weapons/VortexCannon.json").toString());
 
 
     /*@Test
@@ -44,7 +44,11 @@ public class TestCard {
 
     @Test
     public void testPrintGraph(){
-        System.out.print(rocketLauncher.getStaticDefinition());
+        System.out.print(vortexCannon.getStaticDefinition());
+        for (GraphNode<GraphWeaponEffect> g: vortexCannon.getStaticDefinition()){
+            System.out.print(g.getKey().name+"\t These are my effects:"+System.lineSeparator());
+            System.out.print(g.getKey().getEffectGraph());
+        }
     }
 
 

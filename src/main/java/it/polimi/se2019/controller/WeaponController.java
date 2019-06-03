@@ -45,6 +45,7 @@ public class WeaponController extends Controller {
         Weapon weapon= model.nameToWeapon(message.getWeapon());
     }
 
+
     private Set<Player> getVisiblePlayers(Player player){
         Set<Player> visiblePlayers= new HashSet<>();
 
@@ -88,9 +89,28 @@ public class WeaponController extends Controller {
         return new HashSet<>();
     }
 
-    /*private Set<Tile> handleVisibleTiles (List<Tile> tileSet, int visible, Player player){
+    private Set<Tile> handleVisibleTiles (List<Tile> tileSet, int visible, Player player){
+        if (visible==0){
+            tileSet.removeAll(getVisibleTiles(player.getFigure().getTile()));
+            return new HashSet<>(tileSet);
+        }
 
-    }*/
+        else if (visible==1){
+            List<Tile> temp= new ArrayList<>(tileSet);
+            temp.removeAll(getVisibleTiles(player.getFigure().getTile()));
+            tileSet.removeAll(temp);
+            return new HashSet<>(tileSet);
+        }
+
+        else if (visible==2){
+            return getVisibleTiles
+                    (player.getTurnMemory().getHitTargets().
+                            get(player.getTurnMemory().
+                                    getLastEffectUsed()).get(0).getFigure().getTile());
+        }
+        return new HashSet<>();
+    }
+
 
     private Set<RoomColour> visibleRooms (Tile tile){
         Set<RoomColour> visibleRooms= new HashSet<>();
@@ -159,31 +179,60 @@ public class WeaponController extends Controller {
         return tiles;
     }
 
-    private Set<Tile> differentTiles (Set<Tile> tiles){
-        Set<Tile> differentTiles= model.getGameMap().getTiles();
-        differentTiles.removeAll(tiles);
-        return differentTiles;
+
+
+    private Set<Tile> handleDifferentTiles (Set<Tile> tileSet, boolean different, List<String> effects, Player player){
+        if (different)
+            tileSet.removeAll(player.getTurnMemory().getTilesByEffect(effects));
+        return tileSet;
     }
 
-    private Set<Player> differentPlayers (Set<Player> players){
-        Set<Player> playerSet=new HashSet<>(model.getPlayers());
-        playerSet.removeAll(players);
-        return playerSet;
+    private Set<Player> handleDifferentPlayers (Set<Player> targetSet, boolean different, List<String> effects, Player player){
+        if (different)
+            targetSet.removeAll(player.getTurnMemory().getPlayersByEffect(effects));
+        return targetSet;
     }
 
-    private <T> Set<T> previous (Set<T> previousTargets){
-        return previousTargets;
+    private Set<Tile> handlePreviousTiles (Set<Tile> tileSet, boolean previous, List<String> effects, Player player){
+        if (previous)
+            return ballet(tileSet, new HashSet<>(player.getTurnMemory().getTilesByEffect(effects)));
+        else
+            return tileSet;
     }
 
-    private List<Player> generateTargetSet (PartialWeaponEffect effect, Player player){
+
+    private void generateTargetSet (PartialWeaponEffect effect, Player player){
         TargetSpecification targetSpecification= effect.getTargetSpecification();
         List<Player> targetSet= model.getPlayers();
-        return null; //TODO
+        List<Tile> tileSet= new ArrayList<>(model.getGameMap().getTiles());
+        if (targetSpecification.getTile()) {
+            tileSet= new ArrayList<>(ballet
+                    (new HashSet<>(tileSet),
+                            new HashSet<>(handleTile(tileSet, player, targetSpecification))));
 
+        }
+        else {
+            targetSet= new ArrayList<>(ballet(
+                    new HashSet<>(targetSet),
+                    new HashSet<>(handlePlayer(targetSet, player, targetSpecification))));
+        }
     }
 
-    private Set<Player> handleTile (List<Player> targetSet, Player player, boolean tile){
-        //method to be implemented
-       return null;
+    private Set<Tile> handleTile (List<Tile> tileSet, Player player, TargetSpecification targetSpecification){
+        Set<Tile> visibleTiles = handleVisibleTiles(tileSet, targetSpecification.getVisible(), player);
+        Set<Tile> differentTiles = handleDifferentTiles(new HashSet<>(tileSet), targetSpecification.getDifferent().getFirst(), targetSpecification.getDifferent().getSecond(), player);
+        Set<Tile> previousTiles = handlePreviousTiles(new HashSet<>(tileSet), targetSpecification.getDifferent().getFirst(), targetSpecification.getDifferent().getSecond(), player);
+        return null;
+    }
+
+    private Set<Player> handlePlayer (List<Player> targetSet, Player player, TargetSpecification targetSpecification){
+        return null;
+    }
+
+    private <T> Set<T> ballet (Set<T> completeSet, Set<T> inOut){
+        Set<T> temp= new HashSet<>(completeSet);
+        temp.removeAll(inOut);
+        completeSet.removeAll(temp);
+        return completeSet;
     }
 }

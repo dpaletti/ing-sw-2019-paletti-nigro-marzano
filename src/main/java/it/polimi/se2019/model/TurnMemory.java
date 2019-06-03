@@ -1,5 +1,6 @@
 package it.polimi.se2019.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,5 +47,21 @@ public class TurnMemory {
         hitTargets.clear();
         hitTiles.clear();
         lastEffectUsed= "none";
+    }
+
+    public List<Player> getPlayersByEffect (List<String> effects){
+        List<Player> hit= new ArrayList<>();
+        for (String s: effects){
+            hit.addAll(hitTargets.get(s));
+        }
+        return hit;
+    }
+
+    public List<Tile> getTilesByEffect (List<String> effects){
+        List<Tile> hit= new ArrayList<>();
+        for (String s: effects){
+            hit.addAll(hitTiles.get(s));
+        }
+        return hit;
     }
 }

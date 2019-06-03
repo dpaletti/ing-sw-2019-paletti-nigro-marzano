@@ -14,6 +14,10 @@
   "weaponEffects": [
     {
       "name": "basicEffect",
+      "priority": 3,
+      "invalidEffects": [],
+      "price":[],
+      "maxHeight": 2,
       "effects": [
         {
           "priority": 3,
@@ -28,15 +32,16 @@
               "second": []
             },
             "radiusBetween": {
-              "first": -2,
-              "second": -2
+              "first": 1,
+              "second": -1
             },
             "visible": 1,
             "enlarge": 0,
             "area": false
           },
           "actions": [],
-          "name": "B1"
+          "name": "B1",
+          "invalidEffects": []
         },
         {
           "priority": 2,
@@ -70,7 +75,8 @@
               "value": 2
             }
           ],
-          "name": "E1"
+          "name": "E1",
+          "invalidEffects": []
         },
         {
           "priority": 2,
@@ -100,23 +106,112 @@
               "value": 2
             }
           ],
-          "name": "E2"
+          "name": "E2",
+          "invalidEffects": []
         }
       ]
     },
-    //TODO in with BlackHole i've to use the tile flag in true and false at the same time for different and previous
     {
       "name": "withBlackHole",
+      "priority": 2,
+      "invalidEffects": [],
+      "price":[
+        {
+          "colour": "RED"
+        }
+      ],
+      "maxHeight": 2,
       "effects": [
         {
-          "priority": 1,
+          "priority": 3,
           "targetSpecification": {
             "tile": true,
             "different": {
               "first": false,
-              "second": []
+              "second": [
+                "E1",
+                "E2"
+              ]
             },
-            "previous":{
+            "previous": {
+              "first": true,
+              "second": [
+                "B1"
+              ]
+            },
+            "radiusBetween": {
+              "first": -2,
+              "second": -2
+            },
+            "visible": 1,
+            "enlarge": 0,
+            "area": true
+          },
+          "actions": [
+            {
+              "actionType": "DAMAGE",
+              "value": 1
+            }
+          ],
+          "name": "B2",
+          "invalidEffects": [
+            "B3"
+          ]
+        },
+        {
+          "priority": 3,
+          "targetSpecification": {
+            "tile": true,
+            "different": {
+              "first": false,
+              "second": [
+                "E1",
+                "E2"
+              ]
+            },
+            "previous": {
+              "first": true,
+              "second": [
+                "B1"
+              ]
+            },
+            "radiusBetween": {
+              "first": -2,
+              "second": -2
+            },
+            "visible": 1,
+            "enlarge": 0,
+            "area": true
+          },
+          "actions": [
+            {
+              "actionType": "MOVE",
+              "value": 1
+            },
+            {
+              "actionType": "DAMAGE",
+              "value": 1
+            }
+          ],
+          "name": "B3",
+          "invalidEffects": [
+            "B2"
+          ]
+        },
+        {
+          "priority": 2,
+          "targetSpecification": {
+            "tile": true,
+            "different": {
+              "first": false,
+              "second": [
+                "E1",
+                "E2",
+                "B2",
+                "B3"
+              ]
+            },
+            "previous": {
               "first": true,
               "second": [
                 "B1"
@@ -132,29 +227,56 @@
           },
           "actions": [
             {
+              "actionType": "MOVE",
+              "value": 1
+            },
+            {
               "actionType": "DAMAGE",
               "value": 1
             }
           ],
-          "name": "B2",
-          "price":[
+          "name": "E3",
+          "invalidEffects": []
+        },
+        {
+          "priority": 2,
+          "targetSpecification": {
+            "tile": true,
+            "different": {
+              "first": false,
+              "second": [
+                "E1",
+                "E2",
+                "B2",
+                "B3"
+              ]
+            },
+            "previous": {
+              "first": true,
+              "second": [
+                "B1"
+              ]
+            },
+            "radiusBetween": {
+              "first": -2,
+              "second": -2
+            },
+            "visible": 1,
+            "enlarge": 0,
+            "area": true
+          },
+          "actions": [
             {
-              "colour": "RED"
+              "actionType": "MOVE",
+              "value": 1
             }
-          ]
+          ],
+          "name": "E4",
+          "invalidEffects": []
         }
       ]
     }
   ],
-  "name": "GrenadeLauncher",
-  "maxHeight": 3,
-  "constraint": "",
-  "invalidCombinations": [
-    [
-      "B2"
-    ],
-    [
-      "E1"
-    ]
-  ]
+  "name": "VortexCannon",
+  "maxHeight": 2
 }

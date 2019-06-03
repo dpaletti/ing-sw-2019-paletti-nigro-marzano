@@ -33,12 +33,13 @@ public class GraphWeaponEffect extends GenericWeaponEffect {
         for (PartialWeaponEffect effect : effectSet) {
             Set<PartialWeaponEffect> childrenSet= new HashSet<>(effectSet);
             if (effect.priority == actualMax) {
-                GraphNode<PartialWeaponEffect> node = new GraphNode<>(effect,constantMaxHeight-maxHeight);
+                GraphNode<PartialWeaponEffect> node = new GraphNode<>(effect,constantMaxHeight-maxHeight+1);
                 root.addChild(node);
                 for (String string : effect.invalidEffects)
                     childrenSet.remove(getEffect(string, effectSet));
                 childrenSet.remove(effect);
-                generateGraphPartial(childrenSet, node,maxHeight--,constantMaxHeight);
+                int newHeight=maxHeight-1;
+                generateGraphPartial(childrenSet, node,newHeight,constantMaxHeight);
             }
         }
     }
@@ -47,9 +48,7 @@ public class GraphWeaponEffect extends GenericWeaponEffect {
 
 
     private PartialWeaponEffect getEffect(String name,Set<PartialWeaponEffect> effectSet){
-        Log.fine(name);
         for(PartialWeaponEffect effect: effectSet){
-            Log.fine(effect.name);
             if (effect.getName().equals(name))
                 return effect;
         }
