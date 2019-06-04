@@ -1,5 +1,7 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.mv_events.MVSelectionEvent;
+import it.polimi.se2019.utility.Action;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Point;
 
@@ -22,7 +24,6 @@ public class Player extends Observable<Action> implements Targetable{
     private Integer points= 0;
     private Set<Ammo> usableAmmo= new HashSet<>();
     private Set<Ammo> unusableAmmo= new HashSet<>();
-    private TurnMemory turnMemory;
     private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1, 1, 1));
     private List <Integer> frenzyPointsToAssign= new ArrayList<>(Arrays.asList(2, 1, 1, 1, 1));
     private Game game;
@@ -37,28 +38,62 @@ public class Player extends Observable<Action> implements Targetable{
         }
         this.figure.setPlayer(this);
     }
-
     @Override
-    public void hit(String partialWeaponEffect, List<? extends Targetable> hit, TurnMemory turnMemory) {
+    public void hit(String partialWeaponEffect, List<Targetable> hit, TurnMemory turnMemory) {
         List<Player> list = new ArrayList<>();
-        for(int i = 0; i < hit.size(); i++){
-            list.add((Player) hit.get(0));
-        }
+        for (Targetable t: hit
+             )
+           list.add((Player) t);
         turnMemory.putPlayers(partialWeaponEffect, list);
         turnMemory.setLastEffectUsed(partialWeaponEffect);
     }
 
     @Override
-    public List<? extends Targetable> getByEffect(List<String> effects, TurnMemory turnMemory) {
-        List<Player> hit= new ArrayList<>();
+     public List<Targetable> getByEffect(List<String> effects, TurnMemory turnMemory) {
+        List<Targetable> hit= new ArrayList<>();
         for (String s: effects){
             hit.addAll(turnMemory.getHitTargets().get(s));
         }
         return hit;
     }
 
-    public List<Player> getAllPlayers (){
-      return game.getPlayers();
+    @Override
+    public List<Targetable> getAll() {
+        return new ArrayList<>(game.getPlayers());
+    }
+
+    @Override
+    public Point getPosition() {
+        return figure.getPosition();
+    }
+
+    @Override
+    public Map<String, List<Targetable>> getHitTargets(TurnMemory turnMemory) {
+        List<Targetable> list;
+        Map<String, List<Targetable>> map = new HashMap<>();
+        for (String s: turnMemory.getHitTargets().keySet()) {
+            list = new ArrayList<>(turnMemory.getHitTargets().get(s));
+            map.put(s, list);
+        }
+        return map;
+    }
+
+    @Override
+    public void addToSelectionEvent(MVSelectionEvent event, List<Targetable> targets, List<Action> actions) {
+        List<Player> players = new ArrayList<>(toPlayerList(targets));
+        List<String> usernames = new ArrayList<>();
+        for(Player p: players){
+            usernames.add(game.playerToUser(p));
+        }
+        event.addActionOnPlayer(actions, usernames);
+    }
+
+    private List<Player> toPlayerList(List<Targetable> list){
+        List<Player> players = new ArrayList<>();
+        for (Targetable t: list) {
+            players.add((Player) t);
+        }
+        return players;
     }
 
     public GameMap getGameMap (){
@@ -138,16 +173,8 @@ public class Player extends Observable<Action> implements Targetable{
         return usableAmmo;
     }
 
-    public TurnMemory getTurnMemory() {
-        return turnMemory;
-    }
-
     public List<Integer> getPointsToAssign() {
         return pointsToAssign;
-    }
-
-    public PowerUp getTemporaryPowerUp() {
-        return temporaryPowerUp;
     }
 
     public PlayerValue getPlayerValue() {
@@ -166,16 +193,8 @@ public class Player extends Observable<Action> implements Targetable{
         this.firstWeapon = firstWeapon;
     }
 
-    public void setFigure(Figure figure) {
-        this.figure = figure;
-    }
-
     public void setFirstPowerUp(PowerUp firstPowerUp) {
         this.firstPowerUp = firstPowerUp;
-    }
-
-    public void setHealthState(PlayerDamage healthState) {
-        this.healthState = healthState;
     }
 
     public void setHp(List<Tear> hp) {
@@ -193,15 +212,6 @@ public class Player extends Observable<Action> implements Targetable{
     public void setThirdPowerUp(PowerUp thirdPowerUp) {
         this.thirdPowerUp = thirdPowerUp;
     }
-
-    public void setTurnMemory(TurnMemory turnMemory) {
-        this.turnMemory = turnMemory;
-    }
-
-    public void setTemporaryPowerUp(PowerUp temporaryPowerUp) {
-        this.temporaryPowerUp = temporaryPowerUp;
-    }
-
 
 
     public Set<Weapon> showWeapons (){

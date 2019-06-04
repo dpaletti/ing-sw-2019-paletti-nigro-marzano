@@ -1,6 +1,5 @@
 package it.polimi.se2019.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,16 +9,16 @@ public class TurnMemory {
     private  Map<String, List<Tile>> hitTiles= new HashMap<>();
     private String lastEffectUsed= "none";
 
-    public TurnMemory(Map<String, List<Player>> hitTargets, Map<String, List<Tile>> hitTiles) {
-
-        this.hitTargets = hitTargets;
-        this.hitTiles = hitTiles;
+    public TurnMemory(){
+        //empty constructor
     }
 
     public TurnMemory (TurnMemory turnMemory){
         this.hitTiles= turnMemory.getHitTiles();
         this.hitTargets= turnMemory.getHitTargets();
     }
+
+
 
     public Map<String, List<Player>> getHitTargets() {
         return new HashMap<>(hitTargets);
@@ -48,22 +47,13 @@ public class TurnMemory {
     }
 
 
-    public void hit (String partialWeaponEffect, List<? extends Targetable> hitTargets, Targetable target){
+    public void hit (String partialWeaponEffect, List<Targetable> hitTargets, Targetable target){
         target.hit(partialWeaponEffect, hitTargets, this);
         lastEffectUsed=partialWeaponEffect;
     }
 
-    public List<? extends Targetable> getByEffect(List<String> effects, Targetable target){ //NOSONAR
+    public List<Targetable> getByEffect(List<String> effects, Targetable target){
         return target.getByEffect(effects, this);
-    }
-
-
-    public void hitPlayers (String partialWeaponEffect, List<Player> hitPlayers){
-        lastEffectUsed=partialWeaponEffect;
-    }
-
-    public void hitTiles (String partialWeaponEffect, List<Tile> hitTiles){
-        lastEffectUsed=partialWeaponEffect;
     }
 
     public void end (){
@@ -72,19 +62,4 @@ public class TurnMemory {
         lastEffectUsed= "none";
     }
 
-    public List<Player> getPlayersByEffect (List<String> effects){
-        List<Player> hit= new ArrayList<>();
-        for (String s: effects){
-            hit.addAll(hitTargets.get(s));
-        }
-        return hit;
-    }
-
-    public List<Tile> getTilesByEffect (List<String> effects){
-        List<Tile> hit= new ArrayList<>();
-        for (String s: effects){
-            hit.addAll(hitTiles.get(s));
-        }
-        return hit;
-    }
 }

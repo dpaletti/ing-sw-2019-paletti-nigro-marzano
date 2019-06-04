@@ -1,7 +1,5 @@
 package it.polimi.se2019.model;
 
-import java.io.IOException;
-
 public class Weapon extends Card implements Grabbable, Drawable{
     private Boolean loaded = true;
 

@@ -1,6 +1,7 @@
 package it.polimi.se2019.model;
 
-import java.util.Collections;
+import it.polimi.se2019.utility.Action;
+
 import java.util.List;
 
 public class Healthy extends PlayerDamage {

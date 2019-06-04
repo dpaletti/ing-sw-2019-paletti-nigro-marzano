@@ -1,13 +1,13 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.mv_events.MVSelectionEvent;
+import it.polimi.se2019.utility.Action;
 import it.polimi.se2019.utility.Point;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Tile implements Targetable{
+    protected GameMap gameMap;
     protected RoomColour colour;
     protected Map<Direction, Boolean> doors;
     protected Set<Figure> figures;
@@ -16,7 +16,8 @@ public abstract class Tile implements Targetable{
     protected Point position;
     protected List<Tear> hp;
 
-    public Tile (RoomColour colour, Map<Direction, Boolean> doors, Set<Figure> figures, WeaponSpot weaponSpot, LootCard loot, Point position, List<Tear> hp){
+    public Tile (GameMap gameMap, RoomColour colour, Map<Direction, Boolean> doors, Set<Figure> figures, WeaponSpot weaponSpot, LootCard loot, Point position, List<Tear> hp){
+        this.gameMap = gameMap;
         this.colour= colour;
         this.doors= doors;
         this.figures=figures;
@@ -72,6 +73,7 @@ public abstract class Tile implements Targetable{
         return loot;
     }
 
+    @Override
     public Point getPosition() {
         return position;
     }
@@ -98,7 +100,7 @@ public abstract class Tile implements Targetable{
     }
 
     @Override
-    public void hit(String partialWeaponEffect, List<? extends Targetable> hit, TurnMemory turnMemory) {
+    public void hit(String partialWeaponEffect, List<Targetable> hit, TurnMemory turnMemory) {
         List<Tile> list = new ArrayList<>();
         for(int i = 0; i < hit.size(); i++){
             list.add((Tile) hit.get(0));
@@ -108,11 +110,47 @@ public abstract class Tile implements Targetable{
     }
 
     @Override
-    public List<? extends Targetable> getByEffect(List<String> effects, TurnMemory turnMemory) {
+    public List<Targetable> getByEffect(List<String> effects, TurnMemory turnMemory) {
         List<Tile> hit= new ArrayList<>();
         for (String s: effects){
             hit.addAll(turnMemory.getHitTiles().get(s));
         }
-        return hit;
+        return new ArrayList<>(hit);
+    }
+
+    @Override
+    public List<Targetable> getAll() {
+        return new ArrayList<>(gameMap.getTiles());
+    }
+
+    @Override
+    public Map<String, List<Targetable>> getHitTargets(TurnMemory turnMemory) {
+        List<Targetable> list;
+        Map<String, List<Targetable>> map = new HashMap<>();
+        for (String s: turnMemory.getHitTargets().keySet()) {
+            list = new ArrayList<>(turnMemory.getHitTargets().get(s));
+            map.put(s, list);
+        }
+        return map;
+
+    }
+
+    @Override
+    public void addToSelectionEvent(MVSelectionEvent event, List<Targetable> targets, List<Action> actions) {
+        List<Tile> tiles = new ArrayList<>();
+        List<Point> points = new ArrayList<>();
+        for(Targetable t: targets)
+            tiles.add((Tile) t);
+        for(Tile t: tiles)
+            points.add(t.getPosition());
+        event.addActionOnTiles(actions, points);
+    }
+
+    private List<Tile> toTileList(List<Targetable> list){
+        List<Tile> tiles = new ArrayList<>();
+        for (Targetable t: list) {
+            tiles.add((Tile) t);
+        }
+        return tiles;
     }
 }

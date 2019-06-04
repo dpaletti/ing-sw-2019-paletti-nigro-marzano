@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class GameMap {
+    //TODO create one JSON for each half of the map and bind them together when constructing
     private MapConfig config;
     private Map<it.polimi.se2019.utility.Point, Tile> map;
     private GameMode mode;

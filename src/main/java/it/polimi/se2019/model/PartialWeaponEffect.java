@@ -1,5 +1,8 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.utility.Action;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class PartialWeaponEffect extends Effect {
@@ -14,5 +17,9 @@ public class PartialWeaponEffect extends Effect {
 
     public TargetSpecification getTargetSpecification() {
         return new TargetSpecification(targetSpecification);
+    }
+
+    public List<Action> getActions() {
+        return new ArrayList<>(actions);
     }
 }

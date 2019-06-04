@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 
 public class WeaponController extends Controller {
+    private int layersVisitedPartial = 0;
+    private int layersVisited = 0; //TODO where to iterate on this
 
     public WeaponController (Server server, int roomNumber, Game model){
         super(model, server, roomNumber);
@@ -37,82 +39,73 @@ public class WeaponController extends Controller {
 
     @Override
     public void dispatch(ChosenWeaponEvent message) {
-        model.sendPossibleEffects(message.getSource(), message.getWeapon());
+        List<GraphWeaponEffect> list = new ArrayList<>();
+        layersVisited = layersVisited + 1;
+        for (GraphNode<GraphWeaponEffect> g: model.nameToWeapon(message.getWeapon()).getDefinition().getListLayer(layersVisited))
+            list.add(g.getKey());
+        model.sendPossibleEffects(message.getSource(), message.getWeapon(), list);
     }
 
     @Override
     public void dispatch(ChosenEffectEvent message) {
-        Weapon weapon= model.nameToWeapon(message.getWeapon());
-    }
+        GraphWeaponEffect weaponEffect = null;
 
-
-    private Set<Player> getVisiblePlayers(Player player){
-        Set<Player> visiblePlayers= new HashSet<>();
-
-        for (Player p: model.getPlayers()) {
-            if (visibleRooms(player.getFigure().getTile()).contains(p.getFigure().getTile().getColour()))
-                visiblePlayers.add(p);
+        for (GraphNode<GraphWeaponEffect> w: model.nameToWeapon(message.getWeapon()).getDefinition()) {
+            if(w.getKey().getName().equals(message.getEffectName())) {
+                weaponEffect = w.getKey();
+                break;
+            }
         }
-        visiblePlayers.remove(player);
-        return visiblePlayers;
-    }
+        if(weaponEffect == null)
+            throw new NullPointerException("Could not find " + message.getEffectName() + " in " + message.getWeapon());
 
-    private Set<Tile> getVisibleTiles(Tile tile){
-        Set<Tile> visibleTiles= new HashSet<>();
-
-        for (Tile t: model.getGameMap().getTiles()) {
-            if (visibleRooms(tile).contains(t.getColour()))
-                visibleTiles.add(t);
+        layersVisitedPartial = layersVisitedPartial + 1;
+        for(GraphNode<PartialWeaponEffect> p: weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial)) {
+            model.addToSelection(message.getSource(), p.getKey().getActions(), generateTargetSet(p.getKey(), model.userToPlayer(message.getSource())));
         }
-        visibleTiles.remove(tile);
-        return visibleTiles;
+        model.sendPossibleTargets();
     }
 
-    private Set<Player> handleVisibilePlayers (List<Player> targetSet, int visible, Player player){
 
+    private List<Targetable> generateTargetSet (PartialWeaponEffect effect, Player player){
+        TargetSpecification targetSpecification= effect.getTargetSpecification();
+        List<Player> targetSet= model.getPlayers();
+        List<Tile> tileSet= new ArrayList<>(model.getGameMap().getTiles());
+
+    }
+
+    private Set<Targetable> getVisible(Targetable t){
+        Set<Targetable> visibleTarget= new HashSet<>();
+        while(t.getAll().iterator().hasNext()) {
+            if (visibleRooms(t.getPosition()).contains(model.getGameMap().getMap().get(t.getPosition()).getColour()))
+                visibleTarget.add( t.getAll().iterator().next());
+        }
+        visibleTarget.remove(t);
+        return visibleTarget;
+
+    }
+
+    private Set<Targetable> handleVisibile(List<Targetable> targetSet, int visible, Targetable source){
         if (visible==0) {
-            targetSet.removeAll(getVisiblePlayers(player));
+            targetSet.removeAll(getVisible(source));
             return new HashSet<>(targetSet);
         }
 
         else if (visible==1){
-            List<Player> temp= new ArrayList<>(targetSet);
-            temp.removeAll(getVisiblePlayers(player));
+            List<Targetable> temp= new ArrayList<>(targetSet);
+            temp.removeAll(getVisible(source));
             targetSet.removeAll(temp);
             return new HashSet<>(targetSet);
         }
 
         else if (visible==2)
-            return getVisiblePlayers
-                    (player.getTurnMemory().getHitTargets().
-                            get(player.getTurnMemory().getLastEffectUsed()).get(0));
+            return getVisible(source.getHitTargets(model.getTurnMemory()).get(model.getTurnMemory().getLastEffectUsed()).get(0));
         return new HashSet<>(targetSet);
+
     }
 
-    private Set<Tile> handleVisibleTiles (List<Tile> tileSet, int visible, Player player){
-        if (visible==0){
-            tileSet.removeAll(getVisibleTiles(player.getFigure().getTile()));
-            return new HashSet<>(tileSet);
-        }
-
-        else if (visible==1){
-            List<Tile> temp= new ArrayList<>(tileSet);
-            temp.removeAll(getVisibleTiles(player.getFigure().getTile()));
-            tileSet.removeAll(temp);
-            return new HashSet<>(tileSet);
-        }
-
-        else if (visible==2){
-            return getVisibleTiles
-                    (player.getTurnMemory().getHitTargets().
-                            get(player.getTurnMemory().
-                                    getLastEffectUsed()).get(0).getFigure().getTile());
-        }
-        return new HashSet<>(tileSet);
-    }
-
-
-    private Set<RoomColour> visibleRooms (Tile tile){
+    private Set<RoomColour> visibleRooms (Point point){
+        Tile tile = model.getGameMap().getMap().get(point);
         Set<RoomColour> visibleRooms= new HashSet<>();
 
         visibleRooms.add(tile.getColour());
@@ -143,29 +136,21 @@ public class WeaponController extends Controller {
         return visibleRooms;
     }
 
-    private Set<Player> areaSelectionPlayer (Player player, int innerRadius, int outerRadius){
-        Set<Player> targets= new HashSet<>();
-        for (Tile t: areaSelectionTile(player.getFigure().getTile(), innerRadius, outerRadius)){
-            for (Figure f: t.getFigures())
-                targets.add(f.getPlayer());
-        }
-        return targets;
-    }
-
-    private Set<Tile> areaSelectionTile (Tile tile, int innerRadius, int outerRadius){
-        Set<Tile> tiles= new HashSet<>();
-        if (innerRadius==-2 && outerRadius==-2) //redundant because of tile switch in weapon declaration
-            return getVisibleTiles(tile);
-        if (innerRadius==-3 && outerRadius==-3){
-            for (Tile t: model.getGameMap().getTiles()){
-                if (!t.getColour().equals(tile.getColour()))
-                    tiles.add(t);
+    private Set<Targetable> areaSelection(Targetable target, int innerRadius, int outerRadius){
+        Set<Targetable> targetables = new HashSet<>();
+        if(innerRadius==-2 && outerRadius == -2) //redundant because of tile switch in weapon declaration
+            return getVisible(target);
+        if(innerRadius == -3 && outerRadius == -3) {
+            for(Tile t: model.getGameMap().getTiles()) {
+                if (model.getGameMap().getMap().get(target.getPosition()).getColour().equals(t.getColour()))
+                    targetables.add(t);
             }
-            return tiles;
+            return targetables;
         }
-        tiles = getTileCircle(outerRadius, tile.getPosition());
-        tiles.removeAll(getTileCircle(innerRadius, tile.getPosition()));
-        return tiles;
+        targetables = new HashSet<>(getTileCircle(outerRadius, target.getPosition()));
+        targetables.removeAll(getTileCircle(innerRadius, target.getPosition()));
+        return targetables;
+
     }
 
     private Set<Tile> getTileCircle (int distance, Point centre) {
@@ -179,32 +164,21 @@ public class WeaponController extends Controller {
         return tiles;
     }
 
-
-    private Set<Tile> handleDifferentTiles (Set<Tile> tileSet, boolean different, List<String> effects, Player player){
+    private Set<Targetable> handleDifferent(Set<Targetable> targetSet, boolean different, List<String> effects) {
         if (different)
-            tileSet.removeAll(player.getTurnMemory().getTilesByEffect(effects));
-        return tileSet;
-    }
-
-    private Set<Player> handleDifferentPlayers (Set<Player> targetSet, boolean different, List<String> effects, Player player){
-        if (different)
-            targetSet.removeAll(player.getTurnMemory().getPlayersByEffect(effects));
+            targetSet.removeAll(model.getTurnMemory().getByEffect(effects, targetSet.iterator().next()));
         return targetSet;
+
     }
 
-    private Set<Tile> handlePreviousTiles (Set<Tile> tileSet, boolean previous, List<String> effects, Player player){
+    private Set<Targetable> handlePrevious(Set<Targetable> targetables, boolean previous, List<String> effects){
         if (previous)
-            return ballet(tileSet, new HashSet<>(player.getTurnMemory().getTilesByEffect(effects)));
+            return ballet(targetables, new HashSet<>(model.getTurnMemory().getByEffect(effects, targetables.iterator().next())));
         else
-            return tileSet;
+            return targetables;
     }
 
-    private Set<Player> handlePreviousPlayers (Set<Player> targetSet, boolean previous, List<String> effects, Player player){
-        if (previous)
-            return ballet(targetSet, new HashSet<>(player.getTurnMemory().getPlayersByEffect(effects)));
-        else
-            return targetSet;
-    }
+
 
     private Set<Tile> handleRadiusBetweenTiles (int innerRadius, int outerRadius, Player player){
         return areaSelectionTile (player.getFigure().getTile(), innerRadius, outerRadius);
@@ -222,29 +196,14 @@ public class WeaponController extends Controller {
         return tiles;
     }
 
-    private void generateTargetSet (PartialWeaponEffect effect, Player player){
-        TargetSpecification targetSpecification= effect.getTargetSpecification();
-        List<Player> targetSet= model.getPlayers();
-        List<Tile> tileSet= new ArrayList<>(model.getGameMap().getTiles());
-        if (targetSpecification.getTile()) {
-            tileSet= new ArrayList<>(ballet
-                    (new HashSet<>(tileSet),
-                            new HashSet<>(handleTile(tileSet, player, targetSpecification))));
 
-            model.sendPossibleTargets
-                    (model.playerToUser(player),
-                            new ArrayList<>(), tileSet, targetSpecification.getArea());
 
-        }
-        else {
-            targetSet= new ArrayList<>(ballet(
-                    new HashSet<>(targetSet),
-                    new HashSet<>(handlePlayer(targetSet, player, targetSpecification))));
 
-            model.sendPossibleTargets
-                    (model.playerToUser(player), targetSet, new ArrayList<>(), targetSpecification.getArea());
-        }
+    private Set<Targetable> handleTarget(List<Targetable> targetSet,Targetable target, TargetSpecification targetSpecification){
+
+        Set<Tile> visibleTiles = ballet(new HashSet<>(targetSet), handleVisible (targetSet, targetSpecification.getVisible(), target));
     }
+
 
     private Set<Tile> handleTile (List<Tile> tileSet, Player player, TargetSpecification targetSpecification){
 
@@ -292,8 +251,8 @@ public class WeaponController extends Controller {
         }
     }
 
-    private <T> Set<T> ballet (Set<T> completeSet, Set<T> inOut){
-        Set<T> temp= new HashSet<>(completeSet);
+    private Set<Targetable> ballet (Set<Targetable> completeSet, Set<Targetable> inOut){
+        Set<Targetable> temp= new HashSet<>(completeSet);
         temp.removeAll(inOut);
         completeSet.removeAll(temp);
         return completeSet;

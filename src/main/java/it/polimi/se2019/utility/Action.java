@@ -1,12 +1,12 @@
-package it.polimi.se2019.model;
+package it.polimi.se2019.utility;
 
-import it.polimi.se2019.model.ActionType;
 import it.polimi.se2019.model.Direction;
-import it.polimi.se2019.model.Figure;
 
-public class Action {
+import java.io.Serializable;
+
+public class Action implements Serializable {
     private ActionType actionType;
-    private Integer value;
+    private int value;
     private Direction direction;
 
     public ActionType getActionType() { return actionType; }

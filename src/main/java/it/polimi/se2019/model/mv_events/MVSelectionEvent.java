@@ -1,23 +1,21 @@
 package it.polimi.se2019.model.mv_events;
 
+import it.polimi.se2019.utility.Action;
 import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.MVEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class MVSelectionEvent extends MVEvent { //Arlecchino
-    private ArrayList<Point> tiles;
-    private ArrayList<String> players;
-    private boolean isArea; //  if isArea is true, all tiles or players in the event must be attacked, else a subset can be selected
+    private HashMap<ArrayList<Action>, ArrayList<ArrayList<String>>> actionOnPlayers = new HashMap<>();
+    private HashMap<ArrayList<Action>, ArrayList<ArrayList<Point>>> actionOnTiles = new HashMap<>();
 
-    public MVSelectionEvent(String destination, List<Point> tiles, List<String> players, boolean isArea){
+    public MVSelectionEvent(String destination){
         super(destination);
-        this.players= new ArrayList<>(players);
-        this.tiles= new ArrayList<>(tiles);
-        this.isArea= isArea;
     }
 
 
@@ -26,15 +24,35 @@ public class MVSelectionEvent extends MVEvent { //Arlecchino
         dispatcher.dispatch(this);
     }
 
-    public List<Point> getTiles() {
-        return tiles;
+    public void addActionOnPlayer(List<Action> actions, List<String> targets){
+        if(actionOnPlayers.containsKey(new ArrayList<>(actions))) {
+            List<ArrayList<String>> list = actionOnPlayers.get(new ArrayList<>(actions));
+            list.add(new ArrayList<>(targets));
+            actionOnPlayers.put(new ArrayList<>(actions), new ArrayList<>(list));
+            return;
+        }
+        List<ArrayList<String>> list = new ArrayList<>();
+        list.add(new ArrayList<>(targets));
+        actionOnPlayers.put(new ArrayList<>(actions), new ArrayList<>(list));
     }
 
-    public List<String> getPlayers() {
-        return players;
+    public void addActionOnTiles(List<Action> actions, List<Point> targets){
+        if(actionOnTiles.containsKey(new ArrayList<>(actions))) {
+            List<ArrayList<Point>> list = actionOnTiles.get(new ArrayList<>(actions));
+            list.add(new ArrayList<>(targets));
+            actionOnTiles.put(new ArrayList<>(actions), new ArrayList<>(list));
+            return;
+        }
+        List<ArrayList<Point>> list = new ArrayList<>();
+        list.add(new ArrayList<>(targets));
+        actionOnTiles.put(new ArrayList<>(actions), new ArrayList<>(list));
     }
 
-    public boolean isArea() {
-        return isArea;
+    public Map<ArrayList<Action>, ArrayList<ArrayList<Point>>> getActionOnTiles() {
+        return new HashMap<>(actionOnTiles);
+    }
+
+    public Map<ArrayList<Action>, ArrayList<ArrayList<String>>> getActionOnPlayers() {
+        return new HashMap<>(actionOnPlayers);
     }
 }

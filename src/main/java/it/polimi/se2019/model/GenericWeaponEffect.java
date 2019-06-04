@@ -5,4 +5,5 @@ import java.util.List;
 public abstract class GenericWeaponEffect extends Effect{
     protected List<Ammo> price;
     protected int maxHeight;
+    protected int effectType;
 }

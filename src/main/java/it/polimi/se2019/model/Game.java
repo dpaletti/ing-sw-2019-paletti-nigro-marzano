@@ -16,8 +16,10 @@ public class Game extends Observable<MVEvent> {
     private Deck lootDeck;
     private List<Player> players= new ArrayList<>();
     private BiSet<FigureColour, String> userLookup = new BiSet<>();
-    private Map<String, PartialWeaponEffect> effectMap; //getEffect in Card class
     private Random randomConfig= new Random();
+    private TurnMemory turnMemory = new TurnMemory();
+
+    private MVSelectionEvent selectionEventHolder = null;
 
     // TODO Mapping between figures and usernames coming from controller
 
@@ -26,6 +28,27 @@ public class Game extends Observable<MVEvent> {
         powerUpDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllPowerUp()));
         lootDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllLootCards()));
         observers = new ArrayList<>();
+    }
+
+    public void sendPossibleEffects (String username, String weaponName, List<GraphWeaponEffect> weaponEffect){
+        PossibleEffectsEvent event = new PossibleEffectsEvent(username, weaponName);
+        for (GraphWeaponEffect w: weaponEffect){
+            event.addEffect(w.getName(), w.getEffectType());
+        }
+        notify(event);
+    }
+
+    public void addToSelection(String playerSelecting, List<Action> actions, List<Targetable> targetables){
+        if(selectionEventHolder == (null))
+            selectionEventHolder = new MVSelectionEvent(playerSelecting);
+        if(!targetables.isEmpty())
+            targetables.get(0).addToSelectionEvent(selectionEventHolder, targetables, actions);
+
+    }
+
+    public void sendPossibleTargets (){
+        notify(selectionEventHolder);
+        selectionEventHolder = null;
     }
 
     public void timerTick(int timeToGo){
@@ -233,11 +256,11 @@ public class Game extends Observable<MVEvent> {
              notify(new FinalFrenzyStartingEvent("*"));
      }
 
-     public TurnMemory getTurnMemory (Player player){
-        return player.getTurnMemory();
+     public TurnMemory getTurnMemory (){
+        return new TurnMemory(turnMemory);
      }
 
-     public ArrayList<Integer> getPointsToAssign (String username){
+     public List<Integer> getPointsToAssign (String username){
         Player player = userToPlayer(username);
         int index = player.getPointsToAssign().indexOf(player.getPlayerValue().getMaxValue());
         return new ArrayList<>(player.getPointsToAssign().subList(index, player.getPointsToAssign().size()));
@@ -315,29 +338,7 @@ public class Game extends Observable<MVEvent> {
         notify(new AvailableWeaponsEvent(username, availableWeapons));
     }
 
-    public void sendPossibleEffects (String username, String weaponName){
-        Weapon weapon= nameToWeapon(weaponName);
 
-        notify(new PossibleEffectsEvent(username,
-                weaponName,
-                weapon.getCardColour().getColour().toString(),
-                weapon.getCardType()));
-    }
-
-    public void sendPossibleTargets (String username, List<Player> players, List<Tile> tiles, boolean isArea){
-        List<String> usernames= new ArrayList<>();
-        List<Point> points= new ArrayList<>();
-
-        for (Player p: players){
-            usernames.add(playerToUser(p));
-        }
-
-        for (Tile t: tiles){
-            points.add(t.getPosition());
-        }
-
-        notify(new MVSelectionEvent(username, points, usernames, isArea));
-    }
 
     public GraphNode<GraphWeaponEffect> getWeaponEffects (String weapon){
         return nameToWeapon(weapon).getDefinition();
