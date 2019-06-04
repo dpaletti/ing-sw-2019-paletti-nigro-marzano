@@ -19,6 +19,7 @@
             "invalidEffects": [],
             "price":[],
             "maxHeight":2,
+            "effectType":-1,
             "effects": [
                 {
                     "priority": 3,
@@ -92,6 +93,7 @@
               }
             ],
             "maxHeight": 1,
+            "effectType":1,
             "effects": [
                 {
                     "priority": 3,
@@ -163,6 +165,7 @@
               }
             ],
             "maxHeight": 1,
+            "effectType":2,
             "effects": [
                 {
                     "priority": 3,

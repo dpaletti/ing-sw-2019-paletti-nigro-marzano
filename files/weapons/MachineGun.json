@@ -1,3 +1,4 @@
+
 {
   "type": "it.polimi.se2019.model.Weapon",
   "cardColour": {
@@ -18,6 +19,7 @@
       "price": [],
       "maxHeight":2,
       "invalidEffects": [],
+      "effectType":-1,
       "effects": [
         {
           "priority": 3,
@@ -91,6 +93,7 @@
       ],
       "maxHeight":1,
       "invalidEffects":[],
+      "effectType":1,
       "effects": [
         {
           "priority": 3,
@@ -134,8 +137,9 @@
           "colour": "BLUE"
         }
       ],
-      "maxHeight":3,
+      "maxHeight":2,
       "invalidEffects": [],
+      "effectType":2,
       "effects": [
         {
           "priority": 3,
@@ -169,7 +173,11 @@
             }
           ],
           "name": "B4",
-          "invalidEffects": []
+          "invalidEffects": [
+            "B3",
+            "B5",
+            "E2"
+          ]
         },
         {
           "priority": 3,
@@ -183,7 +191,7 @@
               ]
             },
             "previous": {
-              "first": true,
+              "first": false,
               "second": []
             },
             "radiusBetween": {
@@ -202,8 +210,79 @@
           ],
           "name": "B3",
           "invalidEffects": [
+            "B4",
+            "B5",
+            "E2"
+          ]
+        },
+        {
+          "priority": 3,
+          "targetSpecification": {
+            "tile": false,
+            "different": {
+              "first": true,
+              "second": [
+                "B2"
+              ]
+            },
+            "previous": {
+              "first": true,
+              "second": [
+                "B1",
+                "E1"
+              ]
+            },
+            "radiusBetween": {
+              "first": -2,
+              "second": -2
+            },
+            "visible": 1,
+            "enlarge": 0,
+            "area": false
+          },
+          "actions": [
+            {
+              "actionType": "DAMAGE",
+              "value": 1
+            }
+          ],
+          "name": "B5",
+          "invalidEffects": [
+            "B3",
             "B4"
           ]
+        },
+        {
+          "priority": 2,
+          "targetSpecification": {
+            "tile": false,
+            "different": {
+              "first": true,
+              "second": [
+                "B1",
+                "E1"
+              ]
+            },
+            "previous": {
+              "first": false,
+              "second": []
+            },
+            "radiusBetween": {
+              "first": -2,
+              "second": -2
+            },
+            "visible": 1,
+            "enlarge": 0,
+            "area": false
+          },
+          "actions": [
+            {
+              "actionType": "DAMAGE",
+              "value": 1
+            }
+          ],
+          "name": "E2",
+          "invalidEffects": []
         }
       ]
     }

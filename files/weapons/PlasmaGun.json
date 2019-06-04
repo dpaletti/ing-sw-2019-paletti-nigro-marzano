@@ -14,6 +14,13 @@
     "weaponEffects": [
         {
             "name": "basicEffect",
+            "priority": 3,
+            "invalidEffects": [
+              "withChargedSlot"
+            ],
+            "price":[],
+            "maxHeight":1,
+            "effectType":-1,
             "effects": [
                 {
                     "priority": 3,
@@ -41,12 +48,18 @@
                         "value": 2
                       }
                     ],
-                    "name": "B1"
+                    "name": "B1",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "withPhaseGlide",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight":1,
+            "effectType":1,
             "effects": [
                 {
                     "priority": 3,
@@ -74,7 +87,8 @@
                         "value": 1
                       }
                     ],
-                    "name": "B2"
+                    "name": "B2",
+                    "invalidEffects": []
                 },
                 {
                     "priority": 3,
@@ -102,13 +116,54 @@
                         "value": 2
                       }
                     ],
-                    "name": "B3"
+                    "name": "B3",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "withChargedSlot",
+            "priority": 3,
+            "invalidEffects": [
+              "basicEffect"
+            ],
+            "price":[
+              {
+                "colour": "BLUE"
+              }
+            ],
+            "maxHeight":2,
+            "effectType":2,
             "effects": [
+                {
+                  "priority": 3,
+                  "targetSpecification": {
+                    "tile": false,
+                    "different": {
+                      "first": false,
+                      "second": []
+                    },
+                    "previous":{
+                      "first": false,
+                      "second": []
+                    },
+                    "radiusBetween": {
+                      "first": -2,
+                      "second": -2
+                    },
+                    "visible": 1,
+                    "enlarge": 0,
+                    "area": false
+                  },
+                  "actions": [
+                    {
+                      "actionType": "DAMAGE",
+                      "value": 2
+                    }
+                  ],
+                  "name": "B4",
+                  "invalidEffects": []
+                },
                 {
                     "priority": 2,
                     "targetSpecification": {
@@ -120,7 +175,7 @@
 						"previous":{
 							"first": true,
 							"second": [
-								"B1"
+								"B4"
 							]
 						},
                         "radiusBetween": {
@@ -138,32 +193,11 @@
                       }
                     ],
                     "name": "E1",
-                    "price": [
-                        {
-                            "colour": "BLUE"
-                        }
-                    ]
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "PlasmaGun",
-    "maxHeight": 3,
-    "constraint": "",
-    "invalidEliminationFlag": 0,
-    "invalidCombinations": [
-        [
-            "B2"
-        ],
-        [
-            "B3"
-        ],
-        [
-            "B2",
-			"B3"
-        ],
-		[
-			"E1"
-		]
-    ]
+    "maxHeight": 3
 }

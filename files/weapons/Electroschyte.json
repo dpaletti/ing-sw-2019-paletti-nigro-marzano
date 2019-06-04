@@ -10,7 +10,12 @@
     ],
     "weaponEffects": [
     {
-        "name": "basicMode",
+            "name": "basicMode",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight":1,
+            "effectType":-1,
             "effects":[
                 {
                     "priority": 3,
@@ -38,12 +43,25 @@
                             "value": 1
                         }
                     ],
-                    "name": "B1" 
+                    "name": "B1",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "inReaperMode",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[
+              {
+                "colour": "BLUE"
+              },
+              {
+                "colour": "RED"
+              }
+            ],
+            "maxHeight":1,
+            "effectType":0,
             "effects": [
                 {
                     "priority": 3,
@@ -72,21 +90,11 @@
                         }
                     ],
                     "name": "B2",
-                    "price": [
-                        {
-                            "color": "BLUE"
-                        },
-                        {
-                            "color": "RED"
-                        }
-                    ]
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "Electroschyte",
-    "maxHeight": 1,
-    "constraint": "",
-    "invalidEliminationFlag": 0,
-    "invalidCombinations": []
+    "maxHeight": 1
 }

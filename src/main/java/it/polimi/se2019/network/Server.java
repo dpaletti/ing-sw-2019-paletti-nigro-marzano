@@ -79,10 +79,10 @@ public class Server implements ServerInterface {
 
     private void startServer() {
         Game model = new Game();
+        virtualViews.add(new VirtualView(roomNumber, this)); //this needs to stay here
         Controller controller = new MatchMakingController(model, this, roomNumber);
-        virtualViews.add(new VirtualView(roomNumber, this));
 
-        addController(controller, controller.getRoomNumber());
+
         model.register(virtualViews.get(roomNumber));
         if(suspendedConnection != null) {
             Log.fine("Un-suspending connection");

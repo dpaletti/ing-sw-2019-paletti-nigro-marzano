@@ -17,7 +17,8 @@
             "priority": 3,
             "invalidEffects": [],
             "price":[],
-            "maxHeight": 2,
+            "maxHeight": 1,
+            "effectType":-1,
             "effects": [
                 {
                     "priority": 3,
@@ -58,8 +59,13 @@
             "name": "withSecondLock",
             "priority": 2,
             "invalidEffects": [],
-            "price":[],
-            "maxHeight": 2,
+            "price":[
+                {
+                    "colour": "RED"
+                }
+            ],
+            "maxHeight": 1,
+            "effectType":0,
             "effects": [
                             {
                                 "priority": 3,
@@ -89,11 +95,6 @@
                                         "value": 1
                                     }
                                  ],
-                                "price": [
-                                    {
-                                        "colour": "RED"
-                                    }
-                                ],
                                 "name": "B2",
                                 "invalidEffects":[]
                           }      

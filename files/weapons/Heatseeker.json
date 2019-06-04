@@ -17,6 +17,11 @@
     "weaponEffects": [
         {
             "name": "Effect",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight": 2,
+            "effectType":-1,
             "effects": [
                 {
                     "priority": 3,
@@ -44,14 +49,13 @@
                             "value": 3
                         }
                     ],
-                    "name": "B1" 
+                    "name": "B1",
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "Heatseeker",
-    "maxHeight": 1,
-    "constraint": "",
-    "invalidEliminationFlag": 0,
-    "invalidCombinations": []
+    "maxHeight": 1
+
 }

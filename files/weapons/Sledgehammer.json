@@ -11,6 +11,11 @@
     "weaponEffects": [
     {
         "name": "basicMode",
+        "priority": 3,
+        "invalidEffects": [],
+        "price":[],
+        "maxHeight":1,
+        "effectType":-1,
             "effects":[
                 {
                     "priority": 3,
@@ -38,12 +43,22 @@
                             "value": 2
                         }
                     ],
-                    "name": "B1" 
+                    "name": "B1",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "inPulverizeMode",
+            "priority": 3,
+            "invalidEffects": [],
+            "price": [
+              {
+                "color": "RED"
+              }
+            ],
+            "maxHeight":2,
+            "effectType":0,
             "effects": [
                 {
                     "priority": 3,
@@ -72,11 +87,8 @@
                         }
                     ],
                     "name": "B2",
-                    "price": [
-                        {
-                            "color": "RED"
-                        }
-                    ]
+                    "invalidEffects": []
+
                 },
                 {
                     "priority": 2,
@@ -104,7 +116,8 @@
                             "value": 1
                         }
                     ],
-                    "name": "E1"
+                    "name": "E1",
+                    "invalidEffects": []
                 },
                 {
                     "priority": 2,
@@ -132,37 +145,12 @@
                             "value": 2
                         }
                     ],
-                    "name": "E2"
+                    "name": "E2",
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "Sledgehammer",
-    "maxHeight": 2,
-    "constraint": "",
-    "invalidEliminationFlag": 0,
-    "invalidCombinations": [
-		[
-			"E1"
-		],
-		[
-			"E2"
-		],
-		[
-			"B1",
-			"B2"
-		],
-		[
-			"B1",
-			"E1"
-		],
-		[
-			"B1",
-			"E2"
-		],
-		[
-			"E1",
-			"E2"
-		]
-    ]
+    "maxHeight": 1
 }

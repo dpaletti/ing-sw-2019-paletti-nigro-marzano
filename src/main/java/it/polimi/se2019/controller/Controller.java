@@ -16,6 +16,7 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
         this.model = model;
         this.server = server;
         this.roomNumber = roomNumber;
+        server.addController(this,roomNumber);
     }
 
     public int getRoomNumber() {

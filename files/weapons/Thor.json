@@ -1,4 +1,4 @@
-//TODO Check why the eliminate combination does'nt work only with B1M1
+
 {
 	"type": "it.polimi.se2019.model.Weapon",
     "cardColour": {
@@ -15,6 +15,11 @@
     "weaponEffects": [
         {
             "name": "basicEffect",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight":1,
+            "effectType":-1,
             "effects": [
                 {
                     "priority": 3,
@@ -42,15 +47,25 @@
                             "value": 2
                         }
                     ],
-                    "name": "B1" 
+                    "name": "B1",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "withChainReaction",
+            "priority": 2,
+            "invalidEffects": [],
+            "price":[
+                {
+                    "colour": "BLUE"
+                }
+            ],
+            "maxHeight":1,
+            "effectType":1,
             "effects": [
                 {
-                    "priority": 2,
+                    "priority": 3,
                     "targetSpecification": {
                         "tile": false,
                         "different": {
@@ -75,20 +90,25 @@
                             "value": 1
                         }
                     ],
-                    "name": "E1",
-                    "price":[
-                        {
-                            "colour": "BLUE"
-                        }
-                    ]
+                    "name": "B2",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "withHighVoltage",
+            "priority": 1,
+            "invalidEffects": [],
+            "price":[
+                {
+                    "colour": "BLUE"
+                }
+            ],
+            "maxHeight":1,
+            "effectType":2,
             "effects": [
                 {
-                    "priority": 1,
+                    "priority": 3,
                     "targetSpecification": {
                         "tile": false,
                         "different": {
@@ -113,30 +133,12 @@
                             "value": 2
                         }
                     ],
-                    "name": "M1",
-                    "price":[
-                        {
-                            "colour": "BLUE"
-                        }
-                    ]
+                    "name": "B3",
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "Thor",
-    "maxHeight": 3,
-    "constraint": "",
-    "invalidEliminationFlag": 1,
-    "invalidCombinations": [
-		[
-			"M1"
-		],
-		[
-			"E1"
-		],
-        [
-            "B1",
-            "M1"
-        ]
-	]
+    "maxHeight": 3
 }

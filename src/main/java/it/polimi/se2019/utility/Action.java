@@ -8,12 +8,17 @@ public class Action implements Serializable {
     private ActionType actionType;
     private int value;
     private Direction direction;
+    private boolean isArea;
 
     public ActionType getActionType() { return actionType; }
 
     public Direction getDirection() { return direction; }
 
     public Integer getValue() { return value; }
+
+    private boolean isArea(){
+        return isArea;
+    }
 
     public void setActionType(ActionType actionType) { this.actionType = actionType; }
 

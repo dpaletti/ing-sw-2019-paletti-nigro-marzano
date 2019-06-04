@@ -120,8 +120,9 @@ public class MatchMakingController extends Controller {
         List<String> actualUsernames = new ArrayList<>(usernames);
         actualUsernames.remove("*");
         model.closeMatchMaking(actualUsernames);
-        server.addController(new MatchController(model, server, actualUsernames, getRoomNumber()), getRoomNumber());
-        server.addController(new TurnController(model, server, getRoomNumber()), getRoomNumber());
+        new MatchController(model, server, actualUsernames, getRoomNumber());
+        new TurnController(model, server, getRoomNumber());
+        new WeaponController(server, getRoomNumber(), model);
         server.removeController(this, getRoomNumber());
     }
 

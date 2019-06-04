@@ -10,7 +10,12 @@
     ],
     "weaponEffects": [
     {
-        "name": "basicMode",
+            "name": "basicMode",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight":2,
+            "effectType":-1,
             "effects":[
                 {
                     "priority": 3,
@@ -29,7 +34,7 @@
                             "second": 1
                         },
                         "visible": 1,
-                        "enlarge": 0,
+                        "enlarge": -2,
                         "area": false 
                     },
                     "actions": [
@@ -38,7 +43,8 @@
                             "value": 1
                         }
                     ],
-                    "name": "B1" 
+                    "name": "B1",
+                    "invalidEffects": []
                 },
                 {
                     "priority": 2,
@@ -49,10 +55,8 @@
                             "second": []
                         },
 						"previous":{
-							"first": true,
-							"second": [
-								"B1"
-							]
+							"first": false,
+							"second": []
 						},
                         "radiusBetween": {
                             "first": 2,
@@ -68,12 +72,25 @@
                             "value": 1
                         }
                     ],
-                    "name": "E1" 
+                    "name": "E1",
+                  "invalidEffects": []
                 }
             ]
         },
       {
         "name": "inBarbecueMode",
+        "priority": 3,
+        "invalidEffects": [],
+        "price":[
+          {
+            "colour": "YELLOW"
+          },
+          {
+            "colour": "YELLOW"
+          }
+        ],
+        "maxHeight":2,
+        "effectType":0,
         "effects": [
           {
             "priority": 3,
@@ -92,7 +109,7 @@
                 "second": 1
               },
               "visible": 1,
-              "enlarge": 0,
+              "enlarge": -2,
               "area": true
             },
             "actions": [
@@ -102,14 +119,7 @@
               }
             ],
             "name": "B2",
-            "price": [
-              {
-                "colour": "YELLOW"
-              },
-              {
-                "colour": "YELLOW"
-              }
-            ]
+            "invalidEffects": []
           },
           {
             "priority": 2,
@@ -121,9 +131,7 @@
               },
               "previous": {
                 "first": false,
-                "second": [
-                  "B2"
-                ]
+                "second": []
               },
               "radiusBetween": {
                 "first": 2,
@@ -139,33 +147,12 @@
                 "value": 1
               }
             ],
-            "name": "E2"
+            "name": "E2",
+            "invalidEffects": []
           }
         ]
       }
     ],
     "name": "Flamethrower",
-    "maxHeight": 2,
-    "constraint": "",
-    "invalidEliminationFlag": 0,
-    "invalidCombinations": [
-        [
-            "B1",
-			"B2"
-        ],
-		[
-			"B1",
-			"E2"
-		],
-		[
-			"B2",
-			"E1"
-		],
-		[
-			"E1"
-		],
-		[
-			"E2"
-		]
-    ]
+    "maxHeight": 1
 }

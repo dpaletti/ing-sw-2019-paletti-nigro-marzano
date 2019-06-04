@@ -11,6 +11,11 @@
     "weaponEffects": [
     {
         "name": "basicMode",
+        "priority": 3,
+        "invalidEffects": [],
+        "price":[],
+        "maxHeight":1,
+        "effectType":-1,
             "effects":[
                 {
                     "priority": 3,
@@ -38,7 +43,8 @@
                             "value": 1
                         }
                     ],
-                    "name": "B1" 
+                    "name": "B1",
+                    "invalidEffects": []
                 },
                 {
                     "priority": 3,
@@ -70,7 +76,8 @@
                             "value": 1
                         }
                     ],
-                    "name": "B2" 
+                    "name": "B2",
+                    "invalidEffects": []
                 },
                 {
                     "priority": 3,
@@ -102,12 +109,25 @@
                             "value": 1
                         }
                     ],
-                    "name": "B3" 
+                    "name": "B3",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "inPunisherMode",
+            "priority": 3,
+            "invalidEffects": [],
+            "price": [
+                {
+                    "color": "RED"
+                },
+                {
+                    "color": "YELLOW"
+                }
+            ],
+            "maxHeight":1,
+            "effectType":0,
             "effects": [
                  {
                     "priority": 3,
@@ -136,14 +156,7 @@
                         }
                     ],
                     "name": "B4",
-                    "price": [
-                        {
-                            "color": "RED"
-                        },
-                        {
-                            "color": "YELLOW"
-                        }
-                    ]
+                     "invalidEffects": []
                 },
                 {
                     "priority": 3,
@@ -176,14 +189,7 @@
                         }
                     ],
                     "name": "B5",
-                    "price": [
-                        {
-                            "color": "RED"
-                        },
-                        {
-                            "color": "YELLOW"
-                        }
-                    ]
+                    "invalidEffects": []
                 },
                 {
                     "priority": 3,
@@ -216,21 +222,11 @@
                         }
                     ],
                     "name": "B6",
-                    "price": [
-                        {
-                            "color": "RED"
-                        },
-                        {
-                            "color": "YELLOW"
-                        }
-                    ]
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "TractorBeam",
-    "maxHeight": 1,
-    "invalidEliminationFlag": 0,
-    "constraint": "",
-    "invalidCombinations": []
+    "maxHeight": 1
 }

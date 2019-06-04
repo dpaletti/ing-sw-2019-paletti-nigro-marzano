@@ -14,6 +14,13 @@
     "weaponEffects": [
         {
             "name": "basicEffect",
+            "priority": 3,
+            "invalidEffects": [
+              "withSliceAndDice"
+            ],
+            "price":[],
+            "maxHeight":1,
+            "effectType":-1,
             "effects": [
                 {
                     "priority": 3,
@@ -41,12 +48,18 @@
                             "value": 2
                           }
                     ],
-                    "name": "B1"
+                    "name": "B1",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "withShadowStep",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight":1,
+            "effectType":1,
             "effects": [
                 {
                     "priority": 3,
@@ -74,13 +87,54 @@
                         "value": 1
                       }
                     ],
-                    "name": "B2"
+                    "name": "B2",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "withSliceAndDice",
+            "priority": 3,
+            "invalidEffects": [
+              "basicEffect"
+            ],
+            "price":[
+              {
+                "colour": "YELLOW"
+              }
+            ],
+            "maxHeight":2,
+            "effectType":2,
             "effects": [
+                {
+                  "priority": 3,
+                  "targetSpecification": {
+                    "tile": true,
+                    "different": {
+                      "first": false,
+                      "second": []
+                    },
+                    "previous":{
+                      "first": false,
+                      "second": []
+                    },
+                    "radiusBetween": {
+                      "first": 0,
+                      "second": 0
+                    },
+                    "visible": -1,
+                    "enlarge": 0,
+                    "area": false
+                  },
+                  "actions": [
+                    {
+                      "actionType": "DAMAGE",
+                      "value": 2
+                    }
+                  ],
+                  "name": "B3",
+                  "invalidEffects": []
+                },
                 {
                     "priority": 2,
                     "targetSpecification": {
@@ -88,7 +142,7 @@
                         "different": {
                             "first": true,
                             "second": [
-                                "B1"
+                                "B3"
 							]
                         },
 						"previous":{
@@ -110,25 +164,11 @@
                       }
                     ],
                     "name": "E1",
-                    "price": [
-                        {
-                            "colour": "YELLOW"
-                        }
-                    ]
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "Cyberblade",
-    "maxHeight": 3,
-    "constraint": "",
-    "invalidEliminationFlag": 0,
-    "invalidCombinations": [
-       [
-          "B2"
-       ],
-	   [
-		   "E1"
-	   ]	
-    ]
+    "maxHeight": 2
 }

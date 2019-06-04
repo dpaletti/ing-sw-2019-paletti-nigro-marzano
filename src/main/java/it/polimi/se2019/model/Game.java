@@ -56,6 +56,10 @@ public class Game extends Observable<MVEvent> {
         notify(new TimerEvent("*", timeToGo));
     }
 
+    public void sendPartialEffectConflict (String username, List<ArrayList<Action>> possibleActions, List<String> previousTargets){
+        notify(new PartialEffectEvent(username, possibleActions, previousTargets));
+    }
+
     public void newPlayerInMatchMaking(String token, String username){
         notify(new MvJoinEvent(token, username));
     }
@@ -170,10 +174,6 @@ public class Game extends Observable<MVEvent> {
     }
 
     public List<Player> getPlayers() { return players; }
-
-    public Map<String, PartialWeaponEffect> getEffectMap() {
-        return effectMap;
-    }
 
     public BiSet<FigureColour, String> getUserLookup() {
         return userLookup;
@@ -338,6 +338,23 @@ public class Game extends Observable<MVEvent> {
         notify(new AvailableWeaponsEvent(username, availableWeapons));
     }
 
+    public void sendPossibleEffects (String username, String weaponName){
+        Weapon weapon= nameToWeapon(weaponName);
+
+        /*notify(new PossibleEffectsEvent(username,
+                weaponName,
+                weapon.getCardColour().getColour().toString(),
+                ));*/
+    }
+
+    public void sendPossibleTargets (String username, List<Player> players, List<Tile> tiles, boolean isArea) {
+        List<String> usernames = new ArrayList<>();
+        List<Point> points = new ArrayList<>();
+
+        for (Player p : players) {
+            usernames.add(playerToUser(p));
+        }
+    }
 
 
     public GraphNode<GraphWeaponEffect> getWeaponEffects (String weapon){

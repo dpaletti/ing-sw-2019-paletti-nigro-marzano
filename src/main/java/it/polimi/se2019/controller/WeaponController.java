@@ -18,9 +18,11 @@ import java.util.Set;
 public class WeaponController extends Controller {
     private int layersVisitedPartial = 0;
     private int layersVisited = 0; //TODO where to iterate on this
+    protected List<GraphNode<PartialWeaponEffect>> currentLayer= new ArrayList<>();
 
     public WeaponController (Server server, int roomNumber, Game model){
         super(model, server, roomNumber);
+        new WeaponEffectController(server, roomNumber, model);
     }
     @Override
     public void update(VCEvent message) {
@@ -60,17 +62,31 @@ public class WeaponController extends Controller {
             throw new NullPointerException("Could not find " + message.getEffectName() + " in " + message.getWeapon());
 
         layersVisitedPartial = layersVisitedPartial + 1;
-        for(GraphNode<PartialWeaponEffect> p: weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial)) {
+        currentLayer= weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
+        for(GraphNode<PartialWeaponEffect> p: currentLayer) {
             model.addToSelection(message.getSource(), p.getKey().getActions(), generateTargetSet(p.getKey(), model.userToPlayer(message.getSource())));
         }
         model.sendPossibleTargets();
     }
 
 
-    private List<Targetable> generateTargetSet (PartialWeaponEffect effect, Player player){
-        TargetSpecification targetSpecification= effect.getTargetSpecification();
-        List<Player> targetSet= model.getPlayers();
-        List<Tile> tileSet= new ArrayList<>(model.getGameMap().getTiles());
+    protected List<Targetable> generateTargetSet (PartialWeaponEffect effect, Player player){
+        Targetable targetable= null;
+        Set<Targetable> targetSet= new HashSet<>();
+        if(effect.getTargetSpecification().getTile())
+            targetable= player.getFigure().getTile();
+        else
+            targetable= player;
+        targetSet= intersect(handleVisible(effect.getTargetSpecification().getVisible(), targetable),
+                intersect(handleDifferent(targetable,
+                        effect.getTargetSpecification().getDifferent().getFirst(),
+                        effect.getTargetSpecification().getDifferent().getSecond()),
+                        intersect(handlePrevious(targetable,
+                                effect.getTargetSpecification().getPrevious().getFirst(),
+                                effect.getTargetSpecification().getPrevious().getSecond()),
+                                handleRadiusBetween(effect.getTargetSpecification().getRadiusBetween().getFirst(),
+                                        effect.getTargetSpecification().getRadiusBetween().getSecond(), targetable))));
+        return new ArrayList<>(intersect(handleEnlarge(effect.getTargetSpecification().getEnlarge(), targetSet), targetSet));
 
     }
 
@@ -85,22 +101,20 @@ public class WeaponController extends Controller {
 
     }
 
-    private Set<Targetable> handleVisibile(List<Targetable> targetSet, int visible, Targetable source){
+    private Set<Targetable> handleVisible(int visible, Targetable source){
+        List<Targetable> targetables= null;
         if (visible==0) {
-            targetSet.removeAll(getVisible(source));
-            return new HashSet<>(targetSet);
+            targetables= source.getAll();
+            targetables.removeAll(getVisible(source));
+            return new HashSet<>(targetables);
         }
 
-        else if (visible==1){
-            List<Targetable> temp= new ArrayList<>(targetSet);
-            temp.removeAll(getVisible(source));
-            targetSet.removeAll(temp);
-            return new HashSet<>(targetSet);
-        }
+        else if (visible==1)
+            return new HashSet<>(getVisible(source));
 
         else if (visible==2)
             return getVisible(source.getHitTargets(model.getTurnMemory()).get(model.getTurnMemory().getLastEffectUsed()).get(0));
-        return new HashSet<>(targetSet);
+        return new HashSet<>(source.getAll());
 
     }
 
@@ -136,19 +150,19 @@ public class WeaponController extends Controller {
         return visibleRooms;
     }
 
-    private Set<Targetable> areaSelection(Targetable target, int innerRadius, int outerRadius){
+    private Set<Targetable> areaSelection(Targetable source, int innerRadius, int outerRadius){
         Set<Targetable> targetables = new HashSet<>();
         if(innerRadius==-2 && outerRadius == -2) //redundant because of tile switch in weapon declaration
-            return getVisible(target);
+            return getVisible(source);
         if(innerRadius == -3 && outerRadius == -3) {
             for(Tile t: model.getGameMap().getTiles()) {
-                if (model.getGameMap().getMap().get(target.getPosition()).getColour().equals(t.getColour()))
+                if (!model.getGameMap().getMap().get(source.getPosition()).getColour().equals(t.getColour()))
                     targetables.add(t);
             }
             return targetables;
         }
-        targetables = new HashSet<>(getTileCircle(outerRadius, target.getPosition()));
-        targetables.removeAll(getTileCircle(innerRadius, target.getPosition()));
+        targetables = new HashSet<>(getTileCircle(outerRadius, source.getPosition()));
+        targetables.removeAll(getTileCircle(innerRadius, source.getPosition()));
         return targetables;
 
     }
@@ -164,97 +178,59 @@ public class WeaponController extends Controller {
         return tiles;
     }
 
-    private Set<Targetable> handleDifferent(Set<Targetable> targetSet, boolean different, List<String> effects) {
-        if (different)
-            targetSet.removeAll(model.getTurnMemory().getByEffect(effects, targetSet.iterator().next()));
-        return targetSet;
-
-    }
-
-    private Set<Targetable> handlePrevious(Set<Targetable> targetables, boolean previous, List<String> effects){
-        if (previous)
-            return ballet(targetables, new HashSet<>(model.getTurnMemory().getByEffect(effects, targetables.iterator().next())));
-        else
+    private Set<Targetable> handleDifferent(Targetable source, boolean different, List<String> effects) {
+        if (different) {
+            Set<Targetable> targetables = new HashSet<>(source.getAll());
+            targetables.removeAll(model.getTurnMemory().getByEffect(effects, source));
             return targetables;
-    }
-
-
-
-    private Set<Tile> handleRadiusBetweenTiles (int innerRadius, int outerRadius, Player player){
-        return areaSelectionTile (player.getFigure().getTile(), innerRadius, outerRadius);
-    }
-
-    private Set<Player> handleRadiusBetweenPlayers (int innerRadius, int outerRadius, Player player){
-        return areaSelectionPlayer(player, innerRadius, outerRadius);
-    }
-
-    private Set <Tile> handleEnlargeTile (int enlarge, Set<Tile> centre){
-        Set<Tile> tiles= new HashSet<>();
-        for (Tile t: centre){
-            tiles.addAll(getTileCircle(enlarge, t.getPosition()));
         }
-        return tiles;
-    }
-
-
-
-
-    private Set<Targetable> handleTarget(List<Targetable> targetSet,Targetable target, TargetSpecification targetSpecification){
-
-        Set<Tile> visibleTiles = ballet(new HashSet<>(targetSet), handleVisible (targetSet, targetSpecification.getVisible(), target));
-    }
-
-
-    private Set<Tile> handleTile (List<Tile> tileSet, Player player, TargetSpecification targetSpecification){
-
-        Set<Tile> visibleTiles = ballet(new HashSet<>(tileSet), handleVisibleTiles (tileSet, targetSpecification.getVisible(), player));
-
-        Set<Tile> differentTiles = ballet(visibleTiles, handleDifferentTiles
-                (new HashSet<>(tileSet),
-                        targetSpecification.getDifferent().getFirst(),
-                        targetSpecification.getDifferent().getSecond(), player));
-
-        Set<Tile> previousTiles = ballet(differentTiles,
-                handlePreviousTiles (new HashSet<>(tileSet),
-                        targetSpecification.getDifferent().getFirst(),
-                        targetSpecification.getDifferent().getSecond(), player));
-
-        Set<Tile> radiusBetweenTiles = ballet(previousTiles,
-                handleRadiusBetweenTiles (targetSpecification.getRadiusBetween().getFirst(),
-                        targetSpecification.getRadiusBetween().getSecond(), player));
-
-        return ballet(radiusBetweenTiles, handleEnlargeTile(targetSpecification.getEnlarge(), radiusBetweenTiles));
-
+        return new HashSet<>(source.getAll());
 
     }
 
-    private Set<Player> handlePlayer (List<Player> targetSet, Player player, TargetSpecification targetSpecification){
-        {
+    private Set<Targetable> handlePrevious(Targetable source, boolean previous, List<String> effects){
+        if (previous)
+           return new HashSet<>(model.getTurnMemory().getByEffect(effects, source));
+        else
+            return new HashSet<>(source.getAll());
+    }
 
-            Set<Player> visiblePlayers = ballet(new HashSet<>(targetSet), handleVisibilePlayers (targetSet, targetSpecification.getVisible(), player));
+    private Set<Targetable> handleRadiusBetween (int innerRadius, int outerRadius, Targetable targetable){
+        return areaSelection(targetable, innerRadius, outerRadius);
+    }
 
-            Set<Player> differentPlayers = ballet(visiblePlayers, handleDifferentPlayers
-                    (new HashSet<>(targetSet),
-                            targetSpecification.getDifferent().getFirst(),
-                            targetSpecification.getDifferent().getSecond(), player));
-
-            Set<Player> previousPlayers = ballet(differentPlayers,
-                    handlePreviousPlayers (new HashSet<>(targetSet),
-                            targetSpecification.getDifferent().getFirst(),
-                            targetSpecification.getDifferent().getSecond(), player));
-
-            return ballet(previousPlayers,
-                    handleRadiusBetweenPlayers (targetSpecification.getRadiusBetween().getFirst(),
-                            targetSpecification.getRadiusBetween().getSecond(), player));
-
-
+    private Set<Targetable> handleEnlarge (int enlarge, Set<Targetable> centre){
+        Set<Targetable> targetables= new HashSet<>();
+        if (enlarge==-2){
+            Targetable targetable= centre.iterator().next();
+            for (Targetable t: targetable.getAll()){
+                if (t.getPosition().getX()==targetable.getPosition().getX() || t.getPosition().getY()== targetable.getPosition().getY())
+                    targetables.add(t);
+            }
+            return targetables;
         }
-    }
+        else if (enlarge==-1){
+            for (Targetable t: centre){
+                targetables.addAll(model.getGameMap().getRoom(model.getGameMap().getMap().get(t.getPosition()).getColour()));
+            }
+            return targetables;
+        }
+        else if (enlarge==0){
+            return new HashSet<>(centre.iterator().next().getAll());
+        }
+        for (Targetable t: centre){
+            targetables.addAll(getTileCircle(enlarge, t.getPosition()));
+        }
+        return targetables;
+     }
 
-    private Set<Targetable> ballet (Set<Targetable> completeSet, Set<Targetable> inOut){
-        Set<Targetable> temp= new HashSet<>(completeSet);
-        temp.removeAll(inOut);
-        completeSet.removeAll(temp);
-        return completeSet;
+    private Set<Targetable> intersect (Set<Targetable> first, Set<Targetable> second){
+        Set<Targetable> finalSet= new HashSet<>();
+        for (Targetable t: first){
+            if (second.contains(t)){
+                finalSet.add(t);
+            }
+        }
+        return finalSet;
     }
 }

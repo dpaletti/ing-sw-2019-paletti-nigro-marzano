@@ -14,6 +14,11 @@
     "weaponEffects":[
         {
             "name": "basicMode",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight":1,
+            "effectType":-1,
             "effects":[
                 {
                     "priority": 3,
@@ -41,12 +46,18 @@
                             "value": 1
                         }
                     ],
-                    "name": "B1" 
+                    "name": "B1",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "inCozyFireMode",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[],
+            "maxHeight":1,
+            "effectType":0,
             "effects": [
                 {
                     "priority": 3,
@@ -78,14 +89,12 @@
                             "value": 1
                         }
                     ],
-                    "name": "B2"
+                    "name": "B2",
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "Furnace",
-    "maxHeight": 1,
-    "constraint": "",
-    "invalidEliminationFlag": 0,
-    "invalidCombinations": []
+    "maxHeight": 1
 }

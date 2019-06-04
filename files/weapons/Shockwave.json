@@ -1,3 +1,5 @@
+//Dama
+
 {
 	"type": "it.polimi.se2019.model.Weapon",
     "cardColour": {
@@ -11,6 +13,11 @@
     "weaponEffects": [
     {
         "name": "basicMode",
+        "priority": 3,
+        "invalidEffects": [],
+        "price":[],
+        "maxHeight":3,
+        "effectType":-1,
             "effects":[
                 {
                     "priority": 3,
@@ -38,7 +45,8 @@
                             "value": 1
                         }
                     ],
-                    "name": "B1" 
+                    "name": "B1",
+                    "invalidEffects": []
                 },
                 {
                     "priority": 2,
@@ -68,7 +76,8 @@
                             "value": 1
                         }
                     ],
-                    "name": "E1" 
+                    "name": "E1",
+                    "invalidEffects": []
                 },
                 {
                     "priority": 1,
@@ -95,12 +104,22 @@
                             "value": 1
                         }
                     ],
-                    "name": "M1" 
+                    "name": "M1",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "inTsunamiMode",
+            "priority": 3,
+            "invalidEffects": [],
+            "price":[
+                {
+                    "color": "YELLOW"
+                }
+            ],
+            "maxHeight":1,
+            "effectType":0,
             "effects": [
                 {
                     "priority": 3,
@@ -129,37 +148,11 @@
                         }
                     ],
                     "name": "B2",
-                    "price": [
-                        {
-                            "color": "YELLOW"
-                        }
-                    ]
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "Shockwave",
-    "maxHeight": 3,
-    "constraint": "",
-    "invalidEliminationFlag": 0,
-    "invalidCombinations": [
-        [
-			"E1"
-		],
-		[
-			"M1"
-		],
-		[
-			"B2",
-			"B1"
-		],
-		[
-			"B2",
-			"E1"
-		],
-		[
-			"B2",
-			"M1"
-		]
-    ]
+    "maxHeight": 1
 }
