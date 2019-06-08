@@ -19,6 +19,8 @@ public class WeaponController extends Controller {
     private int layersVisitedPartial = 0;
     private int layersVisited = 0; //TODO where to iterate on this
     protected List<GraphNode<PartialWeaponEffect>> currentLayer= new ArrayList<>();
+    private Weapon currentWeapon;
+    private Player currentPlayer;
 
     public WeaponController (Server server, int roomNumber, Game model){
         super(model, server, roomNumber);
@@ -36,16 +38,14 @@ public class WeaponController extends Controller {
 
     @Override
     public void dispatch(ShootEvent message) {
+        currentPlayer= model.userToPlayer(message.getSource());
         model.sendAvailableWeapons(message.getSource());
     }
 
     @Override
     public void dispatch(ChosenWeaponEvent message) {
-        List<GraphWeaponEffect> list = new ArrayList<>();
-        layersVisited = layersVisited + 1;
-        for (GraphNode<GraphWeaponEffect> g: model.nameToWeapon(message.getWeapon()).getDefinition().getListLayer(layersVisited))
-            list.add(g.getKey());
-        model.sendPossibleEffects(message.getSource(), message.getWeapon(), list);
+        currentWeapon= model.nameToWeapon(message.getWeapon());
+        nextWeaponEffect();
     }
 
     @Override
@@ -232,5 +232,18 @@ public class WeaponController extends Controller {
             }
         }
         return finalSet;
+    }
+
+    protected void nextWeaponEffect (){
+        List<GraphWeaponEffect> list = new ArrayList<>();
+        layersVisited = layersVisited + 1;
+        for (GraphNode<GraphWeaponEffect> g: currentWeapon.getDefinition().getListLayer(layersVisited))
+            list.add(g.getKey());
+        if (!list.isEmpty()) {
+            model.sendPossibleEffects(model.playerToUser(currentPlayer), currentWeapon.getName(), list);
+        }
+        else{
+
+        }
     }
 }

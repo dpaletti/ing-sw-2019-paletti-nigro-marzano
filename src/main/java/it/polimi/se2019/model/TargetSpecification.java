@@ -11,7 +11,6 @@ public class TargetSpecification  {
     private Pair<Integer, Integer> radiusBetween;
     private int visible;
     private int enlarge;
-    private boolean area;
 
     public TargetSpecification(TargetSpecification targetSpecification){
         tile= targetSpecification.getTile();
@@ -20,14 +19,11 @@ public class TargetSpecification  {
         radiusBetween= targetSpecification.getRadiusBetween();
         visible= targetSpecification.getVisible();
         enlarge= targetSpecification.getEnlarge();
-        area= targetSpecification.getArea();
     }
 
 
 
     public boolean getTile() { return tile; }
-
-    public boolean getArea() { return area; }
 
     public int getEnlarge() { return enlarge; }
 

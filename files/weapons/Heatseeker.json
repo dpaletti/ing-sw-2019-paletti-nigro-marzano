@@ -40,15 +40,16 @@
                             "second": -3
                         },
                         "visible": 0,
-                        "enlarge": 0,
-                        "area": false  
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 3
+                            "value": 3,
+                            "area": false
                         }
                     ],
+                    "endable": false,
                     "name": "B1",
                     "invalidEffects": []
                 }

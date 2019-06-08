@@ -11,20 +11,25 @@ public abstract class Tile implements Targetable{
     protected RoomColour colour;
     protected Map<Direction, Boolean> doors;
     protected Set<Figure> figures;
-    protected WeaponSpot weaponSpot;
-    protected LootCard loot;
     protected Point position;
-    protected List<Tear> hp;
+    protected List<Grabbable> grabbables;
 
-    public Tile (GameMap gameMap, RoomColour colour, Map<Direction, Boolean> doors, Set<Figure> figures, WeaponSpot weaponSpot, LootCard loot, Point position, List<Tear> hp){
+    public Tile (GameMap gameMap, RoomColour colour, Map<Direction, Boolean> doors, Point position, List<Grabbable> grabbables){
         this.gameMap = gameMap;
         this.colour= colour;
         this.doors= doors;
-        this.figures=figures;
-        this.weaponSpot=weaponSpot;
-        this.loot=loot;
         this.position=position;
-        this.hp=hp;
+        this.grabbables= new ArrayList<>(grabbables);
+    }
+
+    public abstract List<Grabbable> grab ();
+
+    public List<Grabbable> getGrabbables() {
+        return grabbables;
+    }
+
+    public void setGrabbables(List<Grabbable> grabbables) {
+        this.grabbables = grabbables;
     }
 
     public void setColour(RoomColour colour) {
@@ -39,18 +44,8 @@ public abstract class Tile implements Targetable{
         this.figures = figures;
     }
 
-    public void setWeaponSpot(WeaponSpot weaponSpot) {
-        this.weaponSpot = weaponSpot;
-    }
-
-    public void setLoot(LootCard loot) { this.loot = loot; }
-
     public void setPosition(Point position) {
         this.position = position;
-    }
-
-    public void setHp(List<Tear> hp) {
-        this.hp = hp;
     }
 
     public RoomColour getColour() {
@@ -65,21 +60,9 @@ public abstract class Tile implements Targetable{
         return figures;
     }
 
-    public WeaponSpot getWeaponSpot() {
-        return weaponSpot;
-    }
-
-    public LootCard getLoot() {
-        return loot;
-    }
-
     @Override
     public Point getPosition() {
         return position;
-    }
-
-    public List<Tear> getHp() {
-        return hp;
     }
 
     public LootCard getLootCard(){
@@ -92,11 +75,6 @@ public abstract class Tile implements Targetable{
 
     public TileType getTileType(){
         return null;
-    }
-
-    public void addTear(FigureColour figureColour){
-        Tear tearToAdd= new Tear(figureColour);
-        hp.add(tearToAdd);
     }
 
     @Override

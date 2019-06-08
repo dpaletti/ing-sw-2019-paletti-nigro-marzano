@@ -9,9 +9,9 @@ import java.util.List;
 
 public class PartialEffectEvent extends MVEvent {
     private ArrayList<ArrayList<Action>> possibleActions;
-    private ArrayList<String> previousTargets;
+    private ArrayList<ArrayList<String>> previousTargets;
 
-    public PartialEffectEvent(String destination, List<ArrayList<Action>> possibleActions, List<String> previousTargets) {
+    public PartialEffectEvent(String destination, List<ArrayList<Action>> possibleActions, List<ArrayList<String>> previousTargets) {
         super(destination);
         this.possibleActions = new ArrayList<>(possibleActions);
         this.previousTargets = new ArrayList<>(previousTargets);
@@ -21,7 +21,7 @@ public class PartialEffectEvent extends MVEvent {
         return possibleActions;
     }
 
-    public List<String> getPreviousTargets() {
+    public List<ArrayList<String>> getPreviousTargets() {
         return previousTargets;
     }
 

@@ -1,26 +1,25 @@
-
 {
   "type": "it.polimi.se2019.model.Weapon",
   "cardColour": {
-    "colour": "BLUE"
+    "colour": "YELLOW"
   },
   "price": [
     {
-      "colour": "BLUE"
+      "colour": "YELLOW"
     },
     {
-      "colour": "RED"
+      "colour": "BLUE"
     }
   ],
   "weaponEffects": [
     {
-      "name": "basicEffect",
+      "name": "basicMode",
       "priority": 3,
-      "price": [],
-      "maxHeight":2,
       "invalidEffects": [],
+      "price":[],
+      "maxHeight":2,
       "effectType":-1,
-      "effects": [
+      "effects":[
         {
           "priority": 3,
           "targetSpecification": {
@@ -34,8 +33,38 @@
               "second": []
             },
             "radiusBetween": {
-              "first": -2,
-              "second": -2
+              "first": 0,
+              "second": 0
+            },
+            "visible": -1,
+            "enlarge": 0
+          },
+          "actions": [
+            {
+              "actionType": "MOVE",
+              "value": 1,
+              "area": false
+            }
+          ],
+          "endable": false,
+          "name": "B1",
+          "invalidEffects": []
+        },
+        {
+          "priority": 2,
+          "targetSpecification": {
+            "tile": false,
+            "different": {
+              "first": false,
+              "second": []
+            },
+            "previous":{
+              "first": false,
+              "second": []
+            },
+            "radiusBetween": {
+              "first": 0,
+              "second": 0
             },
             "visible": 1,
             "enlarge": 0
@@ -45,36 +74,9 @@
               "actionType": "DAMAGE",
               "value": 1,
               "area": false
-            }
-          ],
-          "name": "B1",
-          "endable": true,
-          "invalidEffects": []
-        },
-        {
-          "priority": 2,
-          "targetSpecification": {
-            "tile": false,
-            "different": {
-              "first": true,
-              "second": [
-                "B1"
-              ]
             },
-            "previous":{
-              "first": false,
-              "second": []
-            },
-            "radiusBetween": {
-              "first": -2,
-              "second": -2
-            },
-            "visible": 1,
-            "enlarge": 0
-          },
-          "actions": [
             {
-              "actionType": "DAMAGE",
+              "actionType": " MARK",
               "value": 1,
               "area": false
             }
@@ -83,19 +85,20 @@
           "name": "E1",
           "invalidEffects": []
         }
+
       ]
     },
     {
-      "name": "withAdditionalDamage",
-      "priority": 2,
-      "price": [
+      "name": "inRocketFistMode",
+      "priority": 3,
+      "invalidEffects": [],
+      "price":[
         {
-          "colour": "YELLOW"
+          "colour": "BLUE"
         }
       ],
-      "maxHeight":1,
-      "invalidEffects":[],
-      "effectType":1,
+      "maxHeight":3,
+      "effectType":0,
       "effects": [
         {
           "priority": 3,
@@ -105,23 +108,20 @@
               "first": false,
               "second": []
             },
-            "previous": {
-              "first": true,
-              "second": [
-                "B1",
-                "E1"
-              ]
+            "previous":{
+              "first": false,
+              "second": []
             },
             "radiusBetween": {
-              "first": -2,
-              "second": -2
+              "first": 0,
+              "second": 0
             },
-            "visible": 1,
+            "visible": -1,
             "enlarge": 0
           },
           "actions": [
             {
-              "actionType": "DAMAGE",
+              "actionType": "MOVE",
               "value": 1,
               "area": false
             }
@@ -129,74 +129,22 @@
           "endable": false,
           "name": "B2",
           "invalidEffects": []
-        }
-      ]
-    },
-    {
-      "name": "withTurretTripod",
-      "priority": 2,
-      "price": [
+        },
         {
-          "colour": "BLUE"
-        }
-      ],
-      "maxHeight":2,
-      "invalidEffects": [],
-      "effectType":2,
-      "effects": [
-        {
-          "priority": 3,
+          "priority": 2,
           "targetSpecification": {
             "tile": false,
             "different": {
               "first": false,
-              "second": [
-                "B2"
-              ]
+              "second": []
             },
-            "previous": {
-              "first": true,
-              "second": [
-                "B1",
-                "E1"
-              ]
-            },
-            "radiusBetween": {
-              "first": -2,
-              "second": -2
-            },
-            "visible": 1,
-            "enlarge": 0
-          },
-          "actions": [
-            {
-              "actionType": "DAMAGE",
-              "value": 1,
-              "area": false
-            }
-          ],
-          "endable": true,
-          "name": "B3",
-          "invalidEffects": []
-        },
-        {
-          "priority": 3,
-          "targetSpecification": {
-            "tile": false,
-            "different": {
-              "first": true,
-              "second": [
-                "B1",
-                "E1"
-              ]
-            },
-            "previous": {
+            "previous":{
               "first": false,
               "second": []
             },
             "radiusBetween": {
-              "first": -2,
-              "second": -2
+              "first": 0,
+              "second": 0
             },
             "visible": 1,
             "enlarge": 0
@@ -204,17 +152,77 @@
           "actions": [
             {
               "actionType": "DAMAGE",
+              "value": 2,
+              "area": false
+            }
+          ],
+          "endable": true,
+          "name": "E2",
+          "invalidEffects": []
+        },
+        {
+          "priority": 1,
+          "targetSpecification": {
+            "tile": false,
+            "different": {
+              "first": false,
+              "second": []
+            },
+            "previous":{
+              "first": false,
+              "second": []
+            },
+            "radiusBetween": {
+              "first": 0,
+              "second": 0
+            },
+            "visible": -1,
+            "enlarge": 0
+          },
+          "actions": [
+            {
+              "actionType": "MOVE",
               "value": 1,
               "area": false
             }
           ],
           "endable": true,
-          "name": "B4",
+          "name": "M1",
+          "invalidEffects": []
+        },
+        {
+          "priority": 2,
+          "targetSpecification": {
+            "tile": false,
+            "different": {
+              "first": false,
+              "second": []
+            },
+            "previous":{
+              "first": false,
+              "second": []
+            },
+            "radiusBetween": {
+              "first": 0,
+              "second": 0
+            },
+            "visible": 1,
+            "enlarge": 0
+          },
+          "actions": [
+            {
+              "actionType": "DAMAGE",
+              "value": 2,
+              "area": false
+            }
+          ],
+          "endable": false,
+          "name": "N1",
           "invalidEffects": []
         }
       ]
     }
   ],
-  "name": "MachineGun",
-  "maxHeight": 3
+  "name": "Railgun",
+  "maxHeight": 1
 }

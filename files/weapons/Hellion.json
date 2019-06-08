@@ -37,15 +37,16 @@
                             "second": 1
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": false 
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 1
+                            "value": 1,
+                            "area": false
                         }
                     ],
+                    "endable": false,
                     "name": "B1",
                     "invalidEffects": []
                 },
@@ -68,15 +69,16 @@
                             "second": 1
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": true 
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "MARK",
-                            "value": 1
+                            "value": 1,
+                            "area": true
                         }
                     ],
+                    "endable": false,
                     "name": "E1",
                     "invalidEffects": []
                 }
@@ -111,15 +113,16 @@
                             "second": 1
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": false
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 1
+                            "value": 1,
+                            "area": false
                         }
                     ],
+                    "endable": false,
                     "name": "B2",
                     "invalidEffects": []
                 },
@@ -142,15 +145,16 @@
                             "second": 1
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": true 
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "MARK",
-                            "value": 2
+                            "value": 2,
+                            "area": true
                         }
                     ],
+                    "endable": false,
                     "name": "E2",
                     "invalidEffects": []
                 }

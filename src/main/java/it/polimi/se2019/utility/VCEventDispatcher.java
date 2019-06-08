@@ -68,4 +68,12 @@ public interface VCEventDispatcher extends EventDispatcher {
     default void dispatch (VCDeathEvent message){
         throw new UnsupportedOperationException("VCDeathEvent not supported");
     }
+
+    default void dispatch (ConflictResolutionEvent message){
+        throw new UnsupportedOperationException("ConflictResolutionEvent not supported");
+    }
+
+    default void dispatch (VCWeaponEndEvent message){
+        throw new UnsupportedOperationException("VCWeaponEndEvent not supported");
+    }
 }

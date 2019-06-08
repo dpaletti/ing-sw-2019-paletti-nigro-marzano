@@ -17,6 +17,11 @@
     "weaponEffects": [
         {
             "name": "effect",
+            "priority": 3,
+            "price": [],
+            "maxHeight":1,
+            "invalidEffects": [],
+            "effectType":-1,
             "effects": [
                 {
                     "priority": 3,
@@ -35,27 +40,27 @@
                             "second": -1
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": false  
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 3
+                            "value": 3,
+                            "area": false
                         },
                         {
                             "actionType": "MARK",
-                            "value": 1
+                            "value": 1,
+                            "area": false
                         }
                     ],
-                    "name": "B1" 
+                    "endable": false,
+                    "name": "B1",
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "Whisper",
-    "maxHeight": 1,
-    "constraint": "",
-    "invalidEliminationFlag": 0,
-    "invalidCombinations": []
+    "maxHeight": 1
 }

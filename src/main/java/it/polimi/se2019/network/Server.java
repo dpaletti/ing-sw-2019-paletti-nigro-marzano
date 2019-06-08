@@ -4,6 +4,7 @@ import it.polimi.se2019.controller.Controller;
 import it.polimi.se2019.controller.MatchMakingController;
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.utility.Saves;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.VirtualView;
@@ -25,6 +26,7 @@ public class Server implements ServerInterface {
     private ServerSocket serverSocket;
     private boolean socketOpen;
     private List<VirtualView> virtualViews = new ArrayList<>();
+    private Saves saves = new Saves();
     private int roomNumber = 0;
 
     private int port;
@@ -47,6 +49,10 @@ public class Server implements ServerInterface {
             Log.severe("Cannot export server message" + e.getMessage());
         }
 
+    }
+
+    public Saves getSaves() {
+        return saves; //TODO correct getter
     }
 
     private int getPort() {

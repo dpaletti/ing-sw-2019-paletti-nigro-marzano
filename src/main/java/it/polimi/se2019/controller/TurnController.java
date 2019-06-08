@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.AmmoColour;
+import it.polimi.se2019.model.Combo;
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.model.mv_events.EndOfTurnEvent;
 import it.polimi.se2019.network.Server;
@@ -16,6 +17,10 @@ import java.util.concurrent.Semaphore;
 public class TurnController extends Controller {
     private ArrayList<String> effects= new ArrayList<>();
     private ArrayList<ArrayList<String>> targets= new ArrayList<>();
+    private String currentPlayer;
+    private Combo currentCombo;
+    private int comboIndex=-1;
+    private int comboUsed= -1;
 
     public TurnController (Game model, Server server, int roomNumber){
         super(model, server, roomNumber);
@@ -71,16 +76,8 @@ public class TurnController extends Controller {
 
         @Override
         public void dispatch(ActionEvent message) {
-            if (message.getAction().equalsIgnoreCase("runAround")) model.allowedMovements(message.getSource(), 3);
-            else if (message.getAction().equalsIgnoreCase("moveAndGrab")) model.allowedMovements(message.getSource(), 1);
-            else if (message.getAction().equalsIgnoreCase("shootPeople")) model.allowedWeapons(message.getSource());
-            else if (message.getAction().equalsIgnoreCase("moveMoveGrab")) model.allowedMovements(message.getSource(), 2);
-            else if (message.getAction().equalsIgnoreCase("moveAndShoot")) model.allowedMovements(message.getSource(), 1);
-            else if (message.getAction().equalsIgnoreCase("frenzyMoveReloadShoot")) model.allowedMovements(message.getSource(), 1);
-            else if (message.getAction().equalsIgnoreCase("moveFourSquares")) model.allowedMovements(message.getSource(), 4);
-            else if (message.getAction().equalsIgnoreCase("frenzyMoveAndGrab")) model.allowedMovements(message.getSource(), 1);
-            else if (message.getAction().equalsIgnoreCase("moveTwiceGrabShoot")) model.allowedMovements(message.getSource(), 2);
-            else if (message.getAction().equalsIgnoreCase("moveThriceAndShoot")) model.allowedMovements(message.getSource(), 3);
+            currentCombo= new Combo(message.getAction());
+
         }
 
     @Override
@@ -104,13 +101,36 @@ public class TurnController extends Controller {
         //TODO: move to next player
     }
 
+    @Override
+    public void dispatch(VCWeaponEndEvent message) {
+        nextPartialCombo();
+    }
+
     private AmmoColour stringToAmmo (String ammoName){
-            for (AmmoColour ammoColour: AmmoColour.values()){
-                if (ammoColour.toString().equalsIgnoreCase(ammoName)){
-                    return ammoColour;
-                }
+        for (AmmoColour ammoColour: AmmoColour.values()){
+            if (ammoColour.toString().equalsIgnoreCase(ammoName)){
+                return ammoColour;
             }
-            throw new NullPointerException("This ammo doesn't exist");
         }
+        throw new NullPointerException("This ammo doesn't exist");
+    }
+
+    private void nextCombo(){
+        comboUsed++;
+        if (comboUsed==2) {//TODO: settings
+            //TODO: reload, end turn or use powerup
+            return;
+        }
+        //TODO: send MVEvent to ask the user the next chosen combo
+    }
+
+    private void nextPartialCombo (){
+        comboIndex++;
+        if (comboIndex==currentCombo.getPartialCombos().size()){
+            nextCombo();
+            return;
+        }
+        currentCombo.getPartialCombos().get(comboIndex).use(model, currentPlayer);
+    }
 
 }

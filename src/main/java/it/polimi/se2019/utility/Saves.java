@@ -1,6 +1,7 @@
 package it.polimi.se2019.utility;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.view.MVEvent;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -12,10 +13,22 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Saves {
+public class Saves implements Observer<MVEvent>, MVEventDispatcher{
     private static FileChannel fileChannel;
 
-    private Saves(){}
+    public Saves(){}
+
+    @Override
+    public void update(MVEvent message) {
+        try{
+            //pre-processing
+            message.handle(this);
+        }catch (UnsupportedOperationException e){
+            //default behaviour
+        }
+    }
+
+
 
     //Opens the filechannel
     public static void start(){

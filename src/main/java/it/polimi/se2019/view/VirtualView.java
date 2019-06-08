@@ -6,6 +6,7 @@ import it.polimi.se2019.network.ConnectionBroadcast;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.*;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
+import it.polimi.se2019.view.vc_events.VCWeaponEndEvent;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -146,6 +147,11 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             submit(getConnectionOnId(message.getDestination()), message);
         }
 
+        @Override
+        public void dispatch (MVWeaponEndEvent message){
+        notify (new VCWeaponEndEvent(message.getDestination()));
+        }
+
     @Override
     public void update(MVEvent message) {
         try {
@@ -155,6 +161,8 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
                 //this branch guards against events that already contain tokens
 
                 message.setDestination(biTokenUsername.getFirst(message.getDestination()));
+            if(message.getDestination().equals("*"))
+                server.getSaves().update(message);
             message.handle(this);
         }catch (UnsupportedOperationException e){
             //if an event cannot be handled is submitted to clients by default

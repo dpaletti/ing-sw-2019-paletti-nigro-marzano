@@ -5,6 +5,12 @@ public class WeaponSpot {
     private Weapon secondWeapon;
     private Weapon thirdWeapon;
 
+    public WeaponSpot (WeaponSpot weaponSpot) {
+        this.firstWeapon= new Weapon(weaponSpot.firstWeapon);
+        this.secondWeapon= new Weapon(weaponSpot.secondWeapon);
+        this.thirdWeapon= new Weapon(weaponSpot.thirdWeapon);
+    }
+
     public Weapon getFirstWeapon() {
         return firstWeapon;
     }
@@ -29,9 +35,4 @@ public class WeaponSpot {
         this.thirdWeapon = thirdWeapon;
     }
 
-    public void weaponSpot (Weapon firstWeapon, Weapon secondWeapon, Weapon thirdWeapon){
-        this.firstWeapon=firstWeapon;
-        this.secondWeapon=secondWeapon;
-        this.thirdWeapon=thirdWeapon;
-    }
 }

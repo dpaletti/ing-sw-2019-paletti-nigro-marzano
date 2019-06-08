@@ -34,15 +34,16 @@
                             "second": -2
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": false  
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 1
+                            "value": 1,
+                            "area": false
                         }
                     ],
+                    "endable": true,
                     "name": "B1",
                     "invalidEffects": []
                 },
@@ -65,15 +66,16 @@
                             "second": -2
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": false  
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "MOVE",
-                            "value": 1
+                            "value": 1,
+                            "area": false
                         }
                     ],
+                    "endable": false,
                     "name": "E1",
                     "invalidEffects": []
                 }
@@ -108,15 +110,16 @@
                             "second": -2
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": true  
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 1
+                            "value": 1,
+                            "area": true
                         }
                     ],
+                    "endable": false,
                     "name": "B2",
                     "invalidEffects": []
                 }

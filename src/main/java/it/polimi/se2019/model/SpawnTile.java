@@ -2,18 +2,15 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Point;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class SpawnTile extends Tile {
 
-    public SpawnTile (RoomColour colour, Map<Direction, Boolean> doors, Set<Figure> figures, WeaponSpot weaponSpot, LootCard loot, Point position, List<Tear> hp){
-        super(colour, doors, figures, weaponSpot, loot, position, hp);
-    }
-    @Override
-    public Weapon getWeapon(Weapon weapon) {
-        return super.getWeapon(weapon);
+    public SpawnTile(GameMap gameMap, RoomColour colour, Map<Direction, Boolean> doors, Point position, List<Grabbable> grabbables) {
+        super(gameMap, colour, doors, position, grabbables);
     }
 
     @Override
@@ -22,7 +19,7 @@ public class SpawnTile extends Tile {
     }
 
     @Override
-    public LootCard getLootCard() {
-        return super.getLootCard();
-    }//non è permesso restituire loot card da qui
+    public List<Grabbable> grab() {
+        return grabbables;
+    }
 }

@@ -34,15 +34,16 @@
                             "second": 0
                         },
                         "visible": -1,
-                        "enlarge": 0,
-                        "area": false
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 2
+                            "value": 2,
+                            "area": false
                         }
                     ],
+                    "endable": false,
                     "name": "B1",
                     "invalidEffects": []
                 }
@@ -77,15 +78,16 @@
                             "second": 0
                         },
                         "visible": -1,
-                        "enlarge": 0,
-                        "area": false
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 3
+                            "value": 3,
+                            "area": false
                         }
                     ],
+                    "endable": true,
                     "name": "B2",
                     "invalidEffects": []
 
@@ -99,23 +101,26 @@
                             "second": []
                         },
 						"previous":{
-							"first": false,
-							"second": []
+							"first": true,
+							"second": [
+                                "B2"
+                            ]
 						},
                         "radiusBetween": {
-                            "first": 0,
-                            "second": 0
+                            "first": -1,
+                            "second": -1
                         },
                         "visible": -1,
-                        "enlarge": 0,
-                        "area": false
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "MOVE",
-                            "value": 1
+                            "value": 1,
+                            "area": false
                         }
                     ],
+                    "endable": false,
                     "name": "E1",
                     "invalidEffects": []
                 },
@@ -128,23 +133,26 @@
                             "second": []
                         },
 						"previous":{
-							"first": false,
-							"second": []
+							"first": true,
+							"second": [
+                                "B2"
+                            ]
 						},
                         "radiusBetween": {
-                            "first": 0,
-                            "second": 0
+                            "first": -1,
+                            "second": -1
                         },
                         "visible": -1,
-                        "enlarge": 0,
-                        "area": false
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "MOVE",
-                            "value": 2
+                            "value": 2,
+                            "area": false
                         }
                     ],
+                    "endable": false,
                     "name": "E2",
                     "invalidEffects": []
                 }

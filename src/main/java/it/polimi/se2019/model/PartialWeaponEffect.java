@@ -9,6 +9,7 @@ public class PartialWeaponEffect extends Effect {
 
     private TargetSpecification targetSpecification;
     private List<Action> actions;
+    private boolean endable;
 
     @Override
     public String toString() {
@@ -22,4 +23,9 @@ public class PartialWeaponEffect extends Effect {
     public List<Action> getActions() {
         return new ArrayList<>(actions);
     }
+
+    public boolean isEndable() {
+        return endable;
+    }
+
 }

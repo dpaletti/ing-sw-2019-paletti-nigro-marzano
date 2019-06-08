@@ -1,7 +1,6 @@
 package it.polimi.se2019.utility;
 
-import it.polimi.se2019.model.AllowedWeaponsEvent;
-import it.polimi.se2019.model.PartialWeaponEffect;
+import it.polimi.se2019.model.mv_events.AllowedWeaponsEvent;
 import it.polimi.se2019.model.mv_events.*;
 
 
@@ -111,7 +110,13 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("WeaponEffectsEvent not supported");
     }
 
-    default void dispatch (PartialWeaponEffect message){
-        throw new UnsupportedOperationException("PartialWeaponEffect not supported");
+    default void dispatch (PartialEffectEvent message){
+        throw new UnsupportedOperationException("PartialEffectEvent not supported");
+    }
+
+    default void dispatch (MVWeaponEndEvent message){throw new UnsupportedOperationException("MVWeaponEndEvent not supported");}
+
+    default void dispatch (GrabbablesEvent message){
+        throw new UnsupportedOperationException("GrabbablesEvent not supported");
     }
 }

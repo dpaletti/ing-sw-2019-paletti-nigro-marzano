@@ -1,6 +1,6 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.AllowedWeaponsEvent;
+import it.polimi.se2019.model.mv_events.AllowedWeaponsEvent;
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Client;
 import it.polimi.se2019.network.Settings;

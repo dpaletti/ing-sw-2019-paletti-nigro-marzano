@@ -7,6 +7,11 @@ public class LootCard implements Grabbable, Drawable{
     private String name;
     private Set<Ammo> ammo= new HashSet<>();
 
+    public LootCard (LootCard lootCard){
+        this.name= lootCard.name;
+        this.ammo= new HashSet<>(lootCard.ammo);
+    }
+
     public LootCard (String name, AmmoColour firstAmmoColour, AmmoColour secondAmmoColour, AmmoColour thirdAmmoColour){
         this.name = name;
         ammo.add(new Ammo(firstAmmoColour));
@@ -25,6 +30,8 @@ public class LootCard implements Grabbable, Drawable{
         return ammo;
     }
 
+
+    @Override
     public String getName() {
         return name;
     }

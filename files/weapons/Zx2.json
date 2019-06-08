@@ -14,6 +14,11 @@
     "weaponEffects": [
     {
         "name": "basicMode",
+        "priority": 3,
+        "price": [],
+        "maxHeight":1,
+        "invalidEffects": [],
+        "effectType":-1,
             "effects":[
                 {
                     "priority": 3,
@@ -32,25 +37,33 @@
                             "second": -1
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": true  
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 2
+                            "value": 2,
+                            "area": true
                         },
                         {
                             "actionType": "MARK",
-                            "value": 1
+                            "value": 1,
+                            "area": true
                         }
                     ],
-                    "name": "B1" 
+                    "endable": false,
+                    "name": "B1",
+                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "inScannerMode",
+            "priority": 3,
+            "price": [],
+            "maxHeight":3,
+            "invalidEffects": [],
+            "effectType":-1,
             "effects": [
                 {
                     "priority": 3,
@@ -69,16 +82,18 @@
                             "second": -1
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": false
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 1
+                            "value": 1,
+                            "area": false
                         }
                     ],
-                    "name": "B2"
+                    "endable": true,
+                    "name": "B2",
+                    "invalidEffects": []
                 },
                 {
                     "priority": 2,
@@ -99,16 +114,18 @@
                             "second": -1
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": false
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 1
+                            "value": 1,
+                            "area": false
                         }
                     ],
-                    "name": "E1"
+                    "endable": true,
+                    "name": "E1",
+                    "invalidEffects": []
                 },
                 {
                     "priority": 1,
@@ -130,64 +147,22 @@
                             "second": -1
                         },
                         "visible": 1,
-                        "enlarge": 0,
-                        "area": false
+                        "enlarge": 0
                     },
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 1
+                            "value": 1,
+                            "area": false
                         }
                     ],
-                    "name": "M1"
+                    "endable": false,
+                    "name": "M1",
+                    "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "Zx2",
-    "maxHeight": 3,
-    "constraint": "",
-    "invalidEliminationFlag": 1,
-    "invalidCombinations": [
-		[
-			"M1"
-		],
-		[
-			"E1"
-		],
-		[
-			"B1",
-			"B2"
-		],
-		[
-			"B1",
-			"M1"
-		],
-		[
-			"B1",
-			"E1"
-		],
-        [
-            "B2",
-            "M1"
-        ],
-        [
-            "B1",
-            "E1",
-            "B2"
-        ],
-        [
-            "B1",
-            "B2",
-            "M1"
-        ],
-        [
-            "B1",
-            "E2"
-        ],
-        [
-            "B1",
-            "E2"
-        ]
-    ]
+    "maxHeight": 1
 }

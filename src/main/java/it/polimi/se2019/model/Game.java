@@ -30,6 +30,18 @@ public class Game extends Observable<MVEvent> {
         observers = new ArrayList<>();
     }
 
+    public void weaponEnd (String playing){
+        notify(new MVWeaponEndEvent(playing));
+    }
+
+    public void apply(String playing, List<Player> players,List<Action> actions){
+        for (Action action:actions){
+            for (Player player: players){
+                //TODO Put action method in action enumeration
+            }
+        }
+    }
+
     public void sendPossibleEffects (String username, String weaponName, List<GraphWeaponEffect> weaponEffect){
         PossibleEffectsEvent event = new PossibleEffectsEvent(username, weaponName);
         for (GraphWeaponEffect w: weaponEffect){
@@ -56,7 +68,7 @@ public class Game extends Observable<MVEvent> {
         notify(new TimerEvent("*", timeToGo));
     }
 
-    public void sendPartialEffectConflict (String username, List<ArrayList<Action>> possibleActions, List<String> previousTargets){
+    public void sendPartialEffectConflict (String username, List<ArrayList<Action>> possibleActions, List<ArrayList<String>>previousTargets){
         notify(new PartialEffectEvent(username, possibleActions, previousTargets));
     }
 
@@ -66,6 +78,14 @@ public class Game extends Observable<MVEvent> {
 
     public void playerReconnection(String token, String oldToken, boolean isMatchMaking){
         notify(new MvReconnectionEvent(token, oldToken, isMatchMaking));
+    }
+
+    public void unloadedWeapons (String username){
+        Player player= userToPlayer(username);
+        List<String> unloadedWeapons= new ArrayList<>();
+        for (Weapon w: player.showWeapons())
+            unloadedWeapons.add(w.getName());
+        notify(new ReloadableWeaponsEvent(username, unloadedWeapons));
     }
 
     public void usernameDeletion(String username){
@@ -307,6 +327,16 @@ public class Game extends Observable<MVEvent> {
 
     public void playerMovement (Player playerRunning, Point finalPosition){
         notify(new MVMoveEvent("*", colourToUser(playerRunning.getFigure().getColour()), finalPosition));
+    }
+
+    public void grabbableCards (String username){
+        Player player= userToPlayer(username);
+        List<String> grabbableNames= new ArrayList<>();
+        List<Grabbable> grabbables= player.getFigure().getTile().grab();
+        for (Grabbable g: grabbables)
+            grabbableNames.add(g.getName());
+        notify(new GrabbablesEvent(username, grabbableNames));
+
     }
 
     public void grab (String username, String grabbed){
