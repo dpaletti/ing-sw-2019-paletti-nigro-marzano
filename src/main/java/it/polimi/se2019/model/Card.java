@@ -35,6 +35,15 @@ public abstract class Card {
         }
     }
 
+    public Card(Card card){
+        this.cardColour=card.cardColour;
+        this.price=card.price;
+        this.weaponEffects=card.weaponEffects;
+        this.name=card.name;
+        this.maxHeight=card.maxHeight;
+        this.staticDefinition=card.staticDefinition;
+
+    }
 
     private void defineCard(){
         Set<GraphWeaponEffect> graphWeaponEffects= new HashSet<>();

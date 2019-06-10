@@ -11,6 +11,10 @@ public class Weapon extends Card implements Grabbable, Drawable{
             super(path);
     }
 
+    public Weapon(Weapon weapon){
+        super(weapon);
+    }
+
     public void setLoaded(Boolean loaded) {
         this.loaded = loaded;
     }

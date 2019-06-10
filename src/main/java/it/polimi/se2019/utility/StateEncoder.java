@@ -133,15 +133,16 @@ public class StateEncoder {
         return tempString;
     }
 
+    //TODO Refactor method to adjust it to the new structure of tile
     public static String getEncodedTile(Tile tile){
         String tempString="";
         tempString=tempString.concat("("+tile.getPosition().getX()+","+tile.getPosition().getY()+")");
         if (tile.getTileType().equals(TileType.SPAWNTILE)){
-            WeaponSpot weaponSpot=tile.getWeaponSpot();
+            /*WeaponSpot weaponSpot=tile.getWeaponSpot();
             tempString=tempString.concat(
                     weaponSpot.getFirstWeapon()+","+
                             weaponSpot.getSecondWeapon()+","+
-                            weaponSpot.getThirdWeapon() + ";");
+                            weaponSpot.getThirdWeapon() + ";");*/
         }else if (tile.getTileType().equals(TileType.LOOTTILE)){
             tempString=tempString.concat(tile.getLootCard().getName()+ ";");
         }

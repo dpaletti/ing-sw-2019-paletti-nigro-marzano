@@ -133,14 +133,6 @@ public class Figure {
         }
     }
 
-    public void damage (SpawnTile target){
-        if (target.getTileType()==TileType.SPAWNTILE){
-            target.addTear(colour);
-        }
-
-    }
-
-
     private Set<Figure> targetSetUpdater (Set<Figure> originalTargetSet, Set<Figure> resultTargetSet, Integer value){
         switch (value){
             case 0:
@@ -229,7 +221,8 @@ public class Figure {
         return (false);
     }
 
-    public void grab(Grabbable grabbed){ //TODO: modify grab with parameter (grabbed card)
+
+    public void grab(Grabbable grabbed){ //TODO: modify grab with parameter (grabbed card); rewrite this method to adjust it to the changes in tile
         if (tile.getTileType()==TileType.LOOTTILE) { //when on a Loot Tile, adds grabbed ammo to usable ammo making sure the number of ammo of a colour does not exceed 3
             int ammoOfSelectedColour=0;
             for (Ammo lootCounter : tile.getLootCard().getAmmo()) {
@@ -248,9 +241,9 @@ public class Figure {
         else {  //when on a Spawn Tile, allows player to grab a weapon and leave one among those they previously grabbed if they already own 3
             Weapon selectedWeapon= null;
             Set<String> availableWeapons= new HashSet<>();
-            availableWeapons.add(tile.getWeaponSpot().getFirstWeapon().getName());
+            /*availableWeapons.add(tile.getWeaponSpot().getFirstWeapon().getName());
             availableWeapons.add(tile.getWeaponSpot().getSecondWeapon().getName());
-            availableWeapons.add(tile.getWeaponSpot().getThirdWeapon().getName());
+            availableWeapons.add(tile.getWeaponSpot().getThirdWeapon().getName());*/
             // TODO: vc_events: a Weapon is returned and assigned to selectedWeapon
 
             if (player.getFirstWeapon()==null){

@@ -31,11 +31,12 @@ public class WeaponEffectController extends WeaponController{
         if (collidingEffects.isEmpty())
             throw new IllegalArgumentException("Target not found in generateTargetset");
         if(collidingEffects.size()==1){
-            model.apply(inferTargetSet
+            //TODO: Get parameters of apply right
+            /*model.apply(inferTargetSet
                     (collidingEffects.get(0).getKey(),selectedTargets,generateTargetSet
                             (collidingEffects.get(0).getKey(),player)),
                     collidingEffects.get(0).getKey().getActions());
-            nextWeaponEffect();
+            nextWeaponEffect();*/
             return;
         }
 
@@ -50,6 +51,7 @@ public class WeaponEffectController extends WeaponController{
         model.sendPartialEffectConflict(model.playerToUser(player), actions, finalTargets);
 
     }
+
 
     private List<Player> inferTargetSet(PartialWeaponEffect partialWeaponEffect,Targetable targetable,List<Targetable> targetables){
         List<Player> players= new ArrayList<>();
@@ -93,7 +95,8 @@ public class WeaponEffectController extends WeaponController{
         List<Player> targets= new ArrayList<>();
         for (String s: message.getSelectedPlayers())
             targets.add(model.userToPlayer(s));
-        model.apply(targets, message.getSelectedActions());
+        //TODO Get parameters of apply right
+        /*model.apply(targets, message.getSelectedActions());*/
         nextWeaponEffect();
     }
 }
