@@ -94,40 +94,47 @@ public class Game extends Observable<MVEvent> {
 
     public void closeMatchMaking(List<String> usernames){
         int colourCounter=0;
-        int chosenConfig=-1;
-        int numberOfLootCards=7;
-        HashMap<String, FigureColour> userToColour= new HashMap<>();
-        List<String> weaponSpots= new ArrayList<>();
-        List<String> lootCards= new ArrayList<>();
+        List<String> configurations= new ArrayList<>();
+
         for (String userCounter: usernames){
             userLookup.add(new Pair<>(FigureColour.values()[colourCounter], userCounter));
             players.add(new Player(new Figure(FigureColour.values()[colourCounter]), this));
 
             colourCounter++;
         }
-        if (((Integer) usernames.size()).equals(3)){
-            chosenConfig= randomConfig.nextInt(2);
-        }
-        else if (((Integer) usernames.size()).equals(4)){
-            chosenConfig= randomConfig.nextInt(3);
-        }
-        else if (((Integer) usernames.size()).equals(5)){
-            chosenConfig= randomConfig.nextInt(2)+1;
-        }
-        //TODO: initialize gameMap
-        for (Player player: players){
-            userToColour.put(userLookup.getSecond(player.getFigure().getColour()), player.getFigure().getColour());
-        }
-        for (int i=0; i<9; i++) {
-            weaponSpots.add(((Weapon)weaponDeck.draw()).getName());
-        }
-        numberOfLootCards+=chosenConfig;
-        for (int i=0; i<numberOfLootCards; i++){
-            lootCards.add(((LootCard)lootDeck.draw()).getName());
-        }
-        killshotTrack= new KillshotTrack(randomConfig.nextInt(4)+5);
 
-        notify(new MatchMakingEndEvent("*", chosenConfig, userToColour, weaponSpots, lootCards, killshotTrack.getNumberOfSkulls()));
+        //calls JSON Helper and generates all possible configurations
+        //configurations to be assigned
+
+        notify(new MatchConfigurationEvent("*", configurations));
+    }
+
+    public void configMatch (String chosenConfig, boolean isFinalFrenzy, int skulls){
+        HashMap<String, FigureColour> userToColour= new HashMap<>();
+        Map<String, RoomColour> weaponSpots= new HashMap<>();
+        Map<Point, String> lootCards= new HashMap<>();
+        Grabbable drawnGrabbable;
+
+        for (Player player: players)
+            userToColour.put(userLookup.getSecond(player.getFigure().getColour()), player.getFigure().getColour());
+
+        //TODO: initialize gameMap
+
+        for (Tile t: gameMap.getSpawnTiles()){
+            for (int i=0; i<3; i++){
+                drawnGrabbable= (Weapon)weaponDeck.draw();
+                t.add(drawnGrabbable);
+                weaponSpots.put(drawnGrabbable.getName(), t.colour);
+            }
+        }
+
+        for (Tile t: gameMap.getLootTiles()){
+            drawnGrabbable= (LootCard)lootDeck.draw();
+            t.add(drawnGrabbable);
+            lootCards.put(t.position, drawnGrabbable.getName());
+        }
+
+        notify(new MatchMakingEndEvent("*", chosenConfig, userToColour, weaponSpots, lootCards, skulls));
     }
 
     public void startMatch(){
@@ -199,26 +206,6 @@ public class Game extends Observable<MVEvent> {
         return userLookup;
     }
 
-    public void setLootDeck(Deck lootDeck) {
-        this.lootDeck = lootDeck;
-    }
-
-    public void setGameMap(GameMap gameMap) {
-        this.gameMap = gameMap;
-    }
-
-    public void setKillshotTrack(KillshotTrack killshotTrack) {
-        this.killshotTrack = killshotTrack;
-    }
-
-    public void setPowerUpDeck(Deck powerUpDeck) {
-        this.powerUpDeck = powerUpDeck;
-    }
-
-    public void setWeaponDeck(Deck weaponDeck) {
-        this.weaponDeck = weaponDeck;
-    }
-
     public void setPlayers(List<Player> players) {
         this.players = players;
     }
@@ -267,7 +254,19 @@ public class Game extends Observable<MVEvent> {
     public void deathHandler (Player deadPlayer){
         notify(new MVDeathEvent("*",
                 colourToUser(deadPlayer.getFigure().getColour()),
-                colourToUser(deadPlayer.getHp().get(10).getColour())));
+                colourToUser(deadPlayer.getHp().get(10).getColour()),
+                (deadPlayer.getHp().size()==12)));
+        updateKillshotTrack(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
+        if (killshotTrack.getKillshot().size()==killshotTrack.getNumberOfSkulls()){
+            if (finalFrenzy){
+                //update status of all players
+                //move calculation of points to turn controller
+                //new FinalFrenzyController(server, roomNumber, model, this);
+                notify(new FinalFrenzyStartingEvent("*"));
+                return;
+            }
+            //endGame();
+        }
     }
 
      public void updateKillshotTrack(FigureColour killer, boolean overkill){
@@ -394,8 +393,8 @@ public class Game extends Observable<MVEvent> {
     public void spawn (String username, AmmoColour spawnColour, String powerUpName){
         Player spawning= userToPlayer(username);
         PowerUp drawnPowerUp= nameToPowerUp(powerUpName);
-        for (Tile tile: gameMap.getTiles()){
-            if (tile.getColour().toString().equals(spawnColour.toString())&&tile.getTileType().equals(TileType.SPAWNTILE)){
+        for (Tile tile: gameMap.getSpawnTiles()){
+            if (tile.getColour().toString().equals(spawnColour.toString())){
                 spawning.run(tile.position);
             }
         }
@@ -445,4 +444,33 @@ public class Game extends Observable<MVEvent> {
         notify(new UpdatePointsEvent(username, userToPlayer(username).getPoints()));
     }
 
+    /*public void endGame() {
+        int maximum= -1;
+        List<Player> tieingPlayers= new ArrayList<>();
+        for (Player p: players){
+            if (p.getPoints()>maximum){
+                maximum= p.getPoints();
+                tieingPlayers.clear();
+                tieingPlayers.add(p);
+            }
+            else if (p.getPoints()==maximum)
+                tieingPlayers.add(p);
+        }
+        if(!(tieingPlayers.size()==1))
+            tieSolver(tieingPlayers);
+    }
+    private void tieSolver (List<Player> players){
+        Map<Player, Integer> bestPlayers= new HashMap<>();
+        for (Player p: players){
+            bestPlayers.put(p, 0);
+            for (Skull s: killshotTrack.getKillshot()){
+                if (s.getTear().getColour().equals(p.getFigure().getColour())) {
+                    bestPlayers.put(p, bestPlayers.get(p) + 1);
+                    if (s.getOverkill())
+                        bestPlayers.put(p, bestPlayers.get(p) + 1);
+                }
+            }
+
+        }
+    }*/
 }

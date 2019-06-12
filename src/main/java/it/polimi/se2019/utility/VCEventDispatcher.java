@@ -65,10 +65,6 @@ public interface VCEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("VCSelectionEvent not supported");
     }
 
-    default void dispatch (VCDeathEvent message){
-        throw new UnsupportedOperationException("VCDeathEvent not supported");
-    }
-
     default void dispatch (ConflictResolutionEvent message){
         throw new UnsupportedOperationException("ConflictResolutionEvent not supported");
     }

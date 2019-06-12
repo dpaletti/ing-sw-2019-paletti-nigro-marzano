@@ -2,27 +2,28 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Point;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class GameMap {
     //TODO create one JSON for each half of the map and bind them together when constructing
     private MapConfig config;
     private Map<Point, Tile> map;
     private GameMode mode;
+    private List<Tile> spawnTiles;
+    private List<Tile> lootTiles;
 
-    public GameMap(MapConfig config, GameMode mode, Map<it.polimi.se2019.utility.Point, Tile> map){
+    public GameMap(MapConfig config, GameMode mode, Map<Point, Tile> map){
         this.config= config;
         this.mode=mode;
         this.map=map;
+
     }
 
     public GameMode getMode() {
         return mode;
     }
 
-    public Map<it.polimi.se2019.utility.Point, Tile> getMap() {
+    public Map<Point, Tile> getMap() {
         return map;
     }
 
@@ -31,7 +32,9 @@ public class GameMap {
     }
 
     public Set<Tile> getTiles() {
-        return new HashSet<>(map.values());
+        Set<Tile> allTiles= new HashSet<>(spawnTiles);
+        allTiles.addAll(lootTiles);
+        return allTiles;
     }
 
     public boolean checkBoundaries (Point position){
@@ -45,5 +48,21 @@ public class GameMap {
                 room.add(t);
         }
         return room;
+    }
+
+    public Tile getTile (Point position){
+        for (Tile t: getTiles()){
+            if (position.equals(t.position))
+                return t;
+        }
+        throw new NullPointerException("tile with given position not found");
+    }
+
+    public List<Tile> getLootTiles() {
+        return new ArrayList<>(lootTiles);
+    }
+
+    public List<Tile> getSpawnTiles() {
+        return new ArrayList<>(spawnTiles);
     }
 }

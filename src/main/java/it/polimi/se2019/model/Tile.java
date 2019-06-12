@@ -6,6 +6,8 @@ import it.polimi.se2019.utility.Point;
 
 import java.util.*;
 
+//TODO: change protected to private and override getters
+
 public abstract class Tile implements Targetable{
     protected GameMap gameMap;
     protected RoomColour colour;
@@ -65,17 +67,14 @@ public abstract class Tile implements Targetable{
         return position;
     }
 
-    public LootCard getLootCard(){
-        return null;
-    }
-
-    public Weapon getWeapon(Weapon weapon){
-        return null;
-    }
-
     public TileType getTileType(){
         return null;
     }
+
+    public abstract void add(Grabbable grabbable);
+
+    public abstract void addAll (List<Grabbable> grabbablesToAdd);
+
 
     @Override
     public void hit(String partialWeaponEffect, List<Targetable> hit, TurnMemory turnMemory) {

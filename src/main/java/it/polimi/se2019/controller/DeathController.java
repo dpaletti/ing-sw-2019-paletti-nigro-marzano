@@ -6,7 +6,7 @@ import it.polimi.se2019.model.Tear;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.*;
 import it.polimi.se2019.view.VCEvent;
-import it.polimi.se2019.view.vc_events.VCDeathEvent;
+import it.polimi.se2019.view.vc_events.SpawnEvent;
 
 import java.util.*;
 
@@ -28,10 +28,11 @@ public class DeathController extends Controller{
     }
 
     @Override
-    public void dispatch(VCDeathEvent message) {
+    public void dispatch(SpawnEvent message) {
         List<Tear> hp= model.getHp(message.getSource());
+        if (hp.size()<11)
+            return;
         assignPoints(message.getSource(), hp);
-        model.updateKillshotTrack(hp.get(10).getColour(), overkill(hp));
         model.userToPlayer(message.getSource()).setHp(null);
     }
 

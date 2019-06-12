@@ -17,6 +17,7 @@ import java.util.concurrent.Semaphore;
 public class TurnController extends Controller {
     private ArrayList<String> effects= new ArrayList<>();
     private ArrayList<ArrayList<String>> targets= new ArrayList<>();
+    private boolean isFirstTurn= true; //TODO: set to false after first turn
     private String currentPlayer;
     private Combo currentCombo;
     private int comboIndex=-1;
@@ -65,7 +66,8 @@ public class TurnController extends Controller {
             }
         }
 
-        @Override
+
+    @Override
         public void dispatch(PowerUpUsageEvent message) {
             try {
                 model.usePowerUp(message.getSource(), message.getUsedPowerUp());
@@ -99,6 +101,7 @@ public class TurnController extends Controller {
     public void dispatch(EndOfTurnEvent message) {
         model.endTurn(message.getSource());
         //TODO: move to next player
+        //update current player and counters
     }
 
     @Override
