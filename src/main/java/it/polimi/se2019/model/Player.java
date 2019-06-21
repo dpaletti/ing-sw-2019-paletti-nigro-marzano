@@ -17,9 +17,7 @@ public class Player extends Observable<Action> implements Targetable{
     private Weapon firstWeapon;
     private Weapon secondWeapon;
     private Weapon thirdWeapon;
-    private PowerUp firstPowerUp;
-    private PowerUp secondPowerUp;
-    private PowerUp thirdPowerUp;
+    private List<PowerUp> powerUps= new ArrayList<>();
     private PowerUp temporaryPowerUp= null;
     private Integer points= 0;
     private Set<Ammo> usableAmmo= new HashSet<>();
@@ -145,16 +143,8 @@ public class Player extends Observable<Action> implements Targetable{
         return healthState;
     }
 
-    public PowerUp getFirstPowerUp() {
-        return firstPowerUp;
-    }
-
-    public PowerUp getSecondPowerUp() {
-        return secondPowerUp;
-    }
-
-    public PowerUp getThirdPowerUp() {
-        return thirdPowerUp;
+    public List<PowerUp> getPowerUps() {
+        return new ArrayList<>(powerUps);
     }
 
     public List<Tear> getHp() {return hp;}
@@ -187,20 +177,8 @@ public class Player extends Observable<Action> implements Targetable{
         this.firstWeapon = firstWeapon;
     }
 
-    public void setFirstPowerUp(PowerUp firstPowerUp) {
-        this.firstPowerUp = firstPowerUp;
-    }
-
     public void setMarks(Set<Tear> marks) {
         this.marks = marks;
-    }
-
-    public void setSecondPowerUp(PowerUp secondPowerUp) {
-        this.secondPowerUp = secondPowerUp;
-    }
-
-    public void setThirdPowerUp(PowerUp thirdPowerUp) {
-        this.thirdPowerUp = thirdPowerUp;
     }
 
     public void setHp(List<Tear> hp) {
@@ -234,29 +212,33 @@ public class Player extends Observable<Action> implements Targetable{
         figure.reload(weapon);
     }
 
-    public void usePowerUp (PowerUp powerUp){
+    public void usePowerUp (String powerUp){
         //TODO: use power up
         deletePowerUp(powerUp);
     }
 
-    //MASSI: finally changed the powerUp structure, method getPowerUpName->getName, method getColour->getCardColour.getColour
-    public void sellPowerUp (PowerUp powerUp){
-        usableAmmo.add(new Ammo(powerUp.getCardColour().getColour()));
+    public void sellPowerUp (String powerUp){
+        if (powerUpIsOwned(powerUp))
+            throw new UnsupportedOperationException("Could not sell " + powerUp + "as player doesn't own it");
+        usableAmmo.add(new Ammo(game.nameToPowerUp(powerUp).getCardColour().getColour()));
         deletePowerUp(powerUp);
     }
 
-    public void deletePowerUp (PowerUp powerUp){
-        if (powerUp.equals(firstPowerUp)){
-            firstPowerUp=null;
-        }
-        else if (powerUp.equals(secondPowerUp)){
-            secondPowerUp=null;
-        }
-        else if (powerUp.equals(thirdPowerUp)){
-            thirdPowerUp=null;
-        }
-        game.discardedPowerUp(this, null, powerUp);
+    public void deletePowerUp (String powerUp){
+        if (powerUpIsOwned(powerUp))
+            throw new UnsupportedOperationException("Could not delete" + powerUp + "as player doesn't own it");
+        powerUps.remove(game.nameToPowerUp(powerUp));
+        game.discardedPowerUp(this, "none", powerUp);
     }
+
+    private boolean powerUpIsOwned (String powerUp){
+        for (PowerUp p: powerUps){
+            if (p.name.equalsIgnoreCase(powerUp))
+                return true;
+        }
+        return false;
+    }
+
     void addTear (FigureColour figureColour){
         Tear tear= new Tear(figureColour);
         hp.add(tear);
@@ -286,48 +268,23 @@ public class Player extends Observable<Action> implements Targetable{
         playerValue= playerValue.getNextPlayerValue();
     }
 
-    public void drawPowerUp (PowerUp powerUp){
-        if (temporaryPowerUp!=null){
-            throw new IllegalStateException("Discard a powerUp before drawing");
-        }
-        if (firstPowerUp==null) firstPowerUp= powerUp;
-        else if (secondPowerUp==null) secondPowerUp= powerUp;
-        else if (thirdPowerUp==null) thirdPowerUp= powerUp;
-        else {
-            temporaryPowerUp= powerUp;
-            List<PowerUp> powerUps= new ArrayList<>();
-            powerUps.add(firstPowerUp);
-            powerUps.add(secondPowerUp);
-            powerUps.add(thirdPowerUp);
-            powerUps.add(powerUp);
+    public void drawPowerUp (String drawnPowerUp){
+        if (powerUps.size()==4)
+            throw new UnsupportedOperationException("Discard a powerup before drawing one");
+        powerUps.add(game.nameToPowerUp(drawnPowerUp));
+        if (powerUps.size()==4) {
             game.chosePowerUpToDiscard(this, powerUps);
         }
+        else if (powerUps.size()<4)
+            powerUps.add(game.nameToPowerUp(drawnPowerUp));
     }
 
-    //TODO check consistency, don't instantiate new powerups, temporary powerups may be null on first deferentiation
-    /*public void discardPowerUp (PowerUp powerUp){
-        PowerUp powerUpToAdd= new PowerUp(temporaryPowerUp.getName(), temporaryPowerUp.getCardColour().getColour());
-        temporaryPowerUp=null;
-        PowerUp discardedPowerUp= new PowerUp(powerUpToAdd.getName(), powerUpToAdd.getCardColour().getColour());
-
-        if (powerUp.equals(firstPowerUp)){
-            discardedPowerUp= 
-            discardedPowerUp= new PowerUp(firstPowerUp.getName(), firstPowerUp.getCardColour().getColour());
-            firstPowerUp=powerUpToAdd;
-        }
-        else if (powerUp.equals(secondPowerUp)){
-            discardedPowerUp= new PowerUp(secondPowerUp.getName(), secondPowerUp.getCardColour().getColour());
-            secondPowerUp=powerUpToAdd;
-        }
-        else if (powerUp.equals(thirdPowerUp)){
-            discardedPowerUp= new PowerUp(thirdPowerUp.getName(), thirdPowerUp.getCardColour().getColour());
-            thirdPowerUp=powerUpToAdd;
-        }
-        else if (!powerUp.equals(powerUpToAdd)){
-            throw new NullPointerException("The powerUp with this name cannot be discarded");
-        }
-        game.discardedPowerUp(this, powerUpToAdd, discardedPowerUp);
-    }*/
+    public void discardPowerUp (String discardedPowerUp){
+        if (!powerUpIsOwned(discardedPowerUp))
+            throw new UnsupportedOperationException("Could not discard" + discardedPowerUp + "as player doesn't own it");
+        game.discardedPowerUp(this, powerUps.get(4).name, discardedPowerUp);
+        powerUps.remove(game.nameToPowerUp(discardedPowerUp));
+    }
 
     public void useAmmo (Set<Ammo> usedAmmo){
         usableAmmo.removeAll(usedAmmo);

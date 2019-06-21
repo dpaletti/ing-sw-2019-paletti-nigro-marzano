@@ -5,7 +5,7 @@ import it.polimi.se2019.view.MVEvent;
 
 public class DiscardedPowerUpEvent extends MVEvent {
     String playing;
-    String drawnPowerUp;
+    String drawnPowerUp;        // if "none" no powerUp was drawn
     String discardedPowerUp;
 
     public DiscardedPowerUpEvent (String destination, String playing, String drawnPowerUp, String discardedPowerUp){

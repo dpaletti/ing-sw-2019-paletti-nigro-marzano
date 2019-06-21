@@ -65,4 +65,18 @@ public class GameMap {
             allPoints.add(t.position);
         return allPoints;
     }
+
+    public List<Point> getAllowedMovements (Tile currentTile, int maximumDistance){
+        List<Point> allowedMovements= new ArrayList<>();
+
+        for (Tile t: getTiles()){
+            if (Math.abs(currentTile.position.getX()-t.position.getX())+
+                    Math.abs(currentTile.position.getY()-t.position.getY())
+                    ==maximumDistance) {
+                allowedMovements.add(t.position);
+            }
+        }
+
+        return allowedMovements;
+    }
 }

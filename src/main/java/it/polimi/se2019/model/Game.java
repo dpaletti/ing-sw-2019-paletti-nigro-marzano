@@ -23,8 +23,6 @@ public class Game extends Observable<MVEvent> {
 
     private MVSelectionEvent selectionEventHolder = null;
 
-    // TODO Mapping between figures and usernames coming from controller
-
     public Game(){
         weaponDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllWeapons()));
         powerUpDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllPowerUp()));
@@ -286,7 +284,7 @@ public class Game extends Observable<MVEvent> {
      public List<Integer> getPointsToAssign (String username){
         Player player = userToPlayer(username);
         List<Integer> points= new ArrayList<>();
-        //check whether player is in FF
+        //checks whether player is in FinalFrenzy
          if (player.getHealthState().isFinalFrenzy())
             points = frenzyPointsToAssign;
          else
@@ -300,8 +298,10 @@ public class Game extends Observable<MVEvent> {
     public void allowedMovements (String username, int radius){
         Player playing= userToPlayer(username);
         List<Point> allowedPositions= new ArrayList<>();
-        //TODO: calculates where the player can move
-        notify(new AllowedMovementsEvent(username, allowedPositions));
+        if (!gameMap.getAllowedMovements(playing.getFigure().getTile(), radius).isEmpty())
+            notify(new AllowedMovementsEvent(username, allowedPositions));
+        else
+            throw new NullPointerException("List of possible movements is empty");
     }
 
     public void allowedWeapons(String username){
@@ -410,16 +410,14 @@ public class Game extends Observable<MVEvent> {
             }
         }
         if (drawnPowerUp!=null){
-            spawning.drawPowerUp(drawnPowerUp);
+            spawning.drawPowerUp(drawnPowerUp.name);
         }
         notify(new MVMoveEvent("*", username, spawning.getFigure().getPosition()));
         notify(new StartTurnEvent(username));
     }
 
     public void usePowerUp (String username, String powerUpName){
-        Player player= userToPlayer(username);
-        PowerUp powerUp= nameToPowerUp(powerUpName);
-        player.usePowerUp(powerUp);
+        userToPlayer(username).usePowerUp(powerUpName);
     }
 
     public void chosePowerUpToDiscard (Player player, List<PowerUp> powerUps){
@@ -434,12 +432,11 @@ public class Game extends Observable<MVEvent> {
     public void discardPowerUp (String username, String powerUpName){
         Player playing= userToPlayer(username);
         PowerUp powerUpToDiscard= nameToPowerUp(powerUpName);
-        //playing.discardPowerUp(powerUpToDiscard); //TODO solve called method's todo
+        playing.discardPowerUp(powerUpToDiscard.name);
     }
 
-    public void discardedPowerUp (Player player, PowerUp drawnPowerUp, PowerUp discardedPowerUp){
-        String username= colourToUser(player.getFigure().getColour());
-        notify(new DiscardedPowerUpEvent("*", username, drawnPowerUp.getName(), discardedPowerUp.getName()));
+    public void discardedPowerUp (Player player, String drawnPowerUp, String discardedPowerUp){
+        notify(new DiscardedPowerUpEvent("*", colourToUser(player.getFigure().getColour()), drawnPowerUp, discardedPowerUp));
     }
 
     public void attackOnPlayer (Player attacked, Player attacker){
@@ -458,7 +455,6 @@ public class Game extends Observable<MVEvent> {
 
     // all players without any damage change their boards to final frenzy boards
     // final frenzy players get a different set of moves based on their position in the current
-
     public void frenzyUpdatePlayerStatus (Player deadPlayer){
         List<Player> beforeFirst = new ArrayList<>();
         List<Player> afterFirst = new ArrayList<>();
