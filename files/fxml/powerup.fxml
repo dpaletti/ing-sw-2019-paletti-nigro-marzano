@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -13,35 +12,23 @@
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
     </columnConstraints>
-    <ImageView fx:id="powerupFirst" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+    <ImageView fx:id="powerupLeft" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
     </ImageView>
-    <ImageView fx:id="powerupSecond" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
+    <ImageView fx:id="powerupMiddle" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
     </ImageView>
-    <ImageView fx:id="powerupThird" fitHeight="203.0" fitWidth="116.0" layoutX="10.0" layoutY="10.0" preserveRatio="true" GridPane.columnIndex="2">
+    <ImageView fx:id="powerupRight" fitHeight="203.0" fitWidth="116.0" layoutX="10.0" layoutY="10.0" preserveRatio="true" GridPane.columnIndex="2">
     </ImageView>
    <Pane prefHeight="200.0" prefWidth="47.0">
-      <children>
-         <ImageView fx:id="ammoLeft" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true">
-         </ImageView>
-         <ImageView fx:id="effectLeft" fitHeight="48.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true">
-         </ImageView>
-      </children>
+         <ImageView fx:id="ammoLeft" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true" />
+         <ImageView fx:id="effectLeft" fitHeight="48.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true" />
    </Pane>
    <Pane prefHeight="200.0" prefWidth="86.0" GridPane.columnIndex="1">
-      <children>
-         <ImageView fx:id="ammoMiddle" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true">
-         </ImageView>
-         <ImageView fx:id="effectMiddle" fitHeight="49.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true">
-         </ImageView>
-      </children>
+         <ImageView fx:id="ammoMiddle" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true" />
+         <ImageView fx:id="effectMiddle" fitHeight="49.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true" />
    </Pane>
    <Pane prefHeight="200.0" prefWidth="0.0" GridPane.columnIndex="2">
-      <children>
-         <ImageView fx:id="ammoRight" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true">
-         </ImageView>
-         <ImageView fx:id="effectRight" fitHeight="48.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true">
-         </ImageView>
-      </children>
+         <ImageView fx:id="ammoRight" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true" />
+         <ImageView fx:id="effectRight" fitHeight="48.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true" />
    </Pane>
     <rowConstraints>
         <RowConstraints />

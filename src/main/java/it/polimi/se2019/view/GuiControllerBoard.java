@@ -30,6 +30,8 @@ public class GuiControllerBoard extends GuiController {
     private ImageView middleYellowSpawn;
     @FXML
     private ImageView bottomYellowSpawn;
+    @FXML
+    private GridPane boardSkull;
 
     public void test(){
 

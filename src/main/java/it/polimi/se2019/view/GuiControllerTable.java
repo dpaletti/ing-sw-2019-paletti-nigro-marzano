@@ -1,110 +1,41 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.view.gui_events.GuiInitialize;
+import it.polimi.se2019.utility.Event;
+import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.view.gui_events.UiMatchSetup;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Text;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Semaphore;
 
 public class GuiControllerTable extends GuiController {
 
+    @FXML
+    private GridPane hp;
 
     @FXML
-    private ImageView hp1;
+    private GridPane mark;
 
     @FXML
-    private ImageView hp2;
-
-    @FXML
-    private ImageView hp3;
-
-    @FXML
-    private ImageView hp4;
-
-    @FXML
-    private ImageView hp5;
-
-    @FXML
-    private ImageView hp6;
-
-    @FXML
-    private ImageView hp7;
-
-    @FXML
-    private ImageView hp8;
-
-    @FXML
-    private ImageView hp9;
-
-    @FXML
-    private ImageView hp10;
-
-    @FXML
-    private ImageView hp11;
-
-    @FXML
-    private ImageView hp12;
-
-    @FXML
-    private ImageView mark1;
-
-    @FXML
-    private ImageView mark2;
-
-    @FXML
-    private ImageView mark3;
-
-    @FXML
-    private ImageView mark4;
-
-    @FXML
-    private ImageView mark5;
-
-    @FXML
-    private ImageView mark6;
-
-    @FXML
-    private ImageView mark7;
-
-    @FXML
-    private ImageView mark8;
-
-    @FXML
-    private ImageView mark9;
-
-    @FXML
-    private ImageView mark10;
-
-    @FXML
-    private ImageView mark11;
-
-    @FXML
-    private ImageView mark12;
-
-    @FXML
-    private ImageView mark13;
-
-    @FXML
-    private ImageView mark14;
-
-    @FXML
-    private ImageView mark15;
-
-    @FXML
-    private ImageView skull8;
-
-    @FXML
-    private ImageView skull6;
-
-    @FXML
-    private ImageView skull2;
-
-    @FXML
-    private ImageView skull11;
-
-    @FXML
-    private ImageView skull12;
+    private GridPane skull;
 
     @FXML
     private Button endTurn;
@@ -116,13 +47,13 @@ public class GuiControllerTable extends GuiController {
     private ImageView moveAndGrab;
 
     @FXML
-    private Text redAmmo;
+    private Label redAmmo;
 
     @FXML
-    private Text yellowAmmo;
+    private Label yellowAmmo;
 
     @FXML
-    private Text blueAmmo;
+    private Label blueAmmo;
 
     @FXML
     private ImageView currentPlayer;
@@ -136,10 +67,19 @@ public class GuiControllerTable extends GuiController {
     @FXML
     private ImageView reload;
 
-        @Override
-        public void dispatch(GuiInitialize message) {
-        //TODO
-        }
+    @FXML
+    private ImageView moveMoveGrab;
+
+    @FXML
+    private ImageView moveShoot;
+
+    @FXML
+    private GridPane root;
+
+    private String chosenMap;
+    private int skulls;
+    private boolean frenzy = false;
+    private Semaphore choiceSem = new Semaphore(2, true);
 
     @FXML
     private void clickable(){
@@ -150,6 +90,163 @@ public class GuiControllerTable extends GuiController {
     private void notClickable(){
         currentPlayer.getScene().setCursor(Cursor.DEFAULT);
     }
+
+
+
+    @Override
+    public void update(Event message) {
+        try {
+            ensureJavaFXThread(() -> message.handle(this));
+        } catch (UnsupportedOperationException e) {
+            Log.fine("ignored " + message);
+        }
+    }
+
+    @Override
+    public void dispatch(UiMatchSetup message) {
+        try {
+            choiceSem.acquireUninterruptibly(2);
+            FXMLLoader choices = new FXMLLoader(Paths.get("files/fxml/match_setup.fxml").toUri().toURL());
+            Pane choichePane = choices.load();
+
+            root.add(choichePane,3, 2);
+            GridPane mapGrid = new GridPane();
+
+            Pane tempPane;
+            ImageView tempImage;
+            List<Integer> mapLayout = new ArrayList<>();
+            mapLayout.add(1);
+            mapLayout.add(0);
+            mapLayout.add(2);
+            for(String conf: message.getConfiguration()) {
+                for (int i = 0; i <= (Math.ceil(message.getConfiguration().size() / 3.0)); i++) {
+                    for(Integer j: mapLayout) {
+                        tempPane = new Pane();
+                        tempImage = createMapImage(conf, mapGrid);
+                        mapGrid.add(tempPane, i, j);
+                        tempImage.setFitWidth(tempPane.getWidth());
+                        tempImage.setFitHeight(tempPane.getHeight());
+                        tempPane.getChildren().add(tempImage);
+                    }
+                }
+            }
+
+            initializeCheckBox((GridPane) choichePane.getChildren().get(0));
+            initializeSkullSelection((GridPane) choichePane.getChildren().get(0));
+            choiceSem.acquireUninterruptibly(2);
+            viewGUI.
+        }catch (MalformedURLException e){
+            Log.severe("Url for table");
+        }catch (IOException e){
+            Log.severe("Could not load " + e.getCause());
+        }
+    }
+
+    public void initializeSkullSelection(GridPane choicheGrid){
+        List<RadioButton> skullButtons = new ArrayList<>();
+        GridPane gridPane = null;
+        for(Node n: choicheGrid.getChildren()){
+            if(n.getId().equals("skullGrid")){
+                gridPane = (GridPane) n;
+            }
+        }
+        if(gridPane == null)
+            throw new NullPointerException("Could not find skull grid");
+        for(Node n: gridPane.getChildren()){
+            ((RadioButton) n).setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if(((RadioButton) event.getSource()).getId().equals("skulls5"))
+                        skulls=5;
+                    if(((RadioButton) event.getSource()).getId().equals("skulls6"))
+                        skulls=6;
+                    if(((RadioButton) event.getSource()).getId().equals("skulls7"))
+                        skulls=7;
+                    if(((RadioButton) event.getSource()).getId().equals("skulls7"))
+                        skulls=8;
+                    choiceSem.release();
+                }
+            });
+        }
+    }
+
+    public void initializeCheckBox(GridPane choicheGrid){
+        CheckBox frenzyBox = null;
+        for(Node n: choicheGrid.getChildren()){
+            if(n.getId().equals("frenzy"))
+                frenzyBox = (CheckBox) n;
+        }
+
+        if(frenzyBox == null)
+            throw new NullPointerException("Could not find frenzy check box");
+
+        frenzyBox.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(((CheckBox) event.getSource()).isSelected()) {
+                    frenzy = true;
+                    return;
+                }
+                frenzy = false;
+            }
+        });
+
+
+    }
+
+
+    public ImageView createMapImage(String conf, GridPane mapGrid) throws MalformedURLException{
+        ImageView tempImage = new ImageView(Paths.get("files/assets/board/map/" + conf).toUri().toURL().toString());
+        tempImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                choiceSem.release();
+                highlight(event, conf);
+                chosenMap = conf;
+                for (Node i : mapGrid.getChildren()) {
+                    i.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            notClickable();
+                        }
+                    });
+                }
+            }
+        });
+        tempImage.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                highlight(event, conf);
+                clickable();
+            }
+        });
+        tempImage.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                darken(event, conf);
+                notClickable();
+            }
+        });
+        return tempImage;
+    }
+
+    public void highlight(MouseEvent event, String conf){
+        try {
+            ((ImageView) event.getSource()).setImage(new Image(Paths.get("files/assets/board/map/" + conf + "_highlighted").toUri().toURL().toString()));
+        }catch (MalformedURLException e){
+            Log.severe("Could not find: " + conf + "_highlighted");
+        }
+
+    }
+
+    public void darken(MouseEvent event, String conf){
+        try{
+            ((ImageView) event.getSource()).setImage(new Image(Paths.get("files/assets/board/map/" + conf).toUri().toURL().toString()));
+        }catch (MalformedURLException e){
+            Log.severe("Could not find: " + conf + "_highlighted");
+        }
+    }
+
 
 
 }

@@ -3,16 +3,18 @@ package it.polimi.se2019.view;
 import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Observer;
-import it.polimi.se2019.view.gui_events.GuiRegistrationEvent;
+import it.polimi.se2019.view.gui_events.UiRegistrationEvent;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.layout.GridPane;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
-public abstract class GuiController implements Observer<Event>, Initializable, GuiDispatcher {
+public abstract class GuiController implements Observer<Event>, Initializable, UiDispatcher {
     protected ViewGUI viewGUI;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -20,10 +22,12 @@ public abstract class GuiController implements Observer<Event>, Initializable, G
     }
 
     @Override
-    public void dispatch(GuiRegistrationEvent message) {
+    public void dispatch(UiRegistrationEvent message) {
         Log.fine("registering viewGui");
         this.viewGUI = message.getReference();
     }
+    
+
 
     @Override
     public void update(Event message) {
@@ -32,6 +36,14 @@ public abstract class GuiController implements Observer<Event>, Initializable, G
         } catch (UnsupportedOperationException e) {
             Log.fine("ignored " + message);
         }
+    }
+
+    public Node getGridNode(GridPane gridPane, int x, int y){
+        for(Node n: gridPane.getChildren()){
+            if(GridPane.getColumnIndex(n) == x && GridPane.getRowIndex(n) == y)
+                return n;
+        }
+        throw new NullPointerException("There is no node at specific coordinate");
     }
 
     protected void ensureJavaFXThread(Runnable action){

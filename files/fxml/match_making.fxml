@@ -1,34 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.partialWeaponEffect.GaussianBlur?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="401.0" prefWidth="570.0" stylesheets="@../css/match.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerMatchMaking">
-      <ImageView fitHeight="401.0" fitWidth="570.0" pickOnBounds="true" preserveRatio="true" smooth="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <Image url="@../assets/adrenalina_part.png" />
-         <partialWeaponEffect>
-            <GaussianBlur radius="8.46" />
-         </partialWeaponEffect>
-      </ImageView>
-      <Label alignment="CENTER" layoutX="25.0" layoutY="14.0" prefHeight="59.0" prefWidth="335.0" stylesheets="@../css/match.css" text="Match Making" AnchorPane.bottomAnchor="328.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="210.0" AnchorPane.topAnchor="14.0">
+<AnchorPane fx:id="anchorPane" prefHeight="401.0" prefWidth="570.0" stylesheets="@../css/match.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerMatchMaking">
+      <Label fx:id="timer" alignment="BASELINE_RIGHT" contentDisplay="RIGHT" layoutX="288.0" layoutY="357.0" prefHeight="30.0" prefWidth="268.0" text="waiting for more players" textAlignment="CENTER" textFill="WHITE">
          <font>
-            <Font size="48.0" />
+            <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="players" contentDisplay="TOP" layoutX="25.0" layoutY="81.0" text="Players" textOverrun="CLIP" AnchorPane.bottomAnchor="276.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="414.0" AnchorPane.topAnchor="81.0">
-         <font>
-            <Font size="36.0" />
-         </font>
-      </Label>
-      <VBox fx:id="usernames" layoutX="25.0" layoutY="136.0" mouseTransparent="true" prefHeight="241.0" prefWidth="348.0" />
-      <Label fx:id="timer" layoutX="489.0" layoutY="357.0" prefHeight="30.0" prefWidth="67.0" textAlignment="RIGHT" textFill="WHITE">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </Label>
+   <TableView fx:id="playerTable" layoutX="114.0" layoutY="50.0" prefHeight="302.0" prefWidth="320.0">
+     <columns>
+       <TableColumn prefWidth="319.0" text="Username" />
+     </columns>
+   </TableView>
 </AnchorPane>

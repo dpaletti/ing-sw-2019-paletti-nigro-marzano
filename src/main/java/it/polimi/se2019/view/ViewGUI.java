@@ -8,6 +8,7 @@ import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Pair;
 import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.gui_events.*;
+import it.polimi.se2019.view.vc_events.VcMatchConfigurationEvent;
 import javafx.application.Application;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.concurrent.SynchronousQueue;
 public class ViewGUI extends View {
 
     private static Semaphore semMatchMaking = new Semaphore(1, true);
-    private static Semaphore semMatch = new Semaphore(5, true);
+    private static Semaphore semMatch = new Semaphore(1, true);
     boolean matchInitialization = false;
     private static SynchronousQueue<GuiController> guiControllers = new SynchronousQueue<>();
     private List<MockPlayer> players = new ArrayList<>();
@@ -49,7 +50,7 @@ public class ViewGUI extends View {
         new Thread(() ->  Application.launch(MatchMakingGui.class)).start();
         semMatchMaking.acquireUninterruptibly();
         semMatchMaking.release();
-        notify(new GuiRegistrationEvent(this));
+        notify(new UiRegistrationEvent(this));
         for (String username:
              usernames) {
             addPlayer(username);
@@ -73,14 +74,18 @@ public class ViewGUI extends View {
     public void closeMatchMaking(){
         Log.fine("Closing matchMaking, semaphore: " + semMatch.availablePermits());
             matchInitialization = true;
-            semMatch.acquireUninterruptibly(5);
+            semMatch.acquireUninterruptibly();
+    }
+
+    public void gameSetup(int skulls, boolean frenzy, String conf){
+        notify(new VcMatchConfigurationEvent(client.getUsername(), skulls, frenzy, conf));
     }
 
     @Override
     public void addPlayer(String username) {
         Log.fine("notifying add player");
         players.add(new MockPlayer(username));
-        notify(new GuiAddPlayer(username));
+        notify(new UiAddPlayer(username));
     }
 
     public static void staticRegister(GuiController controller){
@@ -100,21 +105,21 @@ public class ViewGUI extends View {
     @Override
     public void dispatch(TimerEvent message) {
         if (((Integer) message.getTimeToGo()).equals(Settings.MATCH_MAKING_TIMER))
-            ViewGUI.this.notify(new GuiTimerStart());
+            ViewGUI.this.notify(new UiTimerStart());
         if (message.getTimeToGo() < 0)
-            ViewGUI.this.notify(new GuiTimerStop());
-        ViewGUI.this.notify(new GuiTimerTick(message.getTimeToGo()));
+            ViewGUI.this.notify(new UiTimerStop());
+        ViewGUI.this.notify(new UiTimerTick(message.getTimeToGo()));
     }
 
     @Override
     public void dispatch(UsernameDeletionEvent message) {
-        ViewGUI.this.notify(new GuiRemovePlayer(message.getUsername()));
+        ViewGUI.this.notify(new UiRemovePlayer(message.getUsername()));
     }
 
     @Override
     public void dispatch(MatchMakingEndEvent message) {
         semMatchMaking.acquireUninterruptibly();
-        ViewGUI.this.notify(new GuiCloseMatchMaking());
+        ViewGUI.this.notify(new UiCloseMatchMaking());
         semMatchMaking.acquireUninterruptibly();
     }
 
@@ -128,15 +133,14 @@ public class ViewGUI extends View {
     public void dispatch(AllowedMovementsEvent message) {
         for (Point p:
                 message.getAllowedPositions()) {
-            notify(new GuiHighlightTileEvent(p));
+            notify(new UiHighlightTileEvent(p));
         }
     }
 
-    /*@Override
-    public void dispatch(DeathEvent message) {
-        resetPlayer(message.getDead());
-        notify(new GuiMoveFigure(usernameToPlayer(message.getDead()).getPlayerColor(), new Point(-1, -1)));
-    }*/
+    @Override
+    public void dispatch(MatchConfigurationEvent message) {
+        notify(new UiMatchSetup(message.getConfigurations()));
+    }
 
     private void resetPlayer(String username){
         MockPlayer player = usernameToPlayer(username);
@@ -163,9 +167,8 @@ public class ViewGUI extends View {
     @Override
     public void update(MVEvent message) {
         if(matchInitialization){
-            Log.fine("Update available permits: " + semMatch.availablePermits());
-            semMatch.acquireUninterruptibly(5);
-            notify(new GuiRegistrationEvent(this));
+            semMatch.acquireUninterruptibly();
+            notify(new UiRegistrationEvent(this));
             Log.fine("Semaphore released");
             matchInitialization = false;
         }

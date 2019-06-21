@@ -23,6 +23,7 @@ import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
 public class Server implements ServerInterface {
+    //TODO move username and token uniqueness check here to support multiple parallel lobbys
     private ServerSocket serverSocket;
     private boolean socketOpen;
     private List<VirtualView> virtualViews = new ArrayList<>();

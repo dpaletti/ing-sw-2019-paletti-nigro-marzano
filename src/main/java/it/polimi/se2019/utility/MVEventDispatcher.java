@@ -82,6 +82,10 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("StartFirstTurnEvent not supported");
     }
 
+    default void dispatch(MatchConfigurationEvent message){
+        throw new UnsupportedOperationException("MatchConfigurationEvent not supported");
+    }
+
     default void dispatch (AllowedMovementsEvent message){
         throw new UnsupportedOperationException("Allowed Movements Event not supported");
     }

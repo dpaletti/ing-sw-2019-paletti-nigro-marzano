@@ -3,7 +3,8 @@
 <!--tile overlays for left board one, appended at runtime, after selection-->
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<GridPane layoutX="155.0" layoutY="156.0" prefHeight="443.0" prefWidth="258.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.vc_events.GuiControllerBoardLeft">
+
+<GridPane layoutX="156.0" layoutY="153.0" prefHeight="456.0" prefWidth="276.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerBoardLeft">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -13,52 +14,24 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
-    <children>
         <Pane prefHeight="200.0" prefWidth="200.0">
-            <children>
-                <ImageView fitHeight="123.0" fitWidth="139.0" layoutX="5.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../assets/board/board_left_1/tile02.png" />
-                    </image>
-                </ImageView>
-            </children>
+                <ImageView fx:id = "tile02" fitHeight="123.0" fitWidth="139.0" layoutX="5.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true"/>
+                <ImageView fx:id = "loot02" fitHeight="34.0" fitWidth="36.0" layoutX="25.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true"/>
         </Pane>
         <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
-            <children>
-                <ImageView fitHeight="124.0" fitWidth="123.0" layoutX="13.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../assets/board/board_left_1/tile12.png" />
-                    </image>
-                </ImageView>
-            </children>
+                <ImageView fx:id = "tile12" fitHeight="123.0" fitWidth="144.0" layoutX="2.0" layoutY="5.0" pickOnBounds="true"/>
+                <ImageView fx:id = "loot12" fitHeight="34.0" fitWidth="36.0" layoutX="25.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true"/>
         </Pane>
         <Pane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
-            <children>
-                <ImageView fitHeight="138.0" fitWidth="119.0" layoutX="10.0" layoutY="-2.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../assets/board/board_left_1/tile01.png" />
-                    </image>
-                </ImageView>
-            </children>
+            <ImageView fx:id = "tile01" fitHeight="138.0" fitWidth="119.0" layoutX="10.0" layoutY="-2.0" pickOnBounds="true" preserveRatio="true"/>
         </Pane>
         <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-            <children>
-                <ImageView fitHeight="155.0" fitWidth="119.0" layoutX="19.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../assets/board/board_left_1/tile11.png" />
-                    </image>
-                </ImageView>
-            </children>
+                <ImageView fx:id = "tile11" fitHeight="135.0" fitWidth="130.0" layoutX="8.0" layoutY="-2.0" pickOnBounds="true" preserveRatio="true"/>
+                <ImageView fx:id = "loot11" fitHeight="34.0" fitWidth="36.0" layoutX="13.0" layoutY="44.0" pickOnBounds="true" preserveRatio="true"/>
         </Pane>
         <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-            <children>
-                <ImageView fitHeight="121.0" fitWidth="119.0" layoutX="8.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../assets/board/board_left_1/tile10.png" />
-                    </image>
-                </ImageView>
-            </children>
+            <ImageView fx:id = "tile10" fitHeight="121.0" fitWidth="140.0" layoutX="-2.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true"/>
+            <ImageView fx:id = "loot00" fitHeight="34.0" fitWidth="36.0" layoutX="15.0" layoutY="67.0" pickOnBounds="true" preserveRatio="true"/>
         </Pane>
-    </children>
 </GridPane>
 

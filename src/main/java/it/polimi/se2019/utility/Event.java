@@ -1,7 +1,7 @@
 package it.polimi.se2019.utility;
 
 
-import it.polimi.se2019.view.GuiDispatcher;
+import it.polimi.se2019.view.UiDispatcher;
 
 import java.io.Serializable;
 
@@ -20,8 +20,8 @@ public abstract class Event implements Serializable {
     public void handle(VCEventDispatcher vcEventDispatcher){
         vcEventDispatcher.dispatch(this);
     }
-    public void handle(GuiDispatcher guiDispatcher){
-        guiDispatcher.dispatch(this);
+    public void handle(UiDispatcher uiDispatcher){
+        uiDispatcher.dispatch(this);
     }
 
 }

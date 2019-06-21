@@ -9,7 +9,7 @@ import java.util.List;
 //ask all players their preferred configuration, whether final frenzy= true and the number of skulls (5 to 8)
 
 public class MatchConfigurationEvent extends MVEvent {
-    private ArrayList<String> configurations;
+    private ArrayList<String> configurations; //small, medium_left, medium_right, large
 
     public MatchConfigurationEvent(String destination, List<String> configurations) {
         super(destination);
