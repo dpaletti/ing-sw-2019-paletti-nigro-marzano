@@ -176,7 +176,7 @@ public class Game extends Observable<MVEvent> {
     }
 
     public Tile getTile (Point position){
-        return gameMap.getMap().get(position);
+        return gameMap.getTile(position);
     }
 
     public List<Integer> getFrenzyPointsToAssign() {

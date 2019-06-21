@@ -7,23 +7,17 @@ import java.util.*;
 public class GameMap {
     //TODO create one JSON for each half of the map and bind them together when constructing
     private MapConfig config;
-    private Map<Point, Tile> map;
     private GameMode mode;
     private List<Tile> spawnTiles;
     private List<Tile> lootTiles;
 
-    public GameMap(MapConfig config, GameMode mode, Map<Point, Tile> map){
+    public GameMap(MapConfig config, GameMode mode){
         this.config= config;
         this.mode=mode;
-        this.map=map;
     }
 
     public GameMode getMode() {
         return mode;
-    }
-
-    public Map<Point, Tile> getMap() {
-        return map;
     }
 
     public MapConfig getConfig() {
@@ -37,7 +31,7 @@ public class GameMap {
     }
 
     public boolean checkBoundaries (Point position){
-        return (map.containsKey(position));
+        return (getTiles().contains(getTile(position)));
     }
 
     public Set<Tile> getRoom (RoomColour roomColour){
@@ -63,5 +57,12 @@ public class GameMap {
 
     public List<Tile> getSpawnTiles() {
         return new ArrayList<>(spawnTiles);
+    }
+
+    public List<Point> getPoints (){
+        List<Point> allPoints = new ArrayList<>();
+        for (Tile t: getTiles())
+            allPoints.add(t.position);
+        return allPoints;
     }
 }

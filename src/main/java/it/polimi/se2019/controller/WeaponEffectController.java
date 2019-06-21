@@ -58,11 +58,11 @@ public class WeaponEffectController extends WeaponController{
         if (partialWeaponEffect.getTargetSpecification().getTile()){
             if (isArea(partialWeaponEffect)){
                for (Targetable t: targetables){
-                   for (Figure figure:model.getGameMap().getMap().get(t.getPosition()).getFigures())
+                   for (Figure figure:model.getGameMap().getTile(t.getPosition()).getFigures())
                        players.add(figure.getPlayer());
                }
             }else {
-                for (Figure figure: model.getGameMap().getMap().get(targetable.getPosition()).getFigures())
+                for (Figure figure: model.getGameMap().getTile(targetable.getPosition()).getFigures())
                     players.add(figure.getPlayer());
             }
             return players;

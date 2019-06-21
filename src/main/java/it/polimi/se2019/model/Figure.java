@@ -62,14 +62,14 @@ public class Figure {
     public void teleport (Point teleportPosition){ //only called in case of Teleport Event
         if (boundaryChecker(this, teleportPosition)){
             position= teleportPosition;
-            tile=player.getGameMap().getMap().get(position);
+            tile=player.getGameMap().getTile(position);
         }
     }
 
     public void run (Point destination){
         if ((destination.getDistance(tile.position)<=3)&&(boundaryChecker(this, destination))){
             position=destination;
-            tile=player.getGameMap().getMap().get(position);
+            tile=player.getGameMap().getTile(position);
         }
     }
 
@@ -122,7 +122,7 @@ public class Figure {
         if (!player.getGameMap().checkBoundaries(newPosition)){
             return (false);
         }
-        if (player.getGameMap().getMap().get(newPosition).getColour().equals(figureToMove.tile.colour)){ //same room, figure can be moved
+        if (player.getGameMap().getTile(newPosition).getColour().equals(figureToMove.tile.colour)){ //same room, figure can be moved
             return (true);
         }
         else { //not same room, check if door

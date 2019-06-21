@@ -92,13 +92,12 @@ public class WeaponController extends Controller {
 
     private Set<Targetable> getVisible(Targetable t){
         Set<Targetable> visibleTarget= new HashSet<>();
-        while(t.getAll().iterator().hasNext()) {
-            if (visibleRooms(t.getPosition()).contains(model.getGameMap().getMap().get(t.getPosition()).getColour()))
-                visibleTarget.add( t.getAll().iterator().next());
+       for (Targetable tCounter: t.getAll()) {
+            if (visibleRooms(t.getPosition()).contains(model.getGameMap().getTile(tCounter.getPosition()).getColour()))
+                visibleTarget.add(tCounter);
         }
         visibleTarget.remove(t);
         return visibleTarget;
-
     }
 
     private Set<Targetable> handleVisible(int visible, Targetable source){
@@ -119,7 +118,7 @@ public class WeaponController extends Controller {
     }
 
     private Set<RoomColour> visibleRooms (Point point){
-        Tile tile = model.getGameMap().getMap().get(point);
+        Tile tile = model.getGameMap().getTile(point);
         Set<RoomColour> visibleRooms= new HashSet<>();
 
         visibleRooms.add(tile.getColour());
@@ -156,7 +155,7 @@ public class WeaponController extends Controller {
             return getVisible(source);
         if(innerRadius == -3 && outerRadius == -3) {
             for(Tile t: model.getGameMap().getTiles()) {
-                if (!model.getGameMap().getMap().get(source.getPosition()).getColour().equals(t.getColour()))
+                if (!model.getGameMap().getTile(source.getPosition()).getColour().equals(t.getColour()))
                     targetables.add(t);
             }
             return targetables;
@@ -171,7 +170,7 @@ public class WeaponController extends Controller {
         if (distance==-1)
             return (model.getGameMap().getTiles());
         Set<Tile> tiles = new HashSet<>();
-        for (Point p : model.getGameMap().getMap().keySet()) {
+        for (Point p : model.getGameMap().getPoints()) {
             if (p.getDistance(centre) <= distance)
                 tiles.add(model.getTile(p));
         }
@@ -211,7 +210,7 @@ public class WeaponController extends Controller {
         }
         else if (enlarge==-1){
             for (Targetable t: centre){
-                targetables.addAll(model.getGameMap().getRoom(model.getGameMap().getMap().get(t.getPosition()).getColour()));
+                targetables.addAll(model.getGameMap().getRoom(model.getGameMap().getTile(t.getPosition()).getColour()));
             }
             return targetables;
         }
