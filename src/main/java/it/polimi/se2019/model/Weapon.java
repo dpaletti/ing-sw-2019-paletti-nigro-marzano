@@ -1,6 +1,12 @@
 package it.polimi.se2019.model;
 
-public class Weapon extends Card implements Grabbable, Drawable{
+import it.polimi.se2019.utility.Log;
+
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
+
+public class Weapon extends Card implements Grabbable, Drawable,Jsonable{
     private Boolean loaded = true;
 
     public Boolean getLoaded() {
@@ -19,4 +25,8 @@ public class Weapon extends Card implements Grabbable, Drawable{
         this.loaded = loaded;
     }
 
+    @Override
+    public Jsonable copy() {
+        return new Weapon(this);
+    }
 }

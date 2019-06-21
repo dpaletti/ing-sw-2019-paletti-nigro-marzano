@@ -9,9 +9,7 @@ import java.util.Set;
 
 public class SpawnTile extends Tile {
 
-    public SpawnTile(GameMap gameMap, RoomColour colour, Map<Direction, Boolean> doors, Point position, List<Grabbable> grabbables) {
-        super(gameMap, colour, doors, position, grabbables);
-    }
+    public SpawnTile() {}
 
     @Override
     public TileType getTileType() {

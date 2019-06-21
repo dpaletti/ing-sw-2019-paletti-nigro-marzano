@@ -1,0 +1,10 @@
+{
+  "type":"it.polimi.se2019.model.Combo",
+  "name":"Frenzy Move Move Reload Shoot",
+  "partialCombos":[
+    "MOVE",
+    "MOVE",
+    "RELOAD",
+    "SHOOT"
+  ]
+}

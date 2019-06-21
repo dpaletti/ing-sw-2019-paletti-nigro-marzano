@@ -9,10 +9,7 @@ import java.util.Set;
 
 public class LootTile extends Tile{
 
-    public LootTile(GameMap gameMap, RoomColour colour, Map<Direction, Boolean> doors, Point position, List<Grabbable> grabbables) {
-        super(gameMap, colour, doors, position, grabbables);
-        weaponSpot=null;
-    }
+    public LootTile() {}
 
     @Override
     public TileType getTileType() {

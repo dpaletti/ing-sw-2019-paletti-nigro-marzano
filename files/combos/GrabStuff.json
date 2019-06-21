@@ -1,0 +1,8 @@
+{
+  "type":"it.polimi.se2019.model.Combo",
+  "name":"Grab stuff",
+  "partialCombos":[
+    "MOVE",
+    "GRAB"
+  ]
+}

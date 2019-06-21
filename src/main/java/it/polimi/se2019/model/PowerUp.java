@@ -1,10 +1,24 @@
 package it.polimi.se2019.model;
 
 
-import java.io.IOException;
+import it.polimi.se2019.utility.Log;
 
-public class PowerUp extends Card implements Drawable{
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
+
+public class PowerUp extends Card implements Drawable,Jsonable{
     public PowerUp(String path){
         super(path);
+    }
+
+    public PowerUp(PowerUp powerUp){
+        super(powerUp);
+    }
+
+    @Override
+    public Jsonable copy() {
+        return new PowerUp(this);
     }
 }

@@ -1,0 +1,9 @@
+{
+  "type":"it.polimi.se2019.model.Combo",
+  "name":"Damaged Move Shoot",
+  "partialCombos":[
+    "MOVE",
+    "MOVE",
+    "GRAB"
+  ]
+}

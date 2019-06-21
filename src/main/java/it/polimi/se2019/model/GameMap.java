@@ -1,23 +1,45 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.utility.JsonHandler;
+import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Point;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
-public class GameMap {
-    //TODO create one JSON for each half of the map and bind them together when constructing
+public class GameMap{
     private MapConfig config;
-    private GameMode mode;
-    private List<Tile> spawnTiles;
-    private List<Tile> lootTiles;
+    private List<Tile> spawnTiles=new ArrayList<>();
+    private List<Tile> lootTiles=new ArrayList<>();
 
-    public GameMap(MapConfig config, GameMode mode){
+    public GameMap(MapConfig config){
         this.config= config;
-        this.mode=mode;
-    }
-
-    public GameMode getMode() {
-        return mode;
+        try {
+            GameMap firstHalf=null;
+            GameMap secondHalf=null;
+            if (config.equals(MapConfig.MAP_SMALL) || config.equals(MapConfig.MAP_MEDIUM_RIGHT)) {
+                firstHalf = (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/Left1.json"))));
+            } else {
+                firstHalf = (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/Left2.json"))));
+            }
+            if (config.equals(MapConfig.MAP_SMALL) || config.equals(MapConfig.MAP_MEDIUM_LEFT)) {
+                secondHalf = (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/Right2.json"))));
+            } else {
+                secondHalf = (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/Right1.json"))));
+            }
+            this.spawnTiles.addAll(firstHalf.getSpawnTiles());
+            this.spawnTiles.addAll(secondHalf.getSpawnTiles());
+            this.lootTiles.addAll(firstHalf.getLootTiles());
+            this.lootTiles.addAll(secondHalf.getLootTiles());
+        }catch (IOException c){
+            Log.severe("Map not found in given directory");
+        }catch (NullPointerException e){
+            Log.severe("Map not created: ");
+        }catch (ClassNotFoundException e){
+            Log.severe("Error in json file, type");
+        }
     }
 
     public MapConfig getConfig() {

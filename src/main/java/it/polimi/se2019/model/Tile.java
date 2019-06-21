@@ -8,24 +8,17 @@ import java.util.*;
 
 //TODO: change protected to private and override getters
 
-public abstract class Tile implements Targetable{
+public class Tile implements Targetable{
     protected GameMap gameMap;
     protected RoomColour colour;
     protected Map<Direction, Boolean> doors;
-    protected Set<Figure> figures;
+    protected Set<Figure> figures=new HashSet<>();
     protected Point position;
-    protected List<Grabbable> grabbables;
-    protected WeaponSpot weaponSpot;
+    protected List<Grabbable> grabbables=new ArrayList<>();
 
-    public Tile (GameMap gameMap, RoomColour colour, Map<Direction, Boolean> doors, Point position, List<Grabbable> grabbables){
-        this.gameMap = gameMap;
-        this.colour= colour;
-        this.doors= doors;
-        this.position=position;
-        this.grabbables= new ArrayList<>(grabbables);
-    }
+    protected Tile() { }
 
-    public abstract List<Grabbable> grab ();
+    public List<Grabbable> grab (){throw new UnsupportedOperationException("Can't grab from generic tile");}
 
     public List<Grabbable> getGrabbables() {
         return grabbables;
@@ -72,14 +65,10 @@ public abstract class Tile implements Targetable{
         return null;
     }
 
-    public abstract void add(Grabbable grabbable);
+    public void add(Grabbable grabbable){throw new UnsupportedOperationException("Can't add Tile");}
 
-    public abstract void addAll (List<Grabbable> grabbablesToAdd);
+    public void addAll (List<Grabbable> grabbablesToAdd){throw new UnsupportedOperationException("Can't add Tiles");}
 
-
-    public WeaponSpot getWeaponSpot() {
-        return new WeaponSpot(weaponSpot);
-    }
 
     @Override
     public void hit(String partialWeaponEffect, List<Targetable> hit, TurnMemory turnMemory) {

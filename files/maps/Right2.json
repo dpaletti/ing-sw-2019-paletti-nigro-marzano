@@ -1,0 +1,72 @@
+{
+  "type":"it.polimi.se2019.model.GameMap",
+  "spawnTiles":[
+    {
+      "position":{
+        "x": 2,
+        "y": 2
+      },
+      "colour": "BLUE",
+      "doors": {
+        "NORTH": false,
+        "SOUTH": true,
+        "EAST": false,
+        "WEST": false
+      }
+    },
+    {
+      "position":{
+        "x": 3,
+        "y": 0
+      },
+      "colour": "YELLOW",
+      "doors": {
+          "NORTH": false,
+          "SOUTH": false,
+          "EAST": false,
+          "WEST": true
+        }
+    }
+  ],
+  "lootTiles":[
+    {
+      "position":{
+        "x": 2,
+        "y": 0
+      },
+      "colour": "WHITE",
+      "doors": {
+        "NORTH": false,
+        "SOUTH": false,
+        "EAST": true,
+        "WEST": false
+      }
+    },
+    {
+      "position":{
+        "x": 2,
+        "y": 1
+      },
+      "colour": "MAGENTA",
+      "doors": {
+        "NORTH": true,
+        "SOUTH": false,
+        "EAST": true,
+        "WEST": false
+      }
+    },
+    {
+      "position":{
+        "x": 3,
+        "y": 1
+      },
+      "colour": "YELLOW",
+      "doors": {
+        "NORTH": false,
+        "SOUTH": false,
+        "EAST": false,
+        "WEST": true
+      }
+    }
+  ]
+}

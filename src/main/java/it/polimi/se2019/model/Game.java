@@ -18,15 +18,21 @@ public class Game extends Observable<MVEvent> {
     private BiSet<FigureColour, String> userLookup = new BiSet<>();
     private Random randomConfig= new Random();
     private TurnMemory turnMemory = new TurnMemory();
+    private WeaponHelper weaponHelper=new WeaponHelper();
+    private ComboHelper comboHelper=new ComboHelper();
+    private PowerUpHelper powerUpHelper=new PowerUpHelper();
     private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1, 1, 1));
     private List <Integer> frenzyPointsToAssign= new ArrayList<>(Arrays.asList(2, 1, 1, 1, 1));
 
     private MVSelectionEvent selectionEventHolder = null;
 
+    // TODO Mapping between figures and usernames coming from controller
+
+    //TODO lootCard Helper, json of lootCards
     public Game(){
-        weaponDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllWeapons()));
-        powerUpDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllPowerUp()));
-        lootDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllLootCards()));
+        weaponDeck= new Deck(new ArrayList<>(weaponHelper.getWeapons()));
+        powerUpDeck= new Deck(new ArrayList<>(powerUpHelper.getPowerUps()));
+        /*lootDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllLootCards()));*/
         observers = new ArrayList<>();
     }
 

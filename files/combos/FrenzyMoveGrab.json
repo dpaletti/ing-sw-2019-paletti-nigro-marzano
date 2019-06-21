@@ -1,0 +1,9 @@
+{
+  "type":"it.polimi.se2019.model.Combo",
+  "name":"Frenzy Move Move Grab",
+  "partialCombos":[
+    "MOVE",
+    "MOVE",
+    "GRAB"
+  ]
+}

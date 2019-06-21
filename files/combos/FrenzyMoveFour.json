@@ -1,0 +1,10 @@
+{
+  "type":"it.polimi.se2019.model.Combo",
+  "name":"Frenzy Move Four Squares",
+  "partialCombos":[
+    "MOVE",
+    "MOVE",
+    "MOVE",
+    "MOVE"
+  ]
+}

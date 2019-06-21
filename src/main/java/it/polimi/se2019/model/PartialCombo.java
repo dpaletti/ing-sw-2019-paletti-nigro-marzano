@@ -27,4 +27,5 @@ public enum  PartialCombo {
     };
 
     public abstract void use (Game game, String username);
+
 }

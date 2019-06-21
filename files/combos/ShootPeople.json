@@ -1,0 +1,7 @@
+{
+  "type":"it.polimi.se2019.model.Combo",
+  "name":"Shoot people",
+  "partialCombos":[
+    "SHOOT"
+  ]
+}
