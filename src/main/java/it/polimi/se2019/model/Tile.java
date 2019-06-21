@@ -15,6 +15,7 @@ public abstract class Tile implements Targetable{
     protected Set<Figure> figures;
     protected Point position;
     protected List<Grabbable> grabbables;
+    protected WeaponSpot weaponSpot;
 
     public Tile (GameMap gameMap, RoomColour colour, Map<Direction, Boolean> doors, Point position, List<Grabbable> grabbables){
         this.gameMap = gameMap;
@@ -75,6 +76,10 @@ public abstract class Tile implements Targetable{
 
     public abstract void addAll (List<Grabbable> grabbablesToAdd);
 
+
+    public WeaponSpot getWeaponSpot() {
+        return new WeaponSpot(weaponSpot);
+    }
 
     @Override
     public void hit(String partialWeaponEffect, List<Targetable> hit, TurnMemory turnMemory) {

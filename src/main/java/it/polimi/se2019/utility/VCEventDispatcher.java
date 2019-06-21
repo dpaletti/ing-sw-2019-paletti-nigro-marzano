@@ -72,4 +72,8 @@ public interface VCEventDispatcher extends EventDispatcher {
     default void dispatch (VCWeaponEndEvent message){
         throw new UnsupportedOperationException("VCWeaponEndEvent not supported");
     }
+
+    default void dispatch (CalculatePointsEvent message){
+        throw new UnsupportedOperationException("CalculatePointsEvent not supported");
+    }
 }

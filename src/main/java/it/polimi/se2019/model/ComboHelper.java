@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ComboHelper {
-    private static ComboHelper instance=null;
-    private static Set<Combo> comboSet=new HashSet<>();
+    private static ComboHelper instance = null;
+    private static Set<Combo> comboSet = new HashSet<>();
 
     private ComboHelper(){
         try {

@@ -59,66 +59,6 @@ public class Figure {
         }
     }
 
-    public void move(Direction direction){
-        int x = tile.getPosition().getX();
-        int y = tile.getPosition().getY();
-        Point newPosition = null;
-        switch (direction){
-            case EAST:
-                newPosition = new Point(x + 1, y);
-                break;
-            case WEST:
-                newPosition = new Point(x - 1, y);
-                break;
-            case NORTH:
-                newPosition = new Point(x , y + 1);
-                break;
-            case SOUTH:
-                newPosition = new Point(x , y - 1);
-                break;
-                default:
-                    break;
-        }
-        if(newPosition == (null))
-            throw new NullPointerException("Direction is neither NORTH nor SOUTH nor WEST nor EAST");
-        if (boundaryChecker(this, newPosition)){
-            position= newPosition;
-            tile=player.getGameMap().getMap().get(newPosition);
-        }
-        else {
-            throw new UnsupportedOperationException("The selected position is out of bounds");
-        }
-    }
-
-    public void move(Figure target, Direction direction){
-        //TODO delete code repetition
-        int x = target.tile.getPosition().getX();
-        int y = target.tile.getPosition().getY();
-        Point newPosition= null;
-        switch (direction){
-            case EAST:
-                newPosition = new Point(x, y + 1);
-                break;
-            case WEST:
-                newPosition = new Point(x, y - 1);
-                break;
-            case NORTH:
-                newPosition = new Point(x + 1, y);
-                break;
-            case SOUTH:
-                newPosition = new Point(x - 1, y);
-                break;
-                default:
-                    break;
-        }
-        if (newPosition == (null))
-            throw new NullPointerException("Direction is neither NORTH nor SOUTH nor WEST nor EAST");
-        if (boundaryChecker(target, newPosition)) {
-            target.position = newPosition;
-            target.tile = player.getGameMap().getMap().get(newPosition);
-        }
-    } //MVEvent to notify final position to all users
-
     public void teleport (Point teleportPosition){ //only called in case of Teleport Event
         if (boundaryChecker(this, teleportPosition)){
             position= teleportPosition;
@@ -223,7 +163,7 @@ public class Figure {
 
 
     public void grab(Grabbable grabbed){ //TODO: modify grab with parameter (grabbed card); rewrite this method to adjust it to the changes in tile
-        if (tile.getTileType()==TileType.LOOTTILE) { //when on a Loot Tile, adds grabbed ammo to usable ammo making sure the number of ammo of a colour does not exceed 3
+       /* if (tile.getTileType()==TileType.LOOTTILE) { //when on a Loot Tile, adds grabbed ammo to usable ammo making sure the number of ammo of a colour does not exceed 3
             int ammoOfSelectedColour=0;
             for (Ammo lootCounter : tile.getLootCard().getAmmo()) {
                 for (Ammo ammoCounter: player.getUsableAmmo()){
@@ -243,7 +183,7 @@ public class Figure {
             Set<String> availableWeapons= new HashSet<>();
             /*availableWeapons.add(tile.getWeaponSpot().getFirstWeapon().getName());
             availableWeapons.add(tile.getWeaponSpot().getSecondWeapon().getName());
-            availableWeapons.add(tile.getWeaponSpot().getThirdWeapon().getName());*/
+            availableWeapons.add(tile.getWeaponSpot().getThirdWeapon().getName());
             // TODO: vc_events: a Weapon is returned and assigned to selectedWeapon
 
             if (player.getFirstWeapon()==null){
@@ -261,7 +201,7 @@ public class Figure {
 
                 //TODO: vc_events: a weapon is returned and selectedWeapon is assigned to free weapon slot
             }
-        }
+        }*/
     }
 
     public void reload (Weapon weapon){

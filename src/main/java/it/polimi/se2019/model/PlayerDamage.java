@@ -1,21 +1,22 @@
 package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Action;
+import it.polimi.se2019.utility.ActionType;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class PlayerDamage {
-
-    protected Integer maximumHits;
+    private Integer maximumHits;
+    private boolean finalFrenzy;
+    protected List<List<PartialCombo>> moves = new ArrayList<>();
 
     public Integer getMaximumHits() { return maximumHits; }
 
-    public void setMaximumHits(Integer maximumHits) {
-        this.maximumHits = maximumHits;
-    }
-
-    List<List<Action>> moveSet (List<Action> elapsedMoves){return Collections.emptyList();};
+    public abstract List<List<PartialCombo>> getMoves();
 
     public abstract PlayerDamage findNextHealthState ();
+
+    public abstract boolean isFinalFrenzy();
 }

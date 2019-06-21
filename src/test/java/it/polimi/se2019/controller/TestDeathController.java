@@ -102,7 +102,7 @@ public class TestDeathController {
     @Test
     public void testAssignPoints(){
 
-        deathController.assignPoints("magenta", hp);
+        deathController.deathPointCalculation("magenta", hp);
         assertEquals(blue.getPoints(), (Integer) 9);
         assertEquals(green.getPoints(), (Integer) 6);
         assertEquals(yellow.getPoints(), (Integer) 4);

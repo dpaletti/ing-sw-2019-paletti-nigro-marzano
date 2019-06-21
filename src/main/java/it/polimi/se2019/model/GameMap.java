@@ -16,7 +16,6 @@ public class GameMap {
         this.config= config;
         this.mode=mode;
         this.map=map;
-
     }
 
     public GameMode getMode() {

@@ -18,6 +18,8 @@ public class Game extends Observable<MVEvent> {
     private BiSet<FigureColour, String> userLookup = new BiSet<>();
     private Random randomConfig= new Random();
     private TurnMemory turnMemory = new TurnMemory();
+    private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1, 1, 1));
+    private List <Integer> frenzyPointsToAssign= new ArrayList<>(Arrays.asList(2, 1, 1, 1, 1));
 
     private MVSelectionEvent selectionEventHolder = null;
 
@@ -141,10 +143,9 @@ public class Game extends Observable<MVEvent> {
         PowerUp firstCard= (PowerUp) powerUpDeck.draw();
         PowerUp secondCard= (PowerUp) powerUpDeck.draw();
         notify(new StartFirstTurnEvent(colourToUser(players.get(0).getFigure().getColour()),
-                firstCard.getCardColour().toString(),
                 firstCard.getName(),
-                secondCard.getCardColour().toString(),
-                secondCard.getName()
+                secondCard.getName(),
+                true
                 ));
     }
 
@@ -178,7 +179,11 @@ public class Game extends Observable<MVEvent> {
         return gameMap.getMap().get(position);
     }
 
-    public boolean getFinalFrenzy() {
+    public List<Integer> getFrenzyPointsToAssign() {
+        return frenzyPointsToAssign;
+    }
+
+    public boolean isFinalFrenzy() {
         return finalFrenzy;
     }
 
@@ -252,20 +257,19 @@ public class Game extends Observable<MVEvent> {
     }
 
     public void deathHandler (Player deadPlayer){
+        updateKillshotTrack(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
         notify(new MVDeathEvent("*",
                 colourToUser(deadPlayer.getFigure().getColour()),
                 colourToUser(deadPlayer.getHp().get(10).getColour()),
-                (deadPlayer.getHp().size()==12)));
-        updateKillshotTrack(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
+                (deadPlayer.getHp().size()==12),
+                killshotTrack.getNumberOfSkulls()==killshotTrack.getKillshot().size())); //if number of skulls equals dimension of killshot track, match is over
+        //calculate points of all players, move all lines beneath this in DeathController
+        //in DeathController for (Player p: players) calculatePoints and then verify if FF
         if (killshotTrack.getKillshot().size()==killshotTrack.getNumberOfSkulls()){
             if (finalFrenzy){
-                //update status of all players
-                //move calculation of points to turn controller
-                //new FinalFrenzyController(server, roomNumber, model, this);
+                frenzyUpdatePlayerStatus(deadPlayer);
                 notify(new FinalFrenzyStartingEvent("*"));
-                return;
             }
-            //endGame();
         }
     }
 
@@ -281,9 +285,16 @@ public class Game extends Observable<MVEvent> {
 
      public List<Integer> getPointsToAssign (String username){
         Player player = userToPlayer(username);
-        int index = player.getPointsToAssign().indexOf(player.getPlayerValue().getMaxValue());
-        return new ArrayList<>(player.getPointsToAssign().subList(index, player.getPointsToAssign().size()));
+        List<Integer> points= new ArrayList<>();
+        //check whether player is in FF
+         if (player.getHealthState().isFinalFrenzy())
+            points = frenzyPointsToAssign;
+         else
+             points = pointsToAssign;
+        int index = points.indexOf(player.getPlayerValue().getMaxValue());
+        return new ArrayList<>(pointsToAssign.subList(index, pointsToAssign.size()));
      }
+
     //exposed methods, used for MVEvents or VCEvents
 
     public void allowedMovements (String username, int radius){
@@ -444,33 +455,28 @@ public class Game extends Observable<MVEvent> {
         notify(new UpdatePointsEvent(username, userToPlayer(username).getPoints()));
     }
 
-    /*public void endGame() {
-        int maximum= -1;
-        List<Player> tieingPlayers= new ArrayList<>();
-        for (Player p: players){
-            if (p.getPoints()>maximum){
-                maximum= p.getPoints();
-                tieingPlayers.clear();
-                tieingPlayers.add(p);
-            }
-            else if (p.getPoints()==maximum)
-                tieingPlayers.add(p);
-        }
-        if(!(tieingPlayers.size()==1))
-            tieSolver(tieingPlayers);
-    }
-    private void tieSolver (List<Player> players){
-        Map<Player, Integer> bestPlayers= new HashMap<>();
-        for (Player p: players){
-            bestPlayers.put(p, 0);
-            for (Skull s: killshotTrack.getKillshot()){
-                if (s.getTear().getColour().equals(p.getFigure().getColour())) {
-                    bestPlayers.put(p, bestPlayers.get(p) + 1);
-                    if (s.getOverkill())
-                        bestPlayers.put(p, bestPlayers.get(p) + 1);
-                }
-            }
 
+    // all players without any damage change their boards to final frenzy boards
+    // final frenzy players get a different set of moves based on their position in the current
+
+    public void frenzyUpdatePlayerStatus (Player deadPlayer){
+        List<Player> beforeFirst = new ArrayList<>();
+        List<Player> afterFirst = new ArrayList<>();
+        boolean isBeforeFirst = false;
+
+        for (Player p: players){
+            if (p.equals(deadPlayer))
+                isBeforeFirst = true;
+            if (!isBeforeFirst && p.getHp().size()==0)
+                afterFirst.add(p);
+            else if (isBeforeFirst && p.getHp().size()==0)
+                beforeFirst.add(p);
         }
-    }*/
+
+        for (Player p: beforeFirst)
+            p.updatePlayerDamage(new FinalFrenzyBeforeFirst());
+
+        for (Player p: afterFirst)
+            p.updatePlayerDamage(new FinalFrenzyStandard());
+    }
 }

@@ -2,14 +2,16 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.utility.Action;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class VeryDamaged extends PlayerDamage {
-
+    private Healthy nextHealthState;
     @Override
-    public List<List<Action>> moveSet(List<Action> elapsedMoves) {
-        return Collections.emptyList();
+    public List<List<PartialCombo>> getMoves() {
+        moves.add(Arrays.asList(PartialCombo.MOVE, PartialCombo.SHOOT));
+        return moves;
     }
 
     @Override
@@ -17,6 +19,11 @@ public class VeryDamaged extends PlayerDamage {
 
     @Override
     public PlayerDamage findNextHealthState() {
-        return this; //TODO: Dead or final frenzy to implement
+        return nextHealthState;
+    }
+
+    @Override
+    public boolean isFinalFrenzy() {
+        return false;
     }
 }

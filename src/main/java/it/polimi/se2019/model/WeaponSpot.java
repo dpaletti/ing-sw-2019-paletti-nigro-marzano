@@ -1,5 +1,7 @@
 package it.polimi.se2019.model;
 
+import java.util.List;
+
 public class WeaponSpot {
     private Weapon firstWeapon;
     private Weapon secondWeapon;
@@ -11,8 +13,16 @@ public class WeaponSpot {
         this.thirdWeapon= new Weapon(weaponSpot.thirdWeapon);
     }
 
+    public WeaponSpot (List<Weapon> cards){
+        if (cards.size()>3)
+            throw new UnsupportedOperationException("The number of cards exceeds the number of possible spots");
+        firstWeapon= new Weapon(cards.get(0));
+        secondWeapon= new Weapon(cards.get(1));
+        thirdWeapon= new Weapon(cards.get(2));
+    }
+
     public Weapon getFirstWeapon() {
-        return firstWeapon;
+        return new Weapon(firstWeapon);
     }
 
     public void setFirstWeapon(Weapon firstWeapon) {
@@ -20,7 +30,7 @@ public class WeaponSpot {
     }
 
     public Weapon getSecondWeapon() {
-        return secondWeapon;
+        return new Weapon(secondWeapon);
     }
 
     public void setSecondWeapon(Weapon secondWeapon) {
@@ -28,11 +38,12 @@ public class WeaponSpot {
     }
 
     public Weapon getThirdWeapon() {
-        return thirdWeapon;
+        return new Weapon(thirdWeapon);
     }
 
     public void setThirdWeapon(Weapon thirdWeapon) {
         this.thirdWeapon = thirdWeapon;
     }
+
 
 }

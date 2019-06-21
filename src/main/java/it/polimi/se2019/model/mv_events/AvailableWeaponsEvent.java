@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 public class AvailableWeaponsEvent extends MVEvent {
-    ArrayList<String> weapons;
+    private ArrayList<String> weapons;
 
     public AvailableWeaponsEvent (String destination, List<String> weapons){
         super(destination);
@@ -19,5 +19,9 @@ public class AvailableWeaponsEvent extends MVEvent {
     @Override
     public void handle(MVEventDispatcher dispatcher) {
         dispatcher.dispatch(this);
+    }
+
+    public ArrayList<String> getWeapons() {
+        return weapons;
     }
 }

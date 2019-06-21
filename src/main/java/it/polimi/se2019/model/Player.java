@@ -24,8 +24,6 @@ public class Player extends Observable<Action> implements Targetable{
     private Integer points= 0;
     private Set<Ammo> usableAmmo= new HashSet<>();
     private Set<Ammo> unusableAmmo= new HashSet<>();
-    private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1, 1, 1));
-    private List <Integer> frenzyPointsToAssign= new ArrayList<>(Arrays.asList(2, 1, 1, 1, 1));
     private Game game;
 
     public Player (Figure figure, Game game){
@@ -38,11 +36,11 @@ public class Player extends Observable<Action> implements Targetable{
         }
         this.figure.setPlayer(this);
     }
+
     @Override
     public void hit(String partialWeaponEffect, List<Targetable> hit, TurnMemory turnMemory) {
         List<Player> list = new ArrayList<>();
-        for (Targetable t: hit
-             )
+        for (Targetable t: hit)
            list.add((Player) t);
         turnMemory.putPlayers(partialWeaponEffect, list);
         turnMemory.setLastEffectUsed(partialWeaponEffect);
@@ -173,10 +171,6 @@ public class Player extends Observable<Action> implements Targetable{
         return usableAmmo;
     }
 
-    public List<Integer> getPointsToAssign() {
-        return pointsToAssign;
-    }
-
     public PlayerValue getPlayerValue() {
         return playerValue;
     }
@@ -197,10 +191,6 @@ public class Player extends Observable<Action> implements Targetable{
         this.firstPowerUp = firstPowerUp;
     }
 
-    public void setHp(List<Tear> hp) {
-        this.hp = hp;
-    }
-
     public void setMarks(Set<Tear> marks) {
         this.marks = marks;
     }
@@ -213,6 +203,9 @@ public class Player extends Observable<Action> implements Targetable{
         this.thirdPowerUp = thirdPowerUp;
     }
 
+    public void setHp(List<Tear> hp) {
+        this.hp = hp;
+    }
 
     public Set<Weapon> showWeapons (){
         Set<Weapon> weapons= new HashSet<>();
@@ -221,16 +214,6 @@ public class Player extends Observable<Action> implements Targetable{
         weapons.add(thirdWeapon);
         return weapons;
     }
-
-
-
-    public void moveFigure (Direction direction){
-        figure.move(direction);
-    } //used by weapons
-
-    public void moveFigure (Direction direction, Figure target){
-        figure.move(target, direction);
-    } //used by weapons
 
     public void teleport (Point position){
         figure.teleport(position);
@@ -290,9 +273,12 @@ public class Player extends Observable<Action> implements Targetable{
         if(healthState.getMaximumHits()==hp.size()){
             healthState= healthState.findNextHealthState();
         }
-        if (hp.size()>=10){
+        if (hp.size()>=10)
                 game.deathHandler(this);
-        }
+    }
+
+    void updatePlayerDamage (PlayerDamage playerDamage){
+        healthState= playerDamage;
     }
 
 
@@ -325,6 +311,7 @@ public class Player extends Observable<Action> implements Targetable{
         PowerUp discardedPowerUp= new PowerUp(powerUpToAdd.getName(), powerUpToAdd.getCardColour().getColour());
 
         if (powerUp.equals(firstPowerUp)){
+            discardedPowerUp= 
             discardedPowerUp= new PowerUp(firstPowerUp.getName(), firstPowerUp.getCardColour().getColour());
             firstPowerUp=powerUpToAdd;
         }

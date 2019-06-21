@@ -22,7 +22,7 @@ public class StateEncoder {
                 getEncodedFigureColour(player.getFigure().getColour())+ ";"+
                 getEncodedTears(player.getHp())+ ";"+
                 getEncodedTears(player.getMarks())+ ";"+
-                player.getPointsToAssign().get(0)+ ";"+
+                player.getPlayerValue()+ ";"+
                 player.getFirstWeapon().getName()+ ";"+
                 player.getSecondWeapon().getName()+ ";"+
                 player.getThirdWeapon().getName()+ ";"+
@@ -144,7 +144,7 @@ public class StateEncoder {
                             weaponSpot.getSecondWeapon()+","+
                             weaponSpot.getThirdWeapon() + ";");*/
         }else if (tile.getTileType().equals(TileType.LOOTTILE)){
-            tempString=tempString.concat(tile.getLootCard().getName()+ ";");
+            //tempString=tempString.concat(tile.getLootCard().getName()+ ";");
         }
         return tempString;
     }

@@ -66,8 +66,7 @@ public class TurnController extends Controller {
             }
         }
 
-
-    @Override
+        @Override
         public void dispatch(PowerUpUsageEvent message) {
             try {
                 model.usePowerUp(message.getSource(), message.getUsedPowerUp());
@@ -109,6 +108,12 @@ public class TurnController extends Controller {
         nextPartialCombo();
     }
 
+    @Override
+    public void dispatch(CalculatePointsEvent message) {
+        if (model.isFinalFrenzy())
+            new FinalFrenzyController(server, getRoomNumber(), model, this);
+    }
+
     private AmmoColour stringToAmmo (String ammoName){
         for (AmmoColour ammoColour: AmmoColour.values()){
             if (ammoColour.toString().equalsIgnoreCase(ammoName)){
@@ -122,6 +127,7 @@ public class TurnController extends Controller {
         comboUsed++;
         if (comboUsed==2) {//TODO: settings
             //TODO: reload, end turn or use powerup
+            //to end turn: model.endTurn(player) and currentPlayer= next
             return;
         }
         //TODO: send MVEvent to ask the user the next chosen combo
