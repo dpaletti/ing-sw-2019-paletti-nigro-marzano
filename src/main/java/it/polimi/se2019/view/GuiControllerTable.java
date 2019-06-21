@@ -3,6 +3,10 @@ package it.polimi.se2019.view;
 import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.gui_events.UiMatchSetup;
+import it.polimi.se2019.view.gui_events.UiTimerStart;
+import it.polimi.se2019.view.gui_events.UiTimerStop;
+import it.polimi.se2019.view.gui_events.UiTimerTick;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -80,6 +84,8 @@ public class GuiControllerTable extends GuiController {
     private int skulls;
     private boolean frenzy = false;
     private Semaphore choiceSem = new Semaphore(2, true);
+    private GridPane choiceGrid;
+    private SimpleStringProperty timerValue;
 
     @FXML
     private void clickable(){
@@ -111,6 +117,7 @@ public class GuiControllerTable extends GuiController {
 
             root.add(choichePane,3, 2);
             GridPane mapGrid = new GridPane();
+            choiceGrid = (GridPane) choichePane.getChildren().get(0);
 
             Pane tempPane;
             ImageView tempImage;
@@ -131,8 +138,8 @@ public class GuiControllerTable extends GuiController {
                 }
             }
 
-            initializeCheckBox((GridPane) choichePane.getChildren().get(0));
-            initializeSkullSelection((GridPane) choichePane.getChildren().get(0));
+            initializeCheckBox();
+            initializeSkullSelection();
             choiceSem.acquireUninterruptibly(2);
             viewGUI.gameSetup(skulls, frenzy, chosenMap);
         }catch (MalformedURLException e){
@@ -142,10 +149,38 @@ public class GuiControllerTable extends GuiController {
         }
     }
 
-    public void initializeSkullSelection(GridPane choicheGrid){
+    @Override
+    public void dispatch(UiTimerStart message) {
+        getTimer().setText("Time left: " + message.getDuration());
+        timerValue = new SimpleStringProperty(((Integer) message.getDuration()).toString());
+        getTimer().setText("Time left: " + timerValue.get());
+        getTimer().textProperty().bind(timerValue);
+    }
+
+    @Override
+    public void dispatch(UiTimerTick message) {
+        int timeToSet = message.getTimeToGo() /1000;
+        timerValue.set((((Integer)timeToSet).toString()));
+    }
+
+    @Override
+    public void dispatch(UiTimerStop message) {
+        getTimer().setText("Time is up");
+        choiceGrid.setDisable(true);
+    }
+
+    public Label getTimer(){
+        for(Node n: choiceGrid.getParent().getChildrenUnmodifiable()){
+            if(n.getId().equals("choiceTimer"))
+                return (Label) n;
+        }
+        throw new NullPointerException("Could not find timer label");
+    }
+
+    public void initializeSkullSelection(){
         List<RadioButton> skullButtons = new ArrayList<>();
         GridPane gridPane = null;
-        for(Node n: choicheGrid.getChildren()){
+        for(Node n: choiceGrid.getChildren()){
             if(n.getId().equals("skullGrid")){
                 gridPane = (GridPane) n;
             }
@@ -170,9 +205,9 @@ public class GuiControllerTable extends GuiController {
         }
     }
 
-    public void initializeCheckBox(GridPane choicheGrid){
+    public void initializeCheckBox(){
         CheckBox frenzyBox = null;
-        for(Node n: choicheGrid.getChildren()){
+        for(Node n: choiceGrid.getChildren()){
             if(n.getId().equals("frenzy"))
                 frenzyBox = (CheckBox) n;
         }

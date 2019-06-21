@@ -1,6 +1,5 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.network.Settings;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.gui_events.*;
 import javafx.beans.property.SimpleStringProperty;
@@ -27,7 +26,7 @@ public class GuiControllerMatchMaking extends GuiController implements Initializ
 
     private int missingPlayers = 3;
 
-    private SimpleStringProperty timerValue = new SimpleStringProperty(((Integer) Settings.MATCH_MAKING_TIMER).toString());
+    private SimpleStringProperty timerValue;
 
         @Override
         public void dispatch(UiAddPlayer message) {
@@ -39,6 +38,7 @@ public class GuiControllerMatchMaking extends GuiController implements Initializ
         @Override
         public void dispatch(UiTimerStart message) {
             currentStage.setTitle("Match starting");
+            timerValue = new SimpleStringProperty(((Integer) message.getDuration()).toString());
             timer.setText(timerValue.get());
             timer.setFont(new Font(18));
             timer.textProperty().bind(timerValue);

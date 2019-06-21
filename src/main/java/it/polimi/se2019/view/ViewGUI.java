@@ -1,9 +1,7 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.mv_events.AllowedWeaponsEvent;
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Client;
-import it.polimi.se2019.network.Settings;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Pair;
 import it.polimi.se2019.utility.Point;
@@ -30,6 +28,7 @@ public class ViewGUI extends View {
     boolean matchInitialization = false;
     private static SynchronousQueue<GuiController> guiControllers = new SynchronousQueue<>();
     private List<MockPlayer> players = new ArrayList<>();
+    private boolean timerGoing=false;
 
 
     //TODO set board conf
@@ -104,10 +103,14 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(TimerEvent message) {
-        if (((Integer) message.getTimeToGo()).equals(Settings.MATCH_MAKING_TIMER))
-            ViewGUI.this.notify(new UiTimerStart());
-        if (message.getTimeToGo() < 0)
+        if (!timerGoing) {
+            ViewGUI.this.notify(new UiTimerStart(message.getTimeToGo()));
+            timerGoing = true;
+        }
+        if (message.getTimeToGo() < 0) {
             ViewGUI.this.notify(new UiTimerStop());
+            timerGoing = false;
+        }
         ViewGUI.this.notify(new UiTimerTick(message.getTimeToGo()));
     }
 
