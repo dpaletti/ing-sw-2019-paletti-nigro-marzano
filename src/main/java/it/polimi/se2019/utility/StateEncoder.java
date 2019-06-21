@@ -26,12 +26,12 @@ public class StateEncoder {
                 player.getFirstWeapon().getName()+ ";"+
                 player.getSecondWeapon().getName()+ ";"+
                 player.getThirdWeapon().getName()+ ";"+
-                getEncodedPowerUpNames(player.getFirstPowerUp())+
+                /*getEncodedPowerUpNames(player.getFirstPowerUp())+
                 getEncodedPowerUpColor(player.getFirstPowerUp())+ ";"+
                 getEncodedPowerUpNames(player.getSecondPowerUp())+
                 getEncodedPowerUpColor(player.getSecondPowerUp())+ ";"+
                 getEncodedPowerUpNames(player.getThirdPowerUp())+
-                getEncodedPowerUpColor(player.getThirdPowerUp())+ ";"+
+                getEncodedPowerUpColor(player.getThirdPowerUp())+ ";"+*/
                 player.getPoints()+ ";"+
                 getEncodedAmmo(player.getUsableAmmo())+ ";"+
                 player.getFigure().getPosition().getX()+ ","+ player.getFigure().getPosition().getY()+

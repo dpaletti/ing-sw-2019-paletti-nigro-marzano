@@ -1,6 +1,8 @@
 package it.polimi.se2019.model;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestGameMap {
     GameMap map;
 

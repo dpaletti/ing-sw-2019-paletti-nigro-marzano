@@ -76,4 +76,8 @@ public interface VCEventDispatcher extends EventDispatcher {
     default void dispatch (CalculatePointsEvent message){
         throw new UnsupportedOperationException("CalculatePointsEvent not supported");
     }
+
+    default void dispatch (VcMatchConfigurationEvent message){
+        throw new UnsupportedOperationException("VcMatchConfigurationEvent not supported");
+    }
 }

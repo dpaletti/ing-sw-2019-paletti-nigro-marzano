@@ -8,7 +8,7 @@ import java.util.Set;
 
 import static junit.framework.TestCase.*;
 
-
+@Ignore
 public class TestGraphNode {
         private GraphNode<String> child= new GraphNode<>("Acerbi",1);
         private GraphNode<String> parent= new GraphNode<>( "Strakosha",0);

@@ -2,10 +2,13 @@ package it.polimi.se2019.model;
 import it.polimi.se2019.utility.Action;
 import it.polimi.se2019.utility.ActionType;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+
+@Ignore
 public class TestAction {
     Action action= new Action();
 

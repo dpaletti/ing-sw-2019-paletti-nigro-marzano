@@ -224,7 +224,7 @@ public class Figure {
              //not enough ammo available to reload, want to use PowerUps?
             //TODO: VCEvent: no, end reload/yes, use selectedPowerUp to pay
             PowerUp selectedPowerUp=null;
-            player.sellPowerUp(selectedPowerUp);
+            player.sellPowerUp(selectedPowerUp.name);
             reload(weapon);
         }
     }

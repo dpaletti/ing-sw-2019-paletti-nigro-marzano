@@ -3,6 +3,7 @@ package it.polimi.se2019.model;
 import it.polimi.se2019.utility.BiSet;
 import it.polimi.se2019.utility.Pair;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+@Ignore
 public class TestGame {
 
     private Game game= new Game();

@@ -1,9 +1,12 @@
 package it.polimi.se2019.model;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.file.Paths;
 
+
+@Ignore
 public class TestCard {
   /*
     private Weapon zx2= new Weapon(Paths.get("files/weapons/Zx2.json").toString());
