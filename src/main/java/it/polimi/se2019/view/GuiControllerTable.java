@@ -134,7 +134,7 @@ public class GuiControllerTable extends GuiController {
             initializeCheckBox((GridPane) choichePane.getChildren().get(0));
             initializeSkullSelection((GridPane) choichePane.getChildren().get(0));
             choiceSem.acquireUninterruptibly(2);
-            viewGUI.
+            viewGUI.gameSetup(skulls, frenzy, chosenMap);
         }catch (MalformedURLException e){
             Log.severe("Url for table");
         }catch (IOException e){
