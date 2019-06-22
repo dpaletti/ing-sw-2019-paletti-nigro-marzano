@@ -36,6 +36,10 @@ public class Game extends Observable<MVEvent> {
         observers = new ArrayList<>();
     }
 
+    public void send (MVEvent event){
+        notify(event);
+    }
+
     public void weaponEnd (String playing){
         notify(new MVWeaponEndEvent(playing));
     }

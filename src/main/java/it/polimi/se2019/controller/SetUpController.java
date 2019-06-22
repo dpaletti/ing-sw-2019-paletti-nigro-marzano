@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
+import it.polimi.se2019.model.mv_events.FinalConfigurationEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.network.Settings;
 import it.polimi.se2019.utility.Log;
@@ -17,6 +18,7 @@ public class SetUpController extends Controller {
     private List<String> configs = new ArrayList<>();
     private List<Boolean> isFinalFrenzy = new ArrayList<>();
     private int counter = 0;
+    private Random random;
 
 
     public SetUpController(Game model, Server server, int roomNumber) {
@@ -50,20 +52,24 @@ public class SetUpController extends Controller {
     @Override
     protected void endTimer() {
         super.endTimer();
-
+        model.send(new FinalConfigurationEvent("*", mostVoted(skulls), mostVoted(configs), mostVoted(isFinalFrenzy)));
     }
 
-    private Object mostVoted (List<Object> objects){
-        Map<Object, Integer> votes= new HashMap<>();
+    private <T> T mostVoted (List<T> objects){
+        Map<T, Integer> votes= new HashMap<>();
         int maximum = -1;
-        List<Object> mostVoted= new ArrayList<>();
-        for (Object o: objects)
+        List<T> mostVoted= new ArrayList<>();
+        for (T o: objects)
             votes.put(o, Collections.frequency(objects, o));
-        for (int i: votes.values()){
-            if (maximum == -1 || i>maximum){
+        for (Map.Entry<T, Integer> e: votes.entrySet()){
+            if (maximum == -1 || e.getValue()>maximum){
                 mostVoted.clear();
+                mostVoted.add(e.getKey());
+                maximum = e.getValue();
             }
+            else
+                mostVoted.add(e.getKey());
         }
-        return mostVoted.get(0);
+        return mostVoted.get(random.nextInt(mostVoted.size()));
     }
 }
