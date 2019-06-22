@@ -17,24 +17,18 @@ public class StateEncoder {
         return encodedUsers;
     }
 
+    //Example: Santoro:fcol:M;hp:VBBBBB;mrk:;w1:Thor,false;w2:,;w3:,;pnt:12;amm:R1,B2,Y3;pos:1,1
     public static String getEncodedUser(Player player, String user){
         return  user+ ":"+
-                getEncodedFigureColour(player.getFigure().getColour())+ ";"+
-                getEncodedTears(player.getHp())+ ";"+
-                getEncodedTears(player.getMarks())+ ";"+
-                player.getPlayerValue()+ ";"+
-                player.getFirstWeapon().getName()+ ";"+
-                player.getSecondWeapon().getName()+ ";"+
-                player.getThirdWeapon().getName()+ ";"+
-                /*getEncodedPowerUpNames(player.getFirstPowerUp())+
-                getEncodedPowerUpColor(player.getFirstPowerUp())+ ";"+
-                getEncodedPowerUpNames(player.getSecondPowerUp())+
-                getEncodedPowerUpColor(player.getSecondPowerUp())+ ";"+
-                getEncodedPowerUpNames(player.getThirdPowerUp())+
-                getEncodedPowerUpColor(player.getThirdPowerUp())+ ";"+*/
-                player.getPoints()+ ";"+
-                getEncodedAmmo(player.getUsableAmmo())+ ";"+
-                player.getFigure().getPosition().getX()+ ","+ player.getFigure().getPosition().getY()+
+                "fcol:"+getEncodedFigureColour(player.getFigure().getColour())+ ";"+
+                "hp:"+getEncodedTears(player.getHp())+ ";"+
+                "mrk:"+getEncodedTears(player.getMarks())+ ";"+
+                "pval:"+player.getPlayerValue()+ ";"+
+                getEncodedWeapons(player.getWeapons())+
+                getEncodedPowerUps(player.getPowerUps())+
+                "pnt:"+player.getPoints()+ ";"+
+                "amm:"+getEncodedAmmo(player.getUsableAmmo())+ ";"+
+                "pos:"+player.getFigure().getPosition().getX()+ ","+ player.getFigure().getPosition().getY()+
                 System.lineSeparator();
     }
 
@@ -136,17 +130,42 @@ public class StateEncoder {
     //TODO Refactor method to adjust it to the new structure of tile
     public static String getEncodedTile(Tile tile){
         String tempString="";
+        /*
         tempString=tempString.concat("("+tile.getPosition().getX()+","+tile.getPosition().getY()+")");
         if (tile.getTileType().equals(TileType.SPAWNTILE)){
             /*WeaponSpot weaponSpot=tile.getWeaponSpot();
             tempString=tempString.concat(
                     weaponSpot.getFirstWeapon()+","+
                             weaponSpot.getSecondWeapon()+","+
-                            weaponSpot.getThirdWeapon() + ";");*/
+                            weaponSpot.getThirdWeapon() + ";");
         }else if (tile.getTileType().equals(TileType.LOOTTILE)){
-            //tempString=tempString.concat(tile.getLootCard().getName()+ ";");
-        }
+            tempString=tempString.concat(tile.getLootCard().getName()+ ";");
+        }*/
         return tempString;
+    }
+
+    public static String getEncodedWeapons(List<Weapon> weapons){
+        String encodedWeapons="";
+        for(int i=0;i<3;i++){
+            encodedWeapons=encodedWeapons.concat("w"+i+":");
+            if (weapons.get(i)!=null)
+                encodedWeapons=encodedWeapons.concat(weapons.get(i).getName()+","+weapons.get(i).getLoaded()+";");
+            else
+                encodedWeapons=encodedWeapons.concat(",;");
+        }
+        return encodedWeapons;
+    }
+
+    public static String getEncodedPowerUps(List<PowerUp> powerUps){
+        String encodedPowerUps="";
+        for (int i=0;i<3;i++){
+            encodedPowerUps=encodedPowerUps.concat("p"+i+":");
+            if (powerUps.get(i)!=null)
+                encodedPowerUps=encodedPowerUps.concat(getEncodedPowerUpNames(powerUps.get(i))+";");
+            else
+                encodedPowerUps=encodedPowerUps.concat(",;");
+        }
+        return encodedPowerUps;
     }
 
     public static String addBoard(GameMap map,String file){

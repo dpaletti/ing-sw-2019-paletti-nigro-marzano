@@ -14,9 +14,7 @@ public class Player extends Observable<Action> implements Targetable{
     private PlayerDamage healthState= new Healthy();
     private PlayerValue playerValue= new NoDeaths();
     private Set<Tear> marks= new HashSet<>();
-    private Weapon firstWeapon;
-    private Weapon secondWeapon;
-    private Weapon thirdWeapon;
+    private List<Weapon> weapons=new ArrayList<>();
     private List<PowerUp> powerUps= new ArrayList<>();
     private PowerUp temporaryPowerUp= null;
     private Integer points= 0;
@@ -123,16 +121,8 @@ public class Player extends Observable<Action> implements Targetable{
         this.usableAmmo = usableAmmo;
     }
 
-    public Weapon getThirdWeapon() {
-        return thirdWeapon;
-    }
-
-    public Weapon getSecondWeapon() {
-        return secondWeapon;
-    }
-
-    public Weapon getFirstWeapon() {
-        return firstWeapon;
+    public List<Weapon> getWeapons() {
+        return weapons;
     }
 
     public Figure getFigure() {
@@ -165,7 +155,8 @@ public class Player extends Observable<Action> implements Targetable{
         return playerValue;
     }
 
-    public void setThirdWeapon(Weapon thirdWeapon) {
+    //TODO: Put the setter and the constraints on the weapons'list size
+    /*public void setThirdWeapon(Weapon thirdWeapon) {
         this.thirdWeapon = thirdWeapon;
     }
 
@@ -175,7 +166,7 @@ public class Player extends Observable<Action> implements Targetable{
 
     public void setFirstWeapon(Weapon firstWeapon) {
         this.firstWeapon = firstWeapon;
-    }
+    }*/
 
     public void setMarks(Set<Tear> marks) {
         this.marks = marks;
@@ -185,11 +176,12 @@ public class Player extends Observable<Action> implements Targetable{
         this.hp = hp;
     }
 
+    //TODO Change ths showWeapons with the getter in the usages and delete this method
     public Set<Weapon> showWeapons (){
         Set<Weapon> weapons= new HashSet<>();
-        weapons.add(firstWeapon);
+        /*weapons.add(firstWeapon);
         weapons.add(secondWeapon);
-        weapons.add(thirdWeapon);
+        weapons.add(thirdWeapon);*/
         return weapons;
     }
 

@@ -290,9 +290,10 @@ public class Game extends Observable<MVEvent> {
         playerToMove.teleport(teleportPosition);
     }
 
+    //TODO: do this method with List of weapons
     public void reloadWeapon (String username, String weaponName){
         Player playerReloading= userToPlayer(username);
-        if (weaponName.equals(playerReloading.getFirstWeapon().getName())){
+       /* if (weaponName.equals(playerReloading.getFirstWeapon().getName())){
             playerReloading.reload(playerReloading.getFirstWeapon());
         }
         else if (weaponName.equals(playerReloading.getSecondWeapon().getName())){
@@ -300,7 +301,7 @@ public class Game extends Observable<MVEvent> {
         }
         else if (weaponName.equals(playerReloading.getThirdWeapon().getName())){
             playerReloading.reload(playerReloading.getThirdWeapon());
-        }
+        }*/
     }
 
     public void run (String username, Point destination){

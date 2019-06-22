@@ -25,7 +25,7 @@ public class TestStateEncoder {
 
     @Before
     public void setup(){
-        player.setFirstWeapon((Weapon)weaponHelper.findByName("Cyberblade"));
+        /*player.setFirstWeapon((Weapon)weaponHelper.findByName("Cyberblade"));
         player.setSecondWeapon((Weapon)weaponHelper.findByName("Shotgun"));
         player.setThirdWeapon((Weapon)weaponHelper.findByName("Furnace"));
         player.setHp(new ArrayList<>());
