@@ -7,6 +7,11 @@
 	"weaponEffects": [
 		{
 			"name": "effect",
+			"priority": 3,
+			"invalidEffects": [],
+			"price":[],
+			"maxHeight":1,
+			"effectType":-1,
 			"effects": [
 				{
 					"priority": 3,
@@ -34,7 +39,9 @@
                            "value": 1
                        }
                     ],
-                    "name": "B1"
+                    "name": "B1",
+					"endable": false,
+					"invalidEffects": []
 				},
 				{
 					"priority": 3,
@@ -62,13 +69,14 @@
                            "value": 2
                        }
                     ],
-                    "name": "B2"
+                    "name": "B2",
+					"endable": false,
+					"invalidEffects": []
 				}
 			]
 		}
 	],
 	"name": "NewtonYellow",
     "maxHeight": 1,
-	"constraint": "onTurn",
-    "invalidCombinations":[]
+	"constraint": "onTurn"
 }

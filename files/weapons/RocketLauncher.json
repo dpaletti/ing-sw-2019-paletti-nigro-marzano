@@ -195,7 +195,6 @@
                     "actions": [],
                     "name": "B4",
                     "endable": false,
-                    "price": [],
                     "invalidEffects":[]
                 },
                 {
@@ -229,12 +228,12 @@
                   ],
                   "endable": false,
                   "name": "E2",
-                  "price": [],
                   "invalidEffects":[]
                 }
             ]
         }
     ],
     "name": "RocketLauncher",
-    "maxHeight": 3
+    "maxHeight": 3,
+    "constraint": ""
 }

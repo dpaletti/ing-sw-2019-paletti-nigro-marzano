@@ -216,5 +216,6 @@
     }
   ],
   "name": "MachineGun",
-  "maxHeight": 3
+  "maxHeight": 3,
+  "constraint": ""
 }

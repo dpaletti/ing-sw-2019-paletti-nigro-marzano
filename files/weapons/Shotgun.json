@@ -126,5 +126,6 @@
         }
     ],
     "name": "Shotgun",
-    "maxHeight": 1
+    "maxHeight": 1,
+    "constraint": ""
 }

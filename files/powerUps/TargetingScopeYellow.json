@@ -7,6 +7,15 @@
 	"weaponEffects": [
 		{
 			"name": "effect",
+			"priority": 3,
+			"invalidEffects": [],
+			"price": [
+				{
+					"colour": "YELLOW"
+				}
+			],
+			"maxHeight":1,
+			"effectType":-1,
 			"effects": [
 				{
 					"priority": 3,
@@ -35,11 +44,8 @@
                        }
                     ],
                     "name": "B1",
-					"price": [
-						{
-							"colour": "YELLOW"
-						}
-					]
+					"endable": false,
+					"invalidEffects": []
 				},
 				{
 					
@@ -69,11 +75,8 @@
                        }
                     ],
                     "name": "B2",
-					"price": [
-						{
-							"colour": "BLUE"
-						}
-					]
+					"endable": false,
+					"invalidEffects": []
 				},
 				{
 					"priority": 3,
@@ -102,17 +105,13 @@
                        }
                     ],
                     "name": "B3",
-					"price": [
-						{
-							"colour": "RED"
-						}
-					]
+					"endable": false,
+					"invalidEffects": []
 				}
 			]
 		}
 	],
 	"name": "TargetingScopeYellow",
     "maxHeight": 1,
-	"constraint": "onAttack",
-    "invalidCombinations":[]
+	"constraint": "onAttack"
 }

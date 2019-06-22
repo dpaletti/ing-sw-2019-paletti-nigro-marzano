@@ -15,6 +15,7 @@ public abstract class Card {
     protected Set<WeaponEffect> weaponEffects;
     protected String name;
     protected int maxHeight;
+    protected String constraint;
     private GraphNode<GraphWeaponEffect> staticDefinition=new GraphNode<>(null,0);
 
     public Card(String path) {
@@ -25,6 +26,7 @@ public abstract class Card {
             this.name = card.name;
             this.price = card.price;
             this.weaponEffects = card.weaponEffects;
+            this.constraint=card.constraint;
             defineCard();
         }catch (IOException c){
             Log.severe("Card not found in given directory");
@@ -41,6 +43,7 @@ public abstract class Card {
         this.weaponEffects=card.weaponEffects;
         this.name=card.name;
         this.maxHeight=card.maxHeight;
+        this.constraint=card.constraint;
         this.staticDefinition=card.staticDefinition;
 
     }

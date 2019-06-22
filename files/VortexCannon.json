@@ -308,5 +308,6 @@
     }
   ],
   "name": "VortexCannon",
-  "maxHeight": 2
+  "maxHeight": 2,
+  "constraint": ""
 }

@@ -7,6 +7,11 @@
 	"weaponEffects": [
 		{
 			"name": "effect",
+			"priority": 3,
+			"invalidEffects": [],
+			"price":[],
+			"maxHeight":1,
+			"effectType":-1,
 			"effects": [
 				{
 					"priority": 3,
@@ -34,13 +39,14 @@
                            "value": 1
                        }
                     ],
-                    "name": "B"
+                    "name": "B",
+                    "endable": false,
+                    "invalidEffects": []
 				}
 			]
 		}
 	],
 	"name": "TeleportYellow",
     "maxHeight": 1,
-	"constraint": "onTurn",
-    "invalidCombinations":[]
+	"constraint": "onTurn"
 }

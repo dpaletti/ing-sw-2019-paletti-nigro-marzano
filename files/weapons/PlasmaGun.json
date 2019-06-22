@@ -204,5 +204,6 @@
         }
     ],
     "name": "PlasmaGun",
-    "maxHeight": 3
+    "maxHeight": 3,
+    "constraint": ""
 }
