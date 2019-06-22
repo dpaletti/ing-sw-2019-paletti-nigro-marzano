@@ -8,8 +8,7 @@ import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.ConflictResolutionEvent;
 import it.polimi.se2019.view.vc_events.VcMatchConfigurationEvent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.Thread.sleep;
 
@@ -18,15 +17,11 @@ public class SetUpController extends Controller {
     private List<String> configs = new ArrayList<>();
     private List<Boolean> isFinalFrenzy = new ArrayList<>();
     private int counter = 0;
-    private Thread timer;
 
 
-    public SetUpController(Game model, Server server, int roomNumber, List<Integer> skulls, List<String> configs, List<Boolean> isFinalFrenzy) {
+    public SetUpController(Game model, Server server, int roomNumber) {
         super(model, server, roomNumber);
-        this.skulls = skulls;
-        this.configs = configs;
-        this.isFinalFrenzy = isFinalFrenzy;
-        startTimer();
+        startTimer(Settings.MATCH_SETUP_TIMER);
     }
 
     @Override
@@ -48,30 +43,27 @@ public class SetUpController extends Controller {
         isFinalFrenzy.add(message.isFrenzy());
         counter++;
         if (counter==5) {
-            timer.interrupt();
-            closeSetUp();
+            endTimer();
         }
     }
 
-    private void startTimer (){
-        int period = Settings.MATCH_SETUP_TIMER/10;
-        timer = new Thread(() ->{
-            int time = 0;
-            try {
-                while(time < Settings.MATCH_SETUP_TIMER && !Thread.currentThread().isInterrupted()){
-                    model.timerTick(Settings.MATCH_SETUP_TIMER - time);
-                    time += period;
-                    sleep(period);
-                }
-                closeSetUp();
-            }catch (InterruptedException e){
-                Log.severe("MatchMaking timer interrupted");
-                Thread.currentThread().interrupt();
-            }});
-        timer.start();
+    @Override
+    protected void endTimer() {
+        super.endTimer();
+
     }
 
-    private void closeSetUp(){
-        //calculate set up
+    private Object mostVoted (List<Object> objects){
+        Map<Object, Integer> votes= new HashMap<>();
+        int maximum = -1;
+        List<Object> mostVoted= new ArrayList<>();
+        for (Object o: objects)
+            votes.put(o, Collections.frequency(objects, o));
+        for (int i: votes.values()){
+            if (maximum == -1 || i>maximum){
+                mostVoted.clear();
+            }
+        }
+        return mostVoted.get(0);
     }
 }

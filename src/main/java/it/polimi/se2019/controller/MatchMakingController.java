@@ -41,61 +41,45 @@ public class MatchMakingController extends Controller {
         }
     }
 
-        @Override
-        public void dispatch(VcJoinEvent message) {
-            int period = Settings.MATCH_MAKING_TIMER/10;
-            usernames.add(message.getUsername());
-            model.newPlayerInMatchMaking(message.getSource(), message.getUsername());
+    @Override
+    public void dispatch(VcJoinEvent message) {
+        usernames.add(message.getUsername());
+        model.newPlayerInMatchMaking(message.getSource(), message.getUsername());
 
-            playerCount.set(playerCount.addAndGet(1));
-            Log.info("Players in match making: " + playerCount);
-            if (playerCount.get() == 3) {
-                Log.fine("Timer started");
-                timerRunning.set(true);
+        playerCount.set(playerCount.addAndGet(1));
+        Log.info("Players in match making: " + playerCount);
+        if (playerCount.get() == 3) {
+            Log.fine("Timer started");
+            startTimer(Settings.MATCH_MAKING_TIMER);
+            timerRunning.set(true);
+        }
+        if (playerCount.get() == 5) {
+            timerRunning.set(false);
+            endTimer();
+        }
+    }
 
-               timer = new Thread(() ->{
-                    int counter = 0;
-                        try {
-                            while(counter < Settings.MATCH_MAKING_TIMER && !Thread.currentThread().isInterrupted()){
-                                model.timerTick(Settings.MATCH_MAKING_TIMER - counter);
-                                counter += period;
-                                sleep(period);
-                            }
-                            closeMatchMaking();
-                        }catch (InterruptedException e){
-                            Log.severe("MatchMaking timer interrupted");
-                            Thread.currentThread().interrupt();
-                }});
-               timer.start();
-            }
-            if (playerCount.get() == 5) {
-                timerRunning.set(false);
+    @Override
+    public void dispatch(DisconnectionEvent disconnectionEvent) {
+        model.usernameDeletion(disconnectionEvent.getSource());
+        if (usernames.remove(disconnectionEvent.getSource())) {
+
+            playerCount.set(playerCount.decrementAndGet());
+            Log.info(disconnectionEvent.getSource() + " just disconnected, players in match making; " + playerCount);
+            if (playerCount.get() < 3 && timerRunning.get()) {
                 timer.interrupt();
-                closeMatchMaking();
+                timerRunning.set(false);
+                model.timerTick(-1); //negative time to go signals countdown interruption
+                Log.info("Timer stopped");
             }
         }
 
-        @Override
-        public void dispatch(DisconnectionEvent disconnectionEvent) {
-            model.usernameDeletion(disconnectionEvent.getSource());
-            if (usernames.remove(disconnectionEvent.getSource())) {
+    }
 
-                playerCount.set(playerCount.decrementAndGet());
-                Log.info(disconnectionEvent.getSource() + " just disconnected, players in match making; " + playerCount);
-                if (playerCount.get() < 3 && timerRunning.get()) {
-                    timer.interrupt();
-                    timerRunning.set(false);
-                    model.timerTick(-1); //negative time to go signals countdown interruption
-                    Log.info("Timer stopped");
-                }
-            }
-
-        }
-
-        @Override
-        public void dispatch(VcReconnectionEvent message) {
-            model.playerReconnection(message.getSource(), message.getOldToken(), true);
-        }
+    @Override
+    public void dispatch(VcReconnectionEvent message) {
+        model.playerReconnection(message.getSource(), message.getOldToken(), true);
+    }
 
 
     public int getPlayerCount() {
@@ -114,15 +98,18 @@ public class MatchMakingController extends Controller {
         return new ArrayList<>(usernames);
     }
 
-    private void closeMatchMaking(){
+    @Override
+    protected void endTimer() {
+        super.endTimer();
         Log.fine("closing match making");
         matchMade.set(true);
         List<String> actualUsernames = new ArrayList<>(usernames);
         actualUsernames.remove("*");
         model.closeMatchMaking(actualUsernames);
-        new MatchController(model, server, actualUsernames, getRoomNumber());
+        /*new MatchController(model, server, actualUsernames, getRoomNumber());
         new TurnController(model, server, getRoomNumber());
-        new WeaponController(server, getRoomNumber(), model);
+        new WeaponController(server, getRoomNumber(), model);*/
+        new SetUpController(model, server, getRoomNumber());
         server.removeController(this, getRoomNumber());
     }
 
