@@ -20,17 +20,19 @@ public class TestStateEncoder {
     Player player=new Player(new Figure(FigureColour.MAGENTA),new Game());
     String user;
     String file;
+    WeaponHelper weaponHelper= new WeaponHelper();
+    PowerUpHelper powerUpHelper= new PowerUpHelper();
 
     @Before
     public void setup(){
-        player.setFirstWeapon(CardHelper.getInstance().findWeaponByName("Cyberblade"));
-        player.setSecondWeapon(CardHelper.getInstance().findWeaponByName("Shotgun"));
-        player.setThirdWeapon(CardHelper.getInstance().findWeaponByName("Furnace"));
+        player.setFirstWeapon((Weapon)weaponHelper.findByName("Cyberblade"));
+        player.setSecondWeapon((Weapon)weaponHelper.findByName("Shotgun"));
+        player.setThirdWeapon((Weapon)weaponHelper.findByName("Furnace"));
         player.setHp(new ArrayList<>());
         player.setMarks(new HashSet<>());
-        /*player.setFirstPowerUp(CardHelper.getInstance().findPowerUpByName("TeleportRed"));
-        player.setSecondPowerUp(CardHelper.getInstance().findPowerUpByName("TeleportBlue"));
-        player.setThirdPowerUp(CardHelper.getInstance().findPowerUpByName("TeleportYellow"));*/
+        /*player.setFirstPowerUp((PowerUp)powerUpHelper.findByName("TeleportRed"));
+        player.setSecondPowerUp((PowerUp)powerUpHelper.findByName("TeleportBlue"));
+        player.setThirdPowerUp((PowerUp)powerUpHelper.findByName("TeleportYellow"));*/
         player.setPoints(3);
         player.setUsableAmmo(new HashSet<>());
         user= "Lulic71";

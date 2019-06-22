@@ -8,9 +8,8 @@ import java.nio.file.Paths;
 
 @Ignore
 public class TestCard {
-  /*
-    private Weapon zx2= new Weapon(Paths.get("files/weapons/Zx2.json").toString());
 
+    private Weapon zx2= new Weapon(Paths.get("files/weapons/Zx2.json").toString());
     private Weapon cyberblade= new Weapon(Paths.get("files/weapons/Cyberblade.json").toString());
     private Weapon flamethrower= new Weapon(Paths.get("files/weapons/Flamethrower.json").toString());
     private Weapon furnace= new Weapon(Paths.get("files/weapons/Furnace.json").toString());
@@ -28,14 +27,14 @@ public class TestCard {
     private Weapon whisper= new Weapon(Paths.get("files/weapons/Whisper.json").toString());
     private Weapon electroschyte= new Weapon(Paths.get("files/weapons/Electroschyte.json").toString());
     private Weapon tractorBeam= new Weapon(Paths.get("files/weapons/TractorBeam.json").toString());
-    private Weapon vortexCannon= new Weapon(Paths.get("files/weapons/VortexCannon.json").toString());
- */
     private Weapon machineGun= new Weapon(Paths.get("files/weapons/MachineGun.json").toString());
+    private Weapon powerglove= new Weapon(Paths.get("files/weapons/Powerglove.json").toString());
+    //private Weapon vortexCannon= new Weapon(Paths.get("files/weapons/VortexCannon.json").toString());
 
     @Test
     public void testPrintGraph(){
-        System.out.print(machineGun.getDefinition());
-        for (GraphNode<GraphWeaponEffect> g: machineGun.getDefinition()){
+        System.out.print(zx2.getDefinition());
+        for (GraphNode<GraphWeaponEffect> g: zx2.getDefinition()){
             System.out.print(g.getKey().name+"\t These are my effects:"+System.lineSeparator());
             System.out.print(g.getKey().getEffectGraph());
         }

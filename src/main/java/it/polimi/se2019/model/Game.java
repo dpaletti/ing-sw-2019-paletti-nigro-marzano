@@ -21,6 +21,7 @@ public class Game extends Observable<MVEvent> {
     private WeaponHelper weaponHelper=new WeaponHelper();
     private ComboHelper comboHelper=new ComboHelper();
     private PowerUpHelper powerUpHelper=new PowerUpHelper();
+    private LootCardHelper lootCardHelper=new LootCardHelper();
     private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1, 1, 1));
     private List <Integer> frenzyPointsToAssign= new ArrayList<>(Arrays.asList(2, 1, 1, 1, 1));
 
@@ -32,7 +33,7 @@ public class Game extends Observable<MVEvent> {
     public Game(){
         weaponDeck= new Deck(new ArrayList<>(weaponHelper.getWeapons()));
         powerUpDeck= new Deck(new ArrayList<>(powerUpHelper.getPowerUps()));
-        /*lootDeck= new Deck(new ArrayList<>(CardHelper.getInstance().getAllLootCards()));*/
+        lootDeck= new Deck(new ArrayList<>(lootCardHelper.getLootCards()));
         observers = new ArrayList<>();
     }
 
@@ -249,15 +250,15 @@ public class Game extends Observable<MVEvent> {
     }
 
     public Weapon nameToWeapon (String weaponName){
-        return CardHelper.getInstance().findWeaponByName(weaponName);
+        return (Weapon)weaponHelper.findByName(weaponName);
     }
 
     public PowerUp nameToPowerUp (String powerUpName){
-        return CardHelper.getInstance().findPowerUpByName(powerUpName);
+        return (PowerUp)powerUpHelper.findByName(powerUpName);
     }
 
     public LootCard nameToLootCard (String lootCardName){
-        return CardHelper.getInstance().findLootCardByName(lootCardName);
+        return (LootCard)lootCardHelper.findByName(lootCardName);
     }
 
     public List<Tear> getHp (String username){
@@ -362,14 +363,14 @@ public class Game extends Observable<MVEvent> {
     public void grab (String username, String grabbed){
         Player playerGrabbing= userToPlayer(username);
         Grabbable grabbedCard= null;
-        for (Weapon weapon: CardHelper.getInstance().getAllWeapons()){
+        for (Weapon weapon: weaponHelper.getWeapons()){
             if (weapon.getName().equalsIgnoreCase(grabbed)){
                 grabbedCard= nameToWeapon(grabbed);
                 break;
             }
         }
         if (grabbedCard==null){
-            for (LootCard lootCard: CardHelper.getInstance().getAllLootCards()){
+            for (LootCard lootCard: lootCardHelper.getLootCards()){
                 if (lootCard.getName().equalsIgnoreCase(grabbed)){
                     grabbedCard= nameToLootCard(grabbed);
                 }

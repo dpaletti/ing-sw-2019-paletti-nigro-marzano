@@ -98,7 +98,7 @@
           "colour": "BLUE"
         }
       ],
-      "maxHeight":3,
+      "maxHeight":4,
       "effectType":0,
       "effects": [
         {
@@ -127,7 +127,7 @@
               "area": false
             }
           ],
-          "endable": false,
+          "endable": true,
           "name": "B2",
           "invalidEffects": []
         },
@@ -159,7 +159,44 @@
           ],
           "endable": true,
           "name": "E2",
-          "invalidEffects": []
+          "invalidEffects": [
+            "E3"
+          ]
+        },
+        {
+          "priority": 2,
+          "targetSpecification": {
+            "tile": true,
+            "different": {
+              "first": false,
+              "second": []
+            },
+            "previous":{
+              "first": true,
+              "second": [
+                "B2"
+              ]
+            },
+            "radiusBetween": {
+              "first": 0,
+              "second": 0
+            },
+            "visible": -1,
+            "enlarge": -2
+          },
+          "actions": [
+            {
+              "actionType": "MOVE",
+              "value": 1,
+              "area": false
+            }
+          ],
+          "endable": true,
+          "name": "E3",
+          "invalidEffects": [
+            "E2",
+            "M1"
+          ]
         },
         {
           "priority": 1,
@@ -170,15 +207,17 @@
               "second": []
             },
             "previous":{
-              "first": false,
-              "second": []
+              "first": true,
+              "second": [
+                "B2"
+              ]
             },
             "radiusBetween": {
               "first": 0,
               "second": 0
             },
             "visible": -1,
-            "enlarge": 0
+            "enlarge": -2
           },
           "actions": [
             {
@@ -192,7 +231,7 @@
           "invalidEffects": []
         },
         {
-          "priority": 2,
+          "priority": 0,
           "targetSpecification": {
             "tile": false,
             "different": {
@@ -224,6 +263,6 @@
       ]
     }
   ],
-  "name": "Railgun",
+  "name": "Powerglove",
   "maxHeight": 1
 }

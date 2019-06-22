@@ -21,4 +21,7 @@ public class Deck{
         return deck.remove(deck.size() - 1);
     }
 
+    public void discarded(Drawable card){
+        deck.add(card);
+    }
 }

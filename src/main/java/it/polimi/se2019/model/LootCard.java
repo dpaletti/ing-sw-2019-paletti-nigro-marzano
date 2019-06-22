@@ -3,7 +3,7 @@ package it.polimi.se2019.model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class LootCard implements Grabbable, Drawable{
+public class LootCard implements Grabbable, Drawable,Jsonable{
     private String name;
     private Set<Ammo> ammo= new HashSet<>();
 
@@ -34,5 +34,10 @@ public class LootCard implements Grabbable, Drawable{
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Jsonable copy() {
+        return new LootCard(this);
     }
 }
