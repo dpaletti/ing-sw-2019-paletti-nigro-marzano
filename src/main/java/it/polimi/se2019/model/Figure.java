@@ -163,7 +163,8 @@ public class Figure {
 
 
     public void grab(Grabbable grabbed){ //TODO: modify grab with parameter (grabbed card); rewrite this method to adjust it to the changes in tile
-       /* if (tile.getTileType()==TileType.LOOTTILE) { //when on a Loot Tile, adds grabbed ammo to usable ammo making sure the number of ammo of a colour does not exceed 3
+
+       /* if (tile.getGrabbables().size()<=1 && tile.){ //when on a Loot Tile, adds grabbed ammo to usable ammo making sure the number of ammo of a colour does not exceed 3
             int ammoOfSelectedColour=0;
             for (Ammo lootCounter : tile.getLootCard().getAmmo()) {
                 for (Ammo ammoCounter: player.getUsableAmmo()){
@@ -178,6 +179,7 @@ public class Figure {
                 ammoOfSelectedColour=0;
             }
         }
+       /*
         else {  //when on a Spawn Tile, allows player to grab a weapon and leave one among those they previously grabbed if they already own 3
             Weapon selectedWeapon= null;
             Set<String> availableWeapons= new HashSet<>();

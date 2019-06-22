@@ -1,6 +1,6 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.model.mv_events.MVSelectionEvent;
+import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.utility.Action;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.utility.Point;
@@ -101,7 +101,7 @@ public class Player extends Observable<Action> implements Targetable{
             throw new UnsupportedOperationException("This player is already unpaused");
         }
         isPaused= false;
-        game.unpausedPlayer(this);
+        game.send(new UnpausedPlayerEvent("*", game.colourToUser(figure.getColour())));
     }
 
     public void pause(){
@@ -109,7 +109,7 @@ public class Player extends Observable<Action> implements Targetable{
             throw new UnsupportedOperationException("This player is already paused");
         }
         isPaused= true;
-        game.pausedPlayer(this);
+        game.send(new PausedPlayerEvent("*", game.colourToUser(figure.getColour())));
     }
 
 
@@ -195,12 +195,12 @@ public class Player extends Observable<Action> implements Targetable{
 
     public void teleport (Point position){
         figure.teleport(position);
-        game.playerMovement(this, position);
+        game.send(new MVMoveEvent("*", game.colourToUser(figure.getColour()), position));
     }
 
     public void run (Point destination) {
         figure.run(destination);
-        game.playerMovement(this, destination);
+        game.send(new MVMoveEvent("*", game.colourToUser(figure.getColour()), destination));
     }
 
     public void grabStuff(Grabbable grabbed){
@@ -242,13 +242,13 @@ public class Player extends Observable<Action> implements Targetable{
     void addTear (FigureColour figureColour){
         Tear tear= new Tear(figureColour);
         hp.add(tear);
-        game.attackOnPlayer(this, game.colourToPlayer(figureColour));
+        game.send(new UpdateHpEvent("*", game.colourToUser(figure.getColour()), game.colourToUser(figureColour)));
     }
 
     void addMark (FigureColour figureColour){
         Tear tear= new Tear(figureColour);
         marks.add(tear);
-        game.markOnPlayer(this, game.colourToPlayer(figureColour));
+        game.send(new UpdateMarkEvent("*", game.colourToUser(figure.getColour()), game.colourToUser(figureColour)));
     }
 
     void updatePlayerDamage (){

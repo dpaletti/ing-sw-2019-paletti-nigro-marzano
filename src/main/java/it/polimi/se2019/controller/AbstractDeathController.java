@@ -32,7 +32,7 @@ public abstract class AbstractDeathController extends Controller {
 
     protected void assignPoints (Map<FigureColour, Integer> figuresToHits, String user, List<Tear> hp){
         List<FigureColour> localBestFigures= new ArrayList<>(); //players who gave the same number of hits to dead player
-        for (int i=0; i<4; i++){
+        for (int i=0; i<model.getPlayers().size()-1; i++){
             Integer localMaximum = 0;
             for (Map.Entry<FigureColour, Integer> entry : figuresToHits.entrySet()) {
 

@@ -25,7 +25,7 @@ public abstract class View extends Observable<Event> implements Observer<MVEvent
     public abstract void addPlayer(String username);
 
     @Override
-    public void dispatch(MatchMakingEndEvent message) {
+    public void dispatch(SetUpEvent message) {
         Log.fine("MatchMaking is over");
     }
     @Override

@@ -11,25 +11,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MatchMakingEndEvent extends MVEvent {
-    private String boardConfiguration;
+//sends everyone a map between usernames and colours, the weapons on each weaponSpot and the position of each loot card
+
+public class SetUpEvent extends MVEvent {
     private HashMap<String, FigureColour> userToColour;
     private HashMap<String, RoomColour> weaponSpots;
     private HashMap<Point, String> lootCards;
-    private int numberOfSkulls;
 
-    public MatchMakingEndEvent (String destination,
-                                String boardConfiguration,
-                                Map<String, FigureColour> userToColour,
-                                Map<String, RoomColour> weaponSpots,
-                                Map<Point, String> lootCards,
-                                int numberOfSkulls){
+    public SetUpEvent(String destination,
+                      Map<String, FigureColour> userToColour,
+                      Map<String, RoomColour> weaponSpots,
+                      Map<Point, String> lootCards){
         super(destination);
-        this.boardConfiguration=boardConfiguration;
         this.userToColour=new HashMap<>(userToColour);
         this.weaponSpots= new HashMap<>(weaponSpots);
         this.lootCards= new HashMap<>(lootCards);
-        this.numberOfSkulls= numberOfSkulls;
     }
 
     @Override
@@ -41,10 +37,6 @@ public class MatchMakingEndEvent extends MVEvent {
         return new HashMap<>(userToColour);
     }
 
-    public String getBoardConfiguration() {
-        return boardConfiguration;
-    }
-
     public Map<String, RoomColour> getWeaponSpots() {
         return new HashMap<>(weaponSpots);
     }
@@ -53,7 +45,4 @@ public class MatchMakingEndEvent extends MVEvent {
         return new HashMap<>(lootCards);
     }
 
-    public int getNumberOfSkulls() {
-        return numberOfSkulls;
-    }
 }

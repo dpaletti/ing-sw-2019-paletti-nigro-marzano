@@ -4,6 +4,7 @@ import it.polimi.se2019.model.AmmoColour;
 import it.polimi.se2019.model.Combo;
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.model.mv_events.EndOfTurnEvent;
+import it.polimi.se2019.model.mv_events.StartTurnEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.JsonHandler;
@@ -22,6 +23,9 @@ public class TurnController extends Controller {
     private Combo currentCombo;
     private int comboIndex=-1;
     private int comboUsed= -1;
+
+
+    //model.send (new StartTurnEvent(model.playerToUser(currentPlayer)));
 
     public TurnController (Game model, Server server, int roomNumber){
         super(model, server, roomNumber);

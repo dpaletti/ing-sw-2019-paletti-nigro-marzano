@@ -135,7 +135,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         }
 
         @Override
-        public void dispatch(MatchMakingEndEvent message) {
+        public void dispatch(SetUpEvent message) {
             server.endMatchMaking();
             submit(getConnectionOnId(message.getDestination()), message);
         }

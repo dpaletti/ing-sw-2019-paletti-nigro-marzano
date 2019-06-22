@@ -34,8 +34,8 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("UsernameDeletionEvent not supported");
     }
 
-    default void dispatch(MatchMakingEndEvent message){
-        throw new UnsupportedOperationException("MatchMakingEndEvent not supported");
+    default void dispatch(SetUpEvent message){
+        throw new UnsupportedOperationException("SetUpEvent not supported");
     }
 
     default void dispatch(HandshakeEndEvent message){

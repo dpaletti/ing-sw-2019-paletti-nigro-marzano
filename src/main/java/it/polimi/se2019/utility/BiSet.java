@@ -8,6 +8,14 @@ public class BiSet<T, S> extends AbstractSet<Pair<T, S>> {
     //all in all a bidirectional map
     private Set<Pair<T, S>> set = new HashSet<>();
 
+    public BiSet() {
+        //empty constructor
+    }
+
+    public BiSet(BiSet<T, S> biSet){
+        set = new HashSet<>(biSet.set);
+    }
+
     @Override
     public Iterator<Pair<T, S>> iterator() {
         return set.iterator();

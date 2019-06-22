@@ -124,7 +124,7 @@ public class ViewGUI extends View {
     }
 
     @Override
-    public void dispatch(MatchMakingEndEvent message) {
+    public void dispatch(SetUpEvent message) {
         semMatchMaking.acquireUninterruptibly();
         ViewGUI.this.notify(new UiCloseMatchMaking());
         semMatchMaking.acquireUninterruptibly();

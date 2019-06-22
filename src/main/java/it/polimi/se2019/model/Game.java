@@ -16,6 +16,7 @@ public class Game extends Observable<MVEvent> {
     private Deck lootDeck;
     private List<Player> players= new ArrayList<>();
     private BiSet<FigureColour, String> userLookup = new BiSet<>();
+    private List<String> usernames= new ArrayList<>();
     private Random randomConfig= new Random();
     private TurnMemory turnMemory = new TurnMemory();
     private WeaponHelper weaponHelper=new WeaponHelper();
@@ -45,7 +46,7 @@ public class Game extends Observable<MVEvent> {
         notify(new MVWeaponEndEvent(playing));
     }
 
-    public void apply(String playing, List<Player> players,List<Action> actions){
+    public void apply (String playing, List<Player> players,List<Action> actions){
         for (Action action:actions){
             for (Player player: players){
                 //TODO Put action method in action enumeration
@@ -104,48 +105,11 @@ public class Game extends Observable<MVEvent> {
     }
 
     public void closeMatchMaking(List<String> usernames){
-        int colourCounter=0;
+        this.usernames= new ArrayList<>(usernames);
         List<String> configurations= new ArrayList<>();
-
-        for (String userCounter: usernames){
-            userLookup.add(new Pair<>(FigureColour.values()[colourCounter], userCounter));
-            players.add(new Player(new Figure(FigureColour.values()[colourCounter]), this));
-
-            colourCounter++;
-        }
-
-        //calls JSON Helper and generates all possible configurations
-        //configurations to be assigned
-
+        for (MapConfig m : MapConfig.values())
+            configurations.add(m.name());
         notify(new MatchConfigurationEvent("*", configurations));
-    }
-
-    public void configMatch (String chosenConfig, boolean isFinalFrenzy, int skulls){
-        HashMap<String, FigureColour> userToColour= new HashMap<>();
-        Map<String, RoomColour> weaponSpots= new HashMap<>();
-        Map<Point, String> lootCards= new HashMap<>();
-        Grabbable drawnGrabbable;
-
-        for (Player player: players)
-            userToColour.put(userLookup.getSecond(player.getFigure().getColour()), player.getFigure().getColour());
-
-        //TODO: initialize gameMap
-
-        for (Tile t: gameMap.getSpawnTiles()){
-            for (int i=0; i<3; i++){
-                drawnGrabbable= (Weapon)weaponDeck.draw();
-                t.add(drawnGrabbable);
-                weaponSpots.put(drawnGrabbable.getName(), t.colour);
-            }
-        }
-
-        for (Tile t: gameMap.getLootTiles()){
-            drawnGrabbable= (LootCard)lootDeck.draw();
-            t.add(drawnGrabbable);
-            lootCards.put(t.position, drawnGrabbable.getName());
-        }
-
-        notify(new MatchMakingEndEvent("*", chosenConfig, userToColour, weaponSpots, lootCards, skulls));
     }
 
     public void startMatch(){
@@ -158,10 +122,6 @@ public class Game extends Observable<MVEvent> {
                 ));
     }
 
-    public void startTurn (String playing){
-        notify(new StartTurnEvent(playing));
-    }
-
     public void endTurn (String username){
         Player player= userToPlayer(username);
     }
@@ -171,17 +131,9 @@ public class Game extends Observable<MVEvent> {
         player.pause();
     }
 
-    public void pausedPlayer (Player pausedPlayer){
-        notify(new PausedPlayerEvent("*", colourToUser(pausedPlayer.getFigure().getColour())));
-    }
-
     public void unpausePlayer (String username){
         Player player= userToPlayer(username);
         player.unpause();
-    }
-
-    public void unpausedPlayer (Player unpausedPlayer){
-        notify(new UnpausedPlayerEvent("*", colourToUser(unpausedPlayer.getFigure().getColour())));
     }
 
     public Tile getTile (Point position){
@@ -216,6 +168,10 @@ public class Game extends Observable<MVEvent> {
 
     public List<Player> getPlayers() { return players; }
 
+    public List<String> getUsernames() {
+        return usernames;
+    }
+
     public BiSet<FigureColour, String> getUserLookup() {
         return userLookup;
     }
@@ -227,6 +183,12 @@ public class Game extends Observable<MVEvent> {
     public void setUserLookup(BiSet<FigureColour, String> userLookup) {
         this.userLookup = userLookup;
     }
+
+
+    public void setGameMap(GameMap gameMap) {
+        this.gameMap = gameMap;
+    }
+
 
     public Player colourToPlayer (FigureColour figureColour){
         for (Player playerCounter: players){
@@ -346,10 +308,6 @@ public class Game extends Observable<MVEvent> {
         playerRunning.run(destination);
     }
 
-    public void playerMovement (Player playerRunning, Point finalPosition){
-        notify(new MVMoveEvent("*", colourToUser(playerRunning.getFigure().getColour()), finalPosition));
-    }
-
     public void grabbableCards (String username){
         Player player= userToPlayer(username);
         List<String> grabbableNames= new ArrayList<>();
@@ -450,19 +408,10 @@ public class Game extends Observable<MVEvent> {
         notify(new DiscardedPowerUpEvent("*", colourToUser(player.getFigure().getColour()), drawnPowerUp, discardedPowerUp));
     }
 
-    public void attackOnPlayer (Player attacked, Player attacker){
-        notify(new UpdateHpEvent("*", colourToUser(attacked.getFigure().getColour()), colourToUser(attacker.getFigure().getColour())));
-    }
-
-    public void markOnPlayer (Player marked, Player marker){
-        notify(new UpdateMarkEvent("*", colourToUser(marked.getFigure().getColour()), colourToUser(marker.getFigure().getColour())));
-    }
-
     public void updatePoints (String username, int points){
         userToPlayer(username).setPoints(userToPlayer(username).getPoints()+points);
         notify(new UpdatePointsEvent(username, userToPlayer(username).getPoints()));
     }
-
 
     // all players without any damage change their boards to final frenzy boards
     // final frenzy players get a different set of moves based on their position in the current

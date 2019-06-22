@@ -14,6 +14,7 @@ public class GameMap{
     private List<Tile> spawnTiles=new ArrayList<>();
     private List<Tile> lootTiles=new ArrayList<>();
 
+    //TODO: delete enum MapConfig and JSON the pairing between map name and its halves
     public GameMap(MapConfig config){
         this.config= config;
         try {

@@ -61,10 +61,6 @@ public class Tile implements Targetable{
         return position;
     }
 
-    public TileType getTileType(){
-        return null;
-    }
-
     public void add(Grabbable grabbable){throw new UnsupportedOperationException("Can't add Tile");}
 
     public void addAll (List<Grabbable> grabbablesToAdd){throw new UnsupportedOperationException("Can't add Tiles");}

@@ -12,11 +12,6 @@ public class SpawnTile extends Tile {
     public SpawnTile() {}
 
     @Override
-    public TileType getTileType() {
-        return TileType.SPAWNTILE;
-    }
-
-    @Override
     public List<Grabbable> grab() {
         return grabbables;
     }

@@ -1,7 +1,7 @@
 package it.polimi.se2019.view;
 
 
-import it.polimi.se2019.model.mv_events.MatchMakingEndEvent;
+import it.polimi.se2019.model.mv_events.SetUpEvent;
 import it.polimi.se2019.network.Client;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class ViewCLI extends View {
 
 
         @Override
-        public void dispatch(MatchMakingEndEvent message){
+        public void dispatch(SetUpEvent message){
             //TODO stuff
         }
 

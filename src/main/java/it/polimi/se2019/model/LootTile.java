@@ -12,11 +12,6 @@ public class LootTile extends Tile{
     public LootTile() {}
 
     @Override
-    public TileType getTileType() {
-        return TileType.LOOTTILE;
-    }
-
-    @Override
     public List<Grabbable> grab() {
         return grabbables;
     }
