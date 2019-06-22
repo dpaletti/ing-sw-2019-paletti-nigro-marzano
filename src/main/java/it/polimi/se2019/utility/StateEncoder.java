@@ -27,7 +27,7 @@ public class StateEncoder {
                 getEncodedWeapons(player.getWeapons())+
                 getEncodedPowerUps(player.getPowerUps())+
                 "pnt:"+player.getPoints()+ ";"+
-                "amm:"+getEncodedAmmo(player.getUsableAmmo())+ ";"+
+                "amm:"+getEncodedAmmo(player.getAmmo())+ ";"+
                 "pos:"+player.getFigure().getPosition().getX()+ ","+ player.getFigure().getPosition().getY()+
                 System.lineSeparator();
     }

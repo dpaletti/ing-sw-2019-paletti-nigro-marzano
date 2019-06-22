@@ -95,7 +95,7 @@ public class Game extends Observable<MVEvent> {
     public void unloadedWeapons (String username){
         Player player= userToPlayer(username);
         List<String> unloadedWeapons= new ArrayList<>();
-        for (Weapon w: player.showWeapons())
+        for (Weapon w: player.getWeapons())
             unloadedWeapons.add(w.getName());
         notify(new ReloadableWeaponsEvent(username, unloadedWeapons));
     }
@@ -280,14 +280,14 @@ public class Game extends Observable<MVEvent> {
     public void allowedWeapons(String username){
         Player playing= userToPlayer(username);
         List<String> weapons= new ArrayList<>();
-        for (Weapon weapon: playing.showWeapons()){
+        for (Weapon weapon: playing.getWeapons()){
             weapons.add(weapon.getName());
         }
         notify(new AllowedWeaponsEvent(username, weapons));
     }
     public void teleportPlayer (String username, Point teleportPosition){
         Player playerToMove= userToPlayer(username);
-        playerToMove.teleport(teleportPosition);
+        playerToMove.run(teleportPosition, -1);
     }
 
     //TODO: do this method with List of weapons
@@ -306,7 +306,7 @@ public class Game extends Observable<MVEvent> {
 
     public void run (String username, Point destination){
         Player playerRunning= userToPlayer(username);
-        playerRunning.run(destination);
+        playerRunning.run(destination, 3);
     }
 
     public void grabbableCards (String username){
@@ -336,13 +336,13 @@ public class Game extends Observable<MVEvent> {
             }
         }
         if (grabbedCard==null) throw new NullPointerException("This card is not grabbable");
-        playerGrabbing.grabStuff(grabbedCard);
+        playerGrabbing.grabStuff(grabbedCard.getName());
     }
 
     public void sendAvailableWeapons (String username){
         Player shooting= userToPlayer(username);
         List<String> availableWeapons= new ArrayList<>();
-        for (Weapon weapon: shooting.showWeapons()){
+        for (Weapon weapon: shooting.getWeapons()){
             availableWeapons.add(weapon.getName());
         }
         notify(new AvailableWeaponsEvent(username, availableWeapons));
@@ -376,7 +376,7 @@ public class Game extends Observable<MVEvent> {
         PowerUp drawnPowerUp= nameToPowerUp(powerUpName);
         for (Tile tile: gameMap.getSpawnTiles()){
             if (tile.getColour().toString().equals(spawnColour.toString())){
-                spawning.run(tile.position);
+                spawning.run(tile.position, -1);
             }
         }
         if (drawnPowerUp!=null){

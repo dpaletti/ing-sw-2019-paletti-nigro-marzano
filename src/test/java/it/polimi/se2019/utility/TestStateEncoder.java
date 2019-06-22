@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import static junit.framework.TestCase.assertEquals;
@@ -34,7 +33,7 @@ public class TestStateEncoder {
         player.setSecondPowerUp((PowerUp)powerUpHelper.findByName("TeleportBlue"));
         player.setThirdPowerUp((PowerUp)powerUpHelper.findByName("TeleportYellow"));*/
         player.setPoints(3);
-        player.setUsableAmmo(new HashSet<>());
+        player.setAmmo(new HashSet<>());
         user= "Lulic71";
         file= StateEncoder.generateEncodedGame();
     }

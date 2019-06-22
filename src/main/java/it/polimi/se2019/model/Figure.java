@@ -3,7 +3,6 @@ package it.polimi.se2019.model;
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.utility.Point;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class Figure {
@@ -37,7 +36,7 @@ public class Figure {
         this.player = player;
     }
 
-    public void damage(Figure target){
+    public void damage (Figure target){
         target.player.addTear(colour);
         for (Tear tear: target.player.getMarks()){
             if (tear.getColour().equals(colour)){
@@ -47,7 +46,7 @@ public class Figure {
         target.player.updatePlayerDamage();
     }
 
-    public void mark(Figure target){
+    public void mark (Figure target){
         int alreadyMaximumMarks=0;
         for(Tear marksCounter: target.player.getMarks()){ //
             if(marksCounter.getColour()==colour){
@@ -59,15 +58,8 @@ public class Figure {
         }
     }
 
-    public void teleport (Point teleportPosition){ //only called in case of Teleport Event
-        if (boundaryChecker(this, teleportPosition)){
-            position= teleportPosition;
-            tile=player.getGameMap().getTile(position);
-        }
-    }
-
-    public void run (Point destination){
-        if ((destination.getDistance(tile.position)<=3)&&(boundaryChecker(this, destination))){
+    public void run (Point destination, int distance){
+        if (player.getGameMap().getAllowedMovements(tile, distance).contains(destination)){
             position=destination;
             tile=player.getGameMap().getTile(position);
         }
@@ -117,99 +109,15 @@ public class Figure {
         return originalTargetSet;
     }
 
-        private Boolean boundaryChecker (Figure figureToMove, Point newPosition){
-        //TODO point coordinates assignement has same logic that move() has, create a common function to reduce code repetition
-        if (!player.getGameMap().checkBoundaries(newPosition)){
-            return (false);
-        }
-        if (player.getGameMap().getTile(newPosition).getColour().equals(figureToMove.tile.colour)){ //same room, figure can be moved
-            return (true);
-        }
-        else { //not same room, check if door
-            int x = figureToMove.position.getX();
-            int y = figureToMove.position.getY();
-            Point positionCounter= null;
-            for (Direction directionCounter: Direction.values()){
-                if (figureToMove.tile.doors.get(directionCounter)){
-                    if (directionCounter.equals(Direction.NORTH)){
-                        positionCounter = new Point(x, y + 1);
-                        if (positionCounter.equals(newPosition)){
-                            return (true);
-                        }
-                    }
-                    if (directionCounter.equals(Direction.SOUTH)){
-                        positionCounter = new Point(x, y - 1);
-                        if (positionCounter.equals(newPosition)){
-                            return (true);
-                        }
-                    }
-                    if (directionCounter.equals(Direction.EAST)){
-                        positionCounter = new Point(x + 1, y);
-                        if (positionCounter.equals(newPosition)){
-                            return (true);
-                        }
-                    }
-                    if (directionCounter.equals(Direction.WEST)){
-                        positionCounter = new Point (x - 1, y);
-                        if (positionCounter.equals(newPosition)){
-                            return (true);
-                        }
-                    }
-                }
-            }
-        }
-        return (false);
-    }
-
-
-    public void grab(Grabbable grabbed){ //TODO: modify grab with parameter (grabbed card); rewrite this method to adjust it to the changes in tile
-
-       /* if (tile.getGrabbables().size()<=1 && tile.){ //when on a Loot Tile, adds grabbed ammo to usable ammo making sure the number of ammo of a colour does not exceed 3
-            int ammoOfSelectedColour=0;
-            for (Ammo lootCounter : tile.getLootCard().getAmmo()) {
-                for (Ammo ammoCounter: player.getUsableAmmo()){
-                    if (ammoCounter==lootCounter) {
-                        ammoOfSelectedColour++;
-                    }
-                }
-                if (ammoOfSelectedColour<3) {
-                    player.getUsableAmmo().add(lootCounter);
-                    player.getUnusableAmmo().remove(lootCounter);
-                }
-                ammoOfSelectedColour=0;
-            }
-        }
-       /*
-        else {  //when on a Spawn Tile, allows player to grab a weapon and leave one among those they previously grabbed if they already own 3
-            Weapon selectedWeapon= null;
-            Set<String> availableWeapons= new HashSet<>();
-            /*availableWeapons.add(tile.getWeaponSpot().getFirstWeapon().getName());
-            availableWeapons.add(tile.getWeaponSpot().getSecondWeapon().getName());
-            availableWeapons.add(tile.getWeaponSpot().getThirdWeapon().getName());
-            // TODO: vc_events: a Weapon is returned and assigned to selectedWeapon
-
-            if (player.getFirstWeapon()==null){
-                player.setFirstWeapon(selectedWeapon);
-            }
-            else if (player.getSecondWeapon()==null){
-                player.setSecondWeapon(selectedWeapon);
-            }
-
-            else if (player.getThirdWeapon()==null){
-                player.setThirdWeapon(selectedWeapon);
-            }
-
-            else {
-
-                //TODO: vc_events: a weapon is returned and selectedWeapon is assigned to free weapon slot
-            }
-        }*/
+    public void grab(String grabbed){
+        for (Grabbable g : tile.getGrabbables())
+            g.grab(player, grabbed);
     }
 
     public void reload (Weapon weapon){
         int enoughAmmoForReload=0;
         for (Ammo reloadCostCounter: weapon.getPrice()) {   //checks whether the reload price can be payed
-            for (Ammo availableAmmoCounter: player.getUsableAmmo()){
+            for (Ammo availableAmmoCounter: player.getAmmo()){
                 if(reloadCostCounter==availableAmmoCounter){
                     enoughAmmoForReload++;
                     break;
@@ -219,7 +127,7 @@ public class Figure {
         }
         if(enoughAmmoForReload==weapon.getPrice().size()){  //in case player has enough ammo to pay for the reload
             weapon.setLoaded(true);
-            player.useAmmo(weapon.getPrice());
+            player.useAmmos(weapon.getPrice());
         }
         else{
             NotEnoughAmmoEvent notEnoughAmmoEvent=null;

@@ -16,4 +16,10 @@ public class TestGameMap {
             System.out.print(tile.getColour().toString()+'|'+tile.getPosition().getX()+','+tile.getPosition().getY()+System.lineSeparator());
         }
     }
+
+    @Test
+    public void graphTest (){
+        map = new GameMap(MapConfig.MAP_SMALL);
+        System.out.println(map.graphMap);
+    }
 }

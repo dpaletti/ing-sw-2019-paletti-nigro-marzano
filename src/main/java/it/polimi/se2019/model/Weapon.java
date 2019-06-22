@@ -29,4 +29,27 @@ public class Weapon extends Card implements Grabbable, Drawable,Jsonable{
     public Jsonable copy() {
         return new Weapon(this);
     }
+
+    //check number of weapons in hand
+    //if < 3, pay cost and add weapon to list
+    //else send choice event to game
+
+    @Override
+    public void grab(Player player, String grabbed) {
+        int index =-1;
+        for (Weapon w : player.getWeapons()){
+            if (w.name.equalsIgnoreCase(grabbed)) {
+               index = player.getWeapons().indexOf(w);
+                break;
+            }
+        }
+        if (index == -1)
+            throw new UnsupportedOperationException(grabbed + "is not in the current weapon spot and cannot be grabbed");
+
+        if (player.getWeapons().size() < 3){
+            if (player.pay(((Weapon)player.getFigure().getTile().grabbables.get(index)).price))   //price could be and was paid
+                player.addWeapon((Weapon)player.getFigure().getTile().grabbables.get(index));
+        }
+    }
+
 }

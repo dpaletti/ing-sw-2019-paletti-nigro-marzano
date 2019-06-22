@@ -188,4 +188,49 @@ public class GraphNode<T> implements Iterable<GraphNode<T>> {
 
     }
 
+    public boolean isParent (T key){
+        for (GraphNode<T> t: this.getParents()){
+            if (t.getKey().equals(key))
+                return true;
+        }
+        return false;
+    }
+
+    public void deleteCopies (){
+        boolean isLastLayer = false;
+        List<GraphNode<T>> siblings;
+        for (int i = 1; !isLastLayer; i++){
+            siblings = new ArrayList<>();
+            isLastLayer = true;
+            for (GraphNode<T> t : this.getListLayer(i)){
+                if (!t.isLeaf())
+                    isLastLayer = false;
+                if (!this.containsSibling(siblings, t.getKey()))
+                    siblings.add(t);
+                else {
+                    for (GraphNode<T> g : t.getParents()){
+                        g.removeChild(t);
+                        g.addChild(this.getSibling(siblings, t.getKey()));
+                        t.addParent(g);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean containsSibling (List<GraphNode<T>> siblings, T key){
+        for (GraphNode<T> t : siblings){
+            if (t.getKey().equals(key))
+                return true;
+        }
+        return false;
+    }
+
+    private GraphNode<T> getSibling (List<GraphNode<T>> siblings, T key) {
+        for (GraphNode<T> t : siblings) {
+            if (t.getKey().equals(key))
+                return t;
+        }
+        throw new NullPointerException("given key is not contained in siblings list");
+    }
 }
