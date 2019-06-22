@@ -3,7 +3,6 @@ package it.polimi.se2019.model;
 import it.polimi.se2019.utility.Log;
 
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +17,7 @@ public class WeaponHelper extends JsonHelper{
         Set<Jsonable> allWeapons=new HashSet<>();
         try {
             for (String n : Paths.get("files/weapons").toFile().list()) {
-                helped.add((new PowerUp(Paths.get("files/weapons/".concat(n)).toString())));
+                helped.add((new Weapon(Paths.get("files/weapons/".concat(n)).toString())));
             }
         }catch (NullPointerException e){
             Log.severe("Weapon not found in the weapons directory");

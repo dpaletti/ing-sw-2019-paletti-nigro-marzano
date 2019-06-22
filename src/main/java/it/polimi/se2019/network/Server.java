@@ -29,6 +29,8 @@ public class Server implements ServerInterface {
     private List<VirtualView> virtualViews = new ArrayList<>();
     private Saves saves = new Saves();
     private int roomNumber = 0;
+    private List<String> usernames = new ArrayList<>();
+    private List<String> tokens = new ArrayList<>();
 
     private int port;
     //TODO make it configurable together with RMI registry port
@@ -52,6 +54,14 @@ public class Server implements ServerInterface {
 
     }
 
+    public List<String> getUsernames() {
+        return new ArrayList<>(usernames);
+    }
+
+    public List<String> getTokens() {
+        return new ArrayList<>(tokens);
+    }
+
     public Saves getSaves() {
         return saves; //TODO correct getter
     }
@@ -68,6 +78,14 @@ public class Server implements ServerInterface {
         return socketOpen;
     }
 
+    public void addUsername(String username){
+        usernames.add(username);
+    }
+
+    public void addToken(String token){
+        tokens.add(token);
+    }
+
     public void addController(Controller controller, int roomNumber){
         virtualViews.get(roomNumber).register(controller);
     }
@@ -77,6 +95,8 @@ public class Server implements ServerInterface {
     }
 
     private void openConnections()throws IOException, AlreadyBoundException {
+        usernames.add("*");
+
         serverSocket = new ServerSocket(port);
         socketOpen = true;
 
@@ -85,6 +105,7 @@ public class Server implements ServerInterface {
     }
 
     private void startServer() {
+
         Game model = new Game();
         virtualViews.add(new VirtualView(roomNumber, this)); //this needs to stay here
         Controller controller = new MatchMakingController(model, this, roomNumber);
@@ -107,18 +128,13 @@ public class Server implements ServerInterface {
     private void acceptClients() throws IOException{
         semRMI.release();
         while(true){
-            Log.fine("Before accept");
             Socket socket = serverSocket.accept();
-            Log.fine("After accept");
             if(!isMatchMaking) {
                 isMatchMaking = true;
                 suspendedConnection = new ConnectionSocket(virtualViews.get(roomNumber).generateToken(), socket);
                 break;
             }
-            Log.fine("After condition, room number " + roomNumber);
-            //Log.fine("Accepted new client");
             virtualViews.get(roomNumber).startListening(new ConnectionSocket(virtualViews.get(roomNumber).generateToken(), socket));
-            Log.fine("after listening");
           }
     }
 

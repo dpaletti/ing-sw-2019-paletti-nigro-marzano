@@ -15,8 +15,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.lang.Thread.sleep;
-
 public class MatchMakingController extends Controller {
     private AtomicInteger playerCount = new AtomicInteger(0);
     private AtomicBoolean matchMade = new AtomicBoolean(false);
@@ -45,6 +43,7 @@ public class MatchMakingController extends Controller {
     public void dispatch(VcJoinEvent message) {
         usernames.add(message.getUsername());
         model.newPlayerInMatchMaking(message.getSource(), message.getUsername());
+        server.addUsername(message.getUsername());
 
         playerCount.set(playerCount.addAndGet(1));
         Log.info("Players in match making: " + playerCount);

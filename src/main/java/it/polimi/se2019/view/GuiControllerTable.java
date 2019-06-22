@@ -178,7 +178,6 @@ public class GuiControllerTable extends GuiController {
     }
 
     public void initializeSkullSelection(){
-        List<RadioButton> skullButtons = new ArrayList<>();
         GridPane gridPane = null;
         for(Node n: choiceGrid.getChildren()){
             if(n.getId().equals("skullGrid")){
