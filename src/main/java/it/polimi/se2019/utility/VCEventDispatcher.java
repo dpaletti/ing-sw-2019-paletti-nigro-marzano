@@ -1,6 +1,6 @@
 package it.polimi.se2019.utility;
 
-import it.polimi.se2019.model.mv_events.EndOfTurnEvent;
+import it.polimi.se2019.view.vc_events.EndOfTurnEvent;
 import it.polimi.se2019.view.vc_events.*;
 
 public interface VCEventDispatcher extends EventDispatcher {

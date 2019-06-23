@@ -3,17 +3,14 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.AmmoColour;
 import it.polimi.se2019.model.Combo;
 import it.polimi.se2019.model.Game;
-import it.polimi.se2019.model.mv_events.EndOfTurnEvent;
-import it.polimi.se2019.model.mv_events.StartTurnEvent;
+import it.polimi.se2019.view.vc_events.EndOfTurnEvent;
 import it.polimi.se2019.network.Server;
-import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.*;
 
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 
 public class TurnController extends Controller {
     private ArrayList<String> effects= new ArrayList<>();

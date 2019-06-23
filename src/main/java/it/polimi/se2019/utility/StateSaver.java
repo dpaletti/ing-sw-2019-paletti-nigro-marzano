@@ -1,5 +1,6 @@
 package it.polimi.se2019.utility;
 
+import it.polimi.se2019.model.AmmoColour;
 import it.polimi.se2019.model.FigureColour;
 import it.polimi.se2019.model.Player;
 import it.polimi.se2019.model.mv_events.*;
@@ -14,6 +15,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,8 +114,37 @@ public class StateSaver implements Observer<MVEvent>, MVEventDispatcher{
     }
 
 
+    @Override
+    public void dispatch(DiscardedPowerUpEvent message) {
+        file=savePowerUp(message.getDiscardedPowerUp(),message.getDrawnPowerUp(),message.getPlaying(),file);
+        save();
+    }
 
+    @Override
+    public void dispatch(DiscardedWeaponEvent message) {
+        file=saveWeaponDiscard(message.getDiscardedWeapon(),message.getDrawnWeapon(),file);
+        save();
+    }
 
+    @Override
+    public void dispatch(GrabbedWeaponEvent message) {
+        file=saveWeaponGrab(message.getWeapon(),message.getUser(),file);
+        save();
+    }
+
+    @Override
+    public void dispatch(DrawedPowerUpEvent message) {
+        file=savePowerUpDraw(message.getDrawed(),message.getUser(),file);
+        save();
+    }
+
+    @Override
+    public void dispatch(NewAmmosEvent message) {
+        for (AmmoColour ammo: message.getAmmos()){
+            file=saveAmmo(ammo,message.getUser(),message.getUsage(),file);
+        }
+        save();
+    }
 
     //Todo: only keeping the method to look at the pattern while implementing submethods
     private String saveUser(Player player, String user, String file) {
@@ -196,6 +227,47 @@ public class StateSaver implements Observer<MVEvent>, MVEventDispatcher{
         if (!overkill)
             tear=tear.toLowerCase();
         return areaMatch.replaceAll(killshotMatch.replaceAll(skullMatch.replaceAll(onlyTearKillshot+tear)));
+   }
+
+
+   private String savePowerUp(String discarded,String drawn,String playing,String file){
+        Matcher userMatch=getUser(playing,file).matcher(file);
+        Pattern pattern=Pattern.compile(StateEncoder.getEncodedPowerUp(discarded));
+        return userMatch.replaceAll(pattern.matcher(userMatch.group()).replaceAll(StateEncoder.getEncodedPowerUp(drawn)));
+   }
+
+    private String saveWeaponDiscard(String discarded,String drawn,String file){
+        Pattern pattern=Pattern.compile(discarded+",(true|false)");
+        return pattern.matcher(file).replaceAll(drawn+",true");
+    }
+
+    private String saveWeaponGrab(String grabbed,String user,String file){
+        Matcher userMatch=getUser(user,file).matcher(file);
+        Pattern weapons= Pattern.compile("wpns:\\w{0,30},(true|false)?;\\w{0,30},(true|false)?;\\w{0,30},(true|false)?;");
+        Matcher weaponMatch= weapons.matcher(userMatch.group());
+        String weaponsString=weaponMatch.group();
+        Pattern emptySpot=Pattern.compile(",;");
+        return userMatch.replaceAll(weaponMatch.replaceAll(emptySpot.matcher(weaponsString).replaceAll(grabbed+",true;")));
+    }
+
+   private String savePowerUpDraw(String drawed,String user,String file){
+        Matcher userMatch=getUser(user,file).matcher(file);
+        Pattern powerUps= Pattern.compile("pups:\\w{0,3},[BYR]?;\\w{0,3},[BYR]?;\\w{0,3},[BYR]?;");
+        Matcher powerUpMatch= powerUps.matcher(userMatch.group());
+        String powerUpString=powerUpMatch.group();
+        Pattern emptySpot=Pattern.compile(",;");
+        return userMatch.replaceAll(powerUpMatch.replaceAll(emptySpot.matcher(powerUpString).replaceAll(StateEncoder.getEncodedPowerUp(drawed)+";")));
+   }
+
+   private String saveAmmo(AmmoColour colour, String user, int usage, String file){
+       Matcher userMatch=getUser(user,file).matcher(file);
+       Pattern ammos= Pattern.compile("amm:R\\d,B\\d,Y\\d;");
+       Matcher ammosMatch= ammos.matcher(userMatch.group());
+       Pattern ammo= Pattern.compile(StateEncoder.getEncodedAmmo(colour)+"\\d");
+       Matcher ammoMatch= ammo.matcher(ammosMatch.group());
+       Pattern number= Pattern.compile("\\d");
+       int newNumber= Integer.parseInt(number.matcher(ammoMatch.group()).group())+usage;
+       return userMatch.replaceAll(ammosMatch.replaceAll(ammoMatch.replaceAll(StateEncoder.getEncodedAmmo(colour)+newNumber)));
    }
 
 

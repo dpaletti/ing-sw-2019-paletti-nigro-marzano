@@ -149,5 +149,16 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("DiscardedWeaponEvent not supported");
     }
 
+    default void dispatch(GrabbedWeaponEvent message){
+        throw new UnsupportedOperationException("GrabbedWeaponEvent not supported");
+    }
+
+    default void dispatch(DrawedPowerUpEvent message){
+        throw new UnsupportedOperationException("DrawedPowerUpEvent not supported");
+    }
+
+    default void dispatch(NewAmmosEvent message){
+        throw new UnsupportedOperationException("NewAmmosEvent not supported");
+    }
 
 }

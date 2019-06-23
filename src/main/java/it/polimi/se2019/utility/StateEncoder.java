@@ -12,7 +12,7 @@ public class StateEncoder {
     public static String getEncodedUser(FigureColour figureColour, String user){
         return  user+ ":"+
                 "fcol:"+getEncodedFigureColour(figureColour)+ ";"+
-                "hp:;mrk:;dths:0;w1:,;w2:,;w3:,;p1:;p2:;p3:;pnt:;amm:;pos:,;"+
+                "hp:;mrk:;dths:0;wpns:,;,;,;pups:,;,;,;pnt:;amm:R3,B3,Y3;pos:,;"+
                 System.lineSeparator();
     }
 
@@ -40,50 +40,22 @@ public class StateEncoder {
             encodedPowerUp=encodedPowerUp.concat("New");
 
         if (powerUpName.contains("Blue"))
-            encodedPowerUp=encodedPowerUp.concat("B");
+            encodedPowerUp=encodedPowerUp.concat(",B");
         else if (powerUpName.contains("Red"))
-            encodedPowerUp=encodedPowerUp.concat("R");
+            encodedPowerUp=encodedPowerUp.concat(",R");
         else if (powerUpName.contains("Yellow"))
-            encodedPowerUp=encodedPowerUp.concat("Y");
+            encodedPowerUp=encodedPowerUp.concat(",Y");
         return encodedPowerUp;
     }
 
-    public static String getEncodedAmmo(Set<Ammo> ammoSet){
-        int redCounter=0;
-        int blueCounter=0;
-        int yellowCounter=0;
-        for (Ammo ammo:ammoSet){
-            switch (ammo.getColour()){
-                case RED: redCounter++;
-                break;
-                case BLUE: blueCounter++;
-                break;
-                case YELLOW: yellowCounter++;
-                break;
-                default: throw new IllegalArgumentException("AmmoColour not supported");
-            }
-        }
-        return "R"+redCounter+","+"B"+blueCounter+","+"Y"+yellowCounter;
-    }
-
-    public static String getEncodedTears(Collection<Tear> list){
-        String tempString="";
-        for (Tear tear: list){
-            switch (tear.getColour()){
-                case YELLOW: tempString=tempString.concat("Y");
-                break;
-                case BLUE: tempString=tempString.concat("B");
-                break;
-                case GREEN: tempString=tempString.concat("V");
-                break;
-                case GREY: tempString=tempString.concat("G");
-                break;
-                case MAGENTA: tempString=tempString.concat("M");
-                break;
-                default: throw new IllegalArgumentException("Invalid Tear Colour");
-            }
-        }
-        return tempString;
+    public static String getEncodedAmmo(AmmoColour ammo){
+        if (ammo.equals(AmmoColour.RED))
+            return "R";
+        else if (ammo.equals(AmmoColour.BLUE))
+            return "B";
+        else if (ammo.equals(AmmoColour.YELLOW))
+            return "Y";
+        throw new IllegalArgumentException("Does not exist ammo of another colour");
     }
 
     public static String generateEncodedGame(){
@@ -105,15 +77,6 @@ public class StateEncoder {
         return "map:config:"+config+";";
     }
 
-    // Example of encoded map: (2,2)34;(2,1)LockRifle,Cyberblade,Furnace; ...
-    public static String getEncodedTiles(Set<Tile> tiles){
-        String tempString="";
-        for (Tile tile: tiles){
-            tempString=tempString.concat(getEncodedTile(tile));
-        }
-        return tempString;
-    }
-
     public static String getEncodedTile(Tile tile){
         String tempString="";
         tempString=tempString.concat("pos:"+tile.getPosition().getX()+","+tile.getPosition().getY()+";");
@@ -133,30 +96,6 @@ public class StateEncoder {
         return tempString;
     }
 
-    public static String getEncodedWeapons(List<Weapon> weapons){
-        String encodedWeapons="";
-        for(int i=0;i<3;i++){
-            encodedWeapons=encodedWeapons.concat("w"+i+":");
-            if (weapons.get(i)!=null)
-                encodedWeapons=encodedWeapons.concat(weapons.get(i).getName()+","+weapons.get(i).getLoaded()+";");
-            else
-                encodedWeapons=encodedWeapons.concat(",;");
-        }
-        return encodedWeapons;
-    }
-
-    public static String getEncodedPowerUps(List<PowerUp> powerUps){
-        String encodedPowerUps="";
-        for (int i=0;i<3;i++){
-            encodedPowerUps=encodedPowerUps.concat("p"+i+":");
-            if (powerUps.get(i)!=null)
-                encodedPowerUps=encodedPowerUps.concat(getEncodedPowerUp(powerUps.get(i).getName())+";");
-            else
-                encodedPowerUps=encodedPowerUps.concat(",;");
-        }
-        return encodedPowerUps;
-    }
-
     public static String addBoard(String map,String file){
         Pattern pattern= Pattern.compile("£");
         return pattern.matcher(file).replaceAll(getEncodedBoard(map)+"£");
@@ -165,17 +104,6 @@ public class StateEncoder {
     public static String addLastUser(String user,String file){
         Pattern pattern= Pattern.compile("@");
         return pattern.matcher(file).replaceAll(user+"@");
-    }
-
-    public static int getEncodedKills(Player player){
-        switch (player.getPlayerValue().getMaxValue()){
-            case(8): return 0;
-            case (6): return 1;
-            case (4): return 2;
-            case (2): return 3;
-            case (1): return 4;
-        }
-        throw new IllegalArgumentException("PlayerValue can't be different from these");
     }
 
     public static String addKillShot(int skulls,String file){
