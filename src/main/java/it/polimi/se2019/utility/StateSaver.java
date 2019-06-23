@@ -12,8 +12,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.OpenOption;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -27,10 +30,13 @@ public class StateSaver implements Observer<MVEvent>, MVEventDispatcher{
     public StateSaver(int roomNumber) {
         this.roomNumber = roomNumber;
         try {
-            fileChannel= FileChannel.open(Paths.get("files/config/gamesState"));
+            Set<OpenOption> openOptions= new HashSet<>();
+            openOptions.add(StandardOpenOption.WRITE);
+            openOptions.add(StandardOpenOption.READ);
+            fileChannel= FileChannel.open(Paths.get("files/config/gamesState"),openOptions);
             fileChannel.position((long)roomNumber * 600);
             file= Base64.getEncoder().encodeToString(fileChannel.map(FileChannel.MapMode.READ_WRITE, (long)roomNumber * 600, 600).array());
-            //Now i have to check if the file is empty, if it is i have to encode the game
+            //Now i have to check if the file is empty, if it is i have to encode the game, for it i have to check if it equals to a string full of empry spaces
             if(file.equals("")){
                 file=StateEncoder.generateEncodedGame();
             }else{
