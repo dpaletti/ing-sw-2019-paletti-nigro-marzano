@@ -40,4 +40,46 @@ public class LootCard implements Grabbable, Drawable,Jsonable{
     public Jsonable copy() {
         return new LootCard(this);
     }
+
+    @Override
+    public void grab(Player player, String grabbed) {
+        if (name.equalsIgnoreCase(grabbed))
+            throw new UnsupportedOperationException("Selected grabbable is not on current tile and cannot be grabbed");
+        for (char c: name.toCharArray()){
+            if(c != 'P')
+                addAmmo(c, player);
+        }
+
+        if (name.contains("P"))
+            player.drawPowerUp();
+    }
+
+    private void addAmmo (char c, Player player){
+        Ammo ammo;
+        int counter = 0;
+        switch (c){
+            case 'Y':
+                ammo = new Ammo(AmmoColour.YELLOW);
+                break;
+            case 'B':
+                ammo = new Ammo(AmmoColour.BLUE);
+                break;
+            case'R':
+                ammo = new Ammo(AmmoColour.RED);
+                break;
+            case 'P':
+                return;
+            default:
+                throw new UnsupportedOperationException("Ammo with selected colour could not be found");
+        }
+
+        for (Ammo a: player.getAmmo()){
+            if (a.getColour().equals(ammo.getColour()))
+                counter++;
+        }
+
+        if (counter < 3)
+            player.addAmmo(ammo);
+    }
+
 }

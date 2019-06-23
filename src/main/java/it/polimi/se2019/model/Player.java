@@ -14,14 +14,11 @@ public class Player extends Observable<Action> implements Targetable{
     private PlayerDamage healthState= new Healthy();
     private PlayerValue playerValue= new NoDeaths();
     private Set<Tear> marks= new HashSet<>();
-    private Weapon firstWeapon;
-    private Weapon secondWeapon;
-    private Weapon thirdWeapon;
+    private List<Weapon> weapons=new ArrayList<>();
     private List<PowerUp> powerUps= new ArrayList<>();
     private PowerUp temporaryPowerUp= null;
     private Integer points= 0;
-    private Set<Ammo> usableAmmo= new HashSet<>();
-    private Set<Ammo> unusableAmmo= new HashSet<>();
+    private Set<Ammo> ammo = new HashSet<>();
     private Game game;
 
     public Player (Figure figure, Game game){
@@ -29,7 +26,7 @@ public class Player extends Observable<Action> implements Targetable{
         this.game= game;
         for (AmmoColour ammoColour: AmmoColour.values()){
             for (int i=0; i<3; i++){
-                usableAmmo.add(new Ammo(ammoColour));
+                ammo.add(new Ammo(ammoColour));
             }
         }
         this.figure.setPlayer(this);
@@ -113,26 +110,20 @@ public class Player extends Observable<Action> implements Targetable{
     }
 
 
-    public Integer getPoints() { return points; }
+    public Integer getPoints() {
+        return points;
+    }
 
     public void setPoints(Integer points) {
         this.points = points;
     }
 
-    public void setUsableAmmo(Set<Ammo> usableAmmo) {
-        this.usableAmmo = usableAmmo;
+    public void setAmmo(Set<Ammo> ammo) {
+        this.ammo = ammo;
     }
 
-    public Weapon getThirdWeapon() {
-        return thirdWeapon;
-    }
-
-    public Weapon getSecondWeapon() {
-        return secondWeapon;
-    }
-
-    public Weapon getFirstWeapon() {
-        return firstWeapon;
+    public List<Weapon> getWeapons() {
+        return weapons;
     }
 
     public Figure getFigure() {
@@ -147,34 +138,20 @@ public class Player extends Observable<Action> implements Targetable{
         return new ArrayList<>(powerUps);
     }
 
-    public List<Tear> getHp() {return hp;}
+    public List<Tear> getHp() {
+        return hp;
+    }
 
     public Set<Tear> getMarks() {
         return marks;
     }
 
-    public Set<Ammo> getUnusableAmmo() {
-        return unusableAmmo;
-    }
-
-    public Set<Ammo> getUsableAmmo() {
-        return usableAmmo;
+    public Set<Ammo> getAmmo() {
+        return ammo;
     }
 
     public PlayerValue getPlayerValue() {
         return playerValue;
-    }
-
-    public void setThirdWeapon(Weapon thirdWeapon) {
-        this.thirdWeapon = thirdWeapon;
-    }
-
-    public void setSecondWeapon(Weapon secondWeapon) {
-        this.secondWeapon = secondWeapon;
-    }
-
-    public void setFirstWeapon(Weapon firstWeapon) {
-        this.firstWeapon = firstWeapon;
     }
 
     public void setMarks(Set<Tear> marks) {
@@ -185,25 +162,12 @@ public class Player extends Observable<Action> implements Targetable{
         this.hp = hp;
     }
 
-    public Set<Weapon> showWeapons (){
-        Set<Weapon> weapons= new HashSet<>();
-        weapons.add(firstWeapon);
-        weapons.add(secondWeapon);
-        weapons.add(thirdWeapon);
-        return weapons;
-    }
-
-    public void teleport (Point position){
-        figure.teleport(position);
-        game.send(new MVMoveEvent("*", game.colourToUser(figure.getColour()), position));
-    }
-
-    public void run (Point destination) {
-        figure.run(destination);
+    public void run (Point destination, int distance) {
+        figure.run(destination, distance);
         game.send(new MVMoveEvent("*", game.colourToUser(figure.getColour()), destination));
     }
 
-    public void grabStuff(Grabbable grabbed){
+    public void grabStuff(String grabbed){
         figure.grab(grabbed);
     }
 
@@ -220,7 +184,7 @@ public class Player extends Observable<Action> implements Targetable{
     public void sellPowerUp (String powerUp){
         if (powerUpIsOwned(powerUp))
             throw new UnsupportedOperationException("Could not sell " + powerUp + "as player doesn't own it");
-        usableAmmo.add(new Ammo(game.nameToPowerUp(powerUp).getCardColour().getColour()));
+        ammo.add(new Ammo(game.nameToPowerUp(powerUp).getCardColour().getColour()));
         deletePowerUp(powerUp);
     }
 
@@ -286,8 +250,40 @@ public class Player extends Observable<Action> implements Targetable{
         powerUps.remove(game.nameToPowerUp(discardedPowerUp));
     }
 
-    public void useAmmo (Set<Ammo> usedAmmo){
-        usableAmmo.removeAll(usedAmmo);
-        unusableAmmo.addAll(usedAmmo);
+    public void useAmmos(Set<Ammo> usedAmmo){
+       for (Ammo a : usedAmmo)
+           useAmmo(a);
+    }
+
+    public void useAmmo(Ammo usedAmmo){
+        ammo.remove(usedAmmo);
+    }
+
+    public void addAmmo (Ammo ammo){
+        this.ammo.add(ammo);
+    }
+
+    public void drawPowerUp (){
+        drawPowerUp(game.getPowerUpDeck().draw().getName());
+    }
+
+    public boolean pay (Set<Ammo> ammoToPay){
+        Set<Ammo> ammosOwned = new HashSet<>(ammoToPay);
+        for  (Ammo a : ammoToPay){
+            if (ammosOwned.contains(a))
+                ammosOwned.remove(a);
+            else
+                return false;
+        }
+        useAmmos(ammoToPay);
+        return true;
+    }
+
+    public void addWeapon (Weapon weapon){
+        if (weapons.size() == 3) {
+           // game.send(/*new LeaveOneGrabbableEvent ()*/);
+            return;
+        }
+        weapons.add(weapon);
     }
 }

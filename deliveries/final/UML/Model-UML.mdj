@@ -5144,7 +5144,7 @@
 											"top": 682,
 											"width": 321.73095703125,
 											"height": 13,
-											"text": "-usableAmmo: Set<Ammo>",
+											"text": "-ammo: Set<Ammo>",
 											"horizontalAlignment": 0
 										},
 										{
@@ -32777,7 +32777,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFpyfr2wsxU07I="
 							},
-							"name": "usableAmmo",
+							"name": "ammo",
 							"visibility": "private",
 							"type": "Set<Ammo>"
 						},

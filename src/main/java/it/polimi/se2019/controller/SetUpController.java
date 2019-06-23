@@ -52,9 +52,20 @@ public class SetUpController extends Controller {
     @Override
     protected void endTimer() {
         super.endTimer();
-        int skull = mostVoted(skulls);
-        String config = mostVoted(configs);
-        boolean finalFrenzy = mostVoted(isFinalFrenzy);
+        int skull;
+        String config;
+        boolean finalFrenzy;
+
+        if (counter==0){
+            skull = 8;
+            config = MapConfig.MAP_LARGE.name();
+            finalFrenzy = true;
+        }
+        else {
+            skull = mostVoted(skulls);
+            config = mostVoted(configs);
+            finalFrenzy = mostVoted(isFinalFrenzy);
+        }
         model.send(new FinalConfigurationEvent("*", skull, config, finalFrenzy));
 
         model.setGameMap(new GameMap(MapConfig.MAP_LARGE)); //TODO: MAP_LARGE is here waiting for GameMap(MapConfig) constructor to be modified to GameMap(config)
