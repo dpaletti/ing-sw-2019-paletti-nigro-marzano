@@ -2,9 +2,7 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Client;
-import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.utility.Pair;
-import it.polimi.se2019.utility.Point;
+import it.polimi.se2019.utility.*;
 import it.polimi.se2019.view.gui_events.*;
 import it.polimi.se2019.view.vc_events.VcMatchConfigurationEvent;
 import javafx.application.Application;
@@ -12,7 +10,6 @@ import javafx.application.Application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.SynchronousQueue;
 
 
 //TODO red skulls and disabled skulls
@@ -23,19 +20,25 @@ import java.util.concurrent.SynchronousQueue;
 
 public class ViewGUI extends View {
 
-    private static Semaphore semMatchMaking = new Semaphore(1, true);
-    private static Semaphore semMatch = new Semaphore(1, true);
-    boolean matchInitialization = false;
-    private static SynchronousQueue<GuiController> guiControllers = new SynchronousQueue<>();
+    private static Semaphore semControllerSync = new Semaphore(1, true);
     private List<MockPlayer> players = new ArrayList<>();
     private boolean timerGoing=false;
+    private static ViewGUI instance = null;
 
 
     //TODO set board conf
     private Pair<Integer, Integer> boardConf;
 
-    public ViewGUI(Client client){
+    private ViewGUI(Client client){
         super(client);
+    }
+
+    public static void create(Client client){
+        instance = new ViewGUI(client);
+    }
+
+    public static ViewGUI getInstance() {
+        return instance;
     }
 
     public Pair<Integer, Integer> getBoardConf() {
@@ -44,36 +47,16 @@ public class ViewGUI extends View {
 
     @Override
     public void matchMaking(List<String> usernames) {
-        semMatchMaking.acquireUninterruptibly();
-        startControllerWatchDog();
+        semControllerSync.acquireUninterruptibly();
         new Thread(() ->  Application.launch(MatchMakingGui.class)).start();
-        semMatchMaking.acquireUninterruptibly();
-        semMatchMaking.release();
-        notify(new UiRegistrationEvent(this));
+        Log.fine("Try sem re-acquisition");
+        semControllerSync.acquireUninterruptibly();
         for (String username:
              usernames) {
             addPlayer(username);
         }
         Log.fine("MatchMaking showing ended");
 
-    }
-
-    public void startControllerWatchDog(){
-        new Thread(() ->{
-            try {
-                while(!Thread.currentThread().isInterrupted())
-                    register( guiControllers.take());
-            }catch (InterruptedException e){
-                Log.severe("Interrupted guiController take");
-                Thread.currentThread().interrupt();
-            }
-        }).start();
-    }
-
-    public void closeMatchMaking(){
-        Log.fine("Closing matchMaking, semaphore: " + semMatch.availablePermits());
-            matchInitialization = true;
-            semMatch.acquireUninterruptibly();
     }
 
     public void gameSetup(int skulls, boolean frenzy, String conf){
@@ -87,17 +70,13 @@ public class ViewGUI extends View {
         notify(new UiAddPlayer(username));
     }
 
-    public static void staticRegister(GuiController controller){
-        try {
+    public  void registerController(GuiController controller){
+        register(controller);
+        semControllerSync.release();
+    }
 
-            guiControllers.put(controller);
-            semMatchMaking.release();
-            semMatch.release();
-            Log.fine("controller registration");
-        }catch (InterruptedException e){
-            Log.severe("Gui Controller put interrupted");
-            Thread.currentThread().interrupt();
-        }
+    public void deregisterController(GuiController controller){
+        deregister(controller);
     }
 
     @Override
@@ -107,11 +86,12 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(TimerEvent message) {
+        Log.fine("Time to go: " + message.getTimeToGo());
         if (!timerGoing) {
             ViewGUI.this.notify(new UiTimerStart(message.getTimeToGo()));
             timerGoing = true;
         }
-        if (message.getTimeToGo() < 0) {
+        if (message.getTimeToGo() <= 1000) {
             ViewGUI.this.notify(new UiTimerStop());
             timerGoing = false;
         }
@@ -121,13 +101,6 @@ public class ViewGUI extends View {
     @Override
     public void dispatch(UsernameDeletionEvent message) {
         ViewGUI.this.notify(new UiRemovePlayer(message.getUsername()));
-    }
-
-    @Override
-    public void dispatch(SetUpEvent message) {
-        semMatchMaking.acquireUninterruptibly();
-        ViewGUI.this.notify(new UiCloseMatchMaking());
-        semMatchMaking.acquireUninterruptibly();
     }
 
     @Override
@@ -145,8 +118,11 @@ public class ViewGUI extends View {
     }
 
     @Override
-    public void dispatch(MatchConfigurationEvent message) {
-        notify(new UiMatchSetup(message.getConfigurations()));
+    public synchronized void dispatch(MatchConfigurationEvent message)
+    {
+            notify(new UiCloseMatchMaking());
+            semControllerSync.acquireUninterruptibly();
+            notify(new UiMatchSetup(message.getConfigurations()));
     }
 
     private void resetPlayer(String username){
@@ -173,12 +149,6 @@ public class ViewGUI extends View {
 
     @Override
     public void update(MVEvent message) {
-        if(matchInitialization){
-            semMatch.acquireUninterruptibly();
-            notify(new UiRegistrationEvent(this));
-            Log.fine("Semaphore released");
-            matchInitialization = false;
-        }
         try {
             Log.fine("Received: " + message);
             message.handle(this);
@@ -188,8 +158,5 @@ public class ViewGUI extends View {
         }
     }
 
-    public boolean isMatchInitialization() {
-        return matchInitialization;
-    }
 }
 

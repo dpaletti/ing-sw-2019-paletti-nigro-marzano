@@ -18,7 +18,7 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
         super(client);
         try {
             Registry importRegistry = LocateRegistry.getRegistry();
-            gameServer = (ServerInterface) importRegistry.lookup(Settings.REMOTE_SERVER_NAME);
+            gameServer = (ServerInterface) importRegistry.lookup(client.getRemoteServerName());
            //TODO test remote call not on localhost
 
             UnicastRemoteObject.exportObject(this, 0);
@@ -27,7 +27,7 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
         }catch (RemoteException e){
             Log.severe("Could not get RMI registry " + e.getMessage());
         }catch (NotBoundException e) {
-            Log.severe("Could not bind " + Settings.REMOTE_SERVER_NAME);
+            Log.severe("Could not bind " + client.getRemoteServerName());
         }
     }
 
@@ -36,14 +36,14 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
         super(token, client);
         try {
             Registry importRegistry = LocateRegistry.getRegistry();
-            gameServer = (ServerInterface) importRegistry.lookup(Settings.REMOTE_SERVER_NAME);
+            gameServer = (ServerInterface) importRegistry.lookup(client.getRemoteServerName());
 
             UnicastRemoteObject.exportObject(this, 0);
             gameServer.startListening(this);
         }catch (RemoteException e){
             Log.severe("Could not get RMI registry " + e.getMessage());
         }catch (NotBoundException e) {
-            Log.severe("Could not bind " + Settings.REMOTE_SERVER_NAME);
+            Log.severe("Could not bind " + client.getRemoteServerName());
         }
     }
 

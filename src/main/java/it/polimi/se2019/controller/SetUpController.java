@@ -4,7 +4,6 @@ import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.mv_events.FinalConfigurationEvent;
 import it.polimi.se2019.model.mv_events.SetUpEvent;
 import it.polimi.se2019.network.Server;
-import it.polimi.se2019.network.Settings;
 import it.polimi.se2019.utility.BiSet;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Pair;
@@ -23,7 +22,7 @@ public class SetUpController extends Controller {
 
     public SetUpController(Game model, Server server, int roomNumber) {
         super(model, server, roomNumber);
-        startTimer(Settings.MATCH_SETUP_TIMER);
+        startTimer(server.getMatchSetupTimer());
     }
 
     @Override

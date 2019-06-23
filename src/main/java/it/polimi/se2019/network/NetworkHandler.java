@@ -31,7 +31,7 @@ public abstract class NetworkHandler extends Observable<MVEvent> implements Obse
 
     public void setToken(String token){
         this.token = token;
-        client.writeToken(token);
+        client.writeProperty("token", token);
     }
 
     public void setOldToken(String oldToken){

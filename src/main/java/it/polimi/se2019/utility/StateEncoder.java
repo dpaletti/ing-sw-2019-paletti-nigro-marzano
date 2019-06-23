@@ -137,15 +137,15 @@ public class StateEncoder {
     public static String getEncodedTile(Tile tile){
         String tempString="";
         tempString=tempString.concat("("+tile.getPosition().getX()+","+tile.getPosition().getY()+")");
-        if (tile.getTileType().equals(TileType.SPAWNTILE)){
+        //if (tile.getTileType().equals(TileType.SPAWNTILE)){
             /*WeaponSpot weaponSpot=tile.getWeaponSpot();
             tempString=tempString.concat(
                     weaponSpot.getFirstWeapon()+","+
                             weaponSpot.getSecondWeapon()+","+
                             weaponSpot.getThirdWeapon() + ";");*/
-        }else if (tile.getTileType().equals(TileType.LOOTTILE)){
+        //}else if (tile.getTileType().equals(TileType.LOOTTILE)){
             //tempString=tempString.concat(tile.getLootCard().getName()+ ";");
-        }
+        //}
         return tempString;
     }
 

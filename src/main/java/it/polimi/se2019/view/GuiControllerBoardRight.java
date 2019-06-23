@@ -35,4 +35,5 @@ public class GuiControllerBoardRight extends GuiController {
 
     @FXML
     private ImageView loot32;
+
 }

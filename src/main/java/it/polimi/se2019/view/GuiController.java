@@ -3,7 +3,6 @@ package it.polimi.se2019.view;
 import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Observer;
-import it.polimi.se2019.view.gui_events.UiRegistrationEvent;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -15,27 +14,22 @@ import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 public abstract class GuiController implements Observer<Event>, Initializable, UiDispatcher {
-    protected ViewGUI viewGUI;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ViewGUI.staticRegister(this);
+        ViewGUI.getInstance().registerController(this);
     }
-
-    @Override
-    public void dispatch(UiRegistrationEvent message) {
-        Log.fine("registering viewGui");
-        this.viewGUI = message.getReference();
-    }
-    
-
 
     @Override
     public void update(Event message) {
-        try {
-            ensureJavaFXThread(() -> message.handle(this));
-        } catch (UnsupportedOperationException e) {
-            Log.fine("ignored " + message);
-        }
+        ensureJavaFXThread(() -> {
+            try {
+                message.handle(this);
+            }catch (UnsupportedOperationException e){
+                Log.fine("ignored " +
+                        message);
+            }
+        });
     }
 
     public Node getGridNode(GridPane gridPane, int x, int y){

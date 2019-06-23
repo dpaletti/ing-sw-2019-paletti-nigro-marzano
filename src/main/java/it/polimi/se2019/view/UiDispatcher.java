@@ -25,9 +25,6 @@ public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiInitialize message){
         throw new UnsupportedOperationException("GuiInitialized Unsupported");
     }
-    default void dispatch(UiRegistrationEvent message){
-        throw new UnsupportedOperationException("UiRegistrationEvent unsupported");
-    }
     default void dispatch(UiHighlightTileEvent message){
         throw new UnsupportedOperationException("UiHighlightTileEvent unsupported");
     }

@@ -9,9 +9,11 @@ import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.VirtualView;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Paths;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -19,37 +21,35 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Properties;
 import java.util.concurrent.Semaphore;
 
 public class Server implements ServerInterface {
-    //TODO move username and token uniqueness check here to support multiple parallel lobbys
     private ServerSocket serverSocket;
-    private boolean socketOpen;
     private List<VirtualView> virtualViews = new ArrayList<>();
     private Saves saves = new Saves();
-    private int roomNumber = 0;
+    private int roomNumber = -1;
     private List<String> usernames = new ArrayList<>();
     private List<String> tokens = new ArrayList<>();
+    private Properties properties = new Properties();
 
-    private int port;
-    //TODO make it configurable together with RMI registry port
-    private static final int DEFAULT_PORT = 2080;
     private Semaphore semRMI = new Semaphore(1, true);
 
     private boolean isMatchMaking = true;
-    boolean firstMatch = true;
 
-    Connection suspendedConnection = null;
+    private Connection suspendedConnection = null;
 
-    private Server(int port){
-        this.port = port;
-        socketOpen = false;
+    private Server(){
+        usernames.add("*");
 
         try {
-            UnicastRemoteObject.exportObject(this, 0);
-        }catch (RemoteException e) {
-            Log.severe("Cannot export server message" + e.getMessage());
+            fillProperties();
+            openConnections();
+            newMatch();
+        }catch (AlreadyBoundException e){
+            Log.severe("Could not bind RMI interface");
+        }catch (IOException e){
+            Log.severe("IO error while starting network up");
         }
 
     }
@@ -62,20 +62,20 @@ public class Server implements ServerInterface {
         return new ArrayList<>(tokens);
     }
 
+    private int getPort(){
+        return Integer.parseInt(properties.getProperty("PORT"));
+    }
+
     public Saves getSaves() {
         return saves; //TODO correct getter
     }
 
-    private int getPort() {
-        return port;
+    public int getMatchMakingTimer(){
+        return Integer.parseInt(properties.getProperty("MATCH_MAKING_TIMER"));
     }
 
-    private void setPort(int port) {
-        this.port = port;
-    }
-
-    private boolean isSocketOpen(){
-        return socketOpen;
+    public int getMatchSetupTimer(){
+        return Integer.parseInt(properties.getProperty("MATCH_SETUP_TIMER"));
     }
 
     public void addUsername(String username){
@@ -94,21 +94,20 @@ public class Server implements ServerInterface {
         virtualViews.get(roomNumber).deregister(controller);
     }
 
-    private void openConnections()throws IOException, AlreadyBoundException {
-        usernames.add("*");
+    private void openConnections()throws IOException, AlreadyBoundException{
 
-        serverSocket = new ServerSocket(port);
-        socketOpen = true;
+        UnicastRemoteObject.exportObject(this, 0);
+        serverSocket = new ServerSocket(getPort());
 
         Registry registry = LocateRegistry.createRegistry(1099);
-        registry.bind(Settings.REMOTE_SERVER_NAME, this);
+        registry.bind(properties.getProperty("REMOTE_SERVER_NAME"), this);
     }
 
-    private void startServer() {
+    private void newMVC() {
 
         Game model = new Game();
-        virtualViews.add(new VirtualView(roomNumber, this)); //this needs to stay here
-        Controller controller = new MatchMakingController(model, this, roomNumber);
+        virtualViews.add(new VirtualView(roomNumber, this));
+        new MatchMakingController(model, this, roomNumber);
 
 
         model.register(virtualViews.get(roomNumber));
@@ -132,20 +131,17 @@ public class Server implements ServerInterface {
             if(!isMatchMaking) {
                 isMatchMaking = true;
                 suspendedConnection = new ConnectionSocket(virtualViews.get(roomNumber).generateToken(), socket);
-                break;
+                return;
             }
             virtualViews.get(roomNumber).startListening(new ConnectionSocket(virtualViews.get(roomNumber).generateToken(), socket));
           }
     }
 
-    private void startMatch(){
+    private void newMatch(){
         while(!Thread.currentThread().isInterrupted()) {
             semRMI.acquireUninterruptibly();
-            if(firstMatch) {
-                firstMatch = false;
-            }else
-                roomNumber++;
-            startServer();
+            roomNumber++;
+            newMVC();
             Log.fine("Creating new game");
         }
     }
@@ -155,17 +151,25 @@ public class Server implements ServerInterface {
         isMatchMaking = false;
     }
 
+    private void fillProperties(){
+        try {
+            properties.load(new FileInputStream(Paths.get("files/server.config").toFile()));
+        }catch (IOException e){
+            Log.severe("Could not load properties");
+        }
+    }
+
     //------------------------RMI REMOTE SERVER INTERFACE IMPLEMENTATION------------------------//
 
     @Override
     public void startListening(CallbackInterface client) {
         semRMI.acquireUninterruptibly();
-        semRMI.release();
         Log.fine("Accepted new client");
         if(!isMatchMaking) {
             isMatchMaking = true;
             suspendedConnection = new ConnectionRMI(virtualViews.get(roomNumber).generateToken(), client);
-            startMatch();
+            semRMI.release();
+            newMatch();
             return;
         }
         virtualViews.get(roomNumber).startListening(new ConnectionRMI(virtualViews.get(roomNumber).generateToken(), client));
@@ -193,29 +197,8 @@ public class Server implements ServerInterface {
 
     //------------------------RMI REMOTE SERVER INTERFACE IMPLEMENTATION------------------------//
 
-
     public static void main(String[] args){
-        Scanner in = new Scanner(System.in);
-
-        Log.input("Input socket port number (> 1024): ");
-        Server server = new Server(in.nextInt());
-        if(server.getPort() <= 1024){
-            Log.info("This port does not work, default port will be used " + DEFAULT_PORT);
-            server.setPort(DEFAULT_PORT);
-        }
-
-        try {
-            server.openConnections();
-        }catch (IOException e){
-            if(server.isSocketOpen())
-                Log.severe("Could not get RMI registry");
-            else
-                Log.severe("Could not open server socket");
-        }catch (AlreadyBoundException e){
-            Log.severe("Could not bind server interface to RMI registry");
-        }
-
-        server.startMatch();
+        new Server();
     }
 
 }

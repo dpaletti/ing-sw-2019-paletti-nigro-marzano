@@ -9,8 +9,6 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.Base64;
-import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Saves implements Observer<MVEvent>, MVEventDispatcher{
@@ -73,11 +71,11 @@ public class Saves implements Observer<MVEvent>, MVEventDispatcher{
     }
 
     public static String saveTile(Tile tile,String file){
-        if (tile.getTileType().equals(TileType.SPAWNTILE)){
+        /*if (tile.getTileType().equals(TileType.SPAWNTILE)){
             Pattern pattern=Pattern.compile("\\("+tile.getPosition().getX()+","+tile.getPosition().getY()+"\\)\\w+{1,30}," +
                     "\\w+{1,30},\\w+{1,30};");
            return pattern.matcher(file).replaceAll(StateEncoder.getEncodedTile(tile));
-        }
+        }*/
         //If the Tile is a LootTile then i use another Pattern
         Pattern pattern=Pattern.compile("\\("+tile.getPosition().getX()+","+tile.getPosition().getY()+"\\)\\d*{0,3};");
         return pattern.matcher(file).replaceAll(StateEncoder.getEncodedTile(tile));

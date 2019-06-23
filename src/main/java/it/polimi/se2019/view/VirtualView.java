@@ -3,6 +3,7 @@ package it.polimi.se2019.view;
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Connection;
 import it.polimi.se2019.network.ConnectionBroadcast;
+import it.polimi.se2019.network.EventLoop;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.*;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
@@ -12,7 +13,6 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,28 +51,13 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     }
 
 
-    private class EventLoop implements Runnable {
-        Connection connection;
 
-        private EventLoop(Connection c) {
-            this.connection = c;
-        }
-
-        private boolean shutdown = false;
-
-        @Override
-        public void run() {
-            try {
-                while (!Thread.currentThread().isInterrupted())
-                    retrieve(connection);
-            } catch (NoSuchElementException e) {
-                if (biTokenUsername.containsFirst(connection.getToken()))
-                    VirtualView.this.notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken())));
-                else {
-                    VirtualView.this.notify(new DisconnectionEvent(connection.getToken()));
-                    connection.disconnect();
-                }
-            }
+    public void disconnect(Connection connection){
+        if (biTokenUsername.containsFirst(connection.getToken()))
+            VirtualView.this.notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken())));
+        else {
+            VirtualView.this.notify(new DisconnectionEvent(connection.getToken()));
+            connection.disconnect();
         }
     }
 
@@ -165,7 +150,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     }
 
 
-    private void retrieve(Connection connection){
+    public void retrieve(Connection connection){
         //VirtualView changes token in usernames while receiving
         //players are identified by usernames
 
@@ -184,7 +169,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     public void startListening (Connection connection){
             sem.acquireUninterruptibly();
             connections.add(connection);
-            executorService.submit(new EventLoop(connection));
+            executorService.submit(new EventLoop(this, connection));
             submit(connection, new HandshakeEndEvent(connection.getToken(), server.getUsernames()));
     }
 

@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="401.0" prefWidth="570.0" stylesheets="@../css/match.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerMatchMaking">
+<AnchorPane fx:id="anchorPane" prefHeight="401.0" prefWidth="570.0" stylesheets="@../css/match.css" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerMatchMaking">
       <Label fx:id="timer" alignment="BASELINE_RIGHT" contentDisplay="RIGHT" layoutX="288.0" layoutY="357.0" prefHeight="30.0" prefWidth="268.0" text="waiting for more players" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font size="18.0" />
@@ -14,7 +14,7 @@
       </Label>
    <TableView fx:id="playerTable" layoutX="114.0" layoutY="50.0" prefHeight="302.0" prefWidth="320.0">
      <columns>
-       <TableColumn prefWidth="319.0" text="Username" />
+       <TableColumn fx:id = "usernameColumn" prefWidth="319.0" text="Username" />
      </columns>
    </TableView>
 </AnchorPane>

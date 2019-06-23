@@ -22,12 +22,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.Semaphore;
 
 public class GuiControllerTable extends GuiController {
@@ -81,11 +84,23 @@ public class GuiControllerTable extends GuiController {
     private GridPane root;
 
     private String chosenMap;
-    private int skulls;
+    private int skulls = -1;
     private boolean frenzy = false;
     private Semaphore choiceSem = new Semaphore(2, true);
     private GridPane choiceGrid;
     private SimpleStringProperty timerValue;
+
+    @Override
+    public void update(Event message) {
+        ensureJavaFXThread(() -> {
+            try {
+                message.handle(this);
+            }catch (UnsupportedOperationException e){
+                Log.fine("Table Controller: ignored " +
+                        message);
+            }
+        });
+    }
 
     @FXML
     private void clickable(){
@@ -97,19 +112,18 @@ public class GuiControllerTable extends GuiController {
         currentPlayer.getScene().setCursor(Cursor.DEFAULT);
     }
 
-
-
     @Override
-    public void update(Event message) {
-        try {
-            ensureJavaFXThread(() -> message.handle(this));
-        } catch (UnsupportedOperationException e) {
-            Log.fine("ignored " + message);
-        }
+    public synchronized void initialize(URL location, ResourceBundle resources) {
+        root.getScene().setRoot(root);
+        Stage currentStage = (Stage) root.getScene().getWindow();
+        currentStage.setTitle("Adrenaline");
+        currentStage.setResizable(false);
+        currentStage.setMaximized(true);
+        super.initialize(location, resources);
     }
 
     @Override
-    public void dispatch(UiMatchSetup message) {
+    public synchronized void dispatch(UiMatchSetup message) {
         try {
             choiceSem.acquireUninterruptibly(2);
             FXMLLoader choices = new FXMLLoader(Paths.get("files/fxml/match_setup.fxml").toUri().toURL());
@@ -137,11 +151,10 @@ public class GuiControllerTable extends GuiController {
                     }
                 }
             }
-
             initializeCheckBox();
             initializeSkullSelection();
             choiceSem.acquireUninterruptibly(2);
-            viewGUI.gameSetup(skulls, frenzy, chosenMap);
+            ViewGUI.getInstance().gameSetup(skulls, frenzy, chosenMap);
         }catch (MalformedURLException e){
             Log.severe("Url for table");
         }catch (IOException e){
@@ -170,7 +183,7 @@ public class GuiControllerTable extends GuiController {
     }
 
     public Label getTimer(){
-        for(Node n: choiceGrid.getParent().getChildrenUnmodifiable()){
+        for(Node n: root.getChildren()){
             if(n.getId().equals("choiceTimer"))
                 return (Label) n;
         }
@@ -178,62 +191,37 @@ public class GuiControllerTable extends GuiController {
     }
 
     public void initializeSkullSelection(){
-        GridPane gridPane = null;
-        for(Node n: choiceGrid.getChildren()){
-            if(n.getId().equals("skullGrid")){
-                gridPane = (GridPane) n;
-            }
-        }
-        if(gridPane == null)
-            throw new NullPointerException("Could not find skull grid");
+        GridPane gridPane = (GridPane) choiceGrid.getScene().lookup("#skullGrid");
         for(Node n: gridPane.getChildren()){
-            ((RadioButton) n).setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    if(((RadioButton) event.getSource()).getId().equals("skulls5"))
+            ((RadioButton) n).setOnAction((ActionEvent event) -> {
+                    if(((RadioButton) event.getSource()).getId().equals("skulls5") && skulls < 5)
                         skulls=5;
-                    if(((RadioButton) event.getSource()).getId().equals("skulls6"))
+                    if(((RadioButton) event.getSource()).getId().equals("skulls6") && skulls < 6)
                         skulls=6;
-                    if(((RadioButton) event.getSource()).getId().equals("skulls7"))
+                    if(((RadioButton) event.getSource()).getId().equals("skulls7") && skulls < 7)
                         skulls=7;
-                    if(((RadioButton) event.getSource()).getId().equals("skulls7"))
+                    if(((RadioButton) event.getSource()).getId().equals("skulls7") && skulls < 8)
                         skulls=8;
                     choiceSem.release();
-                }
             });
         }
     }
 
     public void initializeCheckBox(){
-        CheckBox frenzyBox = null;
-        for(Node n: choiceGrid.getChildren()){
-            if(n.getId().equals("frenzy"))
-                frenzyBox = (CheckBox) n;
-        }
-
-        if(frenzyBox == null)
-            throw new NullPointerException("Could not find frenzy check box");
-
-        frenzyBox.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
+        CheckBox frenzyBox = (CheckBox) choiceGrid.getScene().lookup("#frenzy");
+        frenzyBox.setOnAction((ActionEvent event) -> {
                 if(((CheckBox) event.getSource()).isSelected()) {
                     frenzy = true;
                     return;
                 }
                 frenzy = false;
-            }
         });
-
-
     }
 
 
     public ImageView createMapImage(String conf, GridPane mapGrid) throws MalformedURLException{
         ImageView tempImage = new ImageView(Paths.get("files/assets/board/map/" + conf).toUri().toURL().toString());
-        tempImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
+        tempImage.setOnMouseClicked((MouseEvent event) -> {
                 choiceSem.release();
                 highlight(event, conf);
                 chosenMap = conf;
@@ -244,22 +232,15 @@ public class GuiControllerTable extends GuiController {
                             notClickable();
                         }
                     });
-                }
             }
         });
-        tempImage.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
+        tempImage.setOnMouseEntered((MouseEvent event) -> {
                 highlight(event, conf);
                 clickable();
-            }
         });
-        tempImage.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
+        tempImage.setOnMouseExited((MouseEvent event) -> {
                 darken(event, conf);
                 notClickable();
-            }
         });
         return tempImage;
     }

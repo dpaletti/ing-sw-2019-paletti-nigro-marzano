@@ -2,7 +2,6 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.network.Server;
-import it.polimi.se2019.network.Settings;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
@@ -49,7 +48,7 @@ public class MatchMakingController extends Controller {
         Log.info("Players in match making: " + playerCount);
         if (playerCount.get() == 3) {
             Log.fine("Timer started");
-            startTimer(Settings.MATCH_MAKING_TIMER);
+            startTimer(server.getMatchMakingTimer());
             timerRunning.set(true);
         }
         if (playerCount.get() == 5) {
