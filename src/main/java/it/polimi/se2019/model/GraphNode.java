@@ -198,9 +198,9 @@ public class GraphNode<T> implements Iterable<GraphNode<T>> {
 
     public void deleteCopies (){
         boolean isLastLayer = false;
-        List<GraphNode<T>> siblings;
+        Set<GraphNode<T>> siblings;
         for (int i = 1; !isLastLayer; i++){
-            siblings = new ArrayList<>();
+            siblings = new HashSet<>();
             isLastLayer = true;
             for (GraphNode<T> t : this.getListLayer(i)){
                 if (!t.isLeaf())
@@ -218,7 +218,7 @@ public class GraphNode<T> implements Iterable<GraphNode<T>> {
         }
     }
 
-    private boolean containsSibling (List<GraphNode<T>> siblings, T key){
+    private boolean containsSibling (Set<GraphNode<T>> siblings, T key){
         for (GraphNode<T> t : siblings){
             if (t.getKey().equals(key))
                 return true;
@@ -226,7 +226,7 @@ public class GraphNode<T> implements Iterable<GraphNode<T>> {
         return false;
     }
 
-    private GraphNode<T> getSibling (List<GraphNode<T>> siblings, T key) {
+     GraphNode<T> getSibling (Set<GraphNode<T>> siblings, T key) {
         for (GraphNode<T> t : siblings) {
             if (t.getKey().equals(key))
                 return t;

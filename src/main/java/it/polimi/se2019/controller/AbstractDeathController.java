@@ -1,9 +1,7 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.FigureColour;
-import it.polimi.se2019.model.Game;
-import it.polimi.se2019.model.Skull;
-import it.polimi.se2019.model.Tear;
+import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.mv_events.UpdatePointsEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
@@ -46,7 +44,7 @@ public abstract class AbstractDeathController extends Controller {
                     localBestFigures.add(entry.getKey());
             }
 
-            List<Integer> pointsToAssign= model.getPointsToAssign(user).subList(i, i+localBestFigures.size());
+            List<Integer> pointsToAssign= getPointsToAssign(user).subList(i, i+localBestFigures.size());
             i+=(localBestFigures.size()-1);
             for (FigureColour f: localBestFigures) {
                 figuresToHits.remove(f);
@@ -70,7 +68,7 @@ public abstract class AbstractDeathController extends Controller {
         int counter = 0;
         for (Tear t: hp){
             if (tyingFigures.contains(t.getColour())){
-                model.updatePoints(model.colourToUser(t.getColour()), pointsToAssign.get(counter));
+                updatePoints(model.colourToUser(t.getColour()), pointsToAssign.get(counter));
                 tyingFigures.remove(t.getColour());
                 counter++;
             }
@@ -78,13 +76,13 @@ public abstract class AbstractDeathController extends Controller {
     }
 
     protected void firstBlood (Tear firstShooter){
-        model.updatePoints(model.colourToUser(firstShooter.getColour()), 1);
+        updatePoints(model.colourToUser(firstShooter.getColour()), 1);
     }
 
     protected void calculateOverkills (List<Skull> killshotTrack){
         for (Skull s: killshotTrack){
             if (s.getOverkill())
-                model.updatePoints(model.colourToUser(s.getTear().getColour()), 1);
+                updatePoints(model.colourToUser(s.getTear().getColour()), 1);
         }
     }
 
@@ -96,5 +94,22 @@ public abstract class AbstractDeathController extends Controller {
         Map<FigureColour, Integer> figuresToKills = calculateHits(killshot);
         assignPoints(figuresToKills, user, killshot);
         calculateOverkills(killshotTrack);
+    }
+
+    private void updatePoints (String username, int points){
+        model.userToPlayer(username).setPoints(model.userToPlayer(username).getPoints()+points);
+        model.send(new UpdatePointsEvent(username, model.userToPlayer(username).getPoints()));
+    }
+
+    private List<Integer> getPointsToAssign (String username){
+        Player player = model.userToPlayer(username);
+        List<Integer> points;
+        //checks whether player is in FinalFrenzy
+        if (player.getHealthState().isFinalFrenzy())
+            points = model.getFrenzyPointsToAssign();
+        else
+            points = model.getPointsToAssign();
+        int index = points.indexOf(player.getPlayerValue().getMaxValue());
+        return new ArrayList<>(model.getPointsToAssign().subList(index, model.getPointsToAssign().size()));
     }
 }

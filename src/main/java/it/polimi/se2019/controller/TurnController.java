@@ -4,9 +4,13 @@ import it.polimi.se2019.model.AmmoColour;
 import it.polimi.se2019.model.Combo;
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.view.vc_events.EndOfTurnEvent;
+import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.mv_events.MVMoveEvent;
+import it.polimi.se2019.model.mv_events.StartTurnEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.*;
 
@@ -42,26 +46,26 @@ public class TurnController extends Controller {
 
         @Override
         public void dispatch(ReloadEvent message) {
-            model.reloadWeapon(message.getSource(), message.getWeaponName());
+            reloadWeapon(message.getSource(), message.getWeaponName());
         }
 
         @Override
         public void dispatch(VCMoveEvent message) {
-            if (message.getIsTeleport()){model.teleportPlayer(message.getSource(), message.getDestination()); }
-             else {
-                 model.run(message.getSource(), message.getDestination());
-             }
+        int distance = 3;
+            if (message.getIsTeleport())
+                distance = -1;
+             run(message.getSource(), message.getDestination(), distance);
         }
 
         @Override
         public void dispatch(GrabEvent message) {
-            model.grab(message.getSource(), message.getGrabbed());
+            model.userToPlayer(message.getSource()).grabStuff(message.getGrabbed());
         }
 
         @Override
         public void dispatch(SpawnEvent message) {
             try {
-                model.spawn(message.getSource(), stringToAmmo(message.getDiscardedPowerUpColour()), message.getPowerUpToKeep());
+                spawn(message.getSource(), stringToAmmo(message.getDiscardedPowerUpColour()), message.getPowerUpToKeep());
             } catch (NullPointerException e) {
                 Log.severe(e.getMessage());
             }
@@ -84,7 +88,7 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(DiscardedPowerUpEvent message) {
-        model.discardPowerUp(message.getSource(), message.getDiscardedPowerUp());
+        model.userToPlayer(message.getSource()).discardPowerUp(message.getDiscardedPowerUp());
     }
 
     @Override
@@ -142,5 +146,22 @@ public class TurnController extends Controller {
         }
         currentCombo.getPartialCombos().get(comboIndex).use(model, currentPlayer);
     }
+    public void run (String username, Point destination, int distance){
+        model.userToPlayer(username).run(destination, distance);
+    }
 
+    public void reloadWeapon (String username, String weaponName){
+        model.userToPlayer(username).reload(model.nameToWeapon(weaponName));
+    }
+
+    private void spawn (String username, AmmoColour spawnColour, String powerUpName){
+        for (Tile tile: model.getGameMap().getSpawnTiles()){
+            if (tile.getColour().toString().equals(spawnColour.toString()))
+                model.userToPlayer(username).run(tile.getPosition(), -1);
+        }
+        if (model.nameToPowerUp(powerUpName)!=null)
+            model.userToPlayer(username).drawPowerUp(powerUpName);
+        model.send(new MVMoveEvent("*", username, model.userToPlayer(username).getFigure().getPosition()));
+        model.send(new StartTurnEvent(username));
+    }
 }

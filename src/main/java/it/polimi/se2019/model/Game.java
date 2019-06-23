@@ -13,26 +13,27 @@ public class Game extends Observable<MVEvent> {
     private GameMap gameMap;
     private boolean finalFrenzy= true;
     private KillshotTrack killshotTrack;
+
     private Deck weaponDeck;
     private Deck powerUpDeck;
     private Deck lootDeck;
+
     private List<Player> players= new ArrayList<>();
     private BiSet<FigureColour, String> userLookup = new BiSet<>();
     private List<String> usernames= new ArrayList<>();
-    private Random randomConfig= new Random();
+
     private TurnMemory turnMemory = new TurnMemory();
+
     private WeaponHelper weaponHelper=new WeaponHelper();
     private ComboHelper comboHelper=new ComboHelper();
     private PowerUpHelper powerUpHelper=new PowerUpHelper();
     private LootCardHelper lootCardHelper=new LootCardHelper();
+
     private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1, 1, 1));
     private List <Integer> frenzyPointsToAssign= new ArrayList<>(Arrays.asList(2, 1, 1, 1, 1));
 
     private MVSelectionEvent selectionEventHolder = null;
 
-    // TODO Mapping between figures and usernames coming from controller
-
-    //TODO lootCard Helper, json of lootCards
     public Game(){
         weaponDeck= new Deck(new ArrayList<>(weaponHelper.getWeapons()));
         powerUpDeck= new Deck(new ArrayList<>(powerUpHelper.getPowerUps()));
@@ -44,16 +45,9 @@ public class Game extends Observable<MVEvent> {
         notify(event);
     }
 
-    public void weaponEnd (String playing){
-        notify(new MVWeaponEndEvent(playing));
-    }
-
-    public void apply (String playing, List<Player> players,List<Action> actions){
-        for (Action action:actions){
-            for (Player player: players){
-                //TODO Put action method in action enumeration
-            }
-        }
+    public void apply (String playing, List<Player> players, PartialWeaponEffect partialWeaponEffect){
+       for (Player p : players)
+           userToPlayer(playing).apply(p, partialWeaponEffect);
     }
 
     public void sendPossibleEffects (String username, String weaponName, List<GraphWeaponEffect> weaponEffect){
@@ -77,51 +71,12 @@ public class Game extends Observable<MVEvent> {
         selectionEventHolder = null;
     }
 
-    public void timerTick(int timeToGo){
-
-        notify(new TimerEvent("*", timeToGo));
-    }
-
-    public void sendPartialEffectConflict (String username, List<ArrayList<Action>> possibleActions, List<ArrayList<String>>previousTargets){
-        notify(new PartialEffectEvent(username, possibleActions, previousTargets));
-    }
-
-    public void newPlayerInMatchMaking(String token, String username){
-        notify(new MvJoinEvent(token, username));
-    }
-
-    public void playerReconnection(String token, String oldToken, boolean isMatchMaking){
-        notify(new MvReconnectionEvent(token, oldToken, isMatchMaking));
-    }
-
     public void unloadedWeapons (String username){
         Player player= userToPlayer(username);
         List<String> unloadedWeapons= new ArrayList<>();
         for (Weapon w: player.getWeapons())
             unloadedWeapons.add(w.getName());
         notify(new ReloadableWeaponsEvent(username, unloadedWeapons));
-    }
-
-    public void usernameDeletion(String username){
-        notify(new UsernameDeletionEvent("*", username));
-    }
-
-    public void closeMatchMaking(List<String> usernames){
-        this.usernames= new ArrayList<>(usernames);
-        List<String> configurations= new ArrayList<>();
-        for (String name: getMapConfigs())
-            configurations.add(name);
-        notify(new MatchConfigurationEvent("*", configurations));
-    }
-
-    public void startMatch(){
-        PowerUp firstCard= (PowerUp) powerUpDeck.draw();
-        PowerUp secondCard= (PowerUp) powerUpDeck.draw();
-        notify(new StartFirstTurnEvent(colourToUser(players.get(0).getFigure().getColour()),
-                firstCard.getName(),
-                secondCard.getName(),
-                true
-                ));
     }
 
     public void endTurn (String username){
@@ -146,6 +101,10 @@ public class Game extends Observable<MVEvent> {
         return frenzyPointsToAssign;
     }
 
+    public List<Integer> getPointsToAssign() {
+        return pointsToAssign;
+    }
+
     public boolean isFinalFrenzy() {
         return finalFrenzy;
     }
@@ -168,6 +127,10 @@ public class Game extends Observable<MVEvent> {
         return killshotTrack;
     }
 
+    public void setUsernames(List<String> usernames) {
+        this.usernames = usernames;
+    }
+
     public List<Player> getPlayers() { return players; }
 
     public List<String> getUsernames() {
@@ -186,11 +149,17 @@ public class Game extends Observable<MVEvent> {
         this.userLookup = userLookup;
     }
 
-
     public void setGameMap(GameMap gameMap) {
         this.gameMap = gameMap;
     }
 
+    public void setKillshotTrack(KillshotTrack killshotTrack) {
+        this.killshotTrack = new KillshotTrack(killshotTrack.getNumberOfSkulls());
+    }
+
+    public void setFinalFrenzy(boolean finalFrenzy) {
+        this.finalFrenzy = finalFrenzy;
+    }
 
     public Player colourToPlayer (FigureColour figureColour){
         for (Player playerCounter: players){
@@ -256,20 +225,6 @@ public class Game extends Observable<MVEvent> {
         return new TurnMemory(turnMemory);
      }
 
-     public List<Integer> getPointsToAssign (String username){
-        Player player = userToPlayer(username);
-        List<Integer> points= new ArrayList<>();
-        //checks whether player is in FinalFrenzy
-         if (player.getHealthState().isFinalFrenzy())
-            points = frenzyPointsToAssign;
-         else
-             points = pointsToAssign;
-        int index = points.indexOf(player.getPlayerValue().getMaxValue());
-        return new ArrayList<>(pointsToAssign.subList(index, pointsToAssign.size()));
-     }
-
-    //exposed methods, used for MVEvents or VCEvents
-
     public void allowedMovements (String username, int radius){
         Player playing= userToPlayer(username);
         List<Point> allowedPositions= new ArrayList<>();
@@ -279,141 +234,22 @@ public class Game extends Observable<MVEvent> {
             throw new NullPointerException("List of possible movements is empty");
     }
 
-    public void allowedWeapons(String username){
-        Player playing= userToPlayer(username);
-        List<String> weapons= new ArrayList<>();
-        for (Weapon weapon: playing.getWeapons()){
-            weapons.add(weapon.getName());
-        }
-        notify(new AllowedWeaponsEvent(username, weapons));
-    }
-    public void teleportPlayer (String username, Point teleportPosition){
-        Player playerToMove= userToPlayer(username);
-        playerToMove.run(teleportPosition, -1);
-    }
-
-    //TODO: do this method with List of weapons
-    public void reloadWeapon (String username, String weaponName){
-        Player playerReloading= userToPlayer(username);
-       /* if (weaponName.equals(playerReloading.getFirstWeapon().getName())){
-            playerReloading.reload(playerReloading.getFirstWeapon());
-        }
-        else if (weaponName.equals(playerReloading.getSecondWeapon().getName())){
-            playerReloading.reload(playerReloading.getSecondWeapon());
-        }
-        else if (weaponName.equals(playerReloading.getThirdWeapon().getName())){
-            playerReloading.reload(playerReloading.getThirdWeapon());
-        }*/
-    }
-
-    public void run (String username, Point destination){
-        Player playerRunning= userToPlayer(username);
-        playerRunning.run(destination, 3);
-    }
-
-    public void grabbableCards (String username){
-        Player player= userToPlayer(username);
-        List<String> grabbableNames= new ArrayList<>();
-        List<Grabbable> grabbables= player.getFigure().getTile().grab();
-        for (Grabbable g: grabbables)
-            grabbableNames.add(g.getName());
-        notify(new GrabbablesEvent(username, grabbableNames));
-
-    }
-
-    public void grab (String username, String grabbed){
-        Player playerGrabbing= userToPlayer(username);
-        Grabbable grabbedCard= null;
-        for (Weapon weapon: weaponHelper.getWeapons()){
-            if (weapon.getName().equalsIgnoreCase(grabbed)){
-                grabbedCard= nameToWeapon(grabbed);
-                break;
-            }
-        }
-        if (grabbedCard==null){
-            for (LootCard lootCard: lootCardHelper.getLootCards()){
-                if (lootCard.getName().equalsIgnoreCase(grabbed)){
-                    grabbedCard= nameToLootCard(grabbed);
-                }
-            }
-        }
-        if (grabbedCard==null) throw new NullPointerException("This card is not grabbable");
-        playerGrabbing.grabStuff(grabbedCard.getName());
-    }
-
-    public void sendAvailableWeapons (String username){
-        Player shooting= userToPlayer(username);
-        List<String> availableWeapons= new ArrayList<>();
-        for (Weapon weapon: shooting.getWeapons()){
-            availableWeapons.add(weapon.getName());
-        }
-        notify(new AvailableWeaponsEvent(username, availableWeapons));
-    }
-
-    public void sendPossibleEffects (String username, String weaponName){
-        Weapon weapon= nameToWeapon(weaponName);
-
-        /*notify(new PossibleEffectsEvent(username,
-                weaponName,
-                weapon.getCardColour().getColour().toString(),
-                ));*/
-    }
-
+    //TODO: understand where and how this method should be used
     public void sendPossibleTargets (String username, List<Player> players, List<Tile> tiles, boolean isArea) {
         List<String> usernames = new ArrayList<>();
         List<Point> points = new ArrayList<>();
 
-        for (Player p : players) {
+        for (Player p : players)
             usernames.add(playerToUser(p));
-        }
     }
 
-
+    //TODO: same as above
     public GraphNode<GraphWeaponEffect> getWeaponEffects (String weapon){
         return nameToWeapon(weapon).getDefinition();
     }
 
-    public void spawn (String username, AmmoColour spawnColour, String powerUpName){
-        Player spawning= userToPlayer(username);
-        PowerUp drawnPowerUp= nameToPowerUp(powerUpName);
-        for (Tile tile: gameMap.getSpawnTiles()){
-            if (tile.getColour().toString().equals(spawnColour.toString())){
-                spawning.run(tile.position, -1);
-            }
-        }
-        if (drawnPowerUp!=null){
-            spawning.drawPowerUp(drawnPowerUp.name);
-        }
-        notify(new MVMoveEvent("*", username, spawning.getFigure().getPosition()));
-        notify(new StartTurnEvent(username));
-    }
-
     public void usePowerUp (String username, String powerUpName){
-        userToPlayer(username).usePowerUp(powerUpName);
-    }
-
-    public void chosePowerUpToDiscard (Player player, List<PowerUp> powerUps){
-        String username= colourToUser(player.getFigure().getColour());
-        List<String> powerUpsToDiscard= new ArrayList<>();
-        for (PowerUp powerUp: powerUps){
-            powerUpsToDiscard.add(powerUp.getName());
-        }
-        notify(new PowerUpToLeaveEvent(username, powerUpsToDiscard));
-    }
-
-    public void discardPowerUp (String username, String powerUpName){
-        Player playing= userToPlayer(username);
-        PowerUp powerUpToDiscard= nameToPowerUp(powerUpName);
-        playing.discardPowerUp(powerUpToDiscard.name);
-    }
-
-    public void discardedPowerUp (Player player, String drawnPowerUp, String discardedPowerUp){
-        notify(new DiscardedPowerUpEvent("*", colourToUser(player.getFigure().getColour()), drawnPowerUp, discardedPowerUp));
-    }
-
-    public void updatePoints (String username, int points){
-        userToPlayer(username).setPoints(userToPlayer(username).getPoints()+points);
-        notify(new UpdatePointsEvent(username, userToPlayer(username).getPoints()));
+        //userToPlayer(username).usePowerUp(powerUpName);
     }
 
     // all players without any damage change their boards to final frenzy boards

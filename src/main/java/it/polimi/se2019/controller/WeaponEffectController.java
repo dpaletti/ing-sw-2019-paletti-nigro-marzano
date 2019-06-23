@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.mv_events.PartialEffectEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.Action;
 import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
@@ -48,8 +49,7 @@ public class WeaponEffectController extends WeaponController{
             finalTargets.add(new ArrayList<>(targets));
             targets.clear();
         }
-        model.sendPartialEffectConflict(model.playerToUser(player), actions, finalTargets);
-
+        model.send(new PartialEffectEvent(model.playerToUser(player), actions, finalTargets));
     }
 
 

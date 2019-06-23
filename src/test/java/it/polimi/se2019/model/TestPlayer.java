@@ -76,7 +76,7 @@ public class TestPlayer {
         List<Tear> finalHP = new ArrayList<>();
         Tear tear= new Tear(FigureColour.GREEN);
         finalHP.add(tear);
-        player.setHp(finalHP);
+        //player.setHp(finalHP);
         player.addTear(FigureColour.MAGENTA);
 
         assertEquals(player.getHp().get(1), new Tear (FigureColour.MAGENTA));

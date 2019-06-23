@@ -67,8 +67,9 @@ public class SetUpController extends Controller {
             finalFrenzy = mostVoted(isFinalFrenzy);
         }
         model.send(new FinalConfigurationEvent("*", skull, config, finalFrenzy));
-
         model.setGameMap(new GameMap("Large"));
+        model.setKillshotTrack(new KillshotTrack(skull));
+        model.setFinalFrenzy(finalFrenzy);
         model.send(new SetUpEvent("*", assignFigureToUser(), weaponSpotsSetUp(), lootTilesSetUp()));
 
         new MatchController(model, server, model.getUsernames(), getRoomNumber());

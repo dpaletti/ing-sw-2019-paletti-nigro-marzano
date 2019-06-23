@@ -31,7 +31,7 @@ public class DeathController extends AbstractDeathController{
         if (hp.size()<11)
             return;
         deathPointCalculation(message.getSource(), hp);
-        model.userToPlayer(message.getSource()).setHp(null);
+        model.userToPlayer(message.getSource()).emptyHp();
     }
 
     @Override

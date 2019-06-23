@@ -7,8 +7,13 @@ public class Point implements Serializable {
     private int y;
 
     public Point (int x, int y){
-        this.x=x;
-        this.y=y;
+        this.x = x;
+        this.y = y;
+    }
+
+    public Point (Point point){
+        this.x = point.getX();
+        this.y = point.getY();
     }
 
     public int getX() {
@@ -18,10 +23,25 @@ public class Point implements Serializable {
     public int getY() {
         return y;
     }
-    //TODO make it immutable and delete setters
-    //instantiate new point instead of setting
 
     public int getDistance (Point centre){
         return (Math.abs((centre.getX()-x)+(centre.getY()-y)));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Point point = (Point) o;
+        return x == point.x &&
+                y == point.y;
+    }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

@@ -1,16 +1,19 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.mv_events.AllowedWeaponsEvent;
+import it.polimi.se2019.model.mv_events.GrabbablesEvent;
+
 public enum  PartialCombo {
     SHOOT {
         @Override
         public void use(Game game, String username) {
-            game.allowedWeapons(username);
+            game.send(new AllowedWeaponsEvent(username, Card.stringify(Card.toCard(game.userToPlayer(username).getWeapons()))));
         }
     },
     GRAB{
         @Override
         public void use(Game game, String username) {
-            game.grabbableCards(username);
+            game.send(new GrabbablesEvent(username, Grabbable.stringify(Grabbable.toCard(game.userToPlayer(username).getWeapons()))));
         }
     },
     MOVE {
@@ -27,5 +30,4 @@ public enum  PartialCombo {
     };
 
     public abstract void use (Game game, String username);
-
 }

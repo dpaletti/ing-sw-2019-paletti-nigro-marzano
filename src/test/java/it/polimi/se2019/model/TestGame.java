@@ -63,7 +63,7 @@ public class TestGame {
     @Test
     public void testUpdatePoints(){
 
-        game.updatePoints("magenta",1);
+        //game.updatePoints("magenta",1);
         assertEquals(magenta.getPoints(), (Integer) 1);
     }
 

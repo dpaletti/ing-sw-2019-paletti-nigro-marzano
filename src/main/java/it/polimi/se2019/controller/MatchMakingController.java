@@ -1,6 +1,8 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
+import it.polimi.se2019.model.MapConfig;
+import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.VCEvent;
@@ -41,7 +43,7 @@ public class MatchMakingController extends Controller {
     @Override
     public void dispatch(VcJoinEvent message) {
         usernames.add(message.getUsername());
-        model.newPlayerInMatchMaking(message.getSource(), message.getUsername());
+        model.send(new MvJoinEvent(message.getSource(), message.getUsername()));
         server.addUsername(message.getUsername());
 
         playerCount.set(playerCount.addAndGet(1));
@@ -59,7 +61,7 @@ public class MatchMakingController extends Controller {
 
     @Override
     public void dispatch(DisconnectionEvent disconnectionEvent) {
-        model.usernameDeletion(disconnectionEvent.getSource());
+        model.send(new UsernameDeletionEvent("*", disconnectionEvent.getSource()));
         if (usernames.remove(disconnectionEvent.getSource())) {
 
             playerCount.set(playerCount.decrementAndGet());
@@ -67,7 +69,7 @@ public class MatchMakingController extends Controller {
             if (playerCount.get() < 3 && timerRunning.get()) {
                 timer.interrupt();
                 timerRunning.set(false);
-                model.timerTick(-1); //negative time to go signals countdown interruption
+                model.send(new TimerEvent("*", -1));  //negative time to go signals countdown interruption
                 Log.info("Timer stopped");
             }
         }
@@ -76,7 +78,7 @@ public class MatchMakingController extends Controller {
 
     @Override
     public void dispatch(VcReconnectionEvent message) {
-        model.playerReconnection(message.getSource(), message.getOldToken(), true);
+        model.send(new MvReconnectionEvent(message.getSource(), message.getOldToken(), true));
     }
 
 
@@ -103,9 +105,13 @@ public class MatchMakingController extends Controller {
         matchMade.set(true);
         List<String> actualUsernames = new ArrayList<>(usernames);
         actualUsernames.remove("*");
-        model.closeMatchMaking(actualUsernames);
+        closeMatchMaking(actualUsernames);
         new SetUpController(model, server, getRoomNumber());
         server.removeController(this, getRoomNumber());
     }
 
+    private void closeMatchMaking(List<String> usernames){
+        model.setUsernames(new ArrayList<>(usernames));
+        model.send(new MatchConfigurationEvent("*", model.getMapConfigs()));
+    }
 }

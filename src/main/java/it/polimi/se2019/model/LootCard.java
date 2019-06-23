@@ -1,6 +1,8 @@
 package it.polimi.se2019.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class LootCard implements Grabbable, Drawable,Jsonable{

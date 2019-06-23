@@ -6,7 +6,9 @@ import it.polimi.se2019.utility.Log;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class Card {
@@ -76,6 +78,28 @@ public abstract class Card {
 
     public Set<Ammo> getPrice() {
         return price;
+    }
+
+    public Set<Ammo> getReloadPrice(){
+        Set<Ammo> reloadPrice = new HashSet<>();
+        reloadPrice.add(cardColour);
+        reloadPrice.addAll(price);
+        return reloadPrice;
+    }
+
+    public static List<String> stringify (List<Card> cards){
+        List<String> names = new ArrayList<>();
+        for (Card c : cards)
+            names.add(c.getName());
+        return names;
+    }
+
+    public static List<Card> toCard (List<? extends Card> cards){
+        List<Card> toReturn = new ArrayList<>();
+        while (cards.iterator().hasNext()){
+            toReturn.add(cards.iterator().next());
+        }
+        return toReturn;
     }
 
     public <T extends Effect> void generateGraph(Set<T> effectSet, GraphNode<T> root, int maxHeight, int constantMaxHeight){

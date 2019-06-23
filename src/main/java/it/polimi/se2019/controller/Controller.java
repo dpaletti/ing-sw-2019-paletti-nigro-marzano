@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
+import it.polimi.se2019.model.mv_events.TimerEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Observer;
@@ -32,7 +33,7 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
             int time = 0;
             try {
                 while(time < duration && !Thread.currentThread().isInterrupted()){
-                    model.timerTick(duration - time);
+                    model.send(new TimerEvent("*", duration - time));
                     time += 1000;
                     sleep(1000);
                 }

@@ -1,8 +1,9 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.model.mv_events.*;
+import it.polimi.se2019.utility.Action;
 import it.polimi.se2019.utility.Point;
 
+import java.util.List;
 import java.util.Set;
 
 public class Figure {
@@ -17,7 +18,7 @@ public class Figure {
     }
 
     public Point getPosition() {
-        return position;
+        return new Point(position);
     }
 
     public FigureColour getColour() {
@@ -34,79 +35,36 @@ public class Figure {
 
     public void setPlayer(Player player) {
         this.player = player;
-    }
+    }       //needed as figure has reference to player and vice versa
 
     public void damage (Figure target){
         target.player.addTear(colour);
         for (Tear tear: target.player.getMarks()){
             if (tear.getColour().equals(colour)){
                 target.player.addTear(colour);
+                target.player.removeMark(colour);
             }
         }
         target.player.updatePlayerDamage();
     }
 
     public void mark (Figure target){
-        int alreadyMaximumMarks=0;
-        for(Tear marksCounter: target.player.getMarks()){ //
-            if(marksCounter.getColour()==colour){
-                alreadyMaximumMarks++;
-            }
+        int marksOfColour = 0;
+        for(Tear m: target.player.getMarks()){ //
+            if(m.getColour() == colour)
+                marksOfColour++;
         }
-        if(alreadyMaximumMarks<3) {
+        if(marksOfColour < 3)
             target.player.addMark(colour);
-        }
     }
 
     public void run (Point destination, int distance){
         if (player.getGameMap().getAllowedMovements(tile, distance).contains(destination)){
-            position=destination;
-            tile=player.getGameMap().getTile(position);
+            position = destination;
+            tile.removeFigure(this);
+            tile = player.getGameMap().getTile(position);
+            tile.addFigure(this);
         }
-    }
-
-    private Set<Figure> targetSetUpdater (Set<Figure> originalTargetSet, Set<Figure> resultTargetSet, Integer value){
-        switch (value){
-            case 0:
-                originalTargetSet.removeAll(resultTargetSet);
-                break;
-            case 1:
-                for (Figure figureCounter: originalTargetSet){
-                    if(!resultTargetSet.contains(figureCounter)){
-                        originalTargetSet.remove(figureCounter);
-                    }
-                }
-                break;
-            case 2:
-                originalTargetSet.clear();
-                originalTargetSet.add(this);
-                break;
-            default:
-                break;
-        }
-        return originalTargetSet;
-    }
-
-    private Set<Tile> tileSetUpdater (Set<Tile> originalTargetSet, Set<Tile> resultTargetSet, Integer value){
-        switch (value){
-            case 0:
-                originalTargetSet.removeAll(resultTargetSet);
-                break;
-            case 1:
-                for (Tile tileCounter: originalTargetSet){
-                    if(!resultTargetSet.contains(tileCounter)){
-                        originalTargetSet.remove(tileCounter);
-                    }
-                }
-                break;
-            case 2:
-                originalTargetSet.clear();
-                originalTargetSet.add(this.tile);
-                break;
-            default:
-                break;
-        }
-        return originalTargetSet;
     }
 
     public void grab(String grabbed){
@@ -115,35 +73,16 @@ public class Figure {
     }
 
     public void reload (Weapon weapon){
-        int enoughAmmoForReload=0;
-        for (Ammo reloadCostCounter: weapon.getPrice()) {   //checks whether the reload price can be payed
-            for (Ammo availableAmmoCounter: player.getAmmo()){
-                if(reloadCostCounter==availableAmmoCounter){
-                    enoughAmmoForReload++;
-                    break;
-                }
-            }
-
-        }
-        if(enoughAmmoForReload==weapon.getPrice().size()){  //in case player has enough ammo to pay for the reload
-            weapon.setLoaded(true);
-            player.useAmmos(weapon.getPrice());
-        }
-        else{
-            NotEnoughAmmoEvent notEnoughAmmoEvent=null;
-             //not enough ammo available to reload, want to use PowerUps?
-            //TODO: VCEvent: no, end reload/yes, use selectedPowerUp to pay
-            PowerUp selectedPowerUp=null;
-            player.sellPowerUp(selectedPowerUp.name);
-            reload(weapon);
-        }
+        weapon.setLoaded(true);
+        player.useAmmos(weapon.getReloadPrice());
     }
 
-    //to fix
+    public void unload (Weapon weapon){
+        weapon.setLoaded(false);
+    }
 
-    /*public void shoot (PartialWeaponEffect partialWeaponEffect, FigureColour figureColour){
-        for (Action action: partialWeaponEffect.getActions()){
-
-        }
-    }*/
+    public void shoot (PartialWeaponEffect partialWeaponEffect, Figure figure){
+       for(Action a : partialWeaponEffect.getActions())
+           a.getActionType().apply(figure.player, player, a);
+    }
 }

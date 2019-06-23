@@ -6,11 +6,13 @@ import it.polimi.se2019.view.MVEvent;
 public class UpdateMarkEvent extends MVEvent {
     private String marked;
     private String marker;
+    private boolean adding;
 
-    public UpdateMarkEvent (String destination, String marked, String marker){
+    public UpdateMarkEvent (String destination, String marked, String marker, boolean adding){
         super(destination);
-        this.marked= marked;
-        this.marker= marker;
+        this.marked = marked;
+        this.marker = marker;
+        this.adding = adding;
     }
 
     public String getMarked() {
@@ -19,6 +21,10 @@ public class UpdateMarkEvent extends MVEvent {
 
     public String getMarker() {
         return marker;
+    }
+
+    public boolean isAdding() {
+        return adding;
     }
 
     @Override

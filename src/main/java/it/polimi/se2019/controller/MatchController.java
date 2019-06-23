@@ -1,6 +1,9 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
+import it.polimi.se2019.model.PowerUp;
+import it.polimi.se2019.model.mv_events.MvReconnectionEvent;
+import it.polimi.se2019.model.mv_events.StartFirstTurnEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
@@ -21,7 +24,10 @@ public class MatchController extends Controller {
     }
 
     private void startMatch(){
-        model.startMatch();
+        model.send(new StartFirstTurnEvent(model.playerToUser(model.getPlayers().get(0)),
+                ((PowerUp)model.getPowerUpDeck().draw()).getName(),
+                ((PowerUp)model.getPowerUpDeck().draw()).getName(),
+                true));
     }
 
     @Override
@@ -45,6 +51,6 @@ public class MatchController extends Controller {
         public void dispatch(VcReconnectionEvent message) {
             Log.fine("Handling " + message);
             model.unpausePlayer(message.getUsername());
-            model.playerReconnection(message.getSource(), message.getOldToken(), false);
+            model.send(new MvReconnectionEvent(message.getSource(), message.getOldToken(), false));
         }
 }

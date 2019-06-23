@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.mv_events.AvailableWeaponsEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
@@ -17,10 +18,16 @@ import java.util.Set;
 
 public class WeaponController extends Controller {
     private int layersVisitedPartial = 0;
-    private int layersVisited = 0; //TODO where to iterate on this
+    private int layersVisited = 0;
     protected List<GraphNode<PartialWeaponEffect>> currentLayer= new ArrayList<>();
     private Weapon currentWeapon;
     private Player currentPlayer;
+
+    /* when should this be sent?
+                send(new PossibleEffectsEvent(username,
+                weaponName,
+                model.nameToWeapon(weaponName).getCardColour().getColour().toString(),
+                ));*/
 
     public WeaponController (Server server, int roomNumber, Game model){
         super(model, server, roomNumber);
@@ -38,8 +45,8 @@ public class WeaponController extends Controller {
 
     @Override
     public void dispatch(ShootEvent message) {
-        currentPlayer= model.userToPlayer(message.getSource());
-        model.sendAvailableWeapons(message.getSource());
+        model.send(new AvailableWeaponsEvent(message.getSource(),
+                Grabbable.stringify(Grabbable.toCard(model.userToPlayer(message.getSource()).getWeapons()))));
     }
 
     @Override
@@ -238,9 +245,8 @@ public class WeaponController extends Controller {
         layersVisited = layersVisited + 1;
         for (GraphNode<GraphWeaponEffect> g: currentWeapon.getDefinition().getListLayer(layersVisited))
             list.add(g.getKey());
-        if (!list.isEmpty()) {
+        if (!list.isEmpty())
             model.sendPossibleEffects(model.playerToUser(currentPlayer), currentWeapon.getName(), list);
-        }
         else{
 
         }

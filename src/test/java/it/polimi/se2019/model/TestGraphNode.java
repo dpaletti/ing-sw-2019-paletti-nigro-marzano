@@ -123,5 +123,14 @@ public class TestGraphNode {
         System.out.print(parent.toString());
     }
 
+    @Test
+    public void testGetSibling(){
+            GraphNode<String> father = new GraphNode<>("Peppe", 0);
+            father.addChild(new GraphNode<>("Luca", 1));
+            father.addChild(new GraphNode<>("Marco", 1));
+            father.addChild(new GraphNode<>("Gianni", 1));
+            System.out.println(father.getSibling(father.getChildren(), "Luca"));
+    }
+
 }
 

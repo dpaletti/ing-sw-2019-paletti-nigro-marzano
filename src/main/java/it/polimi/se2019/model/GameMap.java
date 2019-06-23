@@ -98,38 +98,53 @@ public class GameMap{
         return allowedMovements;
     }
 
-    private int getDistance (Point startingPosition, Point endingPosition){
+     int getDistance (Point startingPosition, Point endingPosition){
         return Math.abs(graphMap.getGraphNode(getTile(startingPosition)).getLayer() -
                 graphMap.getGraphNode(getTile(endingPosition)).getLayer());
     }
 
     private GraphNode<Tile> mapToGraph (){
         GraphNode<Tile> root = new GraphNode<>(getTile(new Point(0, 0)), 0);
-       getAdjacentTiles(root, 1);
+       getAdjacentTiles(root, root, 1);
        root.deleteCopies();
        return root;
     }
 
-    private void getAdjacentTiles (GraphNode<Tile> root, int layer){        //layer is layer of its children
+     void getAdjacentTiles (GraphNode<Tile> root, GraphNode<Tile> localRoot, int layer){        //layer is layer of its children
+        GraphNode<Tile> child;
         for (Tile t: getTiles()){
-            if (!root.isParent(t) &&
-                    (Math.abs(root.getKey().position.getX() - t.position.getX()) == 1 ^
-                    Math.abs(root.getKey().position.getY() - t.position.getY()) == 1) &&
-                    root.getKey().colour.equals(t.colour) || hasDoor(root.getKey(), t))
-
-                        root.addChild(new GraphNode<>(t, layer));
+            if (!localRoot.isParent(t)){
+                if (Math.abs(localRoot.getKey().position.getX() - t.position.getX()) == 1 ^
+                        Math.abs(localRoot.getKey().position.getY() - t.position.getY()) == 1){
+                        if (localRoot.getKey().colour.name().equals(t.colour.name()) || hasDoor(localRoot.getKey(), t)) {
+                            child = new GraphNode<>(t, layer);
+                            if (!root.isIn(t) || root.getGraphNode(t).getLayer() > layer) {
+                                if (root.isIn(t) && root.getGraphNode(t).getLayer() > layer){
+                                    Log.fine("deleting copy:" + t.position.getX() + t.position.getY());
+                                    for (GraphNode<Tile> g : root.getGraphNode(t).getParents())
+                                        g.removeChild(root.getGraphNode(t));
+                                }
+                                localRoot.addChild(child);
+                                child.addParent(localRoot);
+                            }
+                            System.out.println("tile with position " + localRoot.getKey().position.getX() + localRoot.getKey().position.getY() + " has adjacent " + t.position.getX() + t.position.getY());
+                        }
+                    }
+            }
         }
         layer = layer + 1;
-        for (GraphNode<Tile> t: root.getChildren())
-            getAdjacentTiles(t, layer);
+        //root.deleteCopies();
+        for (GraphNode<Tile> t: localRoot.getChildren())
+            getAdjacentTiles(root, t, layer);
     }
 
-    private boolean hasDoor (Tile root, Tile tile){
+    boolean hasDoor (Tile root, Tile tile){
         if (root.position.getX() != tile.position.getX() && root.position.getY() != tile.position.getY())
-            throw new IllegalArgumentException("tiles are not adjacent");
-        return root.position.getX() == tile.position.getX() - 1 && root.doors.get(Direction.WEST) ||
-                root.position.getX() == tile.position.getX() + 1 && root.doors.get(Direction.EAST) ||
-                root.position.getY() == tile.position.getY() - 1 && root.doors.get(Direction.SOUTH) ||
-                root.position.getY() == tile.position.getY() + 1 && root.doors.get(Direction.NORTH);
+            return false;
+            //throw new IllegalArgumentException("tiles are not adjacent, root:" + root.position.getX() + root.position.getY() + "tile:" + tile.position.getX() + tile.position.getY());
+        return (root.position.getX() - 1 == tile.position.getX() && root.doors.get(Direction.WEST)) ||
+                (root.position.getX() + 1 == tile.position.getX() && root.doors.get(Direction.EAST)) ||
+                (root.position.getY() - 1 == tile.position.getY() && root.doors.get(Direction.SOUTH)) ||
+                (root.position.getY() + 1 == tile.position.getY() && root.doors.get(Direction.NORTH));
     }
 }

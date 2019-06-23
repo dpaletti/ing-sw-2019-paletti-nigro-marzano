@@ -120,4 +120,21 @@ public class Tile implements Targetable{
         }
         return tiles;
     }
+
+    public void addFigure (Figure figure){
+        figures.add(figure);
+    }
+
+    public void removeFigure (Figure figure){
+        figures.remove(figure);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tile tile = (Tile) o;
+        return position.equals(tile.position);
+    }
+
 }
