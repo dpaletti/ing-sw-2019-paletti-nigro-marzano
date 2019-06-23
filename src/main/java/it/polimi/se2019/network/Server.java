@@ -4,7 +4,6 @@ import it.polimi.se2019.controller.Controller;
 import it.polimi.se2019.controller.MatchMakingController;
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.utility.Saves;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.VirtualView;
@@ -27,7 +26,6 @@ import java.util.concurrent.Semaphore;
 public class Server implements ServerInterface {
     private ServerSocket serverSocket;
     private List<VirtualView> virtualViews = new ArrayList<>();
-    private Saves saves = new Saves();
     private int roomNumber = -1;
     private List<String> usernames = new ArrayList<>();
     private List<String> tokens = new ArrayList<>();
@@ -64,10 +62,6 @@ public class Server implements ServerInterface {
 
     private int getPort(){
         return Integer.parseInt(properties.getProperty("PORT"));
-    }
-
-    public Saves getSaves() {
-        return saves; //TODO correct getter
     }
 
     public int getMatchMakingTimer(){

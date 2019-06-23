@@ -8,7 +8,7 @@ public class TestGameMap {
 
     @Test
     public void printMap(){
-        map=new GameMap(MapConfig.MAP_LARGE);
+        map=new GameMap("Large");
         for(Tile tile: map.getLootTiles()){
             System.out.print(tile.getColour().toString()+'|'+tile.getPosition().getX()+','+tile.getPosition().getY()+System.lineSeparator());
         }
@@ -19,7 +19,7 @@ public class TestGameMap {
 
     @Test
     public void graphTest (){
-        map = new GameMap(MapConfig.MAP_SMALL);
+        map = new GameMap("Small");
         System.out.println(map.graphMap);
     }
 }

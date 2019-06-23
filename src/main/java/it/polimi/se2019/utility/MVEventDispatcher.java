@@ -78,9 +78,14 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("TurnEvent not supported");
     }
 
+    default void dispatch (StartTurnEvent message){
+        throw new UnsupportedOperationException("StartTurnEvent not supported");
+    }
+
     default void dispatch (StartFirstTurnEvent message){
         throw new UnsupportedOperationException("StartFirstTurnEvent not supported");
     }
+
 
     default void dispatch(MatchConfigurationEvent message){
         throw new UnsupportedOperationException("MatchConfigurationEvent not supported");
@@ -106,8 +111,16 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("PausedPlayerEvent not supported");
     }
 
+    default void dispatch (UpdateMarkEvent message){
+        throw new UnsupportedOperationException("UpdateMarkEvent not supported");
+    }
+
+    default void dispatch (UpdateHpEvent message){
+        throw new UnsupportedOperationException("UpdateHpEvent not supported");
+    }
+
     default void dispatch (UpdatePointsEvent message){
-        throw new UnsupportedOperationException("UpdatePointEvent not supported");
+        throw new UnsupportedOperationException("UpdatePointsEvent not supported");
     }
 
     default void dispatch (WeaponEffectsEvent message){
@@ -127,4 +140,14 @@ public interface MVEventDispatcher extends EventDispatcher {
     default void dispatch (FinalConfigurationEvent message){
         throw new UnsupportedOperationException("FinalConfigurationEvent not supported");
     }
+
+    default void dispatch(DiscardedPowerUpEvent message){
+        throw new UnsupportedOperationException("DiscardedPowerUpEvent not supported");
+    }
+
+    default void dispatch(DiscardedWeaponEvent message){
+        throw new UnsupportedOperationException("DiscardedWeaponEvent not supported");
+    }
+
+
 }

@@ -139,8 +139,6 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
                 //this branch guards against events that already contain tokens or *
 
                 message.setDestination(biTokenUsername.getFirst(message.getDestination()));
-            if(message.getDestination().equals("*"))
-                server.getSaves().update(message);
             message.handle(this);
         }catch (UnsupportedOperationException e){
             //if an event cannot be handled is submitted to clients by default

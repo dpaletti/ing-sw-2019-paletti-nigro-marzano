@@ -58,7 +58,7 @@ public class SetUpController extends Controller {
 
         if (counter==0){
             skull = 8;
-            config = MapConfig.MAP_LARGE.name();
+            config = "Large";
             finalFrenzy = true;
         }
         else {
@@ -68,7 +68,7 @@ public class SetUpController extends Controller {
         }
         model.send(new FinalConfigurationEvent("*", skull, config, finalFrenzy));
 
-        model.setGameMap(new GameMap(MapConfig.MAP_LARGE)); //TODO: MAP_LARGE is here waiting for GameMap(MapConfig) constructor to be modified to GameMap(config)
+        model.setGameMap(new GameMap("Large"));
         model.send(new SetUpEvent("*", assignFigureToUser(), weaponSpotsSetUp(), lootTilesSetUp()));
 
         new MatchController(model, server, model.getUsernames(), getRoomNumber());

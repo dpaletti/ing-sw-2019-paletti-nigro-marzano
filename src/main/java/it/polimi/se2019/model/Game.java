@@ -5,7 +5,9 @@ import it.polimi.se2019.utility.*;
 import it.polimi.se2019.utility.Observable;
 import it.polimi.se2019.view.MVEvent;
 
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Game extends Observable<MVEvent> {
     private GameMap gameMap;
@@ -107,8 +109,8 @@ public class Game extends Observable<MVEvent> {
     public void closeMatchMaking(List<String> usernames){
         this.usernames= new ArrayList<>(usernames);
         List<String> configurations= new ArrayList<>();
-        for (MapConfig m : MapConfig.values())
-            configurations.add(m.name());
+        for (String name: getMapConfigs())
+            configurations.add(name);
         notify(new MatchConfigurationEvent("*", configurations));
     }
 
@@ -435,5 +437,14 @@ public class Game extends Observable<MVEvent> {
 
         for (Player p: afterFirst)
             p.updatePlayerDamage(new FinalFrenzyStandard());
+    }
+
+    public List<String> getMapConfigs(){
+        List<String> names=new ArrayList<>();
+        Pattern pattern=Pattern.compile(".json");
+        for (String name: Paths.get("files/mapConfigs").toFile().list()){
+            names.add(pattern.matcher(name).replaceAll(""));
+        }
+        return names;
     }
 }

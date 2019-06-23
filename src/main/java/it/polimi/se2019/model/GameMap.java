@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class GameMap{
     private MapConfig config;
@@ -16,26 +17,15 @@ public class GameMap{
     public GraphNode<Tile> graphMap;
 
     //TODO: delete enum MapConfig and JSON the pairing between map name and its halves
-    public GameMap(MapConfig config){
-        this.config= config;
+    public GameMap(String configName){
         try {
-            GameMap firstHalf=null;
-            GameMap secondHalf=null;
-            if (config.equals(MapConfig.MAP_SMALL) || config.equals(MapConfig.MAP_MEDIUM_RIGHT)) {
-                firstHalf = (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/Left1.json"))));
-            } else {
-                firstHalf = (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/Left2.json"))));
-            }
-            if (config.equals(MapConfig.MAP_SMALL) || config.equals(MapConfig.MAP_MEDIUM_LEFT)) {
-                secondHalf = (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/Right2.json"))));
-            } else {
-                secondHalf = (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/Right1.json"))));
-            }
-            this.spawnTiles.addAll(firstHalf.getSpawnTiles());
-            this.spawnTiles.addAll(secondHalf.getSpawnTiles());
-            this.lootTiles.addAll(firstHalf.getLootTiles());
-            this.lootTiles.addAll(secondHalf.getLootTiles());
-            graphMap = mapToGraph();
+            this.config= (MapConfig)JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/mapConfigs/"+configName+".json"))));
+            GameMap leftHalf = (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/"+config.getLeftHalf()+".json"))));
+            GameMap rightHalf= (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/"+config.getRightHalf()+".json"))));
+            this.spawnTiles.addAll(leftHalf.getSpawnTiles());
+            this.spawnTiles.addAll(rightHalf.getSpawnTiles());
+            this.lootTiles.addAll(leftHalf.getLootTiles());
+            this.lootTiles.addAll(rightHalf.getLootTiles());
         }catch (IOException c){
             Log.severe("Map not found in given directory");
         }catch (NullPointerException e){

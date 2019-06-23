@@ -7,28 +7,12 @@ import java.util.regex.Pattern;
 
 public class StateEncoder {
     private StateEncoder(){}
-    public static String getEncodedUsers(Game game){
-        String encodedUsers="";
 
-        for (Pair<FigureColour,String> pair: game.getUserLookup()){
-            String tempString= getEncodedUser(game.userToPlayer(pair.getSecond()),pair.getSecond());
-            encodedUsers= encodedUsers.concat(tempString);
-        }
-        return encodedUsers;
-    }
-
-    //Example: Santoro:fcol:M;hp:VBBBBB;mrk:;w1:Thor,false;w2:,;w3:,;pnt:12;amm:R1,B2,Y3;pos:1,1
-    public static String getEncodedUser(Player player, String user){
+    //This method is used to encode the user when the game is starting, so it creates the right user structure
+    public static String getEncodedUser(FigureColour figureColour, String user){
         return  user+ ":"+
-                "fcol:"+getEncodedFigureColour(player.getFigure().getColour())+ ";"+
-                "hp:"+getEncodedTears(player.getHp())+ ";"+
-                "mrk:"+getEncodedTears(player.getMarks())+ ";"+
-                "pval:"+player.getPlayerValue()+ ";"+
-                getEncodedWeapons(player.getWeapons())+
-                getEncodedPowerUps(player.getPowerUps())+
-                "pnt:"+player.getPoints()+ ";"+
-                "amm:"+getEncodedAmmo(player.getAmmo())+ ";"+
-                "pos:"+player.getFigure().getPosition().getX()+ ","+ player.getFigure().getPosition().getY()+
+                "fcol:"+getEncodedFigureColour(figureColour)+ ";"+
+                "hp:;mrk:;dths:0;w1:,;w2:,;w3:,;p1:;p2:;p3:;pnt:;amm:;pos:,;"+
                 System.lineSeparator();
     }
 
@@ -44,26 +28,24 @@ public class StateEncoder {
 
     }
 
-    public static String getEncodedPowerUpNames(PowerUp powerUp){
-        if(powerUp.getName().contains("Targeting")){
-            return "Tar";
-        }else if(powerUp.getName().contains("Teleport")){
-            return "Tel";
-        }else if(powerUp.getName().contains("Tagback")){
-            return "Tag";
-        }else if (powerUp.getName().contains("Newton")){
-            return "New";
-        }
-        throw new IllegalArgumentException("The powerUp does not exist");
-    }
+    public static String getEncodedPowerUp(String powerUpName){
+        String encodedPowerUp="";
+        if(powerUpName.contains("Targeting"))
+            encodedPowerUp=encodedPowerUp.concat("Tar");
+        else if(powerUpName.contains("Teleport"))
+            encodedPowerUp=encodedPowerUp.concat("Tel");
+        else if(powerUpName.contains("Tagback"))
+            encodedPowerUp=encodedPowerUp.concat("Tag");
+        else if (powerUpName.contains("Newton"))
+            encodedPowerUp=encodedPowerUp.concat("New");
 
-    public static String getEncodedPowerUpColor(PowerUp powerUp){
-        switch (powerUp.getCardColour().getColour()){
-            case YELLOW: return "Y";
-            case BLUE: return "B";
-            case RED: return "R";
-            default: throw new IllegalArgumentException("The powerUp color does not exist");
-        }
+        if (powerUpName.contains("Blue"))
+            encodedPowerUp=encodedPowerUp.concat("B");
+        else if (powerUpName.contains("Red"))
+            encodedPowerUp=encodedPowerUp.concat("R");
+        else if (powerUpName.contains("Yellow"))
+            encodedPowerUp=encodedPowerUp.concat("Y");
+        return encodedPowerUp;
     }
 
     public static String getEncodedAmmo(Set<Ammo> ammoSet){
@@ -105,17 +87,22 @@ public class StateEncoder {
     }
 
     public static String generateEncodedGame(){
-        return "<Players><&>"+System.lineSeparator()+"<Board><£>"+System.lineSeparator()+"<Last><@>"+System.lineSeparator();
+        return "<Players><&>"+System.lineSeparator()+
+                "<Board><£>"+System.lineSeparator()+
+                "<Last><@>"+System.lineSeparator()+
+                "<KillShot><%>"+System.lineSeparator()+
+                "<Discarded><!>"+System.lineSeparator()+
+                "<Frenzy><?>";
     }
 
-    public static String addPlayer(Player player,String user,String file){
+    public static String addPlayer(FigureColour figureColour,String user,String file){
         Pattern pattern= Pattern.compile("&");
-        return pattern.matcher(file).replaceAll(getEncodedUser(player,user)+"&");
+        return pattern.matcher(file).replaceAll(getEncodedUser(figureColour,user)+"&");
     }
 
-    //TODO Wait till GameMap is not a static class then modify
-    public static String getEncodedBoard(GameMap map){
-        return map.getConfig().toString()+ getEncodedTiles(map.getTiles()) ;
+    //Encoded board at the beginning without things placed on the tiles
+    public static String getEncodedBoard(String config){
+        return "map:config:"+config+";";
     }
 
     // Example of encoded map: (2,2)34;(2,1)LockRifle,Cyberblade,Furnace; ...
@@ -127,20 +114,22 @@ public class StateEncoder {
         return tempString;
     }
 
-    //TODO Refactor method to adjust it to the new structure of tile
     public static String getEncodedTile(Tile tile){
         String tempString="";
-        /*
-        tempString=tempString.concat("("+tile.getPosition().getX()+","+tile.getPosition().getY()+")");
-        if (tile.getTileType().equals(TileType.SPAWNTILE)){
-            /*WeaponSpot weaponSpot=tile.getWeaponSpot();
-            tempString=tempString.concat(
-                    weaponSpot.getFirstWeapon()+","+
-                            weaponSpot.getSecondWeapon()+","+
-                            weaponSpot.getThirdWeapon() + ";");
-        }else if (tile.getTileType().equals(TileType.LOOTTILE)){
-            tempString=tempString.concat(tile.getLootCard().getName()+ ";");
-        }*/
+        tempString=tempString.concat("pos:"+tile.getPosition().getX()+","+tile.getPosition().getY()+";");
+        if (tile.getGrabbables().size()>1){
+            //The tile is a spawn tile
+            for(int i=0;i<3;i++){
+                tempString=tempString.concat("w"+i+":");
+                if (tile.getGrabbables().get(i)!=null)
+                    tempString=tempString.concat(tile.getGrabbables().get(i).getName()+";");
+                else
+                    tempString=tempString.concat(",;");
+            }
+        }else{
+            //The tile is a lootTile
+            tempString=tempString.concat("lc:"+tile.getGrabbables().get(0).getName()+";");
+        }
         return tempString;
     }
 
@@ -161,14 +150,14 @@ public class StateEncoder {
         for (int i=0;i<3;i++){
             encodedPowerUps=encodedPowerUps.concat("p"+i+":");
             if (powerUps.get(i)!=null)
-                encodedPowerUps=encodedPowerUps.concat(getEncodedPowerUpNames(powerUps.get(i))+";");
+                encodedPowerUps=encodedPowerUps.concat(getEncodedPowerUp(powerUps.get(i).getName())+";");
             else
                 encodedPowerUps=encodedPowerUps.concat(",;");
         }
         return encodedPowerUps;
     }
 
-    public static String addBoard(GameMap map,String file){
+    public static String addBoard(String map,String file){
         Pattern pattern= Pattern.compile("£");
         return pattern.matcher(file).replaceAll(getEncodedBoard(map)+"£");
     }
@@ -177,4 +166,31 @@ public class StateEncoder {
         Pattern pattern= Pattern.compile("@");
         return pattern.matcher(file).replaceAll(user+"@");
     }
+
+    public static int getEncodedKills(Player player){
+        switch (player.getPlayerValue().getMaxValue()){
+            case(8): return 0;
+            case (6): return 1;
+            case (4): return 2;
+            case (2): return 3;
+            case (1): return 4;
+        }
+        throw new IllegalArgumentException("PlayerValue can't be different from these");
+    }
+
+    public static String addKillShot(int skulls,String file){
+        Pattern pattern= Pattern.compile("%");
+        String killshot="";
+        for(int i=0;i<skulls;i++){
+            killshot=killshot.concat(killshot+"S");
+        }
+        return pattern.matcher(file).replaceAll(killshot+"%");
+    }
+
+    public static String addFrenzy(boolean frenzy,String file){
+        Pattern pattern= Pattern.compile("%");
+        return pattern.matcher(file).replaceAll(frenzy+"?");
+    }
+
+
 }

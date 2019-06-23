@@ -1,0 +1,6 @@
+{
+  "type": "it.polimi.se2019.model.MapConfig",
+  "name": "small",
+  "leftHalf": "left1",
+  "rightHalf": "right2"
+}

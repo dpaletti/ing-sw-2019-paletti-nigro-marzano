@@ -4,8 +4,8 @@ import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.view.MVEvent;
 
 public class UpdateMarkEvent extends MVEvent {
-    String marked;
-    String marker;
+    private String marked;
+    private String marker;
 
     public UpdateMarkEvent (String destination, String marked, String marker){
         super(destination);
