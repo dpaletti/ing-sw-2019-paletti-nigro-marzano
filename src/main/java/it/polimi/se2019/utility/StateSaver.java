@@ -5,8 +5,6 @@ import it.polimi.se2019.model.FigureColour;
 import it.polimi.se2019.model.Player;
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.view.MVEvent;
-import it.polimi.se2019.view.VCEvent;
-import javafx.beans.Observable;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -106,7 +104,7 @@ public class StateSaver implements Observer<MVEvent>, MVEventDispatcher{
     }
 
     @Override
-    public void dispatch(StartTurnEvent message) {
+    public void dispatch(TurnEvent message) {
         file=StateEncoder.addLastUser(message.getUser(),file);
         save();
     }

@@ -78,10 +78,6 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("TurnEvent not supported");
     }
 
-    default void dispatch (StartTurnEvent message){
-        throw new UnsupportedOperationException("StartTurnEvent not supported");
-    }
-
     default void dispatch (StartFirstTurnEvent message){
         throw new UnsupportedOperationException("StartFirstTurnEvent not supported");
     }
@@ -161,4 +157,7 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("NewAmmosEvent not supported");
     }
 
+    default void dispatch (NotEnoughPlayersConnectedEvent message){
+        throw new UnsupportedOperationException("NotEnoughPlayersConnectedEvent not supported");
+    }
 }

@@ -1,5 +1,8 @@
-package it.polimi.se2019.model;
+package it.polimi.se2019.utility;
 
+import it.polimi.se2019.model.Card;
+import it.polimi.se2019.model.Game;
+import it.polimi.se2019.model.Grabbable;
 import it.polimi.se2019.model.mv_events.AllowedWeaponsEvent;
 import it.polimi.se2019.model.mv_events.GrabbablesEvent;
 

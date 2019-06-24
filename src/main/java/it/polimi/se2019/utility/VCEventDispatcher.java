@@ -80,4 +80,8 @@ public interface VCEventDispatcher extends EventDispatcher {
     default void dispatch (VcMatchConfigurationEvent message){
         throw new UnsupportedOperationException("VcMatchConfigurationEvent not supported");
     }
+
+    default void dispatch (ChosenComboEvent message){
+        throw new UnsupportedOperationException("ChosenComboEvent not supported");
+    }
 }

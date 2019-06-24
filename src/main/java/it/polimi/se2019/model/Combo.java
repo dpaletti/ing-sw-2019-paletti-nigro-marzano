@@ -1,15 +1,13 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.utility.Action;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.utility.PartialCombo;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Combo implements Jsonable{
     private String name;

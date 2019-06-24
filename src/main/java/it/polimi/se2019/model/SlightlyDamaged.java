@@ -1,18 +1,19 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.utility.Action;
+import it.polimi.se2019.utility.PartialCombo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class SlightlyDamaged extends PlayerDamage {
     private VeryDamaged nextHealthState;
+    private boolean added = false;
 
     @Override
-    public List<List<PartialCombo>> getMoves() {
-        moves.add(Arrays.asList(PartialCombo.MOVE, PartialCombo.MOVE, PartialCombo.GRAB));
+    public List<ArrayList<PartialCombo>> getMoves() {
+        if (!added)
+            addMoves();
         return moves;
     }
 
@@ -31,5 +32,12 @@ public class SlightlyDamaged extends PlayerDamage {
     @Override
     public boolean isFinalFrenzy() {
         return false;
+    }
+
+    @Override
+    protected void addMoves() {
+        ArrayList<PartialCombo> combos = new ArrayList<>(Arrays.asList(PartialCombo.MOVE, PartialCombo.MOVE, PartialCombo.GRAB));
+        moves.add(combos);
+        added = true;
     }
 }

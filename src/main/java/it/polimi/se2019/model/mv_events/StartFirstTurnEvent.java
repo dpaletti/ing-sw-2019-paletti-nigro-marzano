@@ -3,6 +3,8 @@ package it.polimi.se2019.model.mv_events;
 import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.view.MVEvent;
 
+//first player receives drawn pUps, must discard one of the two and spawn on the colour of the discarded pUp
+
 public class StartFirstTurnEvent extends MVEvent {
     private String firstPowerUpName;
     private String secondPowerUpName;

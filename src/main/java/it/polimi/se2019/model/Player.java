@@ -149,6 +149,10 @@ public class Player implements Targetable{
         return playerValue;
     }
 
+    public boolean isPaused() {
+        return isPaused;
+    }
+
     public void emptyHp (){
         this.hp.clear();
    }
@@ -183,14 +187,7 @@ public class Player implements Targetable{
         if (powerUpIsNotOwned(powerUp))
             throw new UnsupportedOperationException("Could not sell " + powerUp + "as player doesn't own it");
         ammo.add(new Ammo(game.nameToPowerUp(powerUp).getCardColour().getColour()));
-        deletePowerUp(powerUp);
-    }
-
-    private void deletePowerUp (String powerUp){
-        if (powerUpIsNotOwned(powerUp))
-            throw new UnsupportedOperationException("Could not delete" + powerUp + "as player doesn't own it");
-        powerUps.remove(game.nameToPowerUp(powerUp));
-        game.send(new DiscardedPowerUpEvent("*", game.playerToUser(this), "none", powerUp));
+        discardPowerUp(powerUp);
     }
 
     private boolean powerUpIsNotOwned(String powerUp){
@@ -246,7 +243,11 @@ public class Player implements Targetable{
     public void discardPowerUp (String discardedPowerUp){
         if (powerUpIsNotOwned(discardedPowerUp))
             throw new UnsupportedOperationException("Could not discard" + discardedPowerUp + "as player doesn't own it");
-        game.send(new DiscardedPowerUpEvent("*", game.playerToUser(this), powerUps.get(3).name, discardedPowerUp));
+        String drawnPowerUp = "";
+        if (powerUps.size() == 4)
+            drawnPowerUp = powerUps.get(3).name;
+        game.getPowerUpDeck().discard(game.nameToPowerUp(discardedPowerUp));
+        game.send(new DiscardedPowerUpEvent("*", game.playerToUser(this), drawnPowerUp, discardedPowerUp));
         powerUps.remove(game.nameToPowerUp(discardedPowerUp));
     }
 

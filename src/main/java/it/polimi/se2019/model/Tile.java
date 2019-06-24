@@ -145,5 +145,4 @@ public class Tile implements Targetable{
         Tile tile = (Tile) o;
         return position.equals(tile.position);
     }
-
 }
