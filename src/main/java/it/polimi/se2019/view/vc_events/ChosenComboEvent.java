@@ -1,5 +1,6 @@
 package it.polimi.se2019.view.vc_events;
 
+import it.polimi.se2019.model.Combo;
 import it.polimi.se2019.utility.PartialCombo;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
@@ -7,17 +8,17 @@ import it.polimi.se2019.view.VCEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-// player sends list of partial combo they want to use (a list corresponds to one of the possible combos eg grab stuff, shoot people...
+// player sends combo they want to use
 
 public class ChosenComboEvent extends VCEvent {
-    private ArrayList<PartialCombo> chosenCombo;
+    private Combo chosenCombo;
 
-    public ChosenComboEvent (String source, List<PartialCombo> chosenCombo) {
+    public ChosenComboEvent (String source, Combo chosenCombo) {
         super(source);
-        this.chosenCombo = new ArrayList<>(chosenCombo);
+        this.chosenCombo = chosenCombo;
     }
 
-    public ArrayList<PartialCombo> getChosenCombo() {
+    public Combo getChosenCombo() {
         return chosenCombo;
     }
 

@@ -292,4 +292,12 @@ public class Player implements Targetable{
     public void apply (Player target, PartialWeaponEffect partialWeaponEffect){
         figure.shoot(partialWeaponEffect, target.figure);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return figure.equals(player.figure);
+    }
 }

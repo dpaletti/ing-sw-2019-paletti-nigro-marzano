@@ -7,6 +7,8 @@ import it.polimi.se2019.view.MVEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+// actions player can do (eg movearound, shootpeople,...) or use power up
+
 public class TurnEvent extends MVEvent {
     private ArrayList<ArrayList<PartialCombo>> possibleMoves;
 

@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class WeaponController extends Controller {
+public class WeaponController extends CardController {
     private int layersVisitedPartial = 0;
     private int layersVisited = 0;
     protected List<GraphNode<PartialWeaponEffect>> currentLayer= new ArrayList<>();

@@ -87,4 +87,13 @@ public class Figure {
         tile = player.getGameMap().getTile(spawnPosition);
         tile.addFigure(this);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Figure figure = (Figure) o;
+        return colour == figure.colour;
+    }
+
 }

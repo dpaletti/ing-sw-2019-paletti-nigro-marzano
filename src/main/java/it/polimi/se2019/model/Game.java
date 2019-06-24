@@ -25,7 +25,7 @@ public class Game extends Observable<MVEvent> {
     private TurnMemory turnMemory = new TurnMemory();
 
     private WeaponHelper weaponHelper=new WeaponHelper();
-    private ComboHelper comboHelper=new ComboHelper();
+    public ComboHelper comboHelper=new ComboHelper();
     private PowerUpHelper powerUpHelper=new PowerUpHelper();
     private LootCardHelper lootCardHelper=new LootCardHelper();
 
@@ -69,18 +69,6 @@ public class Game extends Observable<MVEvent> {
     public void sendPossibleTargets (){
         notify(selectionEventHolder);
         selectionEventHolder = null;
-    }
-
-    public void unloadedWeapons (String username){
-        Player player= userToPlayer(username);
-        List<String> unloadedWeapons= new ArrayList<>();
-        for (Weapon w: player.getWeapons())
-            unloadedWeapons.add(w.getName());
-        notify(new ReloadableWeaponsEvent(username, unloadedWeapons));
-    }
-
-    public void endTurn (String username){
-        Player player= userToPlayer(username);
     }
 
     public void pausePlayer (String username){
@@ -248,10 +236,6 @@ public class Game extends Observable<MVEvent> {
         return nameToWeapon(weapon).getDefinition();
     }
 
-    public void usePowerUp (String username, String powerUpName){
-        //userToPlayer(username).usePowerUp(powerUpName);
-    }
-
     // all players without any damage change their boards to final frenzy boards
     // final frenzy players get a different set of moves based on their position in the current
     public void frenzyUpdatePlayerStatus (Player deadPlayer){
@@ -282,5 +266,13 @@ public class Game extends Observable<MVEvent> {
             names.add(pattern.matcher(name).replaceAll(""));
         }
         return names;
+    }
+
+    public void unloadedWeapons (String username){
+        Player player= userToPlayer(username);
+        List<String> unloadedWeapons= new ArrayList<>();
+        for (Weapon w: player.getWeapons())
+            unloadedWeapons.add(w.getName());
+        send(new ReloadableWeaponsEvent(username, unloadedWeapons));
     }
 }
