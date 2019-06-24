@@ -37,19 +37,19 @@ public class Weapon extends Card implements Grabbable, Drawable,Jsonable{
     @Override
     public void grab(Player player, String grabbed) {
         int index =-1;
-        for (Weapon w : player.getWeapons()){
-            if (w.name.equalsIgnoreCase(grabbed)) {
-               index = player.getWeapons().indexOf(w);
-                break;
+        for (Grabbable w : player.getFigure().getTile().getGrabbables()){
+            if (w.getName().equalsIgnoreCase(grabbed)) {
+               index = player.getFigure().getTile().getGrabbables().indexOf(w);
+               break;
             }
         }
         if (index == -1)
-            throw new UnsupportedOperationException(grabbed + "is not in the current weapon spot and cannot be grabbed");
-
+            throw new UnsupportedOperationException(grabbed + "\t is not in the current weapon spot and cannot be grabbed");
         if (player.getWeapons().size() < 3){
             if (player.pay(((Weapon)player.getFigure().getTile().grabbables.get(index)).price))   //price could be and was paid
                 player.addWeapon((Weapon)player.getFigure().getTile().grabbables.get(index));
         }
     }
+
 
 }

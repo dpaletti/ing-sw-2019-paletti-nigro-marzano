@@ -239,7 +239,7 @@ public class Player implements Targetable{
             throw new UnsupportedOperationException("Discard a powerup before drawing one");
         powerUps.add(game.nameToPowerUp(drawnPowerUp));
         if (powerUps.size()==4) {
-            game.send(new PowerUpToLeaveEvent(game.playerToUser(this), Card.stringify(Card.toCard(powerUps))));
+            game.send(new PowerUpToLeaveEvent(game.playerToUser(this), Card.cardStringify(Card.cardToCard(powerUps))));
         }
     }
 

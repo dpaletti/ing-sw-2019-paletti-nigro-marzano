@@ -9,7 +9,9 @@ import java.util.Set;
 
 public class SpawnTile extends Tile {
 
-    public SpawnTile() {}
+    public SpawnTile(Tile tile) {
+        super(tile);
+    }
 
     @Override
     public List<Grabbable> grab() {

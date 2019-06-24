@@ -16,7 +16,16 @@ public class Tile implements Targetable{
     protected Point position;
     protected List<Grabbable> grabbables=new ArrayList<>();
 
-    protected Tile() { }
+    protected Tile(){}
+
+    protected Tile(Tile t) {
+        this.gameMap=t.gameMap;
+        this.colour=t.colour;
+        this.doors=t.doors;
+        this.figures=t.figures;
+        this.grabbables=t.grabbables;
+        this.position=t.position;
+    }
 
     public List<Grabbable> grab (){throw new UnsupportedOperationException("Can't grab from generic tile");}
 

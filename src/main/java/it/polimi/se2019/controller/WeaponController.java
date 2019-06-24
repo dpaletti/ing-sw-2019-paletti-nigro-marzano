@@ -46,7 +46,7 @@ public class WeaponController extends Controller {
     @Override
     public void dispatch(ShootEvent message) {
         model.send(new AvailableWeaponsEvent(message.getSource(),
-                Grabbable.stringify(Grabbable.toCard(model.userToPlayer(message.getSource()).getWeapons()))));
+                Grabbable.grabbableStringify(Grabbable.grabbableToCard(model.userToPlayer(message.getSource()).getWeapons()))));
     }
 
     @Override

@@ -15,6 +15,7 @@ public class GameMap{
     private List<Tile> spawnTiles=new ArrayList<>();
     private List<Tile> lootTiles=new ArrayList<>();
     public GraphNode<Tile> graphMap;
+    private Point root;
 
     //TODO: delete enum MapConfig and JSON the pairing between map name and its halves
     public GameMap(String configName){
@@ -22,10 +23,12 @@ public class GameMap{
             this.config= (MapConfig)JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/mapConfigs/"+configName+".json"))));
             GameMap leftHalf = (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/"+config.getLeftHalf()+".json"))));
             GameMap rightHalf= (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/"+config.getRightHalf()+".json"))));
-            this.spawnTiles.addAll(leftHalf.getSpawnTiles());
-            this.spawnTiles.addAll(rightHalf.getSpawnTiles());
-            this.lootTiles.addAll(leftHalf.getLootTiles());
-            this.lootTiles.addAll(rightHalf.getLootTiles());
+            this.spawnTiles.addAll(castTileSpawn(leftHalf.getSpawnTiles()));
+            this.spawnTiles.addAll(castTileSpawn(rightHalf.getSpawnTiles()));
+            this.lootTiles.addAll(castTileLoot(leftHalf.getLootTiles()));
+            this.lootTiles.addAll(castTileLoot(rightHalf.getLootTiles()));
+            this.root=leftHalf.root;
+            graphMap=mapToGraph();
         }catch (IOException c){
             Log.severe("Map not found in given directory");
         }catch (NullPointerException e){
@@ -104,10 +107,10 @@ public class GameMap{
     }
 
     private GraphNode<Tile> mapToGraph (){
-        GraphNode<Tile> root = new GraphNode<>(getTile(new Point(0, 0)), 0);
-       getAdjacentTiles(root, root, 1);
-       root.deleteCopies();
-       return root;
+        GraphNode<Tile> mapRoot = new GraphNode<>(getTile(root), 0);
+       getAdjacentTiles(mapRoot, mapRoot, 1);
+       mapRoot.deleteCopies();
+       return mapRoot;
     }
 
      void getAdjacentTiles (GraphNode<Tile> root, GraphNode<Tile> localRoot, int layer){        //layer is layer of its children
@@ -147,4 +150,19 @@ public class GameMap{
                 (root.position.getY() - 1 == tile.position.getY() && root.doors.get(Direction.SOUTH)) ||
                 (root.position.getY() + 1 == tile.position.getY() && root.doors.get(Direction.NORTH));
     }
+
+    private List<SpawnTile> castTileSpawn(List<Tile> spawnTiles){
+        List<SpawnTile> castedTiles= new ArrayList<>();
+        for (Tile t: spawnTiles)
+            castedTiles.add(new SpawnTile(t));
+        return castedTiles;
+    }
+
+    private List<LootTile> castTileLoot(List<Tile> lootTiles){
+        List<LootTile> castedTiles= new ArrayList<>();
+        for (Tile t: lootTiles)
+            castedTiles.add(new LootTile(t));
+        return castedTiles;
+    }
+
 }

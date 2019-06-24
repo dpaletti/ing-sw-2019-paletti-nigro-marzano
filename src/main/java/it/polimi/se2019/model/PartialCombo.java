@@ -7,13 +7,13 @@ public enum  PartialCombo {
     SHOOT {
         @Override
         public void use(Game game, String username) {
-            game.send(new AllowedWeaponsEvent(username, Card.stringify(Card.toCard(game.userToPlayer(username).getWeapons()))));
+            game.send(new AllowedWeaponsEvent(username, Card.cardStringify(Card.cardToCard(game.userToPlayer(username).getWeapons()))));
         }
     },
     GRAB{
         @Override
         public void use(Game game, String username) {
-            game.send(new GrabbablesEvent(username, Grabbable.stringify(Grabbable.toCard(game.userToPlayer(username).getWeapons()))));
+            game.send(new GrabbablesEvent(username, Grabbable.grabbableStringify(Grabbable.grabbableToCard(game.userToPlayer(username).getWeapons()))));
         }
     },
     MOVE {

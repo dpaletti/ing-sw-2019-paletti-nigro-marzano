@@ -1,5 +1,9 @@
 {
   "type":"it.polimi.se2019.model.GameMap",
+  "root":{
+    "x":0,
+    "y":0
+  },
   "spawnTiles":[
     {
       "position":{

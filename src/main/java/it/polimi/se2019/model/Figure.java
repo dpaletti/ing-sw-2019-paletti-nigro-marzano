@@ -10,15 +10,13 @@ public class Figure {
     private Tile tile;
     private FigureColour colour;
     private Player player;
-    private Point position;
 
     public Figure (FigureColour figureColour){
         this.colour= figureColour;
-        position= new Point (-1, -1);
     }
 
     public Point getPosition() {
-        return new Point(position);
+        return new Point(tile.getPosition());
     }
 
     public FigureColour getColour() {
@@ -60,9 +58,8 @@ public class Figure {
 
     public void run (Point destination, int distance){
         if (player.getGameMap().getAllowedMovements(tile, distance).contains(destination)){
-            position = destination;
             tile.removeFigure(this);
-            tile = player.getGameMap().getTile(position);
+            tile = player.getGameMap().getTile(destination);
             tile.addFigure(this);
         }
     }
@@ -84,5 +81,10 @@ public class Figure {
     public void shoot (PartialWeaponEffect partialWeaponEffect, Figure figure){
        for(Action a : partialWeaponEffect.getActions())
            a.getActionType().apply(figure.player, player, a);
+    }
+
+    public void spawn (Point spawnPosition){
+        tile = player.getGameMap().getTile(spawnPosition);
+        tile.addFigure(this);
     }
 }

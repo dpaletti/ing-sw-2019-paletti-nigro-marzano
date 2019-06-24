@@ -11,7 +11,7 @@ public class Tear {
 
     @Override
     public String toString() {
-        return colour.toString()+"tear";
+        return colour.toString();
     }
 
     @Override

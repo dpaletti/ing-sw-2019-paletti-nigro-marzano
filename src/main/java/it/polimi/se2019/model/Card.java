@@ -87,14 +87,14 @@ public abstract class Card {
         return reloadPrice;
     }
 
-    public static List<String> stringify (List<Card> cards){
+    public static List<String> cardStringify(List<Card> cards){
         List<String> names = new ArrayList<>();
         for (Card c : cards)
             names.add(c.getName());
         return names;
     }
 
-    public static List<Card> toCard (List<? extends Card> cards){
+    public static List<Card> cardToCard(List<? extends Card> cards){
         List<Card> toReturn = new ArrayList<>();
         while (cards.iterator().hasNext()){
             toReturn.add(cards.iterator().next());

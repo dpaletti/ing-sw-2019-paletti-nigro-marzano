@@ -9,7 +9,9 @@ import java.util.Set;
 
 public class LootTile extends Tile{
 
-    public LootTile() {}
+    public LootTile(Tile tile) {
+        super(tile);
+    }
 
     @Override
     public List<Grabbable> grab() {
