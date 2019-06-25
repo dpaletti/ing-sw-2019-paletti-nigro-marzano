@@ -13,8 +13,9 @@ public class SetUpEvent extends MVEvent {
     private HashMap<String, String> userToColour; //<user, figure colour>
     private HashMap<String, String> weaponSpots;    //<weapon, room colour>
     private HashMap<Point, String> lootCards;
+    private String leftConfig;
+    private String rightConfig;
     private int skulls;
-    private String config;
     private boolean frenzy;
 
     public SetUpEvent(String destination,
@@ -22,14 +23,16 @@ public class SetUpEvent extends MVEvent {
                       Map<String, String> weaponSpots,
                       Map<Point, String> lootCards,
                       int skulls,
-                      String config,
+                      String leftConfig,
+                      String rightConfig,
                       boolean frenzy){
         super(destination);
         this.userToColour=new HashMap<>(userToColour);
         this.weaponSpots= new HashMap<>(weaponSpots);
         this.lootCards= new HashMap<>(lootCards);
         this.skulls = skulls;
-        this.config = config;
+        this.leftConfig = leftConfig;
+        this.rightConfig = rightConfig;
         this.frenzy = frenzy;
     }
 
@@ -50,8 +53,12 @@ public class SetUpEvent extends MVEvent {
         return new HashMap<>(lootCards);
     }
 
-    public String getConfig() {
-        return config;
+    public String getLeftConfig() {
+        return leftConfig;
+    }
+
+    public String getRightConfig() {
+        return rightConfig;
     }
 
     public int getSkulls() {

@@ -64,7 +64,9 @@ public class SetUpController extends Controller {
         model.setGameMap(new GameMap(config));
         model.setKillshotTrack(new KillshotTrack(skull));
         model.setFinalFrenzy(finalFrenzy);
-        model.send(new SetUpEvent("*", assignFigureToUser(), weaponSpotsSetUp(), lootTilesSetUp(), skull, config, finalFrenzy));
+        model.send(new SetUpEvent("*", assignFigureToUser(),
+                weaponSpotsSetUp(), lootTilesSetUp(), skull, model.getGameMap().getConfig().getLeftHalf(),
+                model.getGameMap().getConfig().getRightHalf(), finalFrenzy));
 
         new MatchController(model, server, model.getUsernames(), getRoomNumber());
         new TurnController(model, server, getRoomNumber());
@@ -132,4 +134,5 @@ public class SetUpController extends Controller {
         }
         return mostVoted.get(random.nextInt(mostVoted.size()));
     }
+
 }

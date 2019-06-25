@@ -50,14 +50,6 @@ public class Game extends Observable<MVEvent> {
            userToPlayer(playing).apply(p, partialWeaponEffect);
     }
 
-    public void sendPossibleEffects (String username, String weaponName, List<GraphWeaponEffect> weaponEffect){
-        PossibleEffectsEvent event = new PossibleEffectsEvent(username, weaponName);
-        for (GraphWeaponEffect w: weaponEffect){
-            event.addEffect(w.getName(), w.getEffectType());
-        }
-        notify(event);
-    }
-
     public void addToSelection(String playerSelecting, List<Action> actions, List<Targetable> targetables){
         if(selectionEventHolder == (null))
             selectionEventHolder = new MVSelectionEvent(playerSelecting);

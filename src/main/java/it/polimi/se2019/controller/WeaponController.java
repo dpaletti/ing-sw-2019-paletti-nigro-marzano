@@ -2,6 +2,7 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.mv_events.AvailableWeaponsEvent;
+import it.polimi.se2019.model.mv_events.MVWeaponEndEvent;
 import it.polimi.se2019.model.mv_events.UsablePowerUpEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
@@ -68,9 +69,12 @@ public class WeaponController extends CardController {
 
         layersVisitedPartial = layersVisitedPartial + 1;
         currentLayer= weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
-        for(GraphNode<PartialWeaponEffect> p: currentLayer) {
-            model.addToSelection(message.getSource(), p.getKey().getActions(), generateTargetSet(p.getKey(), model.userToPlayer(message.getSource())));
-        }
+        for(GraphNode<PartialWeaponEffect> p: currentLayer)
+            model.addToSelection(message.getSource(),
+                    p.getKey().getActions(),
+                    generateTargetSet(p.getKey(),
+                            model.userToPlayer(message.getSource())));
+
         model.sendPossibleTargets();
     }
 
@@ -78,8 +82,9 @@ public class WeaponController extends CardController {
     public void dispatch(VCSelectionEvent message) {
         model.usablePowerUps("onAttack", true, currentPlayer);
         for (String s : message.getSelectedPlayers()){
-            //currentLayer.get(layersVisited).getKey().getActions().get(layersVisitedPartial).getActionType().apply();
+           // currentLayer.get(layersVisited).getKey().getActions().get(layersVisitedPartial).getActionType().apply();
         }
+        nextWeaponEffect();
     }
 
     @Override
@@ -259,10 +264,17 @@ public class WeaponController extends CardController {
         layersVisited = layersVisited + 1;
         for (GraphNode<GraphWeaponEffect> g: currentWeapon.getDefinition().getListLayer(layersVisited))
             list.add(g.getKey());
-        if (!list.isEmpty())
-            model.sendPossibleEffects(model.playerToUser(currentPlayer), currentWeapon.getName(), list);
-        else{
-
+        if (!list.isEmpty()) {
+            PossibleEffectsEvent event = new PossibleEffectsEvent(model.playerToUser(currentPlayer), currentWeapon.getName());
+            for (GraphWeaponEffect w: list)
+                event.addEffect(w.getName(), w.getEffectType());
+            model.send(event);
         }
+        else
+            model.send(new MVWeaponEndEvent(model.playerToUser(currentPlayer)));
+    }
+
+    private void handlePartial (PartialWeaponEffect partial){
+
     }
 }
