@@ -18,7 +18,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Semaphore;
@@ -26,6 +28,7 @@ import java.util.concurrent.Semaphore;
 public class Server implements ServerInterface {
     private ServerSocket serverSocket;
     private List<VirtualView> virtualViews = new ArrayList<>();
+    private List<Game> models = new ArrayList<>();
     private int roomNumber = -1;
     private List<String> usernames = new ArrayList<>();
     private List<String> tokens = new ArrayList<>();
@@ -52,6 +55,10 @@ public class Server implements ServerInterface {
 
     }
 
+    public List<String> getMapConfigs(int roomNumber){
+        return models.get(roomNumber).getMapConfigs();
+    }
+
     public List<String> getUsernames() {
         return new ArrayList<>(usernames);
     }
@@ -76,10 +83,6 @@ public class Server implements ServerInterface {
         usernames.add(username);
     }
 
-    public void addToken(String token){
-        tokens.add(token);
-    }
-
     public void addController(Controller controller, int roomNumber){
         virtualViews.get(roomNumber).register(controller);
     }
@@ -88,18 +91,51 @@ public class Server implements ServerInterface {
         virtualViews.get(roomNumber).deregister(controller);
     }
 
+    public void kickPlayer(String toKick) {
+        VirtualView room = getPlayerRoomOnId(toKick);
+        if(room!=null)
+            room.removePlayer(toKick);
+        else
+            throw new IllegalArgumentException("Kick is impossible, player to kick cannot be found");
+    }
+
+    public void handleReconnection(String source, String oldToken){
+        VirtualView oldRoom = getPlayerRoomOnId(oldToken);
+        VirtualView tempRoom = getPlayerRoomOnId(source);
+        if(oldRoom != null)
+           oldRoom.reconnect(oldToken);
+        else if(tempRoom != null){
+            tempRoom.refuseReconnection(source);
+        }else
+            throw new IllegalArgumentException("Reconnection to handle is not valid");
+    }
+
+    private VirtualView getPlayerRoomOnId(String id){
+        for (VirtualView v : virtualViews) {
+            if (v.getBiTokenUsername().containsFirst(id)) {
+                return v;
+            }
+
+            if (v.getBiTokenUsername().containsSecond(id)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     private void openConnections()throws IOException, AlreadyBoundException{
 
         UnicastRemoteObject.exportObject(this, 0);
         serverSocket = new ServerSocket(getPort());
 
         Registry registry = LocateRegistry.createRegistry(1099);
-        registry.bind(properties.getProperty("REMOTE_SERVER_NAME"), this);
+        registry.bind(properties.getProperty("SERVER_NAME"), this);
     }
 
     private void newMVC() {
 
         Game model = new Game();
+        models.add(model);
         virtualViews.add(new VirtualView(roomNumber, this));
         new MatchMakingController(model, this, roomNumber);
 
@@ -124,10 +160,10 @@ public class Server implements ServerInterface {
             Socket socket = serverSocket.accept();
             if(!isMatchMaking) {
                 isMatchMaking = true;
-                suspendedConnection = new ConnectionSocket(virtualViews.get(roomNumber).generateToken(), socket);
+                suspendedConnection = new ConnectionSocket(generateToken(), socket);
                 return;
             }
-            virtualViews.get(roomNumber).startListening(new ConnectionSocket(virtualViews.get(roomNumber).generateToken(), socket));
+            virtualViews.get(roomNumber).startListening(new ConnectionSocket(generateToken(), socket));
           }
     }
 
@@ -147,10 +183,21 @@ public class Server implements ServerInterface {
 
     private void fillProperties(){
         try {
-            properties.load(new FileInputStream(Paths.get("files/server.config").toFile()));
+            properties.load(new FileInputStream(Paths.get("files/server.properties").toFile()));
         }catch (IOException e){
             Log.severe("Could not load properties");
         }
+    }
+
+    private String generateToken(){
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[20];
+        random.nextBytes(bytes);
+        String token = Base64.getEncoder().encodeToString(bytes);
+        if(tokens.contains(token))
+            generateToken();
+        tokens.add(token);
+        return token;
     }
 
     //------------------------RMI REMOTE SERVER INTERFACE IMPLEMENTATION------------------------//
@@ -161,20 +208,21 @@ public class Server implements ServerInterface {
         Log.fine("Accepted new client");
         if(!isMatchMaking) {
             isMatchMaking = true;
-            suspendedConnection = new ConnectionRMI(virtualViews.get(roomNumber).generateToken(), client);
+            suspendedConnection = new ConnectionRMI(generateToken(), client);
             semRMI.release();
             newMatch();
             return;
         }
-        virtualViews.get(roomNumber).startListening(new ConnectionRMI(virtualViews.get(roomNumber).generateToken(), client));
+        virtualViews.get(roomNumber).startListening(new ConnectionRMI(generateToken(), client));
+        semRMI.release();
     }
 
     @Override
     public MVEvent pullEvent(String token) throws RemoteException {
         try {
-            return ((ConnectionRMI) virtualViews.get(roomNumber).getConnectionOnId(token)).pull();
+            return ((ConnectionRMI) virtualViews.get(roomNumber).getConnectionOnToken(token)).pull();
         } catch (NullPointerException e) {
-            Log.fine(e.getMessage());
+            Log.fine("Invalid token");
             throw new NullPointerException("You detain an invalid token");
         }
     }
@@ -182,9 +230,9 @@ public class Server implements ServerInterface {
     @Override
     public void pushEvent(String token, VCEvent vcEvent) throws RemoteException {
         try{
-            ((ConnectionRMI) virtualViews.get(roomNumber).getConnectionOnId(token)).push(vcEvent);
+            ((ConnectionRMI) virtualViews.get(roomNumber).getConnectionOnToken(token)).push(vcEvent);
         }catch (NullPointerException e){
-            Log.fine(e.getMessage());
+            Log.fine("Invalid token");
             throw new NullPointerException("You detain an invalid token");
         }
     }

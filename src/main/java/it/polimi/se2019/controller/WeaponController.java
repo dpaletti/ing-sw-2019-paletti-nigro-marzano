@@ -30,7 +30,6 @@ public class WeaponController extends CardController {
 
     public WeaponController (Server server, int roomNumber, Game model){
         super(model, server, roomNumber);
-        new WeaponEffectController(server, roomNumber, model);
     }
     @Override
     public void update(VCEvent message) {

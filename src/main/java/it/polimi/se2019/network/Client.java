@@ -1,54 +1,91 @@
 package it.polimi.se2019.network;
 
 import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.view.UIMode;
 import it.polimi.se2019.view.View;
-import it.polimi.se2019.view.ViewCLI;
-import it.polimi.se2019.view.ViewGUI;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
+import java.security.SecureRandom;
+import java.util.*;
 
 
 public class Client {
     private NetworkHandler networkHandler;
     private View view;
     private Properties properties = new Properties();
+    private Properties hidden = new Properties();
     private Scanner in = new Scanner(System.in);
+    private List<String> mapConfigs = new ArrayList<>();
 
-    private Properties getProperties() {
-        return new Properties(properties);
+
+
+    public Client(){
+        initializePropertiesAndPreferences();
+        viewInitialization();
+        networkInitialization();
+        view.register(networkHandler);
+        networkHandler.register(view);
+
+    }
+
+    private String getServerIP(){
+        return properties.getProperty("SERVER_IP");
+    }
+
+    private  int getTestUsernameBound(){
+        return Integer.parseInt(properties.getProperty("TEST_USERNAME_BOUND"));
+    }
+
+    private int getServerPort(){
+        return Integer.parseInt(properties.getProperty("SERVER_PORT"));
+    }
+
+    private ConnectionMode getConnectionMode(){
+        return ConnectionMode.parseConnectionMode(properties.getProperty("CONNECTION_MODE"));
+    }
+
+    private UIMode getUiMode(){
+        return UIMode.parseUIMode((properties.getProperty("UI_MODE")));
+    }
+
+    private boolean isTesting(){
+        return Boolean.parseBoolean(properties.getProperty("TESTING"));
     }
 
     public String getRemoteServerName(){
-        return properties.getProperty("REMOTE_SERVER_NAME");
+        return properties.getProperty("SERVER_NAME");
     }
 
     public String getUsername(){
-        return properties.getProperty("username");
+        return hidden.getProperty("username");
     }
 
     public String getToken(){
-        return properties.getProperty("token");
+        return hidden.getProperty("token");
     }
 
-    public void writeProperty(String property, String value){
-        properties.setProperty(property, value);
-        try {
-            properties.store(new FileOutputStream(Paths.get("files/server.properties").toFile()), "updating properties");
-        }catch (Exception e){
-            Log.severe("Could not write property file");
+
+    public void writePreference(String property, String value){
+        hidden.put(property, value);
+        try{
+            FileOutputStream f =new FileOutputStream(Client.class.getClassLoader().getResource("hidden.properties").getFile());
+            hidden.store(f, "updating");
+        }catch (FileNotFoundException e){
+            Log.severe("Could not find local properties file");
+        }catch (IOException e){
+            Log.severe("Could not store data in this hidden property file");
         }
     }
 
-    public void openSession(String token, List<String> usernames){
+    public void openSession(String token, List<String> roomUsernames, List<String> allUsernames, List<String> configs){
+        mapConfigs = configs;
         if(!networkHandler.isReconnection()) {
             networkHandler.setToken(token);
-            usernameSelection(usernames);
+            view.matchMaking(usernameSelection(allUsernames, roomUsernames), configs);
         }
         else
             networkHandler.reconnect(token);
@@ -62,112 +99,73 @@ public class Client {
             System.exit(0);
         }
         else {
-            writeProperty("token", "");
+            writePreference("token", "");
             networkHandler.stopListening();
             main(new String[]{"a", "b", "c"});
         }
     }
 
-    private void usernameSelection(List<String> usernames){
-        in = new Scanner(System.in);
+    private List<String> usernameSelection(List<String> allUsernames, List<String> roomUsernames){
+        String username;
+        if(!isTesting()) {
+            in = new Scanner(System.in);
 
-        Log.input("Insert username");
+            Log.input("Insert username");
 
-        String username  = in.nextLine();
-
-        while (usernames.contains(username)) {
-            Log.input("Choose another username please, '" + properties.getProperty("username") + "' already in use");
             username = in.nextLine();
+
+            while (allUsernames.contains(username)) {
+                Log.input("Choose another username please, '" + getUsername() + "' already in use");
+                username = in.nextLine();
+            }
+        }
+        else {
+            Random r = new SecureRandom();
+            username = ((Integer) r.nextInt(getTestUsernameBound())).toString();
+            while(allUsernames.contains(username)){
+                username = ((Integer) r.nextInt(getTestUsernameBound())).toString();
+            }
         }
 
-        writeProperty(username, username);
+        writePreference("username", username);
         networkHandler.chooseUsername(username);
 
-        usernames.add(username);
-        usernames.remove("*");
+        roomUsernames.add(username);
+        roomUsernames.remove("*");
+        return roomUsernames;
 
-        view.matchMaking(usernames);
     }
 
     private boolean isReconnection() {
-        if (getToken().length() == 0) {
-            Log.input("Do you want to reconnect to the previous ongoing session?" +
-                        " (yes/no): [default = no]");
-            return in.nextLine().equals("yes");
-            }
-        return false;
+        return !isTesting() && (getToken().length()!=0);
     }
 
-    public void getViewRegistration(NetworkHandler networkHandler){
-            Log.fine(view.toString());
-            networkHandler.register(view);
+    public void viewInitialization(){
+        view = getUiMode().createView(this);
     }
 
-    public void viewInitialization(String viewMode){
-        if(!viewMode.equals("CLI")) {
-            ViewGUI.create(this);
-            view = ViewGUI.getInstance();
-        }
+    public void networkInitialization(){
+        //Ip and port are always given for network handling, they are ignored if connection mode is RMI
+        if(!isReconnection())
+            networkHandler = getConnectionMode().createNetworkHandler(this, getServerIP(), getServerPort());
         else
-            view = new ViewCLI(this);
-
-
+            networkHandler = getConnectionMode().createNetworkHandler(this, getServerIP(), getServerPort(), getToken());
     }
 
-    public void networkInitialization(String connectionType, String token, boolean reconnecting){
-        if (!connectionType.equals("RMI")) {
-            Log.input("input Server IP (with no spaces) then press Enter: ");
-            String ip = in.nextLine();
-
-            Log.input("input Server port then press Enter: ");
-            int port = in.nextInt();
-            in.nextLine();
-            if(!reconnecting)
-                networkHandler = new NetworkHandlerSocket(this, ip, port);
-            else
-                networkHandler = new NetworkHandlerSocket(token, this, ip, port);
-
-        }
-        else {
-            if(!reconnecting)
-                networkHandler = new NetworkHandlerRMI(this);
-            else
-                networkHandler = new NetworkHandlerRMI(token, this);
-        }
-    }
-
-    public void fillProperties() {
+    public void initializePropertiesAndPreferences() {
         try {
             properties.load(new FileInputStream(Paths.get("files/client.properties").toFile()));
+            properties.load(Client.class.getClassLoader().getResourceAsStream("hidden.properties"));
         } catch (IOException e) {
             Log.severe("Could not load properties file");
         }
     }
+
     public void setNetworkHandler(NetworkHandler networkHandler) {
         this.networkHandler = networkHandler;
     }
 
     public static void main(String[] args) {
-
-        Client client = new Client();
-
-        Log.input("Preferred view mode (GUI/CLI): [default = GUI] ");
-
-        String viewMode = client.in.nextLine();
-
-        Log.input("Preferred network communication mode (RMI/Socket): [default = Socket] ");
-
-        String connectionType = client.in.nextLine();
-
-        boolean reconnecting = client.isReconnection();
-        String token = null;
-        if(reconnecting)
-            token = client.getToken();
-
-        client.viewInitialization(viewMode);
-        //view needs to be initialized before network
-        //nullPointer exception is thrown otherwise
-        client.networkInitialization(connectionType, token, reconnecting);
-        client.view.register(client.networkHandler);
+        new Client();
     }
 }

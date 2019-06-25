@@ -4,13 +4,10 @@ import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.mv_events.PartialEffectEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.Action;
-import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
 import it.polimi.se2019.view.vc_events.ConflictResolutionEvent;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class WeaponEffectController extends WeaponController{
 

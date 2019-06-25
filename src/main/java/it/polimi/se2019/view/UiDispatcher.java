@@ -32,7 +32,7 @@ public interface UiDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("GuiMoveFigureEvent unsupported");
     }
 
-    default void dispatch(UiMatchSetup message){
-        throw new UnsupportedOperationException("UiMatchSetup unsupported");
+    default void dispatch(UiMapConfigEvent message){
+        throw new UnsupportedOperationException("UiMapConfigEvent");
     }
 }

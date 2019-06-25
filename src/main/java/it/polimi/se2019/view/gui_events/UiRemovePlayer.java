@@ -6,7 +6,7 @@ public class UiRemovePlayer extends UiEvent {
     private String player;
 
     public UiRemovePlayer(String username){
-        this.player = player;
+        this.player = username;
     }
 
     public String getPlayer() {

@@ -4,11 +4,14 @@ import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Point;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class GameMap{
     private MapConfig config;
@@ -20,9 +23,9 @@ public class GameMap{
     //TODO: delete enum MapConfig and JSON the pairing between map name and its halves
     public GameMap(String configName){
         try {
-            this.config= (MapConfig)JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/mapConfigs/"+configName+".json"))));
-            GameMap leftHalf = (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/"+config.getLeftHalf()+".json"))));
-            GameMap rightHalf= (GameMap) JsonHandler.deserialize(new String(Files.readAllBytes(Paths.get("files/maps/"+config.getRightHalf()+".json"))));
+            this.config= (MapConfig)JsonHandler.deserialize(readFile("files/mapConfigs/"+configName+".json"));
+            GameMap leftHalf = (GameMap) JsonHandler.deserialize(readFile("files/maps/"+config.getLeftHalf()+".json"));
+            GameMap rightHalf= (GameMap) JsonHandler.deserialize(readFile("files/maps/"+config.getRightHalf()+".json"));
             this.spawnTiles.addAll(castTileSpawn(leftHalf.getSpawnTiles()));
             this.spawnTiles.addAll(castTileSpawn(rightHalf.getSpawnTiles()));
             this.lootTiles.addAll(castTileLoot(leftHalf.getLootTiles()));
@@ -36,6 +39,16 @@ public class GameMap{
         }catch (ClassNotFoundException e){
             Log.severe("Error in json file, type");
         }
+    }
+
+    public String readFile (String path) throws IOException {
+        File file = new File(path);
+        FileInputStream fis = new FileInputStream(file);
+        byte[] data = new byte[(int) file.length()];
+        fis.read(data);
+        fis.close();
+
+        return new String(data, StandardCharsets.UTF_8);
     }
 
     public MapConfig getConfig() {
