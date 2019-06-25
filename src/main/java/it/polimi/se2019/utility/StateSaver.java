@@ -105,7 +105,7 @@ public class StateSaver implements Observer<MVEvent>, MVEventDispatcher{
 
     @Override
     public void dispatch(TurnEvent message) {
-        file=StateEncoder.addLastUser(message.getUser(),file);
+        file=StateEncoder.addLastUser(message.getDestination(),file);
         save();
     }
 

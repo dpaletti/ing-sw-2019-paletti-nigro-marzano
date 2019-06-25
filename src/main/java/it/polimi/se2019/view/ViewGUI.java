@@ -45,12 +45,17 @@ public class ViewGUI extends View {
         return new Pair<>(boardConf.getFirst(), boardConf.getSecond());
     }
 
+    public void send(VCEvent message){
+        notify(message);
+    }
+
     @Override
-    public void matchMaking(List<String> usernames) {
+    public void matchMaking(List<String> usernames, List<String> configs) {
         semControllerSync.acquireUninterruptibly();
-        new Thread(() ->  Application.launch(MatchMakingGui.class)).start();
+        new Thread(() ->  Application.launch(App.class)).start();
         Log.fine("Try sem re-acquisition");
         semControllerSync.acquireUninterruptibly();
+        mapConfigSetup(configs);
         for (String username:
              usernames) {
             addPlayer(username);
@@ -60,7 +65,12 @@ public class ViewGUI extends View {
     }
 
     public void gameSetup(int skulls, boolean frenzy, String conf){
-        notify(new VcMatchConfigurationEvent(client.getUsername(), skulls, frenzy, conf));
+        String actualConf = conf.substring(0, 0).toUpperCase() + conf.substring(1, conf.length() - 1);
+        notify(new VcMatchConfigurationEvent(client.getUsername(), skulls, frenzy, actualConf));
+    }
+
+    public void mapConfigSetup(List<String> config){
+        notify(new UiMapConfigEvent(config));
     }
 
     @Override
@@ -88,19 +98,19 @@ public class ViewGUI extends View {
     public void dispatch(TimerEvent message) {
         Log.fine("Time to go: " + message.getTimeToGo());
         if (!timerGoing) {
-            ViewGUI.this.notify(new UiTimerStart(message.getTimeToGo()));
+            notify(new UiTimerStart(message.getTimeToGo()));
             timerGoing = true;
         }
         if (message.getTimeToGo() <= 1000) {
-            ViewGUI.this.notify(new UiTimerStop());
+            notify(new UiTimerStop());
             timerGoing = false;
         }
-        ViewGUI.this.notify(new UiTimerTick(message.getTimeToGo()));
+        notify(new UiTimerTick(message.getTimeToGo()));
     }
 
     @Override
     public void dispatch(UsernameDeletionEvent message) {
-        ViewGUI.this.notify(new UiRemovePlayer(message.getUsername()));
+        notify(new UiRemovePlayer(message.getUsername()));
     }
 
     @Override
@@ -120,9 +130,7 @@ public class ViewGUI extends View {
     @Override
     public synchronized void dispatch(MatchConfigurationEvent message)
     {
-            notify(new UiCloseMatchMaking());
-            semControllerSync.acquireUninterruptibly();
-            notify(new UiMatchSetup(message.getConfigurations()));
+        notify(new UiCloseMatchMaking());
     }
 
     private void resetPlayer(String username){

@@ -1,5 +1,6 @@
 package it.polimi.se2019.network;
 
+import it.polimi.se2019.model.mv_events.SyncEvent;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.MVEvent;
 import it.polimi.se2019.view.VCEvent;
@@ -50,6 +51,12 @@ public class ConnectionRMI implements Connection{
     }
 
     @Override
+    public void reconnect() {
+        disconnected = false;
+        submit(new SyncEvent(getToken(), eventBuffer));
+    }
+
+    @Override
     public void submit(MVEvent mvEvent) {
         try {
             if(!disconnected) {
@@ -73,11 +80,6 @@ public class ConnectionRMI implements Connection{
     @Override
     public void disconnect() {
         disconnected = true;
-    }
-
-    @Override
-    public List<MVEvent> getBufferedEvents() {
-        return new ArrayList<>(eventBuffer);
     }
 
     public MVEvent pull(){

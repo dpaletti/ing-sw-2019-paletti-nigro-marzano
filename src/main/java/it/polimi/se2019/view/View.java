@@ -21,7 +21,7 @@ public abstract class View extends Observable<Event> implements Observer<MVEvent
 
     }
 
-    public abstract void matchMaking(List<String> usernames);
+    public abstract void matchMaking(List<String> usernames, List<String> configs);
     public abstract void addPlayer(String username);
 
     @Override
@@ -30,7 +30,7 @@ public abstract class View extends Observable<Event> implements Observer<MVEvent
     }
     @Override
     public void dispatch(HandshakeEndEvent message) {
-        client.openSession(message.getDestination(), message.getUsernames());
+        client.openSession(message.getDestination(), message.getRoomUsernames(), message.getAllUsernames(), message.getConfigs());
     }
 
     @Override

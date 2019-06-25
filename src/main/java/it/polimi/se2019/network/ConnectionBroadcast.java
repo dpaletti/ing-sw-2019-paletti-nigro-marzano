@@ -29,12 +29,12 @@ public class ConnectionBroadcast implements Connection{
     }
 
     @Override
-    public List<MVEvent> getBufferedEvents() {
-        throw new UnsupportedOperationException("Cannot get event buffer on broadcast connection");
+    public void disconnect() {
+        throw new UnsupportedOperationException("Cannot disconnect a broadcast connection");
     }
 
     @Override
-    public void disconnect() {
-        throw new UnsupportedOperationException("Cannot disconnect a broadcast connection");
+    public void reconnect() {
+        throw new UnsupportedOperationException("Cannot reconnect a broadcast connection");
     }
 }

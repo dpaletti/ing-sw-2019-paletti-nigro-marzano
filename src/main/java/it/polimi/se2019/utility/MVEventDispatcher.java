@@ -50,10 +50,6 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("ConnectionRefusedEvent not supported");
     }
 
-    default void dispatch(MvReconnectionEvent message){
-        throw new UnsupportedOperationException("MvReconnectionEvent not supported");
-    }
-
     default void dispatch(SyncEvent message){
         throw new UnsupportedOperationException("SyncEvent not supported");
     }

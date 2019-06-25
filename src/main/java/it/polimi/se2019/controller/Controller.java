@@ -15,7 +15,7 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
     protected Game model;
     protected Server server;
     private int roomNumber;
-    private Thread timer;
+    protected Thread timer;
 
     public Controller(Game model, Server server, int roomNumber){
         this.model = model;

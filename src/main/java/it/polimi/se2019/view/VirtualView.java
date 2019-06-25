@@ -9,23 +9,23 @@ import it.polimi.se2019.utility.*;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
 import it.polimi.se2019.view.vc_events.VCWeaponEndEvent;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
 public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent>, MVEventDispatcher {
     private List<Connection> connections = new CopyOnWriteArrayList<>();
 
-    private ExecutorService executorService = Executors.newCachedThreadPool();
-
     private final BiSet<String, String> biTokenUsername = new BiSet<>(); //Pair<"token", "username">
 
+    private final Map<String, Thread> eventLoops = new HashMap<>();
+
     private Semaphore sem = new Semaphore(1, true);
+
+    private int roomNumber;
 
     public VirtualView(){
         observers = new ArrayList<>();
@@ -40,7 +40,6 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         return biTokenUsername;
     }
 
-    private int roomNumber;
 
     private Server server;
 
@@ -51,13 +50,41 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     }
 
 
+    public void reconnect(String token){
+        if(!biTokenUsername.containsFirst(token))
+            throw new IllegalArgumentException("Trying to reconnect invalid player in room " + roomNumber);
+        getConnectionOnToken(token).reconnect();
+    }
+
+    public void refuseReconnection(String token){
+        removePlayer(token);
+        sem.release();
+    }
 
     public void disconnect(Connection connection){
         if (biTokenUsername.containsFirst(connection.getToken()))
-            VirtualView.this.notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken())));
+            notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken())));
         else {
-            VirtualView.this.notify(new DisconnectionEvent(connection.getToken()));
+            notify(new DisconnectionEvent(connection.getToken()));
             connection.disconnect();
+        }
+    }
+
+    public void removePlayer(String id){
+        try {
+            String token = id;
+            if (!biTokenUsername.containsFirst(id)) {
+                token = biTokenUsername.getFirst(id);
+            }
+            biTokenUsername.removeFirst(token);
+            sem.release();
+            connections.remove(getConnectionOnToken(token));
+            eventLoops.get(token).interrupt();
+            eventLoops.remove(token);
+            if (!biTokenUsername.containsFirst(id) && !biTokenUsername.containsSecond(id))
+                return;
+        }catch (NullPointerException e){
+            throw new NullPointerException("Could not remove unregistred player");
         }
     }
 
@@ -65,7 +92,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         public void dispatch(MvJoinEvent message) {
             biTokenUsername.add(new Pair<>(message.getDestination(), message.getUsername()));
             List<Connection> toBroadcast = new ArrayList<>(connections);
-            toBroadcast.remove(getConnectionOnId(message.getDestination()));
+            toBroadcast.remove(getConnectionOnToken(message.getDestination()));
             ConnectionBroadcast connection = new ConnectionBroadcast(toBroadcast);
             connection.submit(message);
             sem.release();
@@ -73,56 +100,14 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
         @Override
         public void dispatch(UsernameDeletionEvent message) {
-            Log.fine("Deleting " + message.getUsername());
-            if(biTokenUsername.containsSecond(message.getUsername())) {
-                connections.remove(getConnectionOnId(biTokenUsername.getFirst(message.getUsername())));
-                biTokenUsername.removeSecond(message.getUsername());
-                submit(getConnectionOnId(message.getDestination()), message);
-            }
-            else {
-                connections.remove(connections.get(connections.size() - 1));
-                //disconnection during username choice
-                sem.release();
-            }
-        }
-
-        @Override
-        public void dispatch(MvReconnectionEvent message) {
-            Log.fine("handling reconnection " + message);
-            Connection connection = getConnectionOnId(message.getDestination());
-            Connection oldConnection = getConnectionOnId(message.getOldToken());
-            String username;
-            try {
-                username = biTokenUsername.getSecond(message.getOldToken());
-            }catch (NullPointerException e){
-                //submit(connection, new ConnectionRefusedEvent(message.getDestination(), "You got an invalid token"));
-                sem.release();
-                return;
-            }
-            biTokenUsername.remove(new Pair<>(message.getOldToken(), username));
-            if(message.isMatchMaking()) {
-                Log.fine("Refusing connection");
-                //submit(connection, new ConnectionRefusedEvent(message.getDestination(), "Cannot reconnect during matchmaking"));
-                if (!connections.remove(connection)) {
-                    Log.severe("Cannot find connection");
-                } else if (!connections.remove(oldConnection)) {
-                    Log.severe("Cannot find old connection");
-                }
-            } else{
-                connection.reconnect((List<MVEvent>) oldConnection.getBufferedEvents());
-                if(connections.remove(oldConnection)){
-                    Log.severe("Cannot find oldConnection");
-                }
-                biTokenUsername.add(new Pair<>(message.getDestination(), username));
-                Log.fine(username + " just reconnected");
-            }
+            submit(new ConnectionBroadcast(connections), message);
             sem.release();
         }
 
         @Override
         public void dispatch(SetUpEvent message) {
             server.endMatchMaking();
-            submit(getConnectionOnId(message.getDestination()), message);
+            submit(getConnectionOnToken(message.getDestination()), message);
         }
 
         @Override
@@ -143,7 +128,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         }catch (UnsupportedOperationException e){
             //if an event cannot be handled is submitted to clients by default
 
-            submit(getConnectionOnId(message.getDestination()), message);
+            submit(getConnectionOnToken(message.getDestination()), message);
         }
     }
 
@@ -167,30 +152,27 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     public void startListening (Connection connection){
             sem.acquireUninterruptibly();
             connections.add(connection);
-            executorService.submit(new EventLoop(this, connection));
-            submit(connection, new HandshakeEndEvent(connection.getToken(), server.getUsernames()));
+            Thread t = new Thread(new EventLoop(this, connection));
+            t.start();
+            eventLoops.put(connection.getToken(), t);
+            List<String> roomUsernames = new ArrayList<>();
+            for(Pair<String, String> p: biTokenUsername){
+                roomUsernames.add(p.getSecond());
+            }
+            submit(connection, new HandshakeEndEvent(connection.getToken(), roomUsernames, server.getUsernames(), server.getMapConfigs(roomNumber)));
     }
 
 
-    public Connection getConnectionOnId(String id){
-        if(id.equals("*"))
+    public Connection getConnectionOnToken(String token){
+        if(token.equals("*"))
             return new ConnectionBroadcast(connections);
 
         for (Connection c:
              connections) {
-            if(c.getToken().equals(id))
+            if(c.getToken().equals(token))
                 return c;
         }
         return null;
     }
 
-    public String generateToken(){
-        SecureRandom random = new SecureRandom();
-        byte[] bytes = new byte[20];
-        random.nextBytes(bytes);
-        String token = Base64.getEncoder().encodeToString(bytes);
-        if(server.getTokens().contains(token))
-            generateToken();
-        return token;
-    }
 }

@@ -4,7 +4,6 @@ import org.junit.Test;
 
 public class TestBench {
     @Test
-    public void serialization(){
-
+    public void easyConnection(){
     }
 }

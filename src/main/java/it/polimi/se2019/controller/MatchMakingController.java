@@ -1,7 +1,6 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
-import it.polimi.se2019.model.MapConfig;
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.Log;
@@ -21,7 +20,6 @@ public class MatchMakingController extends Controller {
     private AtomicBoolean matchMade = new AtomicBoolean(false);
     private AtomicBoolean timerRunning = new AtomicBoolean(false);
     private List<String> usernames = new CopyOnWriteArrayList<>();
-    private Thread timer;
 
     public MatchMakingController(Game model, Server server, int roomNumber){
         super(model, server, roomNumber);
@@ -61,24 +59,29 @@ public class MatchMakingController extends Controller {
 
     @Override
     public void dispatch(DisconnectionEvent disconnectionEvent) {
-        model.send(new UsernameDeletionEvent("*", disconnectionEvent.getSource()));
-        if (usernames.remove(disconnectionEvent.getSource())) {
+        try {
+            server.kickPlayer(disconnectionEvent.getSource());
+            model.send(new UsernameDeletionEvent("*", disconnectionEvent.getSource()));
+            if (usernames.remove(disconnectionEvent.getSource())) {
 
-            playerCount.set(playerCount.decrementAndGet());
-            Log.info(disconnectionEvent.getSource() + " just disconnected, players in match making; " + playerCount);
-            if (playerCount.get() < 3 && timerRunning.get()) {
-                timer.interrupt();
-                timerRunning.set(false);
-                model.send(new TimerEvent("*", -1));  //negative time to go signals countdown interruption
-                Log.info("Timer stopped");
+                playerCount.set(playerCount.decrementAndGet());
+                Log.info(disconnectionEvent.getSource() + " just disconnected, players in match making; " + playerCount);
+                if (playerCount.get() < 3 && timerRunning.get()) {
+                    timer.interrupt();
+                    timerRunning.set(false);
+                    model.send(new TimerEvent("*", -1));  //negative time to go signals countdown interruption
+                    Log.info("Timer stopped");
+                }
             }
+        }catch (IllegalArgumentException e){
+            Log.severe("Player that does not belong to any virtualView trying to disconnect, ignoring");
         }
 
     }
 
     @Override
     public void dispatch(VcReconnectionEvent message) {
-        model.send(new MvReconnectionEvent(message.getSource(), message.getOldToken(), true));
+        server.handleReconnection(message.getSource(), message.getOldToken()); //source can be either a username or a token
     }
 
 

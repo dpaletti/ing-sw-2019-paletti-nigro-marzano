@@ -13,7 +13,7 @@ public class ViewCLI extends View {
     }
 
     @Override
-    public void matchMaking(List<String> usernames) {
+    public void matchMaking(List<String> usernames, List<String> configs) {
 
     }
 

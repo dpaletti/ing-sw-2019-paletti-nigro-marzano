@@ -13,7 +13,6 @@ public class EventLoop implements Runnable {
         this.virtualView = virtualView;
     }
 
-    private boolean shutdown = false;
 
     @Override
     public void run() {

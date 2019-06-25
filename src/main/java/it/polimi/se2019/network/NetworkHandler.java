@@ -31,7 +31,7 @@ public abstract class NetworkHandler extends Observable<MVEvent> implements Obse
 
     public void setToken(String token){
         this.token = token;
-        client.writeProperty("token", token);
+        client.writePreference("token", token);
     }
 
     public void setOldToken(String oldToken){
@@ -63,7 +63,6 @@ public abstract class NetworkHandler extends Observable<MVEvent> implements Obse
         this.token = null;
         this.client = client;
         reconnection = false;
-        client.getViewRegistration(this);
         client.setNetworkHandler(this); //this is needed for RMI sync on delayed connections.
     }
 
