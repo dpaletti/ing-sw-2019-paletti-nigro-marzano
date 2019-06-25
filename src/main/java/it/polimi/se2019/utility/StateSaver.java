@@ -100,23 +100,17 @@ public class StateSaver implements Observer<MVEvent>, MVEventDispatcher{
         for(Map.Entry<String, FigureColour> row: message.getUserToColour().entrySet()){
             file=StateEncoder.addPlayer(row.getValue(),row.getKey(),file);
         }
-        save();
-    }
-
-    @Override
-    public void dispatch(TurnEvent message) {
-        file=StateEncoder.addLastUser(message.getUser(),file);
-        save();
-    }
-
-    @Override
-    public void dispatch(FinalConfigurationEvent message) {
         file=StateEncoder.addBoard(message.getConfig(),file);
         file=StateEncoder.addFrenzy(message.isFrenzy(),file);
         file=StateEncoder.addKillShot(message.getSkulls(),file);
         save();
     }
 
+    @Override
+    public void dispatch(TurnEvent message) {
+        file=StateEncoder.addLastUser(message.getDestination(),file);
+        save();
+    }
 
     @Override
     public void dispatch(DiscardedPowerUpEvent message) {

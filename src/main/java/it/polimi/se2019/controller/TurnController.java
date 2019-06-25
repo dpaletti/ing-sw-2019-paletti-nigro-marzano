@@ -3,13 +3,11 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.AmmoColour;
 import it.polimi.se2019.model.Combo;
 import it.polimi.se2019.model.Game;
-import it.polimi.se2019.model.mv_events.NotEnoughPlayersConnectedEvent;
-import it.polimi.se2019.model.mv_events.ReloadableWeaponsEvent;
+import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.utility.PartialCombo;
+import it.polimi.se2019.view.vc_events.DiscardedPowerUpEvent;
 import it.polimi.se2019.view.vc_events.EndOfTurnEvent;
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.mv_events.MVMoveEvent;
-import it.polimi.se2019.model.mv_events.TurnEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
@@ -28,6 +26,7 @@ public class TurnController extends Controller {
     private Combo currentCombo;
     private int comboIndex= 0;
     private int comboUsed= 0;
+    private boolean reloaded = false;
 
     //should if(currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.WHATEVER)) be checked for Move, grab and shoot as well as reload?
 
@@ -57,7 +56,11 @@ public class TurnController extends Controller {
     public void dispatch(ReloadEvent message) {
         if(currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.RELOAD))
             nextPartialCombo();
+        else
+            reloaded = true;
         reloadWeapon(message.getSource(), message.getWeaponName());
+        if (comboUsed==2)
+            endTurn();
         }
 
     @Override
@@ -97,10 +100,11 @@ public class TurnController extends Controller {
     private void nextCombo(){
         comboUsed++;
         if (comboUsed==2) {
-            endTurn();
+            model.unloadedWeapons(currentPlayer);
             return;
         }
         model.send(new TurnEvent(currentPlayer, model.userToPlayer(currentPlayer).getHealthState().getMoves()));
+        model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
     }
 
     private void nextPartialCombo (){
@@ -164,6 +168,7 @@ public class TurnController extends Controller {
         if (model.nameToPowerUp(powerUpName) != null)
             model.userToPlayer(username).drawPowerUp(powerUpName);
         model.send(new MVMoveEvent("*", username, model.userToPlayer(username).getFigure().getPosition()));
+        model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
         model.send(new TurnEvent(username, model.userToPlayer(username).getHealthState().getMoves()));
     }
 
@@ -177,25 +182,4 @@ public class TurnController extends Controller {
             model.send(new NotEnoughPlayersConnectedEvent("*"));
     }
 
-    private boolean enoughActivePlayers (){
-        int active = 0;
-        for (Player p : model.getPlayers())
-            active++;
-        return !(active < 3);
-    }
-
-    private String getNextActiveUser (String user){
-        if (model.userToPlayer(model.getUsernames().get(model.getUsernames().indexOf(user) + 1)).isPaused())
-            return getNextActiveUser(model.getUsernames().get(model.getUsernames().indexOf(user) + 1));
-        else
-            return model.getUsernames().get(model.getUsernames().indexOf(user) + 1);
-    }
-
-    private void checkConstraint (String constraint, Player sender){
-        if (constraint.equals("on turn")){
-            if (sender.equals(model.userToPlayer(currentPlayer))){
-                //
-            }
-        }
-    }
 }

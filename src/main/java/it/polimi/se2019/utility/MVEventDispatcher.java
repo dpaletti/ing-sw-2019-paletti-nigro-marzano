@@ -133,10 +133,6 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("GrabbablesEvent not supported");
     }
 
-    default void dispatch (FinalConfigurationEvent message){
-        throw new UnsupportedOperationException("FinalConfigurationEvent not supported");
-    }
-
     default void dispatch(DiscardedPowerUpEvent message){
         throw new UnsupportedOperationException("DiscardedPowerUpEvent not supported");
     }

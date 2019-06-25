@@ -1,7 +1,10 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
+import it.polimi.se2019.model.Player;
+import it.polimi.se2019.model.PowerUp;
 import it.polimi.se2019.model.mv_events.TimerEvent;
+import it.polimi.se2019.model.mv_events.UsablePowerUpEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Observer;
@@ -49,4 +52,19 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
         if (!timer.isInterrupted())
             timer.interrupt();
     }
+
+    public boolean enoughActivePlayers (){
+        int active = 0;
+        for (Player p : model.getPlayers())
+            active++;
+        return !(active < 3);
+    }
+
+    public String getNextActiveUser (String user){
+        if (model.userToPlayer(model.getUsernames().get(model.getUsernames().indexOf(user) + 1)).isPaused())
+            return getNextActiveUser(model.getUsernames().get(model.getUsernames().indexOf(user) + 1));
+        else
+            return model.getUsernames().get(model.getUsernames().indexOf(user) + 1);
+    }
+
 }

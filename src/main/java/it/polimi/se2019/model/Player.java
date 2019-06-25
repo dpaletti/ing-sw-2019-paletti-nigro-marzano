@@ -165,6 +165,7 @@ public class Player implements Targetable{
     public void shootPeople (Player target, int hits){
         for (int i = 0; i < hits; i++)
             figure.damage(target.figure);
+        game.usablePowerUps("onDamage", false, target);
     }
 
     public void markPeople (Player target, int marks){

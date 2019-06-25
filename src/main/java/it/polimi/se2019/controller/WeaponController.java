@@ -2,14 +2,13 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.mv_events.AvailableWeaponsEvent;
+import it.polimi.se2019.model.mv_events.UsablePowerUpEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.VCEvent;
-import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
-import it.polimi.se2019.view.vc_events.ChosenWeaponEvent;
-import it.polimi.se2019.view.vc_events.ShootEvent;
+import it.polimi.se2019.view.vc_events.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,7 +45,7 @@ public class WeaponController extends CardController {
     @Override
     public void dispatch(ShootEvent message) {
         model.send(new AvailableWeaponsEvent(message.getSource(),
-                Grabbable.grabbableStringify(Grabbable.grabbableToCard(model.userToPlayer(message.getSource()).getWeapons()))));
+                Card.cardStringify(Card.cardToCard(model.userToPlayer(message.getSource()).getWeapons()))));
     }
 
     @Override
@@ -76,6 +75,22 @@ public class WeaponController extends CardController {
         model.sendPossibleTargets();
     }
 
+    @Override
+    public void dispatch(VCSelectionEvent message) {
+        model.usablePowerUps("onAttack", true, currentPlayer);
+        for (String s : message.getSelectedPlayers()){
+            //currentLayer.get(layersVisited).getKey().getActions().get(layersVisitedPartial).getActionType().apply();
+        }
+    }
+
+    @Override
+    public void dispatch(VCWeaponEndEvent message) {
+        layersVisited = 0;
+        layersVisitedPartial = 0;
+        currentLayer = null;
+        currentPlayer = null;
+        currentWeapon = null;
+    }
 
     protected List<Targetable> generateTargetSet (PartialWeaponEffect effect, Player player){
         Targetable targetable= null;

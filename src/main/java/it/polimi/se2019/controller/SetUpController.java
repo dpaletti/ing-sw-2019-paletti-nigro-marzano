@@ -1,7 +1,6 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.mv_events.FinalConfigurationEvent;
 import it.polimi.se2019.model.mv_events.SetUpEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.BiSet;
@@ -52,25 +51,20 @@ public class SetUpController extends Controller {
     @Override
     protected void endTimer() {
         super.endTimer();
-        int skull;
-        String config;
-        boolean finalFrenzy;
+        int skull = 8;
+        String config = "Large";
+        boolean finalFrenzy = true;
 
-        if (counter==0){
-            skull = 8;
-            config = "Large";
-            finalFrenzy = true;
-        }
-        else {
+        if (counter!=0) {
             skull = mostVoted(skulls);
             config = mostVoted(configs);
             finalFrenzy = mostVoted(isFinalFrenzy);
         }
-        model.send(new FinalConfigurationEvent("*", skull, config, finalFrenzy));
-        model.setGameMap(new GameMap("Large"));
+        counter = 0;
+        model.setGameMap(new GameMap(config));
         model.setKillshotTrack(new KillshotTrack(skull));
         model.setFinalFrenzy(finalFrenzy);
-        model.send(new SetUpEvent("*", assignFigureToUser(), weaponSpotsSetUp(), lootTilesSetUp()));
+        model.send(new SetUpEvent("*", assignFigureToUser(), weaponSpotsSetUp(), lootTilesSetUp(), skull, config, finalFrenzy));
 
         new MatchController(model, server, model.getUsernames(), getRoomNumber());
         new TurnController(model, server, getRoomNumber());

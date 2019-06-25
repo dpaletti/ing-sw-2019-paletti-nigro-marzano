@@ -80,11 +80,6 @@ public class ViewGUI extends View {
     }
 
     @Override
-    public void dispatch(FinalConfigurationEvent message) {
-        Log.fine("Final configuration is here");
-    }
-
-    @Override
     public void dispatch(TimerEvent message) {
         Log.fine("Time to go: " + message.getTimeToGo());
         if (!timerGoing) {

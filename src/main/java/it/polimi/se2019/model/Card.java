@@ -80,6 +80,10 @@ public abstract class Card {
         return price;
     }
 
+    public String getConstraint() {
+        return constraint;
+    }
+
     public Set<Ammo> getReloadPrice(){
         Set<Ammo> reloadPrice = new HashSet<>();
         reloadPrice.add(cardColour);
