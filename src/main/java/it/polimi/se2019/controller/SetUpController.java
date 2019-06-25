@@ -73,15 +73,15 @@ public class SetUpController extends Controller {
         server.removeController(this, getRoomNumber());
     }
 
-    private Map<String, RoomColour> weaponSpotsSetUp (){
-        Map<String, RoomColour> weaponSpots= new HashMap<>();
+    private Map<String, String> weaponSpotsSetUp (){
+        Map<String, String> weaponSpots= new HashMap<>();
         Grabbable drawnGrabbable;
 
         for (Tile t: model.getGameMap().getSpawnTiles()){
             for (int i=0; i<3; i++){
                 drawnGrabbable= (Weapon)model.getWeaponDeck().draw();
                 t.add(drawnGrabbable);
-                weaponSpots.put(drawnGrabbable.getName(), t.getColour());
+                weaponSpots.put(drawnGrabbable.getName(), t.getColour().name());
             }
         }
         return weaponSpots;
@@ -99,15 +99,15 @@ public class SetUpController extends Controller {
         return lootCards;
     }
 
-    private Map<String, FigureColour> assignFigureToUser (){
-        HashMap<String, FigureColour> userToColour= new HashMap<>();
+    private Map<String, String> assignFigureToUser (){
+        HashMap<String, String> userToColour= new HashMap<>();
         int colourCounter=0;
         BiSet<FigureColour, String> lookup= new BiSet<>();
         List<Player> players= new ArrayList<>();
         for (String userCounter: model.getUsernames()){
             lookup.add(new Pair<>(FigureColour.values()[colourCounter], userCounter));
             players.add(new Player(new Figure(FigureColour.values()[colourCounter]), model));
-            userToColour.put(userCounter, FigureColour.values()[colourCounter]);
+            userToColour.put(userCounter, FigureColour.values()[colourCounter].name());
             colourCounter++;
         }
         model.setUserLookup(new BiSet<>(lookup));
