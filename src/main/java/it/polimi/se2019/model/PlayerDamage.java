@@ -19,4 +19,6 @@ public abstract class PlayerDamage {
     public abstract boolean isFinalFrenzy();
 
     protected abstract void addMoves ();
+
+    public abstract PlayerDamage findPreviousHealthState ();
 }

@@ -37,4 +37,9 @@ public class FinalFrenzyBeforeFirst extends PlayerDamage {
         moves.add(combos);
         added = true;
     }
+
+    @Override
+    public PlayerDamage findPreviousHealthState() {
+        throw new UnsupportedOperationException("The player is in FinalFrenzyBeforeState there is no previous health state");
+    }
 }

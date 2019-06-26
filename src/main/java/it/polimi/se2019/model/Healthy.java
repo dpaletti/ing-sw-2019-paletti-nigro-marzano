@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Healthy extends PlayerDamage {
-    private SlightlyDamaged nextHealthState;
     private boolean added = false;
 
     @Override
@@ -20,13 +19,9 @@ public class Healthy extends PlayerDamage {
     @Override
     public Integer getMaximumHits() { return 2; }
 
-    public SlightlyDamaged getNextHealthState() {
-        return nextHealthState;
-    }
-
     @Override
     public PlayerDamage findNextHealthState() {
-        return nextHealthState;
+        return new SlightlyDamaged();
     }
 
     @Override
@@ -43,5 +38,10 @@ public class Healthy extends PlayerDamage {
         combos = new ArrayList<>(Arrays.asList(PartialCombo.MOVE,PartialCombo.MOVE, PartialCombo.MOVE));
         moves.add(combos);
         added = true;
+    }
+
+    @Override
+    public PlayerDamage findPreviousHealthState() {
+        throw new UnsupportedOperationException("There is no previous health state the player is Healthy");
     }
 }

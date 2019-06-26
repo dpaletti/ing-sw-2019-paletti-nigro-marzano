@@ -6,6 +6,9 @@ import java.util.Set;
 public class LootCardHelper extends JsonHelper{
 
     public LootCardHelper() { this.create();}
+    public LootCardHelper(LootCardHelper loot){
+        this.helped=loot.helped;
+    }
 
     @Override
     public void create() {

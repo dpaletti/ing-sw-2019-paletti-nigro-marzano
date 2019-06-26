@@ -1,6 +1,6 @@
 {
   "type":"it.polimi.se2019.model.Combo",
-  "name":"Run around",
+  "name":"RunAround",
   "partialCombos":[
     "MOVE",
     "MOVE",

@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SlightlyDamaged extends PlayerDamage {
-    private VeryDamaged nextHealthState;
     private boolean added = false;
 
     @Override
@@ -20,13 +19,9 @@ public class SlightlyDamaged extends PlayerDamage {
     @Override
     public Integer getMaximumHits() { return 5; }
 
-    public VeryDamaged getNextHealthState() {
-        return nextHealthState;
-    }
-
     @Override
     public PlayerDamage findNextHealthState() {
-        return nextHealthState;
+        return new VeryDamaged();
     }
 
     @Override
@@ -36,8 +31,14 @@ public class SlightlyDamaged extends PlayerDamage {
 
     @Override
     protected void addMoves() {
+        moves.addAll(findPreviousHealthState().getMoves());
         ArrayList<PartialCombo> combos = new ArrayList<>(Arrays.asList(PartialCombo.MOVE, PartialCombo.MOVE, PartialCombo.GRAB));
         moves.add(combos);
         added = true;
+    }
+
+    @Override
+    public PlayerDamage findPreviousHealthState() {
+        return new Healthy();
     }
 }

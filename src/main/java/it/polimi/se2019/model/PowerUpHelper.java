@@ -10,6 +10,9 @@ public class PowerUpHelper extends JsonHelper{
     public PowerUpHelper() {
         this.create();
     }
+    public PowerUpHelper(PowerUpHelper power){
+        this.helped=power.helped;
+    }
 
     @Override
     public void create() {

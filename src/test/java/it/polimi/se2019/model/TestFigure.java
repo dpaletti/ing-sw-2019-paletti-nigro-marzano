@@ -29,6 +29,8 @@ public class TestFigure {
         lookup.add(new Pair<>(FigureColour.BLUE, "blue"));
         model.setUserLookup(lookup);
         blueFigure.getTile().add((Weapon)model.getWeaponDeck().draw());
+        WeaponHelper helper= new WeaponHelper();
+        blueFigure.getTile().add((Weapon)helper.findByName("Whisper"));
     }
 
     @Test
@@ -91,7 +93,18 @@ public class TestFigure {
         assertTrue(loaded);
     }
 
+    @Test
+    public void testShoot(){
+        blueFigure.grab("Whisper");
+        PartialWeaponEffect partial=blueFigure.getPlayer().getWeapons().get(0).getWeaponEffects().iterator().next().getEffects().iterator().next();
+        blueFigure.shoot(partial,magentaFigure,model);
+        List<Tear> newHp= new ArrayList<>();
+        newHp.add(new Tear(FigureColour.BLUE));
+        newHp.add(new Tear(FigureColour.BLUE));
+        newHp.add(new Tear(FigureColour.BLUE));
+        assertEquals(newHp,magentaFigure.getPlayer().getHp());
 
+    }
 
 
 }

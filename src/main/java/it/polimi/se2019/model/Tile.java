@@ -30,27 +30,22 @@ public class Tile implements Targetable{
     public List<Grabbable> grab (){throw new UnsupportedOperationException("Can't grab from generic tile");}
 
     public List<Grabbable> getGrabbables() {
-        return grabbables;
+        return new ArrayList<>(grabbables);
+    }
+
+    public void removeGrabbed(String grabbed){
+        for (Grabbable g: getGrabbables()){
+            if(g.getName().equalsIgnoreCase(grabbed))
+                grabbables.remove(g);
+        }
     }
 
     public void setGrabbables(List<Grabbable> grabbables) {
         this.grabbables = grabbables;
     }
 
-    public void setColour(RoomColour colour) {
-        this.colour = colour;
-    }
-
-    public void setDoors(Map<Direction, Boolean> doors) {
-        this.doors = doors;
-    }
-
     public void setFigures(Set<Figure> figures) {
         this.figures = figures;
-    }
-
-    public void setPosition(Point position) {
-        this.position = position;
     }
 
     public RoomColour getColour() {
@@ -73,7 +68,6 @@ public class Tile implements Targetable{
     public void add(Grabbable grabbable){throw new UnsupportedOperationException("Can't add Tile");}
 
     public void addAll (List<Grabbable> grabbablesToAdd){throw new UnsupportedOperationException("Can't add Tiles");}
-
 
     @Override
     public void hit(String partialWeaponEffect, List<Targetable> hit, TurnMemory turnMemory) {

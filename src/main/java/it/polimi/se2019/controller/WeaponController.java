@@ -3,6 +3,7 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.mv_events.AvailableWeaponsEvent;
 import it.polimi.se2019.model.mv_events.MVWeaponEndEvent;
+import it.polimi.se2019.model.mv_events.PossibleEffectsEvent;
 import it.polimi.se2019.model.mv_events.UsablePowerUpEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;

@@ -6,7 +6,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
-@Ignore
 public class TestAmmo {
     Ammo ammo= new Ammo(AmmoColour.BLUE);
 

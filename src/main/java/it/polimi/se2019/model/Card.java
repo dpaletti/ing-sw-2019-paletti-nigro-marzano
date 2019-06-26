@@ -6,14 +6,11 @@ import it.polimi.se2019.utility.Log;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Card {
     protected Ammo cardColour;
-    protected Set<Ammo> price;
+    protected List<Ammo> price;
     protected Set<WeaponEffect> weaponEffects;
     protected String name;
     protected int maxHeight;
@@ -76,7 +73,7 @@ public abstract class Card {
         return cardColour;
     }
 
-    public Set<Ammo> getPrice() {
+    public List<Ammo> getPrice() {
         return price;
     }
 
@@ -84,8 +81,8 @@ public abstract class Card {
         return constraint;
     }
 
-    public Set<Ammo> getReloadPrice(){
-        Set<Ammo> reloadPrice = new HashSet<>();
+    public List<Ammo> getReloadPrice(){
+        List<Ammo> reloadPrice = new ArrayList<>();
         reloadPrice.add(cardColour);
         reloadPrice.addAll(price);
         return reloadPrice;
@@ -100,13 +97,14 @@ public abstract class Card {
 
     public static List<Card> cardToCard(List<? extends Card> cards){
         List<Card> toReturn = new ArrayList<>();
-        while (cards.iterator().hasNext()){
-            toReturn.add(cards.iterator().next());
+        Iterator iterator= cards.iterator();
+        while (iterator.hasNext()){
+            toReturn.add((Card)iterator.next());
         }
         return toReturn;
     }
 
-    public <T extends Effect> void generateGraph(Set<T> effectSet, GraphNode<T> root, int maxHeight, int constantMaxHeight){
+    public  <T extends Effect> void generateGraph(Set<T> effectSet, GraphNode<T> root, int maxHeight, int constantMaxHeight){
         if (maxHeight==0)
             return;
         int actualMax=0;

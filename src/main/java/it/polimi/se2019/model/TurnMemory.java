@@ -3,7 +3,7 @@ package it.polimi.se2019.model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+//TODO: Use hit methods in controllers to update the turnMemory
 public class TurnMemory {
     private Map<String, List<Player>>  hitTargets= new HashMap<>();
     private  Map<String, List<Tile>> hitTiles= new HashMap<>();
@@ -16,6 +16,7 @@ public class TurnMemory {
     public TurnMemory (TurnMemory turnMemory){
         this.hitTiles= turnMemory.getHitTiles();
         this.hitTargets= turnMemory.getHitTargets();
+        this.lastEffectUsed=turnMemory.lastEffectUsed;
     }
 
 
@@ -44,12 +45,6 @@ public class TurnMemory {
 
     public String getLastEffectUsed() {
         return lastEffectUsed;
-    }
-
-
-    public void hit (String partialWeaponEffect, List<Targetable> hitTargets, Targetable target){
-        target.hit(partialWeaponEffect, hitTargets, this);
-        lastEffectUsed=partialWeaponEffect;
     }
 
     public List<Targetable> getByEffect(List<String> effects, Targetable target){

@@ -36,6 +36,8 @@ public class Figure {
     }       //needed as figure has reference to player and vice versa
 
     public void damage (Figure target){
+        if (target.getPlayer().getHp().size()==12)
+            return;
         target.player.addTear(colour);
         for (Tear tear: target.player.getMarks()){
             if (tear.getColour().equals(colour)){
@@ -43,7 +45,6 @@ public class Figure {
                 target.player.removeMark(colour);
             }
         }
-        target.player.updatePlayerDamage();
     }
 
     public void mark (Figure target){

@@ -11,6 +11,10 @@ public class ComboHelper extends JsonHelper {
         this.create();
     }
 
+    public ComboHelper(ComboHelper combo){
+        this.helped=combo.helped;
+    }
+
     @Override
     public void create() {
         try {
@@ -22,7 +26,7 @@ public class ComboHelper extends JsonHelper {
         }
     }
 
-    public Set<Combo> getPowerUps(){
+    public Set<Combo> getCombos(){
         Set<Combo> combos= new HashSet<>();
         for (Jsonable j: this.getAll()){
             combos.add((Combo)j);

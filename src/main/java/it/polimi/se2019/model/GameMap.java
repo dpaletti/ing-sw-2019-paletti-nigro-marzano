@@ -20,7 +20,6 @@ public class GameMap{
     public GraphNode<Tile> graphMap;
     private Point root;
 
-    //TODO: delete enum MapConfig and JSON the pairing between map name and its halves
     public GameMap(String configName){
         try {
             this.config= (MapConfig)JsonHandler.deserialize(readFile("files/mapConfigs/"+configName+".json"));
@@ -41,7 +40,7 @@ public class GameMap{
         }
     }
 
-    public String readFile (String path) throws IOException {
+    private String readFile (String path) throws IOException {
         File file = new File(path);
         FileInputStream fis = new FileInputStream(file);
         byte[] data = new byte[(int) file.length()];
@@ -110,7 +109,7 @@ public class GameMap{
         return allowedMovements;
     }
 
-     int getDistance (Point startingPosition, Point endingPosition){
+     private int getDistance (Point startingPosition, Point endingPosition){
         return generateGraph(startingPosition).getGraphNode(getTile(endingPosition)).getLayer();
     }
 
@@ -128,7 +127,7 @@ public class GameMap{
        return mapRoot;
     }
 
-     void getAdjacentTiles (GraphNode<Tile> root, GraphNode<Tile> localRoot, int layer){        //layer is layer of its children
+     private void getAdjacentTiles (GraphNode<Tile> root, GraphNode<Tile> localRoot, int layer){        //layer is layer of its children
         GraphNode<Tile> child;
         for (Tile t: getTiles()){
             if (!localRoot.isParent(t)){
@@ -153,7 +152,7 @@ public class GameMap{
             getAdjacentTiles(root, t, layer);
     }
 
-    boolean hasDoor (Tile root, Tile tile){
+    private boolean hasDoor (Tile root, Tile tile){
         if (root.position.getX() != tile.position.getX() && root.position.getY() != tile.position.getY())
             return false;
         return (root.position.getX() - 1 == tile.position.getX() && root.doors.get(Direction.WEST)) ||

@@ -12,6 +12,10 @@ public class WeaponHelper extends JsonHelper{
         this.create();
     }
 
+    public WeaponHelper(WeaponHelper weaponHelper){
+        this.helped=weaponHelper.helped;
+    }
+
     @Override
     public void create() {
         Set<Jsonable> allWeapons=new HashSet<>();

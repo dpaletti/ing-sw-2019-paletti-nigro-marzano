@@ -1,9 +1,10 @@
 package it.polimi.se2019.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class KillshotTrack {
-    private List<Skull> killshot;
+    private List<Skull> killshot= new ArrayList<>();
     private Integer numberOfSkulls;
 
     public KillshotTrack (Integer numberOfSkulls){

@@ -1,6 +1,6 @@
 {
   "type":"it.polimi.se2019.model.Combo",
-  "name":"Damaged Move Move Grab",
+  "name":"DamagedMoveMoveGrab",
   "partialCombos":[
     "MOVE",
     "MOVE",

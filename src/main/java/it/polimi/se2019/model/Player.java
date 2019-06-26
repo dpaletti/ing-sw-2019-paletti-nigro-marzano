@@ -12,11 +12,11 @@ public class Player implements Targetable{
     private List<Tear> hp = new ArrayList<>();
     private PlayerDamage healthState = new Healthy();
     private PlayerValue playerValue = new NoDeaths();
-    private Set<Tear> marks = new HashSet<>();
+    private List<Tear> marks = new ArrayList<>();
     private List<Weapon> weapons = new ArrayList<>();
     private List<PowerUp> powerUps = new ArrayList<>();
     private Integer points = 0;
-    private Set<Ammo> ammo = new HashSet<>();
+    private List<Ammo> ammo = new ArrayList<>();
     private Game game;
 
     public Player (Figure figure, Game game){
@@ -71,6 +71,7 @@ public class Player implements Targetable{
         return map;
     }
 
+    //TODO: Put this in controller
     @Override
     public void addToSelectionEvent(MVSelectionEvent event, List<Targetable> targets, List<Action> actions) {
         List<Player> players = new ArrayList<>(toPlayerList(targets));
@@ -137,12 +138,12 @@ public class Player implements Targetable{
         return new ArrayList<>(hp);
     }
 
-    public Set<Tear> getMarks() {
-        return new HashSet<>(marks);
+    public List<Tear> getMarks() {
+        return new ArrayList<>(marks);
     }
 
-    public Set<Ammo> getAmmo() {
-        return new HashSet<>(ammo);
+    public List<Ammo> getAmmo() {
+        return new ArrayList<>(ammo);
     }
 
     public PlayerValue getPlayerValue() {
@@ -165,6 +166,7 @@ public class Player implements Targetable{
     public void shootPeople (Player target, int hits){
         for (int i = 0; i < hits; i++)
             figure.damage(target.figure);
+        target.updatePlayerDamage();
         game.usablePowerUps("onDamage", false, target);
     }
 
@@ -178,7 +180,7 @@ public class Player implements Targetable{
     }
 
     public void reload(Weapon weapon){
-        if (pay(new HashSet<>(weapon.price)))
+        if (pay(new ArrayList<>(weapon.price)))
             figure.reload(weapon);
         else
             game.send(new NotEnoughAmmoEvent(game.colourToUser(figure.getColour())));
@@ -220,7 +222,7 @@ public class Player implements Targetable{
             game.deathHandler(this);
             return;
         }
-        if(healthState.getMaximumHits()==hp.size())
+        if(healthState.getMaximumHits()<=hp.size())
             healthState= healthState.findNextHealthState();
     }
 
@@ -235,9 +237,10 @@ public class Player implements Targetable{
     public void drawPowerUp (String drawnPowerUp){
         if (powerUps.size()==4)
             throw new UnsupportedOperationException("Discard a powerup before drawing one");
-        powerUps.add(game.nameToPowerUp(drawnPowerUp));
-        if (powerUps.size()==4) {
+        if (powerUps.size()==3) {
             game.send(new PowerUpToLeaveEvent(game.playerToUser(this), Card.cardStringify(Card.cardToCard(powerUps))));
+        }else {
+            powerUps.add(game.nameToPowerUp(drawnPowerUp));
         }
     }
 
@@ -252,9 +255,9 @@ public class Player implements Targetable{
         powerUps.remove(game.nameToPowerUp(discardedPowerUp));
     }
 
-    public void useAmmos (Set<Ammo> usedAmmo){
-       for (Ammo a : usedAmmo)
-           useAmmo(a);
+    public void useAmmos (List<Ammo> usedAmmo){
+       for (Ammo ammo: usedAmmo)
+           useAmmo(ammo);
     }
 
     private void useAmmo  (Ammo usedAmmo){
@@ -269,8 +272,8 @@ public class Player implements Targetable{
         drawPowerUp(game.getPowerUpDeck().draw().getName());
     }
 
-    public boolean pay (Set<Ammo> ammoToPay){
-        Set<Ammo> ammosOwned = new HashSet<>(ammoToPay);
+    public boolean pay (List<Ammo> ammoToPay){
+        List<Ammo> ammosOwned = new ArrayList<>(ammo);
         for  (Ammo a : ammoToPay){
             if (ammosOwned.contains(a))
                 ammosOwned.remove(a);
@@ -284,10 +287,10 @@ public class Player implements Targetable{
     public void addWeapon (Weapon weapon){
         if (weapons.size() == 4)
             throw new UnsupportedOperationException("Discard a weapon before drawing one");
-        weapons.add(weapon);
-        if (weapons.size() == 4) {
-            // game.send(/*new LeaveOneGrabbableEvent ()*/);
+        if (weapons.size() == 3) {
+            game.send(new WeaponToLeaveEvent(game.playerToUser(this),Card.cardStringify(Card.cardToCard(weapons))));
         }
+        weapons.add(weapon);
     }
 
     public void apply (Player target, PartialWeaponEffect partialWeaponEffect){

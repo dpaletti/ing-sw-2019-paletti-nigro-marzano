@@ -8,7 +8,7 @@ import java.util.Set;
 
 import static junit.framework.TestCase.*;
 
-@Ignore
+
 public class TestGraphNode {
         private GraphNode<String> child= new GraphNode<>("Acerbi",1);
         private GraphNode<String> parent= new GraphNode<>( "Strakosha",0);
@@ -28,22 +28,18 @@ public class TestGraphNode {
             assertEquals(child,parent.getChildren().iterator().next());
         }
 
-        @Ignore
         @Test
         public void testisIn(){
             parent.addChild(child);
-            assertTrue(parent.isIn("Lulic"));
+            assertTrue(parent.isIn("Acerbi"));
         }
 
-
-
-        @Ignore
        @Test
        public void testGetGraphNode() {
 
            try {
                child.addParent(parent);
-               assertEquals(child, parent.getGraphNode("Lulic"));
+               assertEquals(child, parent.getGraphNode("Acerbi"));
            } catch (NullPointerException c) {
                fail();
            }
@@ -69,12 +65,11 @@ public class TestGraphNode {
      }
 
 
-     @Ignore
      @Test
      public void testRemove(){
             parent.addChild(child);
             try {
-                GraphNode<String> obj= parent.getGraphNode("Lulic");
+                GraphNode<String> obj= parent.getGraphNode("Acerbi");
                 parent.remove(obj);
                 assertTrue(parent.getChildren().isEmpty());
             }catch (NullPointerException c){
@@ -110,19 +105,16 @@ public class TestGraphNode {
     @Test
     public void testToString(){
         parent.addChild(child);
-        parent.addChild(new GraphNode<>("Luiz Felipe",1));
-        parent.addChild(new GraphNode<>("Radu",1));
-        child.addChild(new GraphNode<>("Romulo",2));
         GraphNode<String> lucasLeiva= new GraphNode<>("Leiva",2);
         child.addChild(lucasLeiva);
-        child.addChild(new GraphNode<>("Luis Alberto",2));
-        child.addChild(new GraphNode<>("Milinkovic-Savic",2));
-        child.addChild(new GraphNode<>("Lulic",2));
-        lucasLeiva.addChild(new GraphNode<>("Correa",3));
         lucasLeiva.addChild(new GraphNode<>("Immobile",3));
-        System.out.print(parent.toString());
+        String lineUp="\t\troot"+System.lineSeparator()+"Acerbi<Strakosha,>\t"+System.lineSeparator()+
+        "Leiva<Acerbi,>\t"+System.lineSeparator()+
+        "Immobile<Leiva,>\t"+System.lineSeparator();
+        assertEquals(lineUp,parent.toString());
     }
 
+    //Todo: try to do it with assert
     @Test
     public void testGetSibling(){
             GraphNode<String> father = new GraphNode<>("Peppe", 0);

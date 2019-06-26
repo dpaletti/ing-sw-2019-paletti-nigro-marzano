@@ -45,7 +45,7 @@ public class LootCard implements Grabbable, Drawable,Jsonable{
 
     @Override
     public void grab(Player player, String grabbed) {
-        if (name.equalsIgnoreCase(grabbed))
+        if (!name.equalsIgnoreCase(grabbed))
             throw new UnsupportedOperationException("Selected grabbable is not on current tile and cannot be grabbed");
         for (char c: name.toCharArray()){
             if(c != 'P')
@@ -54,6 +54,7 @@ public class LootCard implements Grabbable, Drawable,Jsonable{
 
         if (name.contains("P"))
             player.drawPowerUp();
+        player.getFigure().getTile().removeGrabbed(grabbed);
     }
 
     private void addAmmo (char c, Player player){

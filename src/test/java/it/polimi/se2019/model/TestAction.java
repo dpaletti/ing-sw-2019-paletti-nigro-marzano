@@ -8,7 +8,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
-@Ignore
+
 public class TestAction {
     Action action= new Action();
 

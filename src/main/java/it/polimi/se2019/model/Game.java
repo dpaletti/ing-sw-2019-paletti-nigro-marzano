@@ -25,7 +25,7 @@ public class Game extends Observable<MVEvent> {
     private TurnMemory turnMemory = new TurnMemory();
 
     private WeaponHelper weaponHelper=new WeaponHelper();
-    public ComboHelper comboHelper=new ComboHelper();
+    private ComboHelper comboHelper=new ComboHelper();
     private PowerUpHelper powerUpHelper=new PowerUpHelper();
     private LootCardHelper lootCardHelper=new LootCardHelper();
 
@@ -179,12 +179,14 @@ public class Game extends Observable<MVEvent> {
     }
 
     public void deathHandler (Player deadPlayer){
-        updateKillshotTrack(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
         notify(new MVDeathEvent("*",
                 colourToUser(deadPlayer.getFigure().getColour()),
                 colourToUser(deadPlayer.getHp().get(10).getColour()),
                 (deadPlayer.getHp().size()==12),
-                killshotTrack.getNumberOfSkulls()==killshotTrack.getKillshot().size())); //if number of skulls equals dimension of killshot track, match is over
+                killshotTrack.getNumberOfSkulls()==killshotTrack.getKillshot().size()));
+        //TODO: Changed for it to work in the tests
+        killshotTrack.addKillshot(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
+        //if number of skulls equals dimension of killshot track, match is over
         //calculate points of all players, move all lines beneath this in DeathController
         //in DeathController for (Player p: players) calculatePoints and then verify if FF
         if (killshotTrack.getKillshot().size()==killshotTrack.getNumberOfSkulls()){
@@ -207,8 +209,8 @@ public class Game extends Observable<MVEvent> {
 
     public void allowedMovements (String username, String target, int radius){
         Player playing= userToPlayer(target);
-        List<Point> allowedPositions= new ArrayList<>();
-        if (!gameMap.getAllowedMovements(playing.getFigure().getTile(), radius).isEmpty())
+        List<Point> allowedPositions= gameMap.getAllowedMovements(playing.getFigure().getTile(), radius);
+        if (!allowedPositions.isEmpty())
             notify(new AllowedMovementsEvent(username, allowedPositions, target));
         else
             throw new NullPointerException("List of possible movements is empty");
@@ -266,6 +268,26 @@ public class Game extends Observable<MVEvent> {
         for (Weapon w: player.getWeapons())
             unloadedWeapons.add(w.getName());
         send(new ReloadableWeaponsEvent(username, unloadedWeapons));
+    }
+
+    public ComboHelper getComboHelper() {
+        return new ComboHelper(comboHelper);
+    }
+
+    public LootCardHelper getLootCardHelper() {
+        return new LootCardHelper(lootCardHelper);
+    }
+
+    public PowerUpHelper getPowerUpHelper() {
+        return new PowerUpHelper(powerUpHelper);
+    }
+
+    public WeaponHelper getWeaponHelper(){
+        return new WeaponHelper(weaponHelper);
+    }
+
+    public void hit (String partialWeaponEffect, List<Targetable> hitTargets, Targetable target){
+        target.hit(partialWeaponEffect, hitTargets, turnMemory);
     }
 
     public void usablePowerUps (String powerUpType, boolean costs, Player currentPlayer) {  //if player's turn, player owns a power up of this type

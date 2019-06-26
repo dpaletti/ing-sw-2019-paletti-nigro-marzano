@@ -1,6 +1,7 @@
 package it.polimi.se2019.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Ammo implements Serializable {
     private AmmoColour colour;
@@ -15,5 +16,18 @@ public class Ammo implements Serializable {
 
     public Ammo(AmmoColour colour){
         this.colour= colour;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ammo ammo = (Ammo) o;
+        return getColour() == ammo.getColour();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getColour());
     }
 }
