@@ -4,7 +4,6 @@ import it.polimi.se2019.network.Client;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -21,10 +20,10 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(Paths.get("files/fxml/table.fxml").toUri().toURL());
         FXMLLoader setUpLoader = new FXMLLoader(Paths.get("files/fxml/match_setup.fxml").toUri().toURL());
 
-        AnchorPane anchorPane = loader.load();
+        GridPane grid= loader.load();
         Pane pane = setUpLoader.load();
 
-        Scene scene = new Scene(anchorPane);
+        Scene scene = new Scene(grid);
 
         ((GridPane)scene.lookup("#root")).add(pane, 3, 2);
 

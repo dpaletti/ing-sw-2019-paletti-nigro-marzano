@@ -9,7 +9,7 @@ public final class JsonHandler {
     public static String serialize(Event event){
         if(event == (null))
             throw new NullPointerException("Cannot serialize null event");
-        GsonBuilder builder = new GsonBuilder();
+        GsonBuilder builder = new GsonBuilder().enableComplexMapKeySerialization();
         Gson gson = builder.create();
         JsonElement jsonElement = gson.toJsonTree(event);
         jsonElement.getAsJsonObject().addProperty("type", event.getClass().toString().replace("class ", ""));

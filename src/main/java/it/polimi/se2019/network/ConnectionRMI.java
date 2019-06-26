@@ -44,7 +44,7 @@ public class ConnectionRMI implements Connection{
         try {
             return in.take();
         }catch (InterruptedException e){
-            Log.severe(e.getMessage());
+            Log.severe("Retrieving interrupted");
             Thread.currentThread().interrupt();
             return null;
         }
@@ -70,8 +70,8 @@ public class ConnectionRMI implements Connection{
             }
             eventBuffer.add(mvEvent);
         }catch (InterruptedException e){
-            Log.severe(e.getMessage());
-            Thread.currentThread().interrupt();
+            Log.severe("Submitting interrupted");
+            submit(mvEvent);
         }catch (RemoteException e){
             Log.severe("Cannot start remote event loop");
         }
@@ -86,7 +86,7 @@ public class ConnectionRMI implements Connection{
         try {
             return out.take();
         }catch (InterruptedException e){
-            Log.severe(e.getMessage());
+            Log.severe("Pulling interrupted");
             Thread.currentThread().interrupt();
             return null;
         }
@@ -96,7 +96,7 @@ public class ConnectionRMI implements Connection{
         try {
             in.put(vcEvent);
         }catch (InterruptedException e){
-            Log.severe(e.getMessage());
+            Log.severe("Pushing interrupted");
             Thread.currentThread().interrupt();
         }
     }

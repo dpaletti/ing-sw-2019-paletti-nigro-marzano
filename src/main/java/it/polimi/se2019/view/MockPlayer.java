@@ -1,11 +1,13 @@
 package it.polimi.se2019.view;
 
+import it.polimi.se2019.utility.Point;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MockPlayer {
     private String username;
-    private String playerColor = "none"; //colour, all lower case
+    private String playerColor; //colour, all lower case
     private List<String> hp = new ArrayList<>();
     private List<String> mark = new ArrayList<>();
 
@@ -19,8 +21,19 @@ public class MockPlayer {
     private String leftWeapon = "none";
     private String middleWeapon = "none";
     private String rightWeapon = "none";
-    public MockPlayer(String username){
+    private Point position = new Point(-1, -1);
+
+    public MockPlayer(String username, String colour){
         this.username = username;
+        this.playerColor = colour;
+    }
+
+    public Point getPosition() {
+        return position;
+    }
+
+    public void setPosition(Point position) {
+        this.position = position;
     }
 
     public String getUsername() {

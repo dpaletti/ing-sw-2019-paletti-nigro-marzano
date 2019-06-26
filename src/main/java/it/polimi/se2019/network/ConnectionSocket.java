@@ -58,7 +58,7 @@ public class ConnectionSocket implements Connection{
         try {
             return (VCEvent) JsonHandler.deserialize(in.nextLine());
         }catch (ClassNotFoundException e){
-            Log.severe(e.getMessage());
+            Log.severe("Retrieving interrupted");
             throw new NullPointerException("Cannot deserialize");
         }
     }

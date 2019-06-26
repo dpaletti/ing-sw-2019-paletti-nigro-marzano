@@ -3,7 +3,7 @@ package it.polimi.se2019.view;
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Client;
 import it.polimi.se2019.utility.*;
-import it.polimi.se2019.view.gui_events.*;
+import it.polimi.se2019.view.ui_events.*;
 import it.polimi.se2019.view.vc_events.VcMatchConfigurationEvent;
 import javafx.application.Application;
 
@@ -64,9 +64,62 @@ public class ViewGUI extends View {
 
     }
 
+    private MockPlayer getPlayerOnColour(String figure){
+        for (MockPlayer p: players){
+            if(p.getPlayerColor().equalsIgnoreCase(figure))
+                return p;
+        }
+        throw new IllegalArgumentException("Could not find player with figure colour: " + figure);
+    }
+
+    public void lockPlayers(List<String> figuresToLock){
+        notify(new UiLockPlayers(figuresToLock));
+    }
+
+    public void unlockPlayers(){
+        notify(new UiUnlockPlayers());
+    }
+
+    public void showPlayers(List<String> figuresToShow){
+        notify(new UiShowPlayers(figuresToShow));
+    }
+
+    public void hidePlayers(List<String> figuresToHide){
+        notify(new UiHidePlayers(figuresToHide));
+    }
+
+    public Point getPosition(String figure){
+        return getPlayerOnColour(figure).getPosition();
+    }
+
+    public void setPosition(String figure, Point position){
+        getPlayerOnColour(figure).setPosition(position);
+    }
+
+    public void contextSwitch(String figure){
+        notify(new UiContextSwitch(figure));
+    }
+
+    private MockPlayer getPlayerOnUsername(String username){
+        for(MockPlayer m: players){
+            if(m.getUsername().equalsIgnoreCase(username))
+                return m;
+        }
+        throw new IllegalArgumentException("Could not find any player with username: " + username);
+    }
+
     public void gameSetup(int skulls, boolean frenzy, String conf){
-        String actualConf = conf.substring(0, 0).toUpperCase() + conf.substring(1, conf.length() - 1);
+        String actualConf = conf.substring(0, 1).toUpperCase() + conf.substring(1);
         notify(new VcMatchConfigurationEvent(client.getUsername(), skulls, frenzy, actualConf));
+
+    }
+
+    public void show(String weapon){
+        notify(new UiShowWeapon(weapon));
+    }
+
+    public void hide(String weapon){
+        notify(new UiHideWeapon(weapon));
     }
 
     public void mapConfigSetup(List<String> config){
@@ -76,7 +129,6 @@ public class ViewGUI extends View {
     @Override
     public void addPlayer(String username) {
         Log.fine("notifying add player");
-        players.add(new MockPlayer(username));
         notify(new UiAddPlayer(username));
     }
 
@@ -101,6 +153,18 @@ public class ViewGUI extends View {
             timerGoing = false;
         }
         notify(new UiTimerTick(message.getTimeToGo()));
+    }
+
+    @Override
+    public void dispatch(SetUpEvent message) {
+        semControllerSync.release();
+        for (String user : message.getUserToColour().keySet())
+            players.add(new MockPlayer(user, message.getUserToColour().get(user)));
+        semControllerSync.acquireUninterruptibly();
+        notify(new UiCloseSetup());
+        semControllerSync.acquireUninterruptibly();
+        notify(new UiBoardInitialization(message.getWeaponSpots(), message.getLootCards(), message.getLeftConfig(), message.getRightConfig(), message.getSkulls()));
+        notify(new UiSetPlayerBoard(getPlayerOnUsername(client.getUsername()).getPlayerColor()));
     }
 
     @Override

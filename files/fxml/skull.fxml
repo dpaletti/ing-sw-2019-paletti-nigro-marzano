@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
-<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Circle?>
-<Pane prefHeight="200.0" prefWidth="200.0">
-        <Circle fill="DODGERBLUE" layoutX="25.0" layoutY="13.0" radius="21.0" stroke="BLACK" strokeType="INSIDE"/>
+
+<Pane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+        <Circle fill="DODGERBLUE" layoutX="100.0" layoutY="100.0" radius="21.0" stroke="BLACK" strokeType="INSIDE" />
 </Pane>

@@ -3,8 +3,8 @@ package it.polimi.se2019.utility;
 import java.io.Serializable;
 
 public class Point implements Serializable {
-    private int x;
-    private int y;
+    private Integer x;
+    private Integer y;
 
     public Point (int x, int y){
         this.x = x;

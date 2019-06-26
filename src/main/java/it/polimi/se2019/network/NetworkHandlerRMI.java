@@ -3,7 +3,6 @@ package it.polimi.se2019.network;
 import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.VCEvent;
-import it.polimi.se2019.view.vc_events.VcJoinEvent;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -48,17 +47,15 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
     }
 
     @Override
-    public void dispatch(VcJoinEvent message){
-        submit(message);
-    }
-
-
-    @Override
     public void update(Event message) {
         try {
             message.handle(this);
         }catch (UnsupportedOperationException e){
-            Log.fine("Ignored " + e.getMessage());
+            try{
+                submit((VCEvent) message);
+            }catch (ClassCastException ee){
+                Log.fine("Ignored " + e.getMessage());
+            }
         }
     }
 

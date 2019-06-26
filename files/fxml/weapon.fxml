@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane hgap="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerWeapon">
+<GridPane hgap="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerWeapon">
     <columnConstraints>
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
     </columnConstraints>
     <ImageView fx:id="weaponLeft" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
-    </ImageView>
+      </ImageView>
     <ImageView fx:id="weaponMiddle" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
-    </ImageView>
+      </ImageView>
     <ImageView fx:id="weaponRight" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="0">
-    </ImageView>
+      </ImageView>
    <Pane prefHeight="200.0" prefWidth="107.0">
       <children>
          <ImageView fx:id="effectBaseLeft" fitHeight="54.0" fitWidth="99.0" layoutX="14.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true">

@@ -1,11 +1,12 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.gui_events.*;
+import it.polimi.se2019.view.ui_events.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -15,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -73,6 +75,9 @@ public class GuiControllerTable extends GuiController {
     @FXML
     private TableView<TableModel> leaderboard;
 
+    @FXML
+    private ImageView showedCard;
+
     //----- match_setup attributes ---//
     private GridPane choiceGrid;
     private CheckBox frenzyBox;
@@ -89,10 +94,12 @@ public class GuiControllerTable extends GuiController {
     private Scene scene;
 
     private String chosenMap;
-    private int skulls;
+    private int skulls = 5;
     private boolean frenzy = false;
     private static final String MAP_DIR = "files/assets/board/map/";
     private static final String HIGHLIGHTED = "_highlighted";
+
+    private List<String> lockedPlayers = null;
 
     public static class TableModel {
         StringProperty username;
@@ -287,7 +294,6 @@ public class GuiControllerTable extends GuiController {
 
     @Override
     public void dispatch(UiTimerStart message) {
-        titleText.set("Waiting for countdown");
         int timeToSet = message.getDuration() / 1000;
         timerText.set(((Integer) timeToSet).toString());
     }
@@ -307,11 +313,11 @@ public class GuiControllerTable extends GuiController {
     @Override
     public synchronized void dispatch(UiCloseMatchMaking message) {
 
-        titleText.set("Choose preferred options and press send");
         initializeSendButton();
         initializeMapSelection();
         initializeCheckBox();
         initializeSkullSelection();
+        titleText.set("Choose preferred options");
     }
 
 
@@ -320,7 +326,12 @@ public class GuiControllerTable extends GuiController {
         endTurn.setOnMouseClicked((MouseEvent event) ->
         {
             ViewGUI.getInstance().gameSetup(skulls, frenzy, chosenMap);
+            endTurn.setDisable(true);
         });
+        endTurn.setOnMouseEntered((MouseEvent event) -> {
+            clickable();
+        });
+        endTurn.setOnMouseExited((MouseEvent event) -> notClickable());
     }
 
     public void clickOnMap(ImageView map){
@@ -387,7 +398,89 @@ public class GuiControllerTable extends GuiController {
             }
 
         }
+
+    @Override
+    public void dispatch(UiCloseSetup message) {
+        try {
+            root.getChildren().remove(choiceGrid.getParent());
+            root.getChildren().remove(choiceGrid);
+            root.getChildren().remove(timer);
+            root.getChildren().remove(title);
+            root.getChildren().remove(frenzyBox);
+            FXMLLoader loader = new FXMLLoader(Paths.get("files/fxml/board.fxml").toUri().toURL());
+            GridPane board = loader.load();
+            loader = new FXMLLoader(Paths.get("files/fxml/weapon.fxml").toUri().toURL());
+            root.add(board, 3, 2);
+            root.getChildren().add(loader.load());
+            loader = new FXMLLoader(Paths.get("files/fxml/powerup.fxml").toUri().toURL());
+            root.getChildren().add(loader.load());
+            board.toFront();
+        }catch (MalformedURLException e){
+            Log.severe("Could not get board.fxml");
+        }catch (IOException e){
+        Log.severe("Could not load AnchorPane in board");
+        }
     }
+
+    @Override
+    public void dispatch(UiSetPlayerBoard message) {
+        try {
+            currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + message.getColour().toLowerCase() + ".png").toUri().toURL().toString()));
+        }catch (MalformedURLException e){
+            Log.severe("Could not get " + message.getColour() + "player board");
+        }
+    }
+
+    @Override
+    public void dispatch(UiShowWeapon message) {
+        try {
+            showedCard.setImage(new Image(Paths.get("files/assets/cards/" + message.getWeapon() + ".png").toUri().toURL().toString()));
+        }catch (MalformedURLException e){
+            Log.severe("Could not show card: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void dispatch(UiHideWeapon message) {
+        showedCard.setImage(null);
+    }
+
+    @Override
+    public void dispatch(UiHidePlayers message) {
+            for (int i = 1; i < 6; i++) {
+                ((ImageView) scene.lookup("#figure" + i)).setImage(null);
+            }
+            if (lockedPlayers != null)
+                dispatch(new UiShowPlayers(lockedPlayers));
+            }
+
+    @Override
+    public void dispatch(UiLockPlayers message) {
+        lockedPlayers = new ArrayList<>();
+        lockedPlayers.addAll(message.getFiguresToLock());
+    }
+
+    @Override
+    public void dispatch(UiUnlockPlayers message) {
+        lockedPlayers = null;
+        dispatch(new UiHidePlayers(null));
+    }
+
+    @Override
+    public void dispatch(UiShowPlayers message) {
+        try {
+            int i = 0;
+            for (String f : message.getFiguresToShow()) {
+                i++;
+                ((ImageView) scene.lookup("#figure" + i)).setImage(new Image(Paths.get("files/assets/player/figure_" + f.toLowerCase() + ".png").toUri().toURL().toString()));
+
+            }
+        }catch (MalformedURLException e){
+            Log.severe("Wrong URL in reshowing locked selection");
+        }
+
+    }
+}
 
 
 

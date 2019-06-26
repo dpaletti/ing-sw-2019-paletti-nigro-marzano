@@ -1,64 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane fx:id="board" prefHeight="673.0" prefWidth="858.0" stylesheets="@../css/match.css" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="2" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerBoard">
+<GridPane fx:id="board" prefHeight="673.0" prefWidth="858.0" stylesheets="@../css/match.css" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerBoard">
     <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" percentWidth="48.0" />
-        <ColumnConstraints hgrow="SOMETIMES" percentWidth="52.0" />
+        <ColumnConstraints hgrow="SOMETIMES" percentWidth="57.0" />
+        <ColumnConstraints hgrow="SOMETIMES" percentWidth="43.0" />
     </columnConstraints>
     <rowConstraints>
         <RowConstraints maxHeight="192.0" minHeight="109.0" percentHeight="100.0" prefHeight="109.0" vgrow="NEVER" />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
     </rowConstraints>
-    <Pane prefHeight="341.0" prefWidth="275.0" GridPane.columnIndex="1">
-        <ImageView fx:id="boardRight" fitHeight="673.0" fitWidth="472.0" layoutX="-1.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowIndex="0" GridPane.rowSpan="6"/>
-        <ImageView fx:id="topYellowSpawn" fitHeight="156.0" fitWidth="78.0" layoutX="371.0" layoutY="345.0" pickOnBounds="true" preserveRatio="true" rotate="-90.0">
-        </ImageView>
-        <ImageView fx:id="middleYellowSpawn" fitHeight="156.0" fitWidth="78.0" layoutX="371.0" layoutY="445.0" pickOnBounds="true" preserveRatio="true" rotate="-90.0">
-        </ImageView>
-        <ImageView fx:id="bottomYellowSpawn" fitHeight="156.0" fitWidth="78.0" layoutX="371.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true" rotate="-90.0">
-        </ImageView>
-        <ImageView fx:id="rightBlueSpawn" fitHeight="156.0" fitWidth="78.0" layoutX="52.0" layoutY="-34.0" pickOnBounds="true" preserveRatio="true">
-        </ImageView>
-        <ImageView fx:id="middleBlueSpawn" fitHeight="156.0" fitWidth="78.0" layoutX="152.0" layoutY="-34.0" pickOnBounds="true" preserveRatio="true">
-        </ImageView>
-        <ImageView fx:id="leftBlueSpawn" fitHeight="156.0" fitWidth="78.0" layoutX="252.0" layoutY="-34.0" pickOnBounds="true" preserveRatio="true">
-        </ImageView>
-    </Pane>
-    <Pane prefHeight="672.0" prefWidth="436.0" GridPane.columnSpan="2" GridPane.rowSpan="6">
+    <Pane fx:id="leftPane" prefHeight="630.0" prefWidth="564.0">
         <ImageView fx:id="boardLeft" fitHeight="673.0" fitWidth="432.0" pickOnBounds="true" preserveRatio="true">
-      </ImageView>
-        <ImageView fx:id="topRedSpawn" fitHeight="156.0" fitWidth="78.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
         </ImageView>
-        <ImageView fx:id="middleRedSpawn" fitHeight="156.0" fitWidth="78.0" layoutY="308.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
+        <ImageView fx:id="redTop" fitHeight="156.0" fitWidth="78.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
         </ImageView>
-        <ImageView fx:id="bottomRedSpawn" fitHeight="156.0" fitWidth="78.0" layoutY="408.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
+        <ImageView fx:id="redMiddle" fitHeight="156.0" fitWidth="78.0" layoutY="308.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
         </ImageView>
-      <GridPane fx:id="boardSkull" layoutX="4.0" layoutY="34.0" prefHeight="56.0" prefWidth="295.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="66.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="7.0" percentWidth="14.29" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-         </children>
-      </GridPane>
+        <ImageView fx:id="redBottom" fitHeight="156.0" fitWidth="78.0" layoutY="408.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
+        </ImageView>
+        <GridPane fx:id="boardSkull" layoutX="4.0" layoutY="34.0" prefHeight="56.0" prefWidth="295.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="66.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="7.0" percentWidth="14.29" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" percentWidth="14.29" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+
+            </children>
+        </GridPane>
+    </Pane>
+    <Pane fx:id = "rightPane" prefHeight="341.0" prefWidth="275.0" GridPane.columnIndex="1">
+        <ImageView fx:id="boardRight" fitHeight="673.0" fitWidth="482.0" layoutX="-11.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowIndex="0" GridPane.rowSpan="6">
+        </ImageView>
+        <ImageView fx:id="yellowTop" fitHeight="156.0" fitWidth="78.0" layoutX="371.0" layoutY="345.0" pickOnBounds="true" preserveRatio="true" rotate="-90.0">
+        </ImageView>
+        <ImageView fx:id="yellowMiddle" fitHeight="156.0" fitWidth="78.0" layoutX="371.0" layoutY="445.0" pickOnBounds="true" preserveRatio="true" rotate="-90.0">
+        </ImageView>
+        <ImageView fx:id="yellowBottom" fitHeight="156.0" fitWidth="78.0" layoutX="371.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true" rotate="-90.0">
+        </ImageView>
+        <ImageView fx:id="blueRight" fitHeight="156.0" fitWidth="78.0" layoutX="52.0" layoutY="-34.0" pickOnBounds="true" preserveRatio="true">
+        </ImageView>
+        <ImageView fx:id="blueMiddle" fitHeight="156.0" fitWidth="78.0" layoutX="152.0" layoutY="-34.0" pickOnBounds="true" preserveRatio="true">
+        </ImageView>
+        <ImageView fx:id="blueLeft" fitHeight="156.0" fitWidth="78.0" layoutX="252.0" layoutY="-34.0" pickOnBounds="true" preserveRatio="true">
+        </ImageView>
     </Pane>
 </GridPane>

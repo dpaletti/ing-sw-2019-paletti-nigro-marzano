@@ -55,5 +55,6 @@ public abstract class GuiController implements Observer<Event>, Initializable, U
         }
         throw new IllegalStateException("Could not get Image from path");
     }
+    
 
 }

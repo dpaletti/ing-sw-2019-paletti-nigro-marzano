@@ -79,6 +79,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             biTokenUsername.removeFirst(token);
             sem.release();
             connections.remove(getConnectionOnToken(token));
+            Log.fine("Interrupting event loop");
             eventLoops.get(token).interrupt();
             eventLoops.remove(token);
             if (!biTokenUsername.containsFirst(id) && !biTokenUsername.containsSecond(id))

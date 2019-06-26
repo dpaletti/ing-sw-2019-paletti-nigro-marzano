@@ -1,7 +1,7 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.utility.EventDispatcher;
-import it.polimi.se2019.view.gui_events.*;
+import it.polimi.se2019.view.ui_events.*;
 
 public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiAddPlayer message){
@@ -33,6 +33,47 @@ public interface UiDispatcher extends EventDispatcher {
     }
 
     default void dispatch(UiMapConfigEvent message){
-        throw new UnsupportedOperationException("UiMapConfigEvent");
+        throw new UnsupportedOperationException("UiMapConfigEvent unsupported");
     }
+
+    default void dispatch(UiCloseSetup message){
+        throw new UnsupportedOperationException("UiCloseSetupEvent unsupported");
+    }
+
+    default void dispatch(UiBoardInitialization message){
+        throw new UnsupportedOperationException("UiBoardInitialization unsupported");
+    }
+
+    default void dispatch(UiShowWeapon message){
+        throw new UnsupportedOperationException("UiShowWeapon unsupported");
+    }
+    default void dispatch (UiHideWeapon message){
+        throw new UnsupportedOperationException("UiHideWeapon unsupported");
+    }
+    default void dispatch(UiContextSwitch message){
+        throw new UnsupportedOperationException("UiContextSwitch not supported");
+    }
+    default void dispatch(UiHidePlayers message){
+        throw new  UnsupportedOperationException("UiHideplayers not supported");
+    }
+    default void dispatch(UiLockPlayers message){
+        throw new UnsupportedOperationException("UiLockPlayers not supported");
+    }
+    default void dispatch(UiShowPlayers message){
+        throw new UnsupportedOperationException("UiShowPlayers not supported");
+    }
+    default void dispatch(UiUnlockPlayers message){
+        throw new UnsupportedOperationException("UiUnlockPlayers not supported");
+    }
+
+    default void dispatch(UiSetPlayerBoard message){
+        throw new UnsupportedOperationException("UiSetPlayerBoard not supported");
+    }
+    default void dispatch(UiPutPowerUp message){
+        throw new UnsupportedOperationException("UiPutPowerUp not supported");
+    }
+    default void dispatch(UiPutWeapon message){
+        throw new UnsupportedOperationException("UiPutWeapon not supported");
+    }
+
 }
