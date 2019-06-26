@@ -32,6 +32,12 @@ public class WeaponController extends CardController {
     public WeaponController (Server server, int roomNumber, Game model){
         super(model, server, roomNumber);
     }
+
+    public WeaponController (Game model){
+        super();
+        this.model = model;
+    }
+
     @Override
     public void update(VCEvent message) {
         try {
@@ -80,10 +86,11 @@ public class WeaponController extends CardController {
 
     @Override
     public void dispatch(VCSelectionEvent message) {
+        List<Player> targets = new ArrayList<>();
+        for (String s : message.getSelectedPlayers())
+            targets.add(model.userToPlayer(s));
         model.usablePowerUps("onAttack", true, currentPlayer);
-        for (String s : message.getSelectedPlayers()){
-           // currentLayer.get(layersVisited).getKey().getActions().get(layersVisitedPartial).getActionType().apply();
-        }
+        model.apply(model.playerToUser(currentPlayer), targets, currentLayer.get(layersVisitedPartial).getKey());
         nextWeaponEffect();
     }
 
@@ -116,21 +123,23 @@ public class WeaponController extends CardController {
 
     }
 
-    private Set<Targetable> getVisible(Targetable t){
+    private Set<Targetable> getVisible(Targetable t){   //tested
         Set<Targetable> visibleTarget= new HashSet<>();
        for (Targetable tCounter: t.getAll()) {
-            if (visibleRooms(t.getPosition()).contains(model.getGameMap().getTile(tCounter.getPosition()).getColour()))
+            if (visibleRooms(t.getPosition()).contains(model.getGameMap().getTile(tCounter.getPosition()).getColour())) {
                 visibleTarget.add(tCounter);
+            }
         }
         visibleTarget.remove(t);
         return visibleTarget;
     }
 
-    private Set<Targetable> handleVisible(int visible, Targetable source){
-        List<Targetable> targetables= null;
+    private Set<Targetable> handleVisible(int visible, Targetable source){  //tested
+        List<Targetable> targetables;
         if (visible==0) {
             targetables= source.getAll();
             targetables.removeAll(getVisible(source));
+            targetables.remove(source);
             return new HashSet<>(targetables);
         }
 
@@ -143,7 +152,7 @@ public class WeaponController extends CardController {
 
     }
 
-    private Set<RoomColour> visibleRooms (Point point){
+    private Set<RoomColour> visibleRooms (Point point){     //tested
         Tile tile = model.getGameMap().getTile(point);
         Set<RoomColour> visibleRooms= new HashSet<>();
 
@@ -175,7 +184,7 @@ public class WeaponController extends CardController {
         return visibleRooms;
     }
 
-    private Set<Targetable> areaSelection(Targetable source, int innerRadius, int outerRadius){
+    Set<Targetable> areaSelection (Targetable source, int innerRadius, int outerRadius){
         Set<Targetable> targetables = new HashSet<>();
         if(innerRadius==-2 && outerRadius == -2) //redundant because of tile switch in weapon declaration
             return getVisible(source);
@@ -192,13 +201,13 @@ public class WeaponController extends CardController {
 
     }
 
-    private Set<Tile> getTileCircle (int distance, Point centre) {
+    private Set<Tile> getTileCircle (int distance, Point centre) {      //tested
         if (distance==-1)
             return (model.getGameMap().getTiles());
         Set<Tile> tiles = new HashSet<>();
-        for (Point p : model.getGameMap().getPoints()) {
-            if (p.getDistance(centre) <= distance)
-                tiles.add(model.getTile(p));
+        for (Tile t : model.getGameMap().getTiles()) {
+            if (model.getGameMap().getAllowedMovements(model.getTile(centre), distance).contains(t.getPosition()))
+                tiles.add(t);
         }
         return tiles;
     }
@@ -249,17 +258,8 @@ public class WeaponController extends CardController {
         return targetables;
      }
 
-    private Set<Targetable> intersect (Set<Targetable> first, Set<Targetable> second){
-        Set<Targetable> finalSet= new HashSet<>();
-        for (Targetable t: first){
-            if (second.contains(t)){
-                finalSet.add(t);
-            }
-        }
-        return finalSet;
-    }
 
-    protected void nextWeaponEffect (){
+    void nextWeaponEffect (){
         List<GraphWeaponEffect> list = new ArrayList<>();
         layersVisited = layersVisited + 1;
         for (GraphNode<GraphWeaponEffect> g: currentWeapon.getDefinition().getListLayer(layersVisited))
@@ -272,9 +272,5 @@ public class WeaponController extends CardController {
         }
         else
             model.send(new MVWeaponEndEvent(model.playerToUser(currentPlayer)));
-    }
-
-    private void handlePartial (PartialWeaponEffect partial){
-
     }
 }

@@ -291,7 +291,7 @@ public class Player implements Targetable{
     }
 
     public void apply (Player target, PartialWeaponEffect partialWeaponEffect){
-        figure.shoot(partialWeaponEffect, target.figure);
+        figure.shoot(partialWeaponEffect, target.figure, game);
     }
 
     @Override

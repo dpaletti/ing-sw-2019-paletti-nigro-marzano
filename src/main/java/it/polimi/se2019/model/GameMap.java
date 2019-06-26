@@ -61,10 +61,6 @@ public class GameMap{
         return allTiles;
     }
 
-    public boolean checkBoundaries (Point position){
-        return (getTiles().contains(getTile(position)));
-    }
-
     public Set<Tile> getRoom (RoomColour roomColour){
         Set<Tile> room= new HashSet<>();
         for (Tile t: getTiles()){
@@ -115,8 +111,14 @@ public class GameMap{
     }
 
      int getDistance (Point startingPosition, Point endingPosition){
-        return Math.abs(graphMap.getGraphNode(getTile(startingPosition)).getLayer() -
-                graphMap.getGraphNode(getTile(endingPosition)).getLayer());
+        return generateGraph(startingPosition).getGraphNode(getTile(endingPosition)).getLayer();
+    }
+
+    private GraphNode<Tile> generateGraph (Point root){
+        GraphNode<Tile> mapRoot = new GraphNode<>(getTile(root), 0);
+        getAdjacentTiles(mapRoot, mapRoot, 1);
+        mapRoot.deleteCopies();
+        return mapRoot;
     }
 
     private GraphNode<Tile> mapToGraph (){
@@ -136,20 +138,17 @@ public class GameMap{
                             child = new GraphNode<>(t, layer);
                             if (!root.isIn(t) || root.getGraphNode(t).getLayer() > layer) {
                                 if (root.isIn(t) && root.getGraphNode(t).getLayer() > layer){
-                                    Log.fine("deleting copy:" + t.position.getX() + t.position.getY());
                                     for (GraphNode<Tile> g : root.getGraphNode(t).getParents())
                                         g.removeChild(root.getGraphNode(t));
                                 }
                                 localRoot.addChild(child);
                                 child.addParent(localRoot);
                             }
-                            System.out.println("tile with position " + localRoot.getKey().position.getX() + localRoot.getKey().position.getY() + " has adjacent " + t.position.getX() + t.position.getY());
                         }
                     }
             }
         }
         layer = layer + 1;
-        //root.deleteCopies();
         for (GraphNode<Tile> t: localRoot.getChildren())
             getAdjacentTiles(root, t, layer);
     }
@@ -157,7 +156,6 @@ public class GameMap{
     boolean hasDoor (Tile root, Tile tile){
         if (root.position.getX() != tile.position.getX() && root.position.getY() != tile.position.getY())
             return false;
-            //throw new IllegalArgumentException("tiles are not adjacent, root:" + root.position.getX() + root.position.getY() + "tile:" + tile.position.getX() + tile.position.getY());
         return (root.position.getX() - 1 == tile.position.getX() && root.doors.get(Direction.WEST)) ||
                 (root.position.getX() + 1 == tile.position.getX() && root.doors.get(Direction.EAST)) ||
                 (root.position.getY() - 1 == tile.position.getY() && root.doors.get(Direction.SOUTH)) ||

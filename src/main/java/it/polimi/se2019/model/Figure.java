@@ -78,9 +78,9 @@ public class Figure {
         weapon.setLoaded(false);
     }
 
-    public void shoot (PartialWeaponEffect partialWeaponEffect, Figure figure){
+    public void shoot (PartialWeaponEffect partialWeaponEffect, Figure figure, Game game){
        for(Action a : partialWeaponEffect.getActions())
-           a.getActionType().apply(figure.player, player, a);
+           a.getActionType().apply(figure.player, player, a, game);
     }
 
     public void spawn (Point spawnPosition){

@@ -7,11 +7,11 @@ import java.util.Set;
 
 public class LootCard implements Grabbable, Drawable,Jsonable{
     private String name;
-    private Set<Ammo> ammo= new HashSet<>();
+    private List<Ammo> ammo= new ArrayList<>();
 
     public LootCard (LootCard lootCard){
         this.name= lootCard.name;
-        this.ammo= new HashSet<>(lootCard.ammo);
+        this.ammo= new ArrayList<>(lootCard.ammo);
     }
 
     public LootCard (String name, AmmoColour firstAmmoColour, AmmoColour secondAmmoColour, AmmoColour thirdAmmoColour){
@@ -28,7 +28,7 @@ public class LootCard implements Grabbable, Drawable,Jsonable{
         ammo.add(new Ammo(secondAmmoColour));
     }
 
-    public Set<Ammo> getAmmo() {
+    public List<Ammo> getAmmo() {
         return ammo;
     }
 

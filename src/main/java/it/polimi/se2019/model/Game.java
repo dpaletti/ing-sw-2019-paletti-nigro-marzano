@@ -205,11 +205,11 @@ public class Game extends Observable<MVEvent> {
         return new TurnMemory(turnMemory);
      }
 
-    public void allowedMovements (String username, int radius){
-        Player playing= userToPlayer(username);
+    public void allowedMovements (String username, String target, int radius){
+        Player playing= userToPlayer(target);
         List<Point> allowedPositions= new ArrayList<>();
         if (!gameMap.getAllowedMovements(playing.getFigure().getTile(), radius).isEmpty())
-            notify(new AllowedMovementsEvent(username, allowedPositions));
+            notify(new AllowedMovementsEvent(username, allowedPositions, target));
         else
             throw new NullPointerException("List of possible movements is empty");
     }

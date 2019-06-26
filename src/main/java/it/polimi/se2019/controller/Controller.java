@@ -27,6 +27,10 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
         server.addController(this,roomNumber);
     }
 
+    public Controller (){
+        //empty constructor
+    }
+
     public int getRoomNumber() {
         return roomNumber;
     }

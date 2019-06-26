@@ -40,7 +40,7 @@ public class Server implements ServerInterface {
 
     private Connection suspendedConnection = null;
 
-    private Server(){
+    public Server(){
         usernames.add("*");
 
         try {
@@ -132,7 +132,7 @@ public class Server implements ServerInterface {
         registry.bind(properties.getProperty("SERVER_NAME"), this);
     }
 
-    private void newMVC() {
+    protected void newMVC() {
 
         Game model = new Game();
         models.add(model);

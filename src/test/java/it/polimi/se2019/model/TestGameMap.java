@@ -27,7 +27,7 @@ public class TestGameMap {
     @Test
     public void getTileTest(){
         map = new GameMap("Large");
-        System.out.println(map.getTile(new Point(0, 2)) == map.getLootTiles().get(0));
+        System.out.println(map.getTile(new Point(0, 2)));
     }
 
     @Test
@@ -41,7 +41,7 @@ public class TestGameMap {
     @Test
     public void getDistanceTest (){
         map = new GameMap("Large");
-        System.out.println(map.getDistance(new Point(0, 1), new Point(2, 2)));
+        System.out.println(map.getDistance(new Point(2, 2), new Point(3, 1)));
     }
 
     @Test

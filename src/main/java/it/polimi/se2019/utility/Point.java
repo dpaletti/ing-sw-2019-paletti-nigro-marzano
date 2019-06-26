@@ -24,10 +24,6 @@ public class Point implements Serializable {
         return y;
     }
 
-    public int getDistance (Point centre){
-        return (Math.abs((centre.getX()-x)+(centre.getY()-y)));
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
