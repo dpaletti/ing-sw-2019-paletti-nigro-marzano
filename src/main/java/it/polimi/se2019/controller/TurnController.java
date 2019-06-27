@@ -73,7 +73,7 @@ public class TurnController extends Controller {
         }
         else if (currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.RELOAD)) {
             reloadWeapon(message.getSource(), message.getWeaponName());
-            nextPartialCombo(PartialCombo.RELOAD);
+            nextPartialCombo();
         }
         if (comboUsed==2 || reloaded)
             endTurn();
@@ -134,8 +134,7 @@ public class TurnController extends Controller {
     public void dispatch(ChosenComboEvent message) {
         comboIndex=0;
         currentCombo = (Combo) model.getComboHelper().findByName(message.getChosenCombo());
-        for(int i=0; i<currentCombo.getPartialCombos().size();i++)
-            currentCombo.getPartialCombos().get(comboIndex).use(model, message.getSource());
+        currentCombo.getPartialCombos().get(comboIndex).use(model, message.getSource());
 
     }
 
@@ -150,13 +149,13 @@ public class TurnController extends Controller {
         if (message.getIsTeleport())
             distance = -1;
         run(message.getSource(), message.getDestination(), distance);
-        nextPartialCombo(PartialCombo.MOVE);
+        nextPartialCombo();
     }
 
     @Override
     public void dispatch(GrabEvent message) {
         model.userToPlayer(message.getSource()).grabStuff(message.getGrabbed());
-        nextPartialCombo(PartialCombo.GRAB);
+        nextPartialCombo();
     }
 
     private void nextCombo(){
@@ -169,11 +168,10 @@ public class TurnController extends Controller {
         model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
     }
 
-    private void nextPartialCombo (PartialCombo done){
-        comboIndex = currentCombo.getPartialCombos().indexOf(done)+1;
+    private void nextPartialCombo (){
+        comboIndex++;
         if (comboIndex < currentCombo.getPartialCombos().size())
-            for(PartialCombo p: getSetCombo())
-                p.use(model, currentPlayer);
+            currentCombo.getPartialCombos().get(comboIndex).use(model,currentPlayer);
         if (comboIndex == currentCombo.getPartialCombos().size())
             nextCombo();
     }
@@ -204,7 +202,7 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(VCWeaponEndEvent message) {
-        nextPartialCombo(PartialCombo.SHOOT);
+        nextPartialCombo();
     }
 
     @Override
