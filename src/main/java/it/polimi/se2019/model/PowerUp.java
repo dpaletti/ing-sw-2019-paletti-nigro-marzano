@@ -17,8 +17,4 @@ public class PowerUp extends Card implements Drawable,Jsonable{
         super(powerUp);
     }
 
-    @Override
-    public Jsonable copy() {
-        return new PowerUp(this);
-    }
 }

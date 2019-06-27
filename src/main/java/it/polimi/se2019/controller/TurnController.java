@@ -1,9 +1,7 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.AmmoColour;
-import it.polimi.se2019.model.Combo;
-import it.polimi.se2019.model.Game;
-import it.polimi.se2019.model.Tile;
+import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.mv_events.FinalFrenzyStartingEvent;
 import it.polimi.se2019.model.mv_events.MVMoveEvent;
 import it.polimi.se2019.model.mv_events.NotEnoughPlayersConnectedEvent;
 import it.polimi.se2019.model.mv_events.TurnEvent;
@@ -17,12 +15,13 @@ import it.polimi.se2019.view.vc_events.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class TurnController extends Controller {
     private ArrayList<String> effects= new ArrayList<>();
     private ArrayList<ArrayList<String>> targets= new ArrayList<>();
     private boolean isFirstTurn= true; //TODO: set to false after first turn
-    private String currentPlayer = model.getUsernames().get(0);
+    private String currentPlayer;
     private Combo currentCombo;
     private int comboIndex= 0;
     private int comboUsed= 0;
@@ -32,8 +31,14 @@ public class TurnController extends Controller {
 
     public TurnController (Game model, Server server, int roomNumber){
         super(model, server, roomNumber);
+        currentPlayer = model.getUsernames().get(0);
         //turn controller is registered to virtualView in closeMatchMaking() inside MatchMaking controller
         //either leave things like this or take that one out and add server.addController(this) here
+    }
+
+    public TurnController (Game game){
+        this.model = game;
+        currentPlayer = model.getUsernames().get(0);
     }
 
     @Override
@@ -54,18 +59,45 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(ReloadEvent message) {
-        if(currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.RELOAD))
-            nextPartialCombo();
-        else
+        if(currentCombo == null) {
             reloaded = true;
-        reloadWeapon(message.getSource(), message.getWeaponName());
-        if (comboUsed==2)
+            reloadWeapon(message.getSource(), message.getWeaponName());
+        }
+        else if (currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.RELOAD)) {
+            reloadWeapon(message.getSource(), message.getWeaponName());
+            nextPartialCombo(PartialCombo.RELOAD);
+        }
+        if (comboUsed==2 || reloaded)
             endTurn();
+        }
+        private boolean isCombo(List<PartialCombo> combos,Combo combo){
+            List<PartialCombo> expected= combo.getPartialCombos();
+            if(combos.size()!=expected.size())
+                return false;
+            for (int i=0;i<expected.size();i++){
+                if (!expected.get(i).equals(combos.get(i)))
+                    return false;
+            }
+            return true;
         }
 
         private Combo fromPartialToCombo(List<PartialCombo> partialCombos){
-            for(Combo c: model.getComboHelper().getCombos()){
-                if(c.getPartialCombos().containsAll(partialCombos) && c.getPartialCombos().size() == partialCombos.size())
+            PlayerDamage playerState=model.userToPlayer(currentPlayer).getHealthState();
+            Set<Combo> allCombos= model.getComboHelper().getCombos();
+            List<Combo> usables= new ArrayList<>();
+            if(playerState.equals(new FinalFrenzyBeforeFirst()) || playerState.equals(new FinalFrenzyStandard())){
+                for (Combo combo: allCombos){
+                    if(combo.getName().contains("Frenzy"))
+                        usables.add(combo);
+                }
+            }else{
+                for (Combo combo:allCombos){
+                    if(!combo.getName().contains("Frenzy"))
+                        usables.add(combo);
+                }
+            }
+            for(Combo c: usables){
+                if(isCombo(partialCombos,c))
                     return c;
             }
             throw new IllegalArgumentException("No combo exist with such partialCombos");
@@ -92,16 +124,11 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(ChosenComboEvent message) {
-        if (currentCombo == null){
-            currentCombo = message.getChosenCombo();
-            comboUsed++;
+        comboIndex=0;
+        currentCombo = message.getChosenCombo();
+        for(int i=0; i<currentCombo.getPartialCombos().size();i++)
             currentCombo.getPartialCombos().get(comboIndex).use(model, message.getSource());
-        }
 
-        if (comboUsed < 2)
-            model.send(new TurnEvent(message.getSource(), fromPartialToStringCombo(model.userToPlayer(message.getSource()).getHealthState().getMoves())));
-        else
-            model.unloadedWeapons(currentPlayer);
     }
 
     @Override
@@ -111,17 +138,17 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(VCMoveEvent message) {
-        int distance = 3;
+        int distance = 1;
         if (message.getIsTeleport())
             distance = -1;
         run(message.getSource(), message.getDestination(), distance);
-        nextPartialCombo();
+        nextPartialCombo(PartialCombo.MOVE);
     }
 
     @Override
     public void dispatch(GrabEvent message) {
         model.userToPlayer(message.getSource()).grabStuff(message.getGrabbed());
-        nextPartialCombo();
+        nextPartialCombo(PartialCombo.GRAB);
     }
 
     private void nextCombo(){
@@ -134,11 +161,12 @@ public class TurnController extends Controller {
         model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
     }
 
-    private void nextPartialCombo (){
-        comboIndex++;
+    private void nextPartialCombo (PartialCombo done){
+        comboIndex = currentCombo.getPartialCombos().indexOf(done)+1;
         if (comboIndex < currentCombo.getPartialCombos().size())
-            currentCombo.getPartialCombos().get(comboIndex).use(model, currentPlayer);
-        if (comboIndex == currentCombo.getPartialCombos().size() - 1)
+            for(int j = comboIndex; j < currentCombo.getPartialCombos().size(); j++)
+                currentCombo.getPartialCombos().get(comboIndex).use(model, currentPlayer);
+        if (comboIndex == currentCombo.getPartialCombos().size())
             nextCombo();
     }
 
@@ -161,7 +189,7 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(VCWeaponEndEvent message) {
-        nextPartialCombo();
+        nextPartialCombo(PartialCombo.SHOOT);
     }
 
     @Override
@@ -190,7 +218,7 @@ public class TurnController extends Controller {
     private void spawn (String username, AmmoColour spawnColour, String powerUpName) {
         for (Tile tile : model.getGameMap().getSpawnTiles()) {
             if (tile.getColour().toString().equals(spawnColour.toString()))
-                model.userToPlayer(username).run(tile.getPosition(), -1);
+                model.userToPlayer(username).getFigure().spawn(tile.getPosition());
         }
         if (model.nameToPowerUp(powerUpName) != null)
             model.userToPlayer(username).drawPowerUp(powerUpName);
@@ -209,4 +237,15 @@ public class TurnController extends Controller {
             model.send(new NotEnoughPlayersConnectedEvent("*"));
     }
 
+    public int getComboIndex() {
+        return comboIndex;
+    }
+
+    public int getComboUsed() {
+        return comboUsed;
+    }
+
+    public String getCurrentPlayer() {
+        return currentPlayer;
+    }
 }

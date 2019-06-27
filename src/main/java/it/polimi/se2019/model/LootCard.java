@@ -39,11 +39,6 @@ public class LootCard implements Grabbable, Drawable,Jsonable{
     }
 
     @Override
-    public Jsonable copy() {
-        return new LootCard(this);
-    }
-
-    @Override
     public void grab(Player player, String grabbed) {
         if (!name.equalsIgnoreCase(grabbed))
             throw new UnsupportedOperationException("Selected grabbable is not on current tile and cannot be grabbed");

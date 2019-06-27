@@ -13,7 +13,7 @@ public abstract class JsonHelper {
     public Jsonable findByName(String name){
         for (Jsonable j: helped){
             if(j.getName().equalsIgnoreCase(name))
-                return j.copy();
+                return j;
         }
         throw new NullPointerException("Not found");
     }

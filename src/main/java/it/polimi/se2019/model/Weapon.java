@@ -7,9 +7,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Weapon extends Card implements Grabbable, Drawable, Jsonable{
-    private Boolean loaded = true;
+    private boolean loaded = true;
 
-    public Boolean getLoaded() {
+    public boolean getLoaded() {
         return loaded;
     }
 
@@ -19,15 +19,11 @@ public class Weapon extends Card implements Grabbable, Drawable, Jsonable{
 
     public Weapon(Weapon weapon){
         super(weapon);
+        this.loaded=weapon.loaded;
     }
 
     public void setLoaded(Boolean loaded) {
         this.loaded = loaded;
-    }
-
-    @Override
-    public Jsonable copy() {
-        return new Weapon(this);
     }
 
     //check number of weapons in hand

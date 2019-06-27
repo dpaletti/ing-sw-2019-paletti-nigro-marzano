@@ -22,7 +22,7 @@ public enum  PartialCombo {
     MOVE {
         @Override
         public void use(Game game, String username) {
-            game.allowedMovements(username, "", 1);
+            game.allowedMovements("", username, 1);
         }
     },
     RELOAD{

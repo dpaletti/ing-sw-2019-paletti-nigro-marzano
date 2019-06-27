@@ -3,11 +3,7 @@
     "cardColour": {
         "colour": "YELLOW"
     },
-    "price": [
-        {
-            "colour": "YELLOW"
-        }
-    ],
+    "price": [],
     "weaponEffects": [
     {
         "name": "basicMode",

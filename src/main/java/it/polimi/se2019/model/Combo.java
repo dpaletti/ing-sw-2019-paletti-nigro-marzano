@@ -48,9 +48,4 @@ public class Combo implements Jsonable{
                 ", partialCombos=" + partialCombos +
                 '}';
     }
-
-    @Override
-    public Jsonable copy() {
-        return new Combo(this);
-    }
 }

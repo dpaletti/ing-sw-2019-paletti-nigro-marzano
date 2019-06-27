@@ -5,9 +5,6 @@
     },
     "price": [
         {
-            "colour": "YELLOW"
-        },
-        {
             "colour": "RED"
         }
     ],

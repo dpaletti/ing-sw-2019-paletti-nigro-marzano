@@ -70,7 +70,6 @@ public class Figure {
 
     public void reload (Weapon weapon){
         weapon.setLoaded(true);
-        player.useAmmos(weapon.getReloadPrice());
     }
 
     public void unload (Weapon weapon){

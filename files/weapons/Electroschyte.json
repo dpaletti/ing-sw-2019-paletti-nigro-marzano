@@ -33,7 +33,7 @@
                             "first": 0,
                             "second": 0
                         },
-                        "visible": -1,
+                        "visible": 1,
                         "enlarge": 0
                     },
                     "actions": [
@@ -80,7 +80,7 @@
                             "first": 0,
                             "second": 0
                         },
-                        "visible": -1,
+                        "visible": 1,
                         "enlarge": 0
                     },
                     "actions": [

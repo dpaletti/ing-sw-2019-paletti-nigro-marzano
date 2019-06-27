@@ -1,13 +1,10 @@
-//TODO
+
 {
   "type": "it.polimi.se2019.model.Weapon",
   "cardColour": {
     "colour": "YELLOW"
   },
   "price": [
-    {
-      "colour": "YELLOW"
-    },
     {
       "colour": "BLUE"
     }

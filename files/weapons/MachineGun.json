@@ -6,9 +6,6 @@
   },
   "price": [
     {
-      "colour": "BLUE"
-    },
-    {
       "colour": "RED"
     }
   ],
@@ -86,7 +83,7 @@
       ]
     },
     {
-      "name": "withAdditionalDamage",
+      "name": "withFocusShot",
       "priority": 2,
       "price": [
         {

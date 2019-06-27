@@ -4,5 +4,4 @@ import java.util.Set;
 
 public interface Jsonable {
     String getName();
-    Jsonable copy();
 }
