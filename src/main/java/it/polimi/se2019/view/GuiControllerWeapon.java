@@ -1,7 +1,11 @@
 package it.polimi.se2019.view;
 
+import it.polimi.se2019.view.ui_events.UiTurnEnd;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiControllerWeapon extends GuiController {
 
@@ -52,7 +56,13 @@ public class GuiControllerWeapon extends GuiController {
     @FXML
     private ImageView effectOptional2Right;
 
+    private List<ImageView> active;
 
-
+    @Override
+    public void dispatch(UiTurnEnd message) {
+        for(ImageView i: active)
+            i.setDisable(false);
+        active = new ArrayList<>();
+    }
 
 }

@@ -1,24 +1,19 @@
 package it.polimi.se2019.view.vc_events;
 
-import it.polimi.se2019.model.Combo;
-import it.polimi.se2019.utility.PartialCombo;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 // player sends combo they want to use
 
 public class ChosenComboEvent extends VCEvent {
-    private Combo chosenCombo;
+    private String chosenCombo;
 
-    public ChosenComboEvent (String source, Combo chosenCombo) {
+    public ChosenComboEvent (String source, String chosenCombo) {
         super(source);
         this.chosenCombo = chosenCombo;
     }
 
-    public Combo getChosenCombo() {
+    public String getChosenCombo() {
         return chosenCombo;
     }
 

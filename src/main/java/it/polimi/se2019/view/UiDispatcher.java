@@ -87,5 +87,14 @@ public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiAvailableMove message){
         throw new UnsupportedOperationException("UiAvailableMove not supported");
     }
+    default void dispatch(UiResetMap message){
+        throw new UnsupportedOperationException("UiResetMap not supported");
+    }
+    default void dispatch(UiTurnEnd message){
+        throw new UnsupportedOperationException("UiTurnEnd not supported");
+    }
+    default void dispatch(UiStartTurn message){
+        throw new UnsupportedOperationException("UiStartTurn not supported");
+    }
 
 }

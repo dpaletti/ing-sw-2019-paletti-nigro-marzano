@@ -73,7 +73,7 @@ public class GuiControllerTable extends GuiController {
     private static final String HIGHLIGHTED = "_highlighted";
 
     private SimpleStringProperty directionsText = new SimpleStringProperty();
-    List<String> availableMoves = new ArrayList<>();
+    private List<String> availableMoves = new ArrayList<>();
 
     private List<String> lockedPlayers = null;
 
@@ -383,6 +383,10 @@ public class GuiControllerTable extends GuiController {
             root.getChildren().remove(timer);
             root.getChildren().remove(title);
             root.getChildren().remove(frenzyBox);
+            endTurn.setText("End turn");
+            endTurn.setOnAction((ActionEvent event) -> ViewGUI.getInstance().endTurn());
+            ((Label)scene.lookup("#directions")).textProperty().bind(directionsText);
+            directionsText.set("Please wait for your turn");
             FXMLLoader loader = new FXMLLoader(Paths.get("files/fxml/board.fxml").toUri().toURL());
             GridPane board = loader.load();
             loader = new FXMLLoader(Paths.get("files/fxml/weapon.fxml").toUri().toURL());
@@ -458,7 +462,6 @@ public class GuiControllerTable extends GuiController {
 
     @Override
     public void dispatch(UiSpawn message) {
-        ((Label)scene.lookup("#directions")).textProperty().bind(directionsText);
         directionsText.set("Please choose a powerup to discard");
     }
 
@@ -482,6 +485,16 @@ public class GuiControllerTable extends GuiController {
         }catch (MalformedURLException e){
             Log.severe("Cannot retrieve rectangle for overlay");
         }
+    }
+
+    @Override
+    public void dispatch(UiTurnEnd message) {
+        directionsText.set("Please wait for your turn");
+
+    }
+
+    public void dispatch(UiStartTurn message){
+        endTurn.setDisable(false);
     }
 }
 

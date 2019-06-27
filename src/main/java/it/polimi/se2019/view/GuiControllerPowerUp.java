@@ -4,6 +4,7 @@ import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.ui_events.UiAvailablePowerup;
 import it.polimi.se2019.view.ui_events.UiPutPowerUp;
 import it.polimi.se2019.view.ui_events.UiSpawn;
+import it.polimi.se2019.view.ui_events.UiTurnEnd;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
@@ -13,6 +14,8 @@ import javafx.scene.input.MouseEvent;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiControllerPowerUp extends GuiController {
 
@@ -51,6 +54,8 @@ public class GuiControllerPowerUp extends GuiController {
     private String middle;
     private String right;
 
+    private List<ImageView> active = new ArrayList<>();
+
 
     @Override
     public void dispatch(UiPutPowerUp message) {
@@ -86,12 +91,15 @@ public class GuiControllerPowerUp extends GuiController {
     }
     @Override
     public void dispatch(UiSpawn message) {
+        enable(powerupLeft);
         powerupLeft.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 ViewGUI.getInstance().chooseSpawn(left, middle);
-                powerupLeft.setDisable(true);
-                powerupMiddle.setDisable(true);
+                disable(powerupLeft);
+                disable(powerupMiddle);
+                powerupLeft.setImage(null);
+                left = null;
                 notClickable();
             }
         });
@@ -108,12 +116,15 @@ public class GuiControllerPowerUp extends GuiController {
             }
         });
 
+        enable(powerupMiddle);
         powerupMiddle.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 ViewGUI.getInstance().chooseSpawn(left, middle);
-                powerupLeft.setDisable(true);
-                powerupMiddle.setDisable(true);
+                disable(powerupMiddle);
+                disable(powerupLeft);
+                powerupMiddle.setImage(null);
+                middle = null;
                 notClickable();
             }
         });
@@ -131,13 +142,23 @@ public class GuiControllerPowerUp extends GuiController {
         });
     }
 
+    private void enable(ImageView imageView){
+        imageView.setDisable(false);
+        active.add(imageView);
+    }
+
+    private void disable(ImageView imageView){
+        imageView.setDisable(true);
+        active.remove(imageView);
+    }
+
     @Override
     public void dispatch(UiAvailablePowerup message) {
         if(message.getPowerUp().equalsIgnoreCase(left)){
-            powerupLeft.setDisable(false);
+            enable(powerupLeft);
             powerupLeft.setOnMouseClicked((MouseEvent event) -> {
                 ViewGUI.getInstance().usePowerUp(message.getPowerUp());
-                powerupLeft.setDisable(true);
+                disable(powerupLeft);
                 powerupLeft.setImage(null);
                 left = null;
             });
@@ -156,10 +177,10 @@ public class GuiControllerPowerUp extends GuiController {
             });
         }
         if(message.getPowerUp().equalsIgnoreCase(right)){
-            powerupRight.setDisable(false);
+            enable(powerupRight);
             powerupRight.setOnMouseClicked((MouseEvent event) -> {
                 ViewGUI.getInstance().usePowerUp(message.getPowerUp());
-                powerupRight.setDisable(true);
+                disable(powerupRight);
                 powerupRight.setImage(null);
                 right = null;
             });
@@ -178,10 +199,10 @@ public class GuiControllerPowerUp extends GuiController {
             });
         }
         if(message.getPowerUp().equalsIgnoreCase(middle)){
-            powerupMiddle.setDisable(false);
+            enable(powerupMiddle);
             powerupMiddle.setOnMouseClicked((MouseEvent event) -> {
                 ViewGUI.getInstance().usePowerUp(message.getPowerUp());
-                powerupMiddle.setDisable(true);
+                disable(powerupMiddle);
                 powerupMiddle.setImage(null);
                 middle = null;
             });
@@ -200,5 +221,12 @@ public class GuiControllerPowerUp extends GuiController {
             });
 
         }
+    }
+
+    @Override
+    public void dispatch(UiTurnEnd message){
+        for (ImageView i: active)
+            disable(i);
+
     }
 }

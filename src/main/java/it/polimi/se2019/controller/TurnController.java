@@ -1,7 +1,6 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.mv_events.FinalFrenzyStartingEvent;
 import it.polimi.se2019.model.mv_events.MVMoveEvent;
 import it.polimi.se2019.model.mv_events.NotEnoughPlayersConnectedEvent;
 import it.polimi.se2019.model.mv_events.TurnEvent;
@@ -125,7 +124,7 @@ public class TurnController extends Controller {
     @Override
     public void dispatch(ChosenComboEvent message) {
         comboIndex=0;
-        currentCombo = message.getChosenCombo();
+        currentCombo = (Combo) model.getComboHelper().findByName(message.getChosenCombo());
         for(int i=0; i<currentCombo.getPartialCombos().size();i++)
             currentCombo.getPartialCombos().get(comboIndex).use(model, message.getSource());
 

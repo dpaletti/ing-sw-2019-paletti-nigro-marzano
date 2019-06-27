@@ -5,6 +5,7 @@ import it.polimi.se2019.network.Client;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.ui_events.*;
+import it.polimi.se2019.view.vc_events.EndOfTurnEvent;
 import it.polimi.se2019.view.vc_events.PowerUpUsageEvent;
 import it.polimi.se2019.view.vc_events.SpawnEvent;
 import it.polimi.se2019.view.vc_events.VcMatchConfigurationEvent;
@@ -74,6 +75,7 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(TurnEvent message) {
+        notify(new UiStartTurn());
         for(String c: message.getCombos())
             notify(new UiAvailableMove(c));
     }
@@ -111,6 +113,7 @@ public class ViewGUI extends View {
     }
 
     public void useCombo(){
+        
 
     }
 
@@ -210,7 +213,13 @@ public class ViewGUI extends View {
         if(p == null)
             throw new IllegalArgumentException(powerupToDiscard + "could not be parsed to get spawn point");
 
+        notify(new UiResetMap());
         notify(new SpawnEvent(client.getUsername(),colour, powerupToKeep));
+    }
+
+    public void endTurn(){
+        notify(new EndOfTurnEvent(client.getUsername()));
+        notify(new UiTurnEnd());
     }
 
     @Override

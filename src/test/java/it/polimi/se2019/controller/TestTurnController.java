@@ -1,21 +1,20 @@
 package it.polimi.se2019.controller;
-import static org.junit.Assert.*;
-
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.mv_events.NotEnoughPlayersConnectedEvent;
 import it.polimi.se2019.model.mv_events.TurnEvent;
-import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.BiSet;
 import it.polimi.se2019.utility.Pair;
 import it.polimi.se2019.utility.PartialCombo;
 import it.polimi.se2019.utility.Point;
-import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestTurnController {
     private Game game= new Game();
@@ -74,8 +73,7 @@ public class TestTurnController {
     @Test
     public void testChosenComboEventDispatch(){
         ComboHelper comboHelper= game.getComboHelper();
-        Combo finalFrenzyMoveReloadShoot= (Combo)comboHelper.findByName("FrenzyMoveReloadShoot");
-        ChosenComboEvent event= new ChosenComboEvent(game.playerToUser(leiva),finalFrenzyMoveReloadShoot);
+        ChosenComboEvent event= new ChosenComboEvent(game.playerToUser(leiva),"FrenzyMoveReloadShoot");
         turnController.update(event);
         VCMoveEvent moveChoice= new VCMoveEvent(game.playerToUser(leiva),new Point(0,2),false);
         turnController.update(moveChoice);
@@ -88,8 +86,7 @@ public class TestTurnController {
     @Test
     public void testEndTurn(){
         ComboHelper comboHelper= game.getComboHelper();
-        Combo run= (Combo)comboHelper.findByName("RunAround");
-        ChosenComboEvent event=new ChosenComboEvent(game.playerToUser(leiva),run);
+        ChosenComboEvent event=new ChosenComboEvent(game.playerToUser(leiva), "RunAround");
         turnController.update(event);
         VCMoveEvent moveEvent= new VCMoveEvent(game.playerToUser(leiva),new Point(0,2),false);
         turnController.update(moveEvent);
@@ -113,9 +110,8 @@ public class TestTurnController {
     @Test
     public void testGrabEvent(){
         ComboHelper comboHelper= game.getComboHelper();
-        Combo moveAndGrab= (Combo)comboHelper.findByName("GrabStuff");
         LootCardHelper lootCardHelper= game.getLootCardHelper();
-        ChosenComboEvent chosenComboEvent= new ChosenComboEvent(game.playerToUser(leiva),moveAndGrab);
+        ChosenComboEvent chosenComboEvent= new ChosenComboEvent(game.playerToUser(leiva), "GrabStuff");
         leiva.getFigure().spawn(new Point(2,1));
         game.getGameMap().getTile(new Point(2,1)).add((LootCard)lootCardHelper.findByName("PBR"));
         turnController.update(chosenComboEvent);

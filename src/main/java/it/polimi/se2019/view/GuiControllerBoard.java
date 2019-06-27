@@ -5,6 +5,7 @@ import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.ui_events.UiBoardInitialization;
 import it.polimi.se2019.view.ui_events.UiHighlightTileEvent;
 import it.polimi.se2019.view.ui_events.UiMoveFigure;
+import it.polimi.se2019.view.ui_events.UiResetMap;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,6 +46,7 @@ public class GuiControllerBoard extends GuiController {
     private List<String> yellowEmpty = new ArrayList<>();
     private List<String> blueEmpty = new ArrayList<>();
     private Map<Point, ArrayList<String>> figuresOnTile = new HashMap<>();
+    private List<ImageView> highlightedTiles = new ArrayList<>();
 
     @Override
     public void dispatch(UiBoardInitialization message) {
@@ -267,11 +269,13 @@ public class GuiControllerBoard extends GuiController {
     public void dispatch(UiHighlightTileEvent message) {
         try {
             ImageView toHighlight = (ImageView) scene.lookup("#tile" + message.getTile().getX() + message.getTile().getY());
+            highlightedTiles.add(toHighlight);
             String toQuery;
             if (toHighlight.getParent().getParent().getId().equals("leftGrid"))
                 toQuery = path + leftConfig + "/tile" + message.getTile().getX() + message.getTile().getY() + ".png";
             else
                 toQuery = path + rightConfig + "/tile" + message.getTile().getX() + message.getTile().getY() + ".png";
+
             toHighlight.setImage(new Image(Paths.get(toQuery).toUri().toURL().toString()));
         }catch (MalformedURLException e){
             Log.severe("Could not get image for highlighting correct tiles");
@@ -316,6 +320,11 @@ public class GuiControllerBoard extends GuiController {
         board.getScene().setCursor(Cursor.DEFAULT);
     }
 
-
-
+    @Override
+    public void dispatch(UiResetMap message) {
+        for(ImageView i: highlightedTiles) {
+            i.setImage(null);
+        }
+        highlightedTiles = new ArrayList<>();
+    }
 }
