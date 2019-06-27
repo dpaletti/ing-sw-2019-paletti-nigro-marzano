@@ -17,4 +17,14 @@ public class PowerUp extends Card implements Drawable,Jsonable{
         super(powerUp);
     }
 
+    public String getColour(){
+        String colour="";
+        if (name.contains("Red"))
+            colour="RED";
+        else if (name.contains("Blue"))
+            colour="BLUE";
+        else if(name.contains("Yellow"))
+            colour="YELLOW";
+        return colour;
+    }
 }

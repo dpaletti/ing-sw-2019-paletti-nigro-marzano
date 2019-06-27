@@ -172,8 +172,8 @@ public class GameMap{
         return castedTiles;
     }
 
-    public Map<Point,String> getMappedSpawnPoints(){
-        Map<Point, String> spawnPoints= new HashMap<>();
+    public HashMap<Point,String> getMappedSpawnPoints(){
+        HashMap<Point, String> spawnPoints= new HashMap<>();
         for(Tile t: spawnTiles)
             spawnPoints.put(t.getPosition(), t.getColour().toString());
         return spawnPoints;

@@ -52,7 +52,8 @@ public class TurnController extends Controller {
     @Override
     public void update(VCEvent message) {
         try {
-            message.handle(this);
+            if(message.getSource().equals(currentPlayer))
+                message.handle(this);
         }catch (UnsupportedOperationException e){
             //ignore events that this controller does not support
             Log.fine("TurnController ignored " + JsonHandler.serialize(message));
@@ -241,6 +242,7 @@ public class TurnController extends Controller {
         model.send(new TurnEvent(username, fromPartialToStringCombo(model.userToPlayer(username).getHealthState().getMoves())));
     }
 
+    //Create an event to assure that whenever a player leaves he forces spawn in a point
     private void endTurn(){
         comboUsed = 0;
         comboIndex = 0;

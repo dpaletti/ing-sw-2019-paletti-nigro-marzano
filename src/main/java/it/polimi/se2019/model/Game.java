@@ -186,7 +186,8 @@ public class Game extends Observable<MVEvent> {
                 colourToUser(deadPlayer.getFigure().getColour()),
                 colourToUser(deadPlayer.getHp().get(10).getColour()),
                 (deadPlayer.getHp().size()==12),
-                killshotTrack.getNumberOfSkulls()==killshotTrack.getKillshot().size()));
+                killshotTrack.getNumberOfSkulls()==killshotTrack.getKillshot().size(),
+                ((PowerUp)powerUpDeck.draw()).getName(),gameMap.getMappedSpawnPoints()));
         //TODO: Changed for it to work in the tests
         killshotTrack.addKillshot(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
         //if number of skulls equals dimension of killshot track, match is over
