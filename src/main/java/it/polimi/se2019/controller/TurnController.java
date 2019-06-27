@@ -52,7 +52,8 @@ public class TurnController extends Controller {
     @Override
     public void update(VCEvent message) {
         try {
-            message.handle(this);
+            if(message.getSource().equals(currentPlayer))
+                message.handle(this);
         }catch (UnsupportedOperationException e){
             //ignore events that this controller does not support
             Log.fine("TurnController ignored " + JsonHandler.serialize(message));
