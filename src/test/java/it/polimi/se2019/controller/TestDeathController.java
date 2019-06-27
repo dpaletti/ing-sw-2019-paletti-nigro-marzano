@@ -1,111 +1,92 @@
 package it.polimi.se2019.controller;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.BiSet;
 import it.polimi.se2019.utility.Pair;
+import it.polimi.se2019.utility.Point;
+import it.polimi.se2019.view.vc_events.CalculatePointsEvent;
+import it.polimi.se2019.view.vc_events.SpawnEvent;
+import it.polimi.se2019.view.vc_events.VCMoveEvent;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.*;
-@RunWith(MockitoJUnitRunner.class)
 public class TestDeathController {
-
-    @Mock
-    private Server server;
-
     private Game game= new Game();
-    private DeathController deathController= new DeathController(server, 1, game);
-    private List<Integer> points= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1));
-    private List<Player> players= new ArrayList<>();
-    private List<FigureColour> figureColours= new ArrayList<>(Arrays.asList(FigureColour.BLUE, FigureColour.GREEN, FigureColour.GREY));
-    private Player magenta= new Player(new Figure(FigureColour.MAGENTA), game);
-    private Player blue= new Player(new Figure(FigureColour.BLUE), game);
-    private Player yellow= new Player(new Figure(FigureColour.YELLOW), game);
-    private Player grey= new Player(new Figure(FigureColour.GREY), game);
-    private Player green= new Player(new Figure(FigureColour.GREEN), game);
-    private BiSet<FigureColour, String> lookup= new BiSet<>();
-    private List<Tear> hp= new ArrayList<>(Arrays.asList(new Tear(FigureColour.BLUE),
-            new Tear(FigureColour.BLUE),
-            new Tear(FigureColour.GREEN),
-            new Tear(FigureColour.GREEN),
-            new Tear(FigureColour.GREY),
-            new Tear(FigureColour.YELLOW),
-            new Tear(FigureColour.BLUE),
-            new Tear(FigureColour.YELLOW),
-            new Tear(FigureColour.GREEN),
-            new Tear(FigureColour.YELLOW),
-            new Tear(FigureColour.GREY)
-    ));
-
-
+    private TurnController turnController;
+    Player leiva= new Player(new Figure(FigureColour.GREEN),game);
+    Player wallace= new Player(new Figure(FigureColour.MAGENTA),game);
+    Player ciro= new Player(new Figure(FigureColour.YELLOW),game);
+    TestModelHelper testModelHelper=new TestModelHelper();
+    DeathController deathController=new DeathController(game);
+    private KillshotTrack killshotTrack= new KillshotTrack(1);
     @Before
     public void setup(){
-        players.add(magenta);
-        players.add(blue);
-        players.add(grey);
-        players.add(green);
-        players.add(yellow);
-        game.setPlayers(players);
-
-        lookup.add(new Pair<>(FigureColour.MAGENTA, "magenta"));
-        lookup.add(new Pair<>(FigureColour.BLUE, "blue"));
-        lookup.add(new Pair<>(FigureColour.YELLOW, "yellow"));
-        lookup.add(new Pair<>(FigureColour.GREEN, "green"));
-        lookup.add(new Pair<>(FigureColour.GREY, "grey"));
-        game.setUserLookup(lookup);
-
+        BiSet<FigureColour, String> look= new BiSet<>();
+        List<Player> playerList=new ArrayList<>();
+        look.add(new Pair<>(FigureColour.GREEN, "leiva"));
+        look.add(new Pair<>(FigureColour.MAGENTA, "wallace"));
+        look.add(new Pair<>(FigureColour.YELLOW, "ciro"));
+        playerList.add(leiva);
+        playerList.add(ciro);
+        playerList.add(wallace);
+        game.setUserLookup(look);
+        game.setPlayers(playerList);
+        game.register(testModelHelper);
+        game.setGameMap(new GameMap("Small"));
+        List<String> users= new ArrayList<>();
+        users.add(game.playerToUser(leiva));
+        users.add(game.playerToUser(wallace));
+        users.add(game.playerToUser(ciro));
+        game.setUsernames(users);
+        turnController=new TurnController(game);
+        LootCardHelper lootCardHelper=game.getLootCardHelper();
+        Point casualLoot= new Point(1,1);
+        game.getGameMap().getTile(casualLoot).add((LootCard)lootCardHelper.findByName("PBR"));
+        leiva.getFigure().spawn(casualLoot);
+        leiva.grabStuff("PBR");
+        WeaponHelper weaponHelper=game.getWeaponHelper();
+        Point redSpawnPoint=new Point(0,1);
+        game.getGameMap().getTile(redSpawnPoint).add((Weapon)weaponHelper.findByName("Heatseeker"));
+        wallace.getFigure().spawn(redSpawnPoint);
+        wallace.grabStuff("Heatseeker");
+        game.setKillshotTrack(killshotTrack);
+        game.setFinalFrenzy(false);
     }
 
-    //TODO: adjust this test
-    @Ignore
     @Test
-    public void testSolveTies(){
-
-        deathController.solveTies(points, figureColours, hp);
-        assertEquals((Integer) 8, blue.getPoints());
-        assertEquals((Integer) 6, green.getPoints());
+    public void testRespawn(){
+        Weapon heatseeker= wallace.getWeapons().get(0);
+        List<Player> players=new ArrayList<>();
+        players.add(leiva);
+        String colour=leiva.getPowerUps().get(0).getColour();
+        game.apply(game.playerToUser(wallace),players,heatseeker.getWeaponEffects().iterator().next().getEffects().iterator().next());
+        game.apply(game.playerToUser(wallace),players,heatseeker.getWeaponEffects().iterator().next().getEffects().iterator().next());
+        game.apply(game.playerToUser(wallace),players,heatseeker.getWeaponEffects().iterator().next().getEffects().iterator().next());
+        game.apply(game.playerToUser(wallace),players,heatseeker.getWeaponEffects().iterator().next().getEffects().iterator().next());
+        SpawnEvent spawnEvent= new SpawnEvent(game.playerToUser(leiva),colour,"");
+        deathController.update(spawnEvent);
+        assertEquals(0,leiva.getHp().size());
+        assertEquals(colour,game.getTile(leiva.getPosition()).getColour().toString());
     }
 
-    //TODO: adjust this test
-    @Ignore
     @Test
-    public void testCalculateHits(){
-
-        Map<FigureColour, Integer> leaderboard= new HashMap<>();
-        leaderboard.put(FigureColour.BLUE, 3);
-        leaderboard.put(FigureColour.GREEN, 3);
-        leaderboard.put(FigureColour.GREY, 2);
-        leaderboard.put(FigureColour.YELLOW, 3);
-        Map<FigureColour, Integer> calculatedLeaderboard= deathController.calculateHits(hp);
-
-        assertEquals(calculatedLeaderboard, leaderboard);
+    public void testCalculatePointsEvent(){
+        Weapon heatseeker= wallace.getWeapons().get(0);
+        List<Player> players=new ArrayList<>();
+        players.add(leiva);
+        game.apply(game.playerToUser(wallace),players,heatseeker.getWeaponEffects().iterator().next().getEffects().iterator().next());
+        game.apply(game.playerToUser(wallace),players,heatseeker.getWeaponEffects().iterator().next().getEffects().iterator().next());
+        game.apply(game.playerToUser(wallace),players,heatseeker.getWeaponEffects().iterator().next().getEffects().iterator().next());
+        game.apply(game.playerToUser(wallace),players,heatseeker.getWeaponEffects().iterator().next().getEffects().iterator().next());
+        CalculatePointsEvent calculatePointsEvent=new CalculatePointsEvent(game.playerToUser(wallace));
+        deathController.update(calculatePointsEvent);
+        assertEquals(18,(int)wallace.getPoints());
     }
 
-    //TODO: adjust this test
-    @Ignore
-    @Test
-    public void testOverkill(){
-
-    assertFalse(deathController.overkill(hp));
-    hp.add(new Tear(FigureColour.BLUE));
-    assertTrue(deathController.overkill(hp));
-    }
-
-    //TODO: adjust this test
-    @Ignore
-    @Test
-    public void testAssignPoints(){
-
-        deathController.deathPointCalculation("magenta", hp);
-        assertEquals(blue.getPoints(), (Integer) 9);
-        assertEquals(green.getPoints(), (Integer) 6);
-        assertEquals(yellow.getPoints(), (Integer) 4);
-        assertEquals(grey.getPoints(), (Integer) 2);
-    }
 }

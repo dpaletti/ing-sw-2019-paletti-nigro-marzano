@@ -241,6 +241,7 @@ public class TurnController extends Controller {
         model.send(new TurnEvent(username, fromPartialToStringCombo(model.userToPlayer(username).getHealthState().getMoves())));
     }
 
+    //Create an event to assure that whenever a player leaves he forces spawn in a point
     private void endTurn(){
         comboUsed = 0;
         comboIndex = 0;

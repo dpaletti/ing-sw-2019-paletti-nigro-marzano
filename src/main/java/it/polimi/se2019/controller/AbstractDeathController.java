@@ -18,6 +18,9 @@ public abstract class AbstractDeathController extends Controller {
         super(model, server, roomNumber);
     }
 
+    public AbstractDeathController(){
+        //Empty constructor for testing
+    }
     @Override
     public void update(VCEvent message) {
         try {
@@ -45,7 +48,8 @@ public abstract class AbstractDeathController extends Controller {
             }
 
             List<Integer> pointsToAssign= getPointsToAssign(user).subList(i, i+localBestFigures.size());
-            i+=(localBestFigures.size()-1);
+            if(!localBestFigures.isEmpty())
+                i+=(localBestFigures.size()-1);
             for (FigureColour f: localBestFigures) {
                 figuresToHits.remove(f);
             }
