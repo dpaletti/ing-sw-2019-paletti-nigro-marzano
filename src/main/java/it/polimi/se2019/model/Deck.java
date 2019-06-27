@@ -2,6 +2,7 @@ package it.polimi.se2019.model;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,6 +16,11 @@ public class Deck{
     }
 
     public Drawable draw(){
+        if(deck.isEmpty()) {
+            deck = discards;
+            Collections.shuffle(deck);
+            discards.clear();
+        }
         return deck.remove(deck.size() - 1);
     }
 

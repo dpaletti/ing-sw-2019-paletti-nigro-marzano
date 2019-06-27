@@ -180,7 +180,9 @@ public class Player implements Targetable{
     }
 
     public void reload(Weapon weapon){
-        if (pay(new ArrayList<>(weapon.price)))
+        ArrayList<Ammo> reloadPrice= new ArrayList<>(weapon.price);
+        reloadPrice.add(weapon.cardColour);
+        if (pay(new ArrayList<>(reloadPrice)))
             figure.reload(weapon);
         else
             game.send(new NotEnoughAmmoEvent(game.colourToUser(figure.getColour())));

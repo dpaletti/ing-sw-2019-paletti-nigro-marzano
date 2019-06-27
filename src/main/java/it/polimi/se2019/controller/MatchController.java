@@ -27,14 +27,10 @@ public class MatchController extends Controller {
     }
 
     private void startMatch(){
-        List<Tile> spawnTiles = model.getGameMap().getSpawnTiles();
-        Map<Point, String> spawnPoints= new HashMap<>();
-        for(Tile t: spawnTiles)
-            spawnPoints.put(t.getPosition(), t.getColour().toString());
         model.send(new StartFirstTurnEvent(model.playerToUser(model.getPlayers().get(0)),
                 ((PowerUp)model.getPowerUpDeck().draw()).getName(),
                 ((PowerUp)model.getPowerUpDeck().draw()).getName(),
-                true, spawnPoints));
+                true, model.getGameMap().getMappedSpawnPoints()));
     }
 
     @Override

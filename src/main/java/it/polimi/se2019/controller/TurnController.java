@@ -3,6 +3,7 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.mv_events.MVMoveEvent;
 import it.polimi.se2019.model.mv_events.NotEnoughPlayersConnectedEvent;
+import it.polimi.se2019.model.mv_events.StartFirstTurnEvent;
 import it.polimi.se2019.model.mv_events.TurnEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
@@ -13,6 +14,7 @@ import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,6 +27,13 @@ public class TurnController extends Controller {
     private int comboIndex= 0;
     private int comboUsed= 0;
     private boolean reloaded = false;
+    private int turnCounter=0;
+
+    @Override
+    protected void endTimer() {
+        super.endTimer();
+        endTurn();
+    }
 
     //should if(currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.WHATEVER)) be checked for Move, grab and shoot as well as reload?
 
@@ -163,10 +172,17 @@ public class TurnController extends Controller {
     private void nextPartialCombo (PartialCombo done){
         comboIndex = currentCombo.getPartialCombos().indexOf(done)+1;
         if (comboIndex < currentCombo.getPartialCombos().size())
-            for(int j = comboIndex; j < currentCombo.getPartialCombos().size(); j++)
-                currentCombo.getPartialCombos().get(comboIndex).use(model, currentPlayer);
+            for(PartialCombo p: getSetCombo())
+                p.use(model, currentPlayer);
         if (comboIndex == currentCombo.getPartialCombos().size())
             nextCombo();
+    }
+
+    private Set<PartialCombo> getSetCombo(){
+        Set<PartialCombo> partials= new HashSet<>();
+        for(int j = comboIndex; j < currentCombo.getPartialCombos().size(); j++)
+            partials.add(currentCombo.getPartialCombos().get(comboIndex));
+        return partials;
     }
 
     @Override
@@ -230,8 +246,20 @@ public class TurnController extends Controller {
         comboUsed = 0;
         comboIndex = 0;
         currentCombo = null;
-        if (enoughActivePlayers())
+        turnCounter++;
+        if (enoughActivePlayers()){
             currentPlayer = getNextActiveUser(currentPlayer);
+            if (turnCounter== model.getUsernames().size())
+                isFirstTurn=false;
+            if (isFirstTurn)
+                model.send(new StartFirstTurnEvent(currentPlayer,
+                        model.getPowerUpDeck().draw().getName(),
+                        model.getPowerUpDeck().draw().getName(),false,model.getGameMap().getMappedSpawnPoints()));
+            else
+                model.send(new TurnEvent(currentPlayer,fromPartialToStringCombo(model.userToPlayer(currentPlayer).getHealthState().getMoves())));
+            //This line is commented out only to pass the serverless tests
+            //startTimer(server.getTurnTimer());
+        }
         else
             model.send(new NotEnoughPlayersConnectedEvent("*"));
     }

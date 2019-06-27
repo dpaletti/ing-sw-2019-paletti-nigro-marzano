@@ -59,8 +59,10 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
 
     public boolean enoughActivePlayers (){
         int active = 0;
-        for (Player p : model.getPlayers())
-            active++;
+        for (Player p : model.getPlayers()) {
+            if(!p.isPaused())
+                active++;
+        }
         return !(active < 3);
     }
 

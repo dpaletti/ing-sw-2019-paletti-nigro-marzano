@@ -55,6 +55,10 @@ public class Server implements ServerInterface {
 
     }
 
+    public int getTurnTimer(){
+        return Integer.parseInt(properties.getProperty("TURN_TIMER"));
+    }
+
     public List<String> getMapConfigs(int roomNumber){
         return models.get(roomNumber).getMapConfigs();
     }

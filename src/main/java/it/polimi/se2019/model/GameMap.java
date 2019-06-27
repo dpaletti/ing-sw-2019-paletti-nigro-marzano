@@ -8,10 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class GameMap{
     private MapConfig config;
@@ -173,6 +170,13 @@ public class GameMap{
         for (Tile t: lootTiles)
             castedTiles.add(new LootTile(t));
         return castedTiles;
+    }
+
+    public Map<Point,String> getMappedSpawnPoints(){
+        Map<Point, String> spawnPoints= new HashMap<>();
+        for(Tile t: spawnTiles)
+            spawnPoints.put(t.getPosition(), t.getColour().toString());
+        return spawnPoints;
     }
 
 }
