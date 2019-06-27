@@ -3,14 +3,14 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.AmmoColour;
 import it.polimi.se2019.model.Combo;
 import it.polimi.se2019.model.Game;
-import it.polimi.se2019.model.mv_events.*;
-import it.polimi.se2019.utility.PartialCombo;
-import it.polimi.se2019.view.vc_events.DiscardedPowerUpEvent;
-import it.polimi.se2019.view.vc_events.EndOfTurnEvent;
-import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.Tile;
+import it.polimi.se2019.model.mv_events.MVMoveEvent;
+import it.polimi.se2019.model.mv_events.NotEnoughPlayersConnectedEvent;
+import it.polimi.se2019.model.mv_events.TurnEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.utility.PartialCombo;
 import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.*;
@@ -63,6 +63,33 @@ public class TurnController extends Controller {
             endTurn();
         }
 
+        private Combo fromPartialToCombo(List<PartialCombo> partialCombos){
+            for(Combo c: model.getComboHelper().getCombos()){
+                if(c.getPartialCombos().containsAll(partialCombos) && c.getPartialCombos().size() == partialCombos.size())
+                    return c;
+            }
+            throw new IllegalArgumentException("No combo exist with such partialCombos");
+        }
+
+        private List<Combo> convertMoves(List<ArrayList<PartialCombo>> partials){
+            List<Combo> combos = new ArrayList<>();
+            for(ArrayList<PartialCombo> p: partials){
+                combos.add(fromPartialToCombo(p));
+            }
+            return combos;
+        }
+
+        private List<String> movesToString(List<Combo> combos){
+            List<String> strings = new ArrayList<>();
+            for (Combo c: combos)
+                strings.add(c.getName());
+            return strings;
+        }
+
+        private List<String> fromPartialToStringCombo(List<ArrayList<PartialCombo>> partials){
+            return movesToString(convertMoves(partials));
+        }
+
     @Override
     public void dispatch(ChosenComboEvent message) {
         if (currentCombo == null){
@@ -72,7 +99,7 @@ public class TurnController extends Controller {
         }
 
         if (comboUsed < 2)
-            model.send(new TurnEvent(message.getSource(), model.userToPlayer(message.getSource()).getHealthState().getMoves()));
+            model.send(new TurnEvent(message.getSource(), fromPartialToStringCombo(model.userToPlayer(message.getSource()).getHealthState().getMoves())));
         else
             model.unloadedWeapons(currentPlayer);
     }
@@ -103,7 +130,7 @@ public class TurnController extends Controller {
             model.unloadedWeapons(currentPlayer);
             return;
         }
-        model.send(new TurnEvent(currentPlayer, model.userToPlayer(currentPlayer).getHealthState().getMoves()));
+        model.send(new TurnEvent(currentPlayer, fromPartialToStringCombo(model.userToPlayer(currentPlayer).getHealthState().getMoves())));
         model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
     }
 
@@ -169,7 +196,7 @@ public class TurnController extends Controller {
             model.userToPlayer(username).drawPowerUp(powerUpName);
         model.send(new MVMoveEvent("*", username, model.userToPlayer(username).getFigure().getPosition()));
         model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
-        model.send(new TurnEvent(username, model.userToPlayer(username).getHealthState().getMoves()));
+        model.send(new TurnEvent(username, fromPartialToStringCombo(model.userToPlayer(username).getHealthState().getMoves())));
     }
 
     private void endTurn(){

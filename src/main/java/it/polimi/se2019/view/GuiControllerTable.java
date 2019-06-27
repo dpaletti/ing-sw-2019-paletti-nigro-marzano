@@ -40,34 +40,7 @@ public class GuiControllerTable extends GuiController {
     private Button leave;
 
     @FXML
-    private ImageView moveAndGrab;
-
-    @FXML
-    private Label redAmmo;
-
-    @FXML
-    private Label yellowAmmo;
-
-    @FXML
-    private Label blueAmmo;
-
-    @FXML
     private ImageView currentPlayer;
-
-    @FXML
-    private ImageView run;
-
-    @FXML
-    private ImageView shoot;
-
-    @FXML
-    private ImageView reload;
-
-    @FXML
-    private ImageView moveMoveGrab;
-
-    @FXML
-    private ImageView moveShoot;
 
     @FXML
     private GridPane root;
@@ -98,6 +71,9 @@ public class GuiControllerTable extends GuiController {
     private boolean frenzy = false;
     private static final String MAP_DIR = "files/assets/board/map/";
     private static final String HIGHLIGHTED = "_highlighted";
+
+    private SimpleStringProperty directionsText = new SimpleStringProperty();
+    List<String> availableMoves = new ArrayList<>();
 
     private List<String> lockedPlayers = null;
 
@@ -478,7 +454,34 @@ public class GuiControllerTable extends GuiController {
         }catch (MalformedURLException e){
             Log.severe("Wrong URL in reshowing locked selection");
         }
+    }
 
+    @Override
+    public void dispatch(UiSpawn message) {
+        ((Label)scene.lookup("#directions")).textProperty().bind(directionsText);
+        directionsText.set("Please choose a powerup to discard");
+    }
+
+    @Override
+    public void dispatch(UiAvailableMove message) {
+        try {
+            directionsText.set("Please choose one of the highlighted combos");
+            ImageView available;
+            available =((ImageView) scene.lookup("#" + message.getCombo()));
+            availableMoves.add(message.getCombo());
+            available.setDisable(false);
+            available.setImage(
+                    new Image(Paths.get("files/assets/rectangle_" + ViewGUI.getInstance().getColour().toLowerCase()).toUri().toURL().toString() + ".png"));
+            available.setOnMouseEntered((MouseEvent event) -> clickable());
+            available.setOnMouseExited((MouseEvent event) -> notClickable());
+            available.setOnMouseClicked((MouseEvent event) -> {
+                ViewGUI.getInstance().useCombo();
+                for(String s: availableMoves)
+                    scene.lookup("#" + s).setDisable(true);
+            });
+        }catch (MalformedURLException e){
+            Log.severe("Cannot retrieve rectangle for overlay");
+        }
     }
 }
 

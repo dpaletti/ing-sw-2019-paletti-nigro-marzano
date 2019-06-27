@@ -152,4 +152,8 @@ public interface MVEventDispatcher extends EventDispatcher {
     default void dispatch (NotEnoughPlayersConnectedEvent message){
         throw new UnsupportedOperationException("NotEnoughPlayersConnectedEvent not supported");
     }
+
+    default void dispatch(UsablePowerUpEvent message){
+        throw new UnsupportedOperationException("UsablePowerUpEvent not supported");
+    }
 }

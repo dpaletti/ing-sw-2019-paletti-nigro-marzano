@@ -13,14 +13,10 @@
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
     </columnConstraints>
-    <ImageView fx:id="weaponLeft" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
-      </ImageView>
-    <ImageView fx:id="weaponMiddle" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
-      </ImageView>
-    <ImageView fx:id="weaponRight" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="0">
-      </ImageView>
    <Pane prefHeight="200.0" prefWidth="107.0">
       <children>
+          <ImageView fx:id="weaponLeft" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+          </ImageView>
          <ImageView fx:id="effectBaseLeft" fitHeight="54.0" fitWidth="99.0" layoutX="14.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true">
          </ImageView>
          <ImageView fx:id="effectAlternateLeft" fitHeight="46.0" fitWidth="108.0" layoutX="6.0" layoutY="147.0" pickOnBounds="true">
@@ -33,6 +29,8 @@
    </Pane>
    <Pane prefHeight="201.0" prefWidth="85.0" GridPane.columnIndex="1">
       <children>
+          <ImageView fx:id="weaponMiddle" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
+          </ImageView>
          <ImageView fx:id="effectBaseMiddle" fitHeight="54.0" fitWidth="99.0" layoutX="14.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true">
          </ImageView>
          <ImageView fx:id="effectAlternateMiddle" fitHeight="46.0" fitWidth="108.0" layoutX="6.0" layoutY="147.0" pickOnBounds="true">
@@ -45,6 +43,8 @@
    </Pane>
    <Pane prefHeight="201.0" prefWidth="63.0" GridPane.columnIndex="2">
       <children>
+          <ImageView fx:id="weaponRight" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="0">
+          </ImageView>
          <ImageView fx:id="effectBaseRight" fitHeight="54.0" fitWidth="99.0" layoutX="14.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true">
          </ImageView>
          <ImageView fx:id="effectAlternateRight" fitHeight="46.0" fitWidth="108.0" layoutX="6.0" layoutY="147.0" pickOnBounds="true">

@@ -3,6 +3,8 @@ package it.polimi.se2019.view;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.ui_events.UiBoardInitialization;
+import it.polimi.se2019.view.ui_events.UiHighlightTileEvent;
+import it.polimi.se2019.view.ui_events.UiMoveFigure;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,6 +35,10 @@ public class GuiControllerBoard extends GuiController {
     @FXML
     private GridPane boardSkull;
 
+    private String leftConfig;
+    private String rightConfig;
+    private String path = "files/assets/board/board_" ;
+
     private Scene scene;
 
     private List<String> redEmpty = new ArrayList<>();
@@ -47,8 +53,6 @@ public class GuiControllerBoard extends GuiController {
         setupMap(message.getLeftConfig(), message.getRightConfig());
         initializeSkulls(message.getSkulls());
         initializeLoot(message.getLootCards());
-        place("GREEN", new Point(3, 2));
-        place("BLUE", new Point(3, 2));
     }
 
     private void place(String figure, Point position){
@@ -109,7 +113,8 @@ public class GuiControllerBoard extends GuiController {
                 }
             }
             if(actualEntry == null)
-                actualEntry = toUpdate;
+                throw new IllegalArgumentException("Could not find " + figureLeaving + "in" + toUpdate);
+
 
             if (figuresOnTile.get(actualEntry).isEmpty()) {
                 centerToUpdate.setImage(null);
@@ -181,10 +186,6 @@ public class GuiControllerBoard extends GuiController {
             notClickable();
         };
     }
-
-
-
-
 
     private void initializeLoot(Map<Point, String> lootMap){
         try {
@@ -262,10 +263,32 @@ public class GuiControllerBoard extends GuiController {
         }
     }
 
+    @Override
+    public void dispatch(UiHighlightTileEvent message) {
+        try {
+            ImageView toHighlight = (ImageView) scene.lookup("#tile" + message.getTile().getX() + message.getTile().getY());
+            String toQuery;
+            if (toHighlight.getParent().getParent().getId().equals("leftGrid"))
+                toQuery = path + leftConfig + "/tile" + message.getTile().getX() + message.getTile().getY() + ".png";
+            else
+                toQuery = path + rightConfig + "/tile" + message.getTile().getX() + message.getTile().getY() + ".png";
+            toHighlight.setImage(new Image(Paths.get(toQuery).toUri().toURL().toString()));
+        }catch (MalformedURLException e){
+            Log.severe("Could not get image for highlighting correct tiles");
+        }
+    }
+
+    @Override
+    public void dispatch(UiMoveFigure message) {
+        place(message.getFigure(), message.getDestination());
+    }
+
     private void setupMap(String leftConfig, String rightConfig){
         try {
-            Image leftImage = new Image(Paths.get("files/assets/board/board_" + leftConfig + "/board_" + leftConfig + ".png").toUri().toURL().toString());
-            Image rightImage = new Image(Paths.get("files/assets/board/board_" + rightConfig + "/board_" + rightConfig + ".png").toUri().toURL().toString());
+            this.leftConfig = leftConfig;
+            this.rightConfig = rightConfig;
+            Image leftImage = new Image(Paths.get(path + leftConfig + "/board_" + leftConfig + ".png").toUri().toURL().toString());
+            Image rightImage = new Image(Paths.get(path + rightConfig + "/board_" + rightConfig + ".png").toUri().toURL().toString());
             boardLeft.setImage(leftImage);
             boardRight.setImage(rightImage);
 
@@ -292,6 +315,7 @@ public class GuiControllerBoard extends GuiController {
     private void notClickable() {
         board.getScene().setCursor(Cursor.DEFAULT);
     }
+
 
 
 }

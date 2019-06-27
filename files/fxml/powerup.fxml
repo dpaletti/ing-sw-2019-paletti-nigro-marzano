@@ -7,27 +7,27 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane hgap="10.0" GridPane.columnIndex="5" GridPane.rowIndex="4" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerPowerUp">
+<GridPane hgap="10.0" GridPane.columnIndex="5" GridPane.rowIndex="4" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerPowerUp">
     <columnConstraints>
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
     </columnConstraints>
-    <ImageView fx:id="powerupLeft" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
-      </ImageView>
-    <ImageView fx:id="powerupMiddle" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
-      </ImageView>
-    <ImageView fx:id="powerupRight" fitHeight="203.0" fitWidth="116.0" layoutX="10.0" layoutY="10.0" preserveRatio="true" GridPane.columnIndex="2">
-      </ImageView>
    <Pane prefHeight="200.0" prefWidth="47.0">
+       <ImageView fx:id="powerupLeft" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+       </ImageView>
          <ImageView fx:id="ammoLeft" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true" />
          <ImageView fx:id="effectLeft" fitHeight="48.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true" />
    </Pane>
    <Pane prefHeight="200.0" prefWidth="86.0" GridPane.columnIndex="1">
+       <ImageView fx:id="powerupMiddle" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
+       </ImageView>
          <ImageView fx:id="ammoMiddle" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true" />
          <ImageView fx:id="effectMiddle" fitHeight="49.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true" />
    </Pane>
    <Pane prefHeight="200.0" prefWidth="0.0" GridPane.columnIndex="2">
+       <ImageView fx:id="powerupRight" fitHeight="203.0" fitWidth="116.0" layoutX="10.0" layoutY="10.0" preserveRatio="true" GridPane.columnIndex="2">
+       </ImageView>
          <ImageView fx:id="ammoRight" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true" />
          <ImageView fx:id="effectRight" fitHeight="48.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true" />
    </Pane>

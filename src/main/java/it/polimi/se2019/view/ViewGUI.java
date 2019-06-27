@@ -2,13 +2,18 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Client;
-import it.polimi.se2019.utility.*;
+import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.ui_events.*;
+import it.polimi.se2019.view.vc_events.PowerUpUsageEvent;
+import it.polimi.se2019.view.vc_events.SpawnEvent;
 import it.polimi.se2019.view.vc_events.VcMatchConfigurationEvent;
 import javafx.application.Application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 
@@ -20,17 +25,31 @@ import java.util.concurrent.Semaphore;
 
 public class ViewGUI extends View {
 
+    private ArrayBlockingQueue<MVEvent> eventBuffer = new ArrayBlockingQueue<>(100);
     private static Semaphore semControllerSync = new Semaphore(1, true);
     private List<MockPlayer> players = new ArrayList<>();
     private boolean timerGoing=false;
     private static ViewGUI instance = null;
+    private Map<Point, String> pointColorSpawnMap;
 
 
-    //TODO set board conf
-    private Pair<Integer, Integer> boardConf;
+    private class EventListener implements Runnable{
+        @Override
+        public void run() {
+            try {
+                while(!Thread.currentThread().isInterrupted())
+                    (eventBuffer.take()).handle(ViewGUI.this);
+
+            }catch (InterruptedException e){
+                Log.severe("Could not take event from buffer in View");
+            }
+
+        }
+    }
 
     private ViewGUI(Client client){
         super(client);
+        new Thread(new EventListener()).start();
     }
 
     public static void create(Client client){
@@ -41,12 +60,27 @@ public class ViewGUI extends View {
         return instance;
     }
 
-    public Pair<Integer, Integer> getBoardConf() {
-        return new Pair<>(boardConf.getFirst(), boardConf.getSecond());
-    }
-
     public void send(VCEvent message){
         notify(message);
+    }
+
+    public void fourthPowerUp(String powerUp){
+        //TODO
+    }
+
+    public void usePowerUp(String powerUp){
+        notify(new PowerUpUsageEvent(client.getUsername(), powerUp));
+    }
+
+    @Override
+    public void dispatch(TurnEvent message) {
+        for(String c: message.getCombos())
+            notify(new UiAvailableMove(c));
+    }
+
+    @Override
+    public void dispatch(UsablePowerUpEvent message) {
+        new UiAvailablePowerup(message.getUsablePowerUp());
     }
 
     @Override
@@ -70,6 +104,14 @@ public class ViewGUI extends View {
                 return p;
         }
         throw new IllegalArgumentException("Could not find player with figure colour: " + figure);
+    }
+
+    public String getColour(){
+        return getPlayerOnUsername(client.getUsername()).getPlayerColor();
+    }
+
+    public void useCombo(){
+
     }
 
     public void lockPlayers(List<String> figuresToLock){
@@ -141,6 +183,42 @@ public class ViewGUI extends View {
         deregister(controller);
     }
 
+    public Point spawnPointOnColour(String colour){
+        for(Map.Entry<Point, String> m : pointColorSpawnMap.entrySet()){
+            if(m.getValue().equalsIgnoreCase(colour))
+                return m.getKey();
+        }
+        throw new IllegalArgumentException("Could not found spawn point given colour: " + colour);
+    }
+
+
+    public void chooseSpawn(String powerupToDiscard, String powerupToKeep){
+        Point p = null;
+        String colour = null;
+        if(powerupToDiscard.contains("Blue")) {
+            p = spawnPointOnColour("blue");
+            colour = "BLUE";
+        }
+        else if(powerupToDiscard.contains("Red")) {
+            p = spawnPointOnColour("red");
+            colour = "RED";
+        }
+        else if (powerupToDiscard.contains("Yellow")) {
+            p = spawnPointOnColour("yellow");
+            colour = "YELLOW";
+        }
+        if(p == null)
+            throw new IllegalArgumentException(powerupToDiscard + "could not be parsed to get spawn point");
+
+        notify(new SpawnEvent(client.getUsername(),colour, powerupToKeep));
+    }
+
+    @Override
+    public void dispatch(MVMoveEvent message) {
+        notify(new UiMoveFigure(getPlayerOnUsername(message.getUsername()).getPlayerColor(), message.getFinalPosition()));
+
+    }
+
     @Override
     public void dispatch(TimerEvent message) {
         Log.fine("Time to go: " + message.getTimeToGo());
@@ -172,10 +250,17 @@ public class ViewGUI extends View {
         notify(new UiRemovePlayer(message.getUsername()));
     }
 
+
     @Override
     public void dispatch(StartFirstTurnEvent message) {
-        //TODO change GUI
-        //TODO send SpawnEvent
+        semControllerSync.acquireUninterruptibly();
+        semControllerSync.acquireUninterruptibly();
+        pointColorSpawnMap = message.getSpawnPoints();
+        for(Point p: message.getSpawnPoints().keySet())
+            notify(new UiHighlightTileEvent(p));
+        notify(new UiPutPowerUp(message.getFirstPowerUpName()));
+        notify(new UiPutPowerUp(message.getSecondPowerUpName()));
+        notify(new UiSpawn());
     }
 
     @Override
@@ -218,10 +303,12 @@ public class ViewGUI extends View {
     public void update(MVEvent message) {
         try {
             Log.fine("Received: " + message);
-            message.handle(this);
+            eventBuffer.put(message);
         }catch (UnsupportedOperationException e){
             Log.severe("Unsupported event in view");
             throw new UnsupportedOperationException("Error: " + e.getMessage(), e);
+        }catch (InterruptedException e){
+            Log.severe("Interrupted while adding to buffer in ViewGUI");
         }
     }
 

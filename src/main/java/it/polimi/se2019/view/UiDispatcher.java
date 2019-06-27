@@ -75,5 +75,17 @@ public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiPutWeapon message){
         throw new UnsupportedOperationException("UiPutWeapon not supported");
     }
+    default void dispatch(UiPausePlayer message){
+        throw new UnsupportedOperationException("UiPausePlayer not supported");
+    }
+    default void dispatch(UiSpawn message){
+        throw new UnsupportedOperationException("UiSpawn not supported");
+    }
+    default void dispatch(UiAvailablePowerup message){
+        throw new UnsupportedOperationException("UiAvailablePowerup not supported");
+    }
+    default void dispatch(UiAvailableMove message){
+        throw new UnsupportedOperationException("UiAvailableMove not supported");
+    }
 
 }

@@ -1,6 +1,5 @@
 package it.polimi.se2019.model.mv_events;
 
-import it.polimi.se2019.utility.PartialCombo;
 import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.view.MVEvent;
 
@@ -10,11 +9,11 @@ import java.util.List;
 // actions player can do (eg movearound, shootpeople,...) or use power up
 
 public class TurnEvent extends MVEvent {
-    private ArrayList<ArrayList<PartialCombo>> possibleMoves;
+    private ArrayList<String> combos;
 
-    public TurnEvent(String destination, List<ArrayList<PartialCombo>> possibleMoves) {
+    public TurnEvent(String destination, List<String> combos) {
         super(destination);
-        this.possibleMoves = new ArrayList<>(possibleMoves);
+        this.combos = new ArrayList<>(combos);
     }
 
     @Override
@@ -22,7 +21,7 @@ public class TurnEvent extends MVEvent {
         dispatcher.dispatch(this);
     }
 
-    public List<ArrayList<PartialCombo>> getPossibleMoves() {
-        return possibleMoves;
+    public List<String> getCombos() {
+        return combos;
     }
 }

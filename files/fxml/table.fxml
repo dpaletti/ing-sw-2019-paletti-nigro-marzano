@@ -31,14 +31,19 @@
 
        <ImageView fx:id="currentPlayer" fitHeight="219.0" fitWidth="890.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowIndex="3" GridPane.rowSpan="2" />
          <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
-               <ImageView fx:id="run" fitHeight="25.0" fitWidth="40.0" layoutX="8.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
-               <ImageView fx:id="moveAndGrab" fitHeight="25.0" fitWidth="40.0" layoutX="8.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true" />
-               <ImageView fx:id="shoot" fitHeight="25.0" fitWidth="40.0" layoutX="8.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true" />
+               <ImageView fx:id="RunAround" fitHeight="25.0" fitWidth="40.0" layoutX="8.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+               <ImageView fx:id="GrabStuff" fitHeight="25.0" fitWidth="40.0" layoutX="8.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true" />
+               <ImageView fx:id="ShootPeople" fitHeight="25.0" fitWidth="40.0" layoutX="8.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true" />
                <ImageView fx:id="reload" fitHeight="42.0" fitWidth="40.0" layoutX="14.0" layoutY="121.0" pickOnBounds="true" />
+      <ImageView fx:id="FrenzyMoveReloadShoot" fitHeight="17.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="FrenzyMoveFour" fitHeight="17.0" fitWidth="60.0" layoutX="-3.0" layoutY="32.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="FrenzyMoveMoveGrab" fitHeight="17.0" fitWidth="60.0" layoutY="53.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="FrenzyMoveMoveReloadShoot" fitHeight="17.0" fitWidth="60.0" layoutX="-5.0" layoutY="113.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="FrenzyMoveThreeGrab" fitHeight="17.0" fitWidth="60.0" layoutX="-2.0" layoutY="147.0" pickOnBounds="true" preserveRatio="true" />
          </Pane>
          <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
-               <ImageView fx:id="moveMoveGrab" fitHeight="25.0" fitWidth="40.0" layoutX="44.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
-               <ImageView fx:id="moveShoot" fitHeight="25.0" fitWidth="40.0" layoutX="191.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+               <ImageView fx:id="DamagedMoveMoveGrab" fitHeight="25.0" fitWidth="40.0" layoutX="44.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+               <ImageView fx:id="DamagedMoveShoot" fitHeight="25.0" fitWidth="40.0" layoutX="191.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
       
                 <!-- hp grid pane -->
                <GridPane fx:id="hp" hgap="10.0" layoutX="-61.0" layoutY="41.0" prefHeight="70.0" prefWidth="591.0">
@@ -109,6 +114,11 @@
                      <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                   </columnResizePolicy>
                </TableView>
+      <Label fx:id="directions" layoutX="32.0" layoutY="486.0" prefHeight="193.0" prefWidth="342.0" wrapText="true">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
          </Pane>
          <Pane prefHeight="200.0" prefWidth="200.0">
                 <Button id="leave" fx:id="leave" prefHeight="50.0" prefWidth="100.0" text="Leave" textAlignment="CENTER">

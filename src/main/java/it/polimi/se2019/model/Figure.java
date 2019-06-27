@@ -3,9 +3,6 @@ package it.polimi.se2019.model;
 import it.polimi.se2019.utility.Action;
 import it.polimi.se2019.utility.Point;
 
-import java.util.List;
-import java.util.Set;
-
 public class Figure {
     private Tile tile;
     private FigureColour colour;
@@ -59,7 +56,8 @@ public class Figure {
 
     public void run (Point destination, int distance){
         if (player.getGameMap().getAllowedMovements(tile, distance).contains(destination)){
-            tile.removeFigure(this);
+            if(tile != null)
+                tile.removeFigure(this);
             tile = player.getGameMap().getTile(destination);
             tile.addFigure(this);
         }
