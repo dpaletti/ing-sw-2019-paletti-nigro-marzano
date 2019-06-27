@@ -40,7 +40,7 @@
       <ImageView fx:id="center31" fitHeight="63.75" fitWidth="62.5" layoutX="40.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true" />
         </Pane>
         <Pane fx:id="pane20" prefHeight="94.0" prefWidth="31.0" GridPane.rowIndex="2">
-      <ImageView fx:id="tile20" fitHeight="286.0" fitWidth="146.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="tile20" fitHeight="286.0" fitWidth="146.0" layoutY="100" pickOnBounds="true" preserveRatio="true" />
                 <ImageView fx:id="loot20" fitHeight="35.0" fitWidth="35.0" layoutX="35.0" layoutY="79.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="center20" fitHeight="63.75" fitWidth="62.0" layoutX="59.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
         </Pane>

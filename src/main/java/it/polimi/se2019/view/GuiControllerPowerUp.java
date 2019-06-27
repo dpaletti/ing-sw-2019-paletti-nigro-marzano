@@ -120,7 +120,7 @@ public class GuiControllerPowerUp extends GuiController {
         powerupMiddle.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ViewGUI.getInstance().chooseSpawn(left, middle);
+                ViewGUI.getInstance().chooseSpawn(middle, left);
                 disable(powerupMiddle);
                 disable(powerupLeft);
                 powerupMiddle.setImage(null);

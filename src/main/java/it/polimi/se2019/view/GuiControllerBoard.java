@@ -61,6 +61,11 @@ public class GuiControllerBoard extends GuiController {
             Point oldPosition = ViewGUI.getInstance().getPosition(figure);
             leaveTile(oldPosition, figure);
             enterTile(position, figure);
+            for(ImageView i: highlightedTiles){
+                i.setImage(null);
+                i.setDisable(false);
+            }
+            ViewGUI.getInstance().setPosition(figure, position);
     }
 
     public void enterTile(Point toUpdate, String figureEntering){
@@ -277,6 +282,10 @@ public class GuiControllerBoard extends GuiController {
                 toQuery = path + rightConfig + "/tile" + message.getTile().getX() + message.getTile().getY() + ".png";
 
             toHighlight.setImage(new Image(Paths.get(toQuery).toUri().toURL().toString()));
+            toHighlight.setDisable(false);
+            toHighlight.setOnMouseEntered((MouseEvent event) -> clickable());
+            toHighlight.setOnMouseExited((MouseEvent event) -> notClickable());
+            toHighlight.setOnMouseClicked((MouseEvent event) -> ViewGUI.getInstance().move(message.getTile()));
         }catch (MalformedURLException e){
             Log.severe("Could not get image for highlighting correct tiles");
         }

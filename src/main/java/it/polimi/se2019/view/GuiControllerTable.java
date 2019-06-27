@@ -478,7 +478,7 @@ public class GuiControllerTable extends GuiController {
             available.setOnMouseEntered((MouseEvent event) -> clickable());
             available.setOnMouseExited((MouseEvent event) -> notClickable());
             available.setOnMouseClicked((MouseEvent event) -> {
-                ViewGUI.getInstance().useCombo();
+                ViewGUI.getInstance().useCombo(message.getCombo());
                 for(String s: availableMoves)
                     scene.lookup("#" + s).setDisable(true);
             });

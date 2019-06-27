@@ -208,7 +208,11 @@ public class Game extends Observable<MVEvent> {
      }
 
     public void allowedMovements (String username, String target, int radius){
-        Player playing= userToPlayer(target);
+        Player playing;
+        if(target.equals(""))
+            playing = userToPlayer(username);
+        else
+            playing= userToPlayer(target);
         List<Point> allowedPositions= gameMap.getAllowedMovements(playing.getFigure().getTile(), radius);
         if (!allowedPositions.isEmpty())
             notify(new AllowedMovementsEvent(username, allowedPositions, target));

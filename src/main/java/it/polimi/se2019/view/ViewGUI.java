@@ -5,10 +5,7 @@ import it.polimi.se2019.network.Client;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.ui_events.*;
-import it.polimi.se2019.view.vc_events.EndOfTurnEvent;
-import it.polimi.se2019.view.vc_events.PowerUpUsageEvent;
-import it.polimi.se2019.view.vc_events.SpawnEvent;
-import it.polimi.se2019.view.vc_events.VcMatchConfigurationEvent;
+import it.polimi.se2019.view.vc_events.*;
 import javafx.application.Application;
 
 import java.util.ArrayList;
@@ -85,6 +82,11 @@ public class ViewGUI extends View {
         new UiAvailablePowerup(message.getUsablePowerUp());
     }
 
+
+    public void move(Point p){
+        notify(new VCMoveEvent(client.getUsername(), p, false));
+    }
+
     @Override
     public void matchMaking(List<String> usernames, List<String> configs) {
         semControllerSync.acquireUninterruptibly();
@@ -112,9 +114,8 @@ public class ViewGUI extends View {
         return getPlayerOnUsername(client.getUsername()).getPlayerColor();
     }
 
-    public void useCombo(){
-        
-
+    public void useCombo(String combo){
+        notify(new ChosenComboEvent(client.getUsername(), combo));
     }
 
     public void lockPlayers(List<String> figuresToLock){
