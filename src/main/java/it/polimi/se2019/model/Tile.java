@@ -83,6 +83,7 @@ public class Tile implements Targetable{
     public List<Targetable> getByEffect(List<String> effects, TurnMemory turnMemory) {
         List<Tile> hit= new ArrayList<>();
         for (String s: effects){
+            if (turnMemory.getHitTiles().get(s) != null)
             hit.addAll(turnMemory.getHitTiles().get(s));
         }
         return new ArrayList<>(hit);
@@ -114,6 +115,14 @@ public class Tile implements Targetable{
         for(Tile t: tiles)
             points.add(t.getPosition());
         event.addActionOnTiles(actions, points);
+    }
+
+    @Override
+    public List<Targetable> getPlayers () {
+        List<Targetable> targetables = new ArrayList<>();
+        for (Figure f : figures)
+            targetables.add(f.getPlayer());
+        return targetables;
     }
 
     private List<Tile> toTileList(List<Targetable> list){

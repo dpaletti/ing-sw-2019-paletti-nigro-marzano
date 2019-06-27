@@ -26,4 +26,6 @@ public enum ActionType {
     };
 
     public abstract void apply(Player target, Player shooter, Action action, Game game);
+
+
 }

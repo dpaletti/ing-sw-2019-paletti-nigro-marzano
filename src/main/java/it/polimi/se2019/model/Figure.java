@@ -94,4 +94,10 @@ public class Figure {
         return colour == figure.colour;
     }
 
+    @Override
+    public String toString() {
+        return "Figure{" +
+                "colour=" + colour +
+                '}';
+    }
 }

@@ -1,5 +1,4 @@
 package it.polimi.se2019.controller;
-import com.sun.tools.javadoc.Start;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.mv_events.NotEnoughPlayersConnectedEvent;
 import it.polimi.se2019.model.mv_events.StartFirstTurnEvent;

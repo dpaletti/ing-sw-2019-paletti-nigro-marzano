@@ -32,4 +32,12 @@ public class Pair<T , S > {
         return first.equals(pair.first) &&
                 second.equals(pair.second);
     }
+
+    @Override
+    public String toString() {
+        return "Pair{" +
+                "first=" + first +
+                ", second=" + second +
+                '}';
+    }
 }

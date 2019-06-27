@@ -5,17 +5,19 @@ import it.polimi.se2019.model.AmmoColour;
 import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.view.MVEvent;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class NewAmmosEvent extends MVEvent {
-    private HashSet<AmmoColour> ammos;
+    private ArrayList<String> ammos;
     private String user;
     private int usage;
 
-    public NewAmmosEvent(String destination, Set<AmmoColour> ammos, String user) {
+    public NewAmmosEvent(String destination, List<String> ammos, String user) {
         super(destination);
-        this.ammos = new HashSet<>(ammos);
+        this.ammos = new ArrayList<>(ammos);
         this.user = user;
     }
 
@@ -23,8 +25,8 @@ public class NewAmmosEvent extends MVEvent {
         return user;
     }
 
-    public Set<AmmoColour> getAmmos() {
-        return new HashSet<>(ammos);
+    public List<String> getAmmos() {
+        return ammos;
     }
 
     public int getUsage() {

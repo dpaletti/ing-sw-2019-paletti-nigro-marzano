@@ -44,8 +44,9 @@ public class Player implements Targetable{
     @Override
      public List<Targetable> getByEffect (List<String> effects, TurnMemory turnMemory) {
         List<Targetable> hit= new ArrayList<>();
-        for (String s: effects){
-            hit.addAll(turnMemory.getHitTargets().get(s));
+        for (String s: effects) {
+            if (turnMemory.getHitTargets().get(s) != null)
+                hit.addAll(turnMemory.getHitTargets().get(s));
         }
         return hit;
     }
@@ -80,6 +81,11 @@ public class Player implements Targetable{
             usernames.add(game.playerToUser(p));
         }
         event.addActionOnPlayer(actions, usernames);
+    }
+
+    @Override
+    public List<Targetable> getPlayers() {
+        return new ArrayList<>(Arrays.asList(this));
     }
 
     private List<Player> toPlayerList (List<Targetable> list){
@@ -305,5 +311,12 @@ public class Player implements Targetable{
         if (o == null || getClass() != o.getClass()) return false;
         Player player = (Player) o;
         return figure.equals(player.figure);
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "figure=" + figure.toString() +
+                '}';
     }
 }

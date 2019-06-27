@@ -25,4 +25,11 @@ public class Action implements Serializable {
     public void setDirection(Direction direction) { this.direction = direction; }
 
     public void setValue(Integer value) { this.value = value; }
+
+    @Override
+    public String toString() {
+        return "Action{" +
+                "actionType=" + actionType +
+                '}';
+    }
 }

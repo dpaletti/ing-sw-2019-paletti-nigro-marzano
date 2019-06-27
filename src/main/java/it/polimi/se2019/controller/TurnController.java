@@ -78,6 +78,7 @@ public class TurnController extends Controller {
         if (comboUsed==2 || reloaded)
             endTurn();
         }
+
         private boolean isCombo(List<PartialCombo> combos,Combo combo){
             List<PartialCombo> expected= combo.getPartialCombos();
             if(combos.size()!=expected.size())

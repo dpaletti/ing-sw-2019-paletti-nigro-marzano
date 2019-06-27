@@ -157,4 +157,8 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("UsablePowerUpEvent not supported");
     }
 
+    default void dispatch(PartialSelectionEvent message){
+        throw new UnsupportedOperationException("PartialSelectionEvent not supported");
+    }
+
 }

@@ -55,7 +55,6 @@ public class Game extends Observable<MVEvent> {
             selectionEventHolder = new MVSelectionEvent(playerSelecting);
         if(!targetables.isEmpty())
             targetables.get(0).addToSelectionEvent(selectionEventHolder, targetables, actions);
-
     }
 
     public void sendPossibleTargets (){
@@ -71,6 +70,10 @@ public class Game extends Observable<MVEvent> {
     public void unpausePlayer (String username){
         Player player= userToPlayer(username);
         player.unpause();
+    }
+
+    public void setTurnMemory(TurnMemory turnMemory) {
+        this.turnMemory = turnMemory;
     }
 
     public Tile getTile (Point position){

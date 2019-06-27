@@ -7,16 +7,16 @@ import java.util.Map;
 public class TurnMemory {
     private Map<String, List<Player>>  hitTargets= new HashMap<>();
     private  Map<String, List<Tile>> hitTiles= new HashMap<>();
-    private String lastEffectUsed= "none";
+    private String lastEffectUsed= "";
 
     public TurnMemory(){
         //empty constructor
     }
 
     public TurnMemory (TurnMemory turnMemory){
-        this.hitTiles= turnMemory.getHitTiles();
-        this.hitTargets= turnMemory.getHitTargets();
-        this.lastEffectUsed=turnMemory.lastEffectUsed;
+        this.hitTiles = turnMemory.getHitTiles();
+        this.hitTargets = turnMemory.getHitTargets();
+        this.lastEffectUsed = turnMemory.getLastEffectUsed();
     }
 
 
@@ -47,6 +47,23 @@ public class TurnMemory {
         return lastEffectUsed;
     }
 
+    //------------------testing purposes--------------------------
+
+    public void setHitTargets(Map<String, List<Player>> hitTargets) {
+        this.hitTargets = hitTargets;
+    }
+
+    public void setHitTiles(Map<String, List<Tile>> hitTiles) {
+        this.hitTiles = hitTiles;
+    }
+
+    //-------------------------------------------------------------
+
+    public void hit (String partialWeaponEffect, List<Targetable> hitTargets, Targetable target){
+        target.hit(partialWeaponEffect, hitTargets, this);
+        lastEffectUsed=partialWeaponEffect;
+    }
+
     public List<Targetable> getByEffect(List<String> effects, Targetable target){
         return target.getByEffect(effects, this);
     }
@@ -54,7 +71,7 @@ public class TurnMemory {
     public void end (){
         hitTargets.clear();
         hitTiles.clear();
-        lastEffectUsed= "none";
+        lastEffectUsed= "";
     }
 
 }

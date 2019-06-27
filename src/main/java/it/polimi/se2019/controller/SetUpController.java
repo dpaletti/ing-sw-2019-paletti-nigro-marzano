@@ -71,7 +71,6 @@ public class SetUpController extends Controller {
         new MatchController(model, server, model.getUsernames(), getRoomNumber());
         new TurnController(model, server, getRoomNumber());
         new WeaponController(server, getRoomNumber(), model);
-        new WeaponEffectController(server, getRoomNumber(), model);
         server.removeController(this, getRoomNumber());
     }
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 public class TestModelHelper extends View {
     private MVEvent current;
+
     @Override
     public void update(MVEvent message) {
         current=message;

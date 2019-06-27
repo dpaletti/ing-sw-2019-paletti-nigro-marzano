@@ -84,4 +84,12 @@ public interface VCEventDispatcher extends EventDispatcher {
     default void dispatch (ChosenComboEvent message){
         throw new UnsupportedOperationException("ChosenComboEvent not supported");
     }
+
+    default void dispatch (ChosenEffectPowerUpEvent message){
+        throw new UnsupportedOperationException("ChosenEffectPowerUp not supported");
+    }
+
+    default void dispatch (VCPartialEffectEvent message){
+        throw new UnsupportedOperationException("VCPartialEffectEvent not supported");
+    }
 }
