@@ -10,6 +10,7 @@ import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.*;
 
 import java.lang.annotation.Target;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class WeaponController extends CardController {
@@ -117,15 +118,21 @@ public class WeaponController extends CardController {
                 handlePartial(currentLayer.get(partialGraphLayer).getKey());
         }
         else {
-            if (message.getTargetPlayer() != null)
+            if (message.getTargetPlayer() != null) {
                 model.apply(model.playerToUser(currentPlayer),
                         new ArrayList<>(Arrays.asList(model.userToPlayer(message.getTargetPlayer()))),
                         currentLayer.get(partialGraphLayer).getKey());
+                usablePowerUps(new ArrayList<>(Arrays.asList(message.getTargetPlayer())));
+            }
             else if (message.getTargetTile() != null) {
                 List<Player> targets = new ArrayList<>();
-                for (Targetable t : model.getTile(message.getTargetTile()).getPlayers())
+                List<String> users = new ArrayList<>();
+                for (Targetable t : model.getTile(message.getTargetTile()).getPlayers()) {
                     targets.add((Player) t);
+                    users.add(model.playerToUser((Player)t));
+                }
                 model.apply(model.playerToUser(currentPlayer), targets, currentLayer.get(partialGraphLayer).getKey());
+                usablePowerUps(users);
             }
 
             layersVisitedPartial++;
@@ -167,7 +174,15 @@ public class WeaponController extends CardController {
         List<String> players = new ArrayList<>();
         //for (Targetable t : targetables)
         return players;
+    }
 
+    private void usablePowerUps(List<String> targets){
+        if (targets.size() == 1 && targets.get(0).equals(model.playerToUser(currentPlayer)))
+            model.usablePowerUps("onAttack", true, currentPlayer);
+        else {
+            for (String s : targets)
+                model.usablePowerUps("onDamage", false, model.userToPlayer(s));
+        }
     }
 
 }

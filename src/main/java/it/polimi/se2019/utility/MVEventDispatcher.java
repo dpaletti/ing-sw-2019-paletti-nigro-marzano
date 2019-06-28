@@ -14,10 +14,6 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("FigureToAttackEvent not supported");
     }
 
-    default void dispatch(NotEnoughAmmoEvent message){
-        throw new UnsupportedOperationException("NotEnoughAmmoEvent not supported");
-    }
-
     default void dispatch(TeleportEvent message){
         throw new UnsupportedOperationException("TeleportEvent not supported");
     }

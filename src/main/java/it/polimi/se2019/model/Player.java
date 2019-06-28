@@ -173,7 +173,6 @@ public class Player implements Targetable{
         for (int i = 0; i < hits; i++)
             figure.damage(target.figure);
         target.updatePlayerDamage();
-        game.usablePowerUps("onDamage", false, target);
     }
 
     public void markPeople (Player target, int marks){
@@ -190,8 +189,8 @@ public class Player implements Targetable{
         reloadPrice.add(weapon.cardColour);
         if (pay(new ArrayList<>(reloadPrice)))
             figure.reload(weapon);
-        else
-            game.send(new NotEnoughAmmoEvent(game.colourToUser(figure.getColour())));
+        /*else
+           game.send(new SellPowerUpEvent());*/
     }
 
     public void sellPowerUp (String powerUp){
