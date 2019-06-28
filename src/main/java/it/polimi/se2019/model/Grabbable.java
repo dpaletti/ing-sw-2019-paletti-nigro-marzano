@@ -7,7 +7,7 @@ public interface Grabbable {
 
     String getName();
 
-    void grab(Player playing, String grabbed);
+    void grab(Player playing, String grabbed, Game game);
 
     static List<String> grabbableStringify(List<Grabbable> grabbables){
         List<String> names = new ArrayList<>();

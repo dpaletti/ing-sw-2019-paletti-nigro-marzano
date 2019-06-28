@@ -1,6 +1,6 @@
 package it.polimi.se2019.utility;
 
-import it.polimi.se2019.view.vc_events.EndOfTurnEvent;
+import it.polimi.se2019.view.vc_events.VCEndOfTurnEvent;
 import it.polimi.se2019.view.vc_events.*;
 
 public interface VCEventDispatcher extends EventDispatcher {
@@ -53,8 +53,8 @@ public interface VCEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("Discarded PowerUp Event not supported");
     }
 
-    default void dispatch (EndOfTurnEvent message){
-        throw new UnsupportedOperationException("EndOfTurnEvent not supported");
+    default void dispatch (VCEndOfTurnEvent message){
+        throw new UnsupportedOperationException("VCEndOfTurnEvent not supported");
     }
 
 
@@ -90,4 +90,11 @@ public interface VCEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("VCPartialEffectEvent not supported");
     }
 
+    default void dispatch (VCSellPowerUpEvent message){
+        throw new UnsupportedOperationException("VCSellPowerUpEvent not supported");
+    }
+
+    default void dispatch (VCChooseAmmoToPayEvent message){
+        throw new UnsupportedOperationException("VCChooseAmmoToPayEvent not supported");
+    }
 }

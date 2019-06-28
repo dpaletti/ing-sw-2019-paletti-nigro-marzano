@@ -103,7 +103,7 @@ public class TestTurnController {
         turnController.update(moveEvent3);
         turnController.update(moveEvent2);
         assertEquals(new Point(1,2),leiva.getPosition());
-        EndOfTurnEvent endOfTurnEvent= new EndOfTurnEvent(game.playerToUser(leiva));
+        VCEndOfTurnEvent endOfTurnEvent= new VCEndOfTurnEvent(game.playerToUser(leiva));
         turnController.update(endOfTurnEvent);
         assertEquals("wallace",turnController.getCurrentPlayer());
     }

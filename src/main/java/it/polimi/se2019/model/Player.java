@@ -132,6 +132,10 @@ public class Player implements Targetable{
         return figure;
     }
 
+    public Game getGame() {
+        return game;
+    }
+
     public PlayerDamage getHealthState() {
         return healthState;
     }
@@ -187,10 +191,20 @@ public class Player implements Targetable{
     public void reload(Weapon weapon){
         ArrayList<Ammo> reloadPrice= new ArrayList<>(weapon.price);
         reloadPrice.add(weapon.cardColour);
-        if (pay(new ArrayList<>(reloadPrice)))
+        if (missingAmmos(new ArrayList<>(reloadPrice)).isEmpty())
             figure.reload(weapon);
-/*        else
-           game.send(new MVSellPowerUpEvent(game.playerToUser(this), ));*/
+        else {
+            if (!powerUpsToPay(reloadPrice).isEmpty()) {
+                Map<String, Integer> colourToMissing = new HashMap<>();
+                for (Ammo a : (missingAmmos(reloadPrice))) {
+                    if (colourToMissing.containsKey(a.getColour().name()))
+                        colourToMissing.put(a.getColour().name(), colourToMissing.get(a.getColour().name()) + 1);
+                    else
+                        colourToMissing.put(a.getColour().name(), 1);
+                }
+                game.send(new MVSellPowerUpEvent(game.playerToUser(this), powerUpsToPay(reloadPrice), colourToMissing));
+            }
+        }
     }
 
     public void sellPowerUp (String powerUp){
@@ -279,19 +293,18 @@ public class Player implements Targetable{
         drawPowerUp(game.getPowerUpDeck().draw().getName());
     }
 
-    public boolean pay (List<Ammo> ammoToPay){  //missingAmmos
-        return true;
-        /*List<Ammo> ammosMissing = new ArrayList<>();
-        return ammosMissing;
+    public List<Ammo> missingAmmos (List<Ammo> ammoToPay){
+        List<Ammo> ammosMissing = new ArrayList<>();
         List<Ammo> ammosOwned = new ArrayList<>(ammo);
         for  (Ammo a : ammoToPay){
             if (ammosOwned.contains(a))
                 ammosOwned.remove(a);
             else
-                return false;
+                ammosMissing.add(a);
         }
-        useAmmos(ammoToPay);
-        return true;*/
+        if (ammosMissing.isEmpty())
+            useAmmos(ammoToPay);
+        return ammosMissing;
     }
 
     public void addWeapon (Weapon weapon){
@@ -321,4 +334,22 @@ public class Player implements Targetable{
                 "figure=" + figure.toString() +
                 '}';
     }
+
+ public List<String> powerUpsToPay (List<Ammo> price){
+        List<PowerUp> availablePowerUps = new ArrayList<>(powerUps);
+        List<String> toPay = new ArrayList<>();
+        boolean flag = false;
+        for (Ammo a : price){
+            for (PowerUp p : availablePowerUps){
+                if (a.getColour().name().equalsIgnoreCase(p.getColour())) {
+                    toPay.add(p.name);
+                    availablePowerUps.remove(p);
+                    flag = true;
+                }
+                if (!flag)
+                    return Collections.emptyList();
+            }
+        }
+        return toPay;
+ }
 }

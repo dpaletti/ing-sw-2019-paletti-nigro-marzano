@@ -1,9 +1,12 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.mv_events.MVSellPowerUpEvent;
 import it.polimi.se2019.utility.Log;
 
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class Weapon extends Card implements Grabbable, Drawable, Jsonable{
@@ -31,7 +34,7 @@ public class Weapon extends Card implements Grabbable, Drawable, Jsonable{
     //else send choice event to game
 
     @Override
-    public void grab(Player player, String grabbed) {
+    public void grab(Player player, String grabbed, Game game) {
         int index =-1;
         for (Grabbable w : player.getFigure().getTile().getGrabbables()){
             if (w.getName().equalsIgnoreCase(grabbed)) {
@@ -42,8 +45,22 @@ public class Weapon extends Card implements Grabbable, Drawable, Jsonable{
         if (index == -1)
             throw new UnsupportedOperationException(grabbed + "\t is not in the current weapon spot and cannot be grabbed");
         if (player.getWeapons().size() < 3){
-            if (player.pay(((Weapon)player.getFigure().getTile().grabbables.get(index)).price))   //price could be and was paid
+            if(player.missingAmmos(((Weapon)player.getFigure().getTile().grabbables.get(index)).price).isEmpty())  //price could be and was paid
                 player.addWeapon((Weapon)player.getFigure().getTile().grabbables.get(index));
+            else{
+                if (!player.powerUpsToPay(((Weapon)player.getFigure().getTile().grabbables.get(index)).price).isEmpty()) {
+                    Map<String, Integer> colourToMissing = new HashMap<>();
+                    for (Ammo a : (player.missingAmmos(((Weapon)player.getFigure().getTile().grabbables.get(index)).price))) {
+                        if (colourToMissing.containsKey(a.getColour().name()))
+                            colourToMissing.put(a.getColour().name(), colourToMissing.get(a.getColour().name()) + 1);
+                        else
+                            colourToMissing.put(a.getColour().name(), 1);
+                    }
+                    game.send(new MVSellPowerUpEvent(game.playerToUser(player),
+                            player.powerUpsToPay(((Weapon)player.getFigure().getTile().grabbables.get(index)).price),
+                            colourToMissing));
+                }
+            }
         }
     }
 

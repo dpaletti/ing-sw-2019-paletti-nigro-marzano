@@ -150,6 +150,10 @@ public class WeaponController extends CardController {
         model.usablePowerUps("onAttack", true, currentPlayer);
         model.apply(model.playerToUser(currentPlayer), targets, currentLayer.get(layersVisitedPartial).getKey());
         nextWeaponEffect();
+        //should this be sent later?
+        for (Player p : targets) {
+            disablePowerUps(model.playerToUser(p), "onDamage");
+        }
     }
 
     @Override

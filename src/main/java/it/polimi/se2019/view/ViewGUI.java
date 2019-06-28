@@ -202,7 +202,7 @@ public class ViewGUI extends View {
     }
 
     public void endTurn(){
-        notify(new EndOfTurnEvent(client.getUsername()));
+        notify(new VCEndOfTurnEvent(client.getUsername()));
         notify(new UiTurnEnd());
     }
 

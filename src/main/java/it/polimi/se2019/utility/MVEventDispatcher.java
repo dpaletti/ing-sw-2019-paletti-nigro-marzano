@@ -153,4 +153,23 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("PartialSelectionEvent not supported");
     }
 
+    default void dispatch (MVSellPowerUpEvent message){
+        throw new UnsupportedOperationException("MVSellPowerUpEvent not supported");
+    }
+
+    default void dispatch (FinanceUpdateEvent message){
+        throw new UnsupportedOperationException("FinanceUpdateEvent not supported");
+    }
+
+    default void dispatch (MVEndOfTurnEvent message){
+        throw new UnsupportedOperationException("MVEndOfTurnEvent not supported");
+    }
+
+    default void dispatch (MVChooseAmmoToPayEvent message){
+        throw new UnsupportedOperationException("MVChooseAmmoToPayEvent not supported");
+    }
+
+    default void dispatch (DisablePowerUpEvent message){
+        throw new UnsupportedOperationException("DisablePowerUpEvent not supported");
+    }
 }

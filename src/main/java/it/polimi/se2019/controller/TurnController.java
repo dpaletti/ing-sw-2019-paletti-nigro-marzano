@@ -1,10 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.mv_events.MVMoveEvent;
-import it.polimi.se2019.model.mv_events.NotEnoughPlayersConnectedEvent;
-import it.polimi.se2019.model.mv_events.StartFirstTurnEvent;
-import it.polimi.se2019.model.mv_events.TurnEvent;
+import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
@@ -12,6 +9,7 @@ import it.polimi.se2019.utility.PartialCombo;
 import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.*;
+import it.polimi.se2019.view.vc_events.DiscardedPowerUpEvent;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -141,7 +139,7 @@ public class TurnController extends Controller {
     }
 
     @Override
-    public void dispatch(EndOfTurnEvent message) {
+    public void dispatch(VCEndOfTurnEvent message) {
         endTurn();
     }
 
@@ -204,6 +202,7 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(VCWeaponEndEvent message) {
+        disablePowerUps(currentPlayer,"onAttack");
         nextPartialCombo();
     }
 
@@ -244,6 +243,7 @@ public class TurnController extends Controller {
 
     //Create an event to assure that whenever a player leaves he forces spawn in a point
     private void endTurn(){
+        String previouslyPlaying = currentPlayer;
         comboUsed = 0;
         comboIndex = 0;
         currentCombo = null;
@@ -256,10 +256,13 @@ public class TurnController extends Controller {
                 model.send(new StartFirstTurnEvent(currentPlayer,
                         model.getPowerUpDeck().draw().getName(),
                         model.getPowerUpDeck().draw().getName(),false,model.getGameMap().getMappedSpawnPoints()));
-            else
-                model.send(new TurnEvent(currentPlayer,fromPartialToStringCombo(model.userToPlayer(currentPlayer).getHealthState().getMoves())));
-            //This line is commented out only to pass the serverless tests
-            //startTimer(server.getTurnTimer());
+            else {
+                model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
+                disablePowerUps(currentPlayer,"onTurn");
+                model.send(new TurnEvent(currentPlayer, fromPartialToStringCombo(model.userToPlayer(currentPlayer).getHealthState().getMoves())));
+                //This line is commented out only to pass the serverless tests
+                //startTimer(server.getTurnTimer());
+            }
         }
         else
             model.send(new NotEnoughPlayersConnectedEvent("*"));
@@ -276,4 +279,6 @@ public class TurnController extends Controller {
     public String getCurrentPlayer() {
         return currentPlayer;
     }
+
+
 }

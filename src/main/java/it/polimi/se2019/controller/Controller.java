@@ -3,6 +3,7 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.model.Player;
 import it.polimi.se2019.model.PowerUp;
+import it.polimi.se2019.model.mv_events.DisablePowerUpEvent;
 import it.polimi.se2019.model.mv_events.TimerEvent;
 import it.polimi.se2019.model.mv_events.UsablePowerUpEvent;
 import it.polimi.se2019.network.Server;
@@ -71,6 +72,13 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
             return getNextActiveUser(model.getUsernames().get(model.getUsernames().indexOf(user) + 1));
         else
             return model.getUsernames().get(model.getUsernames().indexOf(user) + 1);
+    }
+
+    protected void disablePowerUps(String currentPlayer, String constraint){
+        for (PowerUp p : model.userToPlayer(currentPlayer).getPowerUps()) {
+            if (p.getConstraint().equalsIgnoreCase(constraint))
+                model.send(new DisablePowerUpEvent(currentPlayer, p.getName()));
+        }
     }
 
 }

@@ -10,6 +10,7 @@ import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.ChosenEffectPowerUpEvent;
 import it.polimi.se2019.view.vc_events.PowerUpUsageEvent;
+import it.polimi.se2019.view.vc_events.VCChooseAmmoToPayEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,10 @@ public class PowerUpController extends CardController {
             endUsage();
     }
 
+    @Override
+    public void dispatch(VCChooseAmmoToPayEvent message) {
 
+    }
 
     @Override
     public void dispatch(ChosenEffectPowerUpEvent message) {
