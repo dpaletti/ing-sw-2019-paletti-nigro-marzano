@@ -2,11 +2,16 @@
     -fx-background-image: url("../assets/star_sky.png");
 }
 
+/*delete this, only for testing purposes*/
+.pane {
+  -fx-border-color: black
+}
 
 .label {
     -fx-font-family: "Arial";
     -fx-text-fill: linear-gradient(white, #d0d0d0);
 }
+
 
 .button {
     -fx-background-color:

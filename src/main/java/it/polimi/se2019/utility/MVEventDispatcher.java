@@ -87,10 +87,6 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("PowerUpToLeave Event not supported");
     }
 
-    default void dispatch(AllowedWeaponsEvent message){
-        throw new UnsupportedOperationException("AllowedWeaponsEvent not supported");
-    }
-
     default void dispatch(UnpausedPlayerEvent message) {
         throw new UnsupportedOperationException("UnpausedPlayerEvent not supported");
     }
@@ -111,9 +107,6 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("UpdatePointsEvent not supported");
     }
 
-    default void dispatch (WeaponEffectsEvent message){
-        throw new UnsupportedOperationException("WeaponEffectsEvent not supported");
-    }
 
     default void dispatch (PartialEffectEvent message){
         throw new UnsupportedOperationException("PartialEffectEvent not supported");
@@ -123,14 +116,6 @@ public interface MVEventDispatcher extends EventDispatcher {
 
     default void dispatch (GrabbablesEvent message){
         throw new UnsupportedOperationException("GrabbablesEvent not supported");
-    }
-
-    default void dispatch(DiscardedPowerUpEvent message){
-        throw new UnsupportedOperationException("DiscardedPowerUpEvent not supported");
-    }
-
-    default void dispatch(DiscardedWeaponEvent message){
-        throw new UnsupportedOperationException("DiscardedWeaponEvent not supported");
     }
 
     default void dispatch(GrabbedWeaponEvent message){
@@ -153,6 +138,17 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("UsablePowerUpEvent not supported");
     }
 
+    default void dispatch(ReloadableWeaponsEvent message){
+        throw new UnsupportedOperationException("Reloadable weapons not supported");
+    }
+
+    default void dispatch(AllowedWeaponsEvent message){
+        throw new UnsupportedOperationException("AllowedWeapon not supported");
+    }
+
+    default void dispatch(PossibleEffectsEvent message){
+        throw new UnsupportedOperationException("PossibleEffects not supported");
+    }
     default void dispatch(PartialSelectionEvent message){
         throw new UnsupportedOperationException("PartialSelectionEvent not supported");
     }

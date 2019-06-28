@@ -1,24 +1,19 @@
 package it.polimi.se2019.controller;
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.mv_events.AllowedMovementsEvent;
-import it.polimi.se2019.model.mv_events.AvailableWeaponsEvent;
 import it.polimi.se2019.model.mv_events.MVSelectionEvent;
-import it.polimi.se2019.model.mv_events.PossibleEffectsEvent;
-import it.polimi.se2019.network.Server;
-import it.polimi.se2019.utility.*;
+import it.polimi.se2019.utility.BiSet;
+import it.polimi.se2019.utility.Pair;
+import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
 import it.polimi.se2019.view.vc_events.ChosenWeaponEvent;
-import it.polimi.se2019.view.vc_events.ShootEvent;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 
-import java.lang.reflect.Array;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 public class TestWeaponController {
 
     private Game game = new Game();
@@ -41,7 +36,6 @@ public class TestWeaponController {
 
     private ChosenWeaponEvent chosenWeaponEvent = new ChosenWeaponEvent("magenta", "Whisper");
     private ChosenEffectEvent chosenEffectEvent = new ChosenEffectEvent("magenta", "effect", "Whisper");
-    private ShootEvent shootEvent = new ShootEvent("magenta");
     private TestModelHelper testModelHelper = new TestModelHelper();
 
     @Before
@@ -128,27 +122,5 @@ public class TestWeaponController {
         assertTrue(((MVSelectionEvent)testModelHelper.getCurrent()).getActionOnPlayers().values().contains(targets));
     }
 
-    @Test
-    public void testDispatchShoot(){
-        magenta.getFigure().spawn(new Point(0, 1));
-        ArrayList<Grabbable> grabbables = new ArrayList<>(Arrays.asList(whisper));
-        game.getTile(magenta.getPosition()).setGrabbables(grabbables);
-        magenta.grabStuff("Whisper");
-        weaponController.dispatch(shootEvent);
 
-        assertEquals("magenta", testModelHelper.getCurrent().getDestination());
-        assertTrue(((AvailableWeaponsEvent)testModelHelper.getCurrent()).getWeapons().contains("Whisper"));
-    }
-
-    @Test
-    public void testDispatchWeapon(){
-        int value = 0;
-        weaponController.dispatch(shootEvent);
-        weaponController.dispatch(chosenWeaponEvent);
-
-        assertEquals("magenta", testModelHelper.getCurrent().getDestination());
-        assertEquals("Whisper", ((PossibleEffectsEvent)testModelHelper.getCurrent()).getWeaponName());
-        assertTrue(((PossibleEffectsEvent)testModelHelper.getCurrent()).getEffects().get("effect") == 0);
-        assertTrue(((PossibleEffectsEvent)testModelHelper.getCurrent()).getEffects().containsKey("effect"));
-    }
 }

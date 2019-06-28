@@ -25,6 +25,7 @@ public class ViewGUI extends View {
 
     private ArrayBlockingQueue<MVEvent> eventBuffer = new ArrayBlockingQueue<>(100);
     private static Semaphore semControllerSync = new Semaphore(1, true);
+    private Semaphore semMove = new Semaphore(1, true);
     private List<MockPlayer> players = new ArrayList<>();
     private boolean timerGoing=false;
     private static ViewGUI instance = null;
@@ -45,6 +46,8 @@ public class ViewGUI extends View {
         }
     }
 
+    //------------------Singleton implementation-------------------//
+
     private ViewGUI(Client client){
         super(client);
         new Thread(new EventListener()).start();
@@ -58,34 +61,61 @@ public class ViewGUI extends View {
         return instance;
     }
 
+    //-------------------------------------------------------------//
+
+    //------------------Utility-------------------//
     public void send(VCEvent message){
         notify(message);
     }
 
-    public void fourthPowerUp(String powerUp){
-        //TODO
+    public void send(UiEvent message){
+        notify(message);
     }
 
-    public void usePowerUp(String powerUp){
-        notify(new PowerUpUsageEvent(client.getUsername(), powerUp));
+
+    public  void registerController(GuiController controller){
+        register(controller);
+        semControllerSync.release();
+    }
+
+    public void deregisterController(GuiController controller){
+        deregister(controller);
+    }
+
+    public String getUsername(){
+        return client.getUsername();
     }
 
     @Override
-    public void dispatch(TurnEvent message) {
-        notify(new UiStartTurn());
-        for(String c: message.getCombos())
-            notify(new UiAvailableMove(c));
+    public void dispatch(TimerEvent message) {
+        Log.fine("Time to go: " + message.getTimeToGo());
+        if (!timerGoing) {
+            notify(new UiTimerStart(message.getTimeToGo()));
+            timerGoing = true;
+        }
+        if (message.getTimeToGo() <= 1000) {
+            notify(new UiTimerStop());
+            timerGoing = false;
+        }
+        notify(new UiTimerTick(message.getTimeToGo()));
     }
 
     @Override
-    public void dispatch(UsablePowerUpEvent message) {
-        new UiAvailablePowerup(message.getUsablePowerUp());
+    public void update(MVEvent message) {
+        try {
+            Log.fine("Received: " + message);
+            eventBuffer.put(message);
+        }catch (UnsupportedOperationException e){
+            Log.severe("Unsupported event in view");
+            throw new UnsupportedOperationException("Error: " + e.getMessage(), e);
+        }catch (InterruptedException e){
+            Log.severe("Interrupted while adding to buffer in ViewGUI");
+        }
     }
 
+    //------------------Utility-------------------//
 
-    public void move(Point p){
-        notify(new VCMoveEvent(client.getUsername(), p, false));
-    }
+    //------------------MatchMaking-------------------//
 
     @Override
     public void matchMaking(List<String> usernames, List<String> configs) {
@@ -95,11 +125,177 @@ public class ViewGUI extends View {
         semControllerSync.acquireUninterruptibly();
         mapConfigSetup(configs);
         for (String username:
-             usernames) {
+                usernames) {
             addPlayer(username);
         }
         Log.fine("MatchMaking showing ended");
 
+    }
+
+    public void mapConfigSetup(List<String> config){
+        notify(new UiMapConfigEvent(config));
+    }
+
+    @Override
+    public void addPlayer(String username) {
+        Log.fine("notifying add player");
+        notify(new UiAddPlayer(username));
+    }
+
+    @Override
+    public synchronized void dispatch(MatchConfigurationEvent message)
+    {
+        notify(new UiCloseMatchMaking());
+    }
+
+    @Override
+    public void dispatch(UsernameDeletionEvent message) {
+        notify(new UiRemovePlayer(message.getUsername()));
+    }
+
+    //------------------------------------------------//
+
+
+    //------------------Setup-------------------//
+
+    @Override
+    public void dispatch(SetUpEvent message) {
+        semControllerSync.release();
+        for (String user : message.getUserToColour().keySet())
+            players.add(new MockPlayer(user, message.getUserToColour().get(user).toLowerCase()));
+
+        semControllerSync.acquireUninterruptibly();
+        notify(new UiCloseSetup());
+        semControllerSync.acquireUninterruptibly();
+
+        notify(new UiBoardInitialization(message.getWeaponSpots(), message.getLootCards(), message.getLeftConfig(), message.getRightConfig(), message.getSkulls()));
+        notify(new UiSetPlayerBoard(getPlayerOnUsername(client.getUsername()).getPlayerColor()));
+    }
+
+    public void gameSetup(int skulls, boolean frenzy, String conf){
+        String actualConf = conf.substring(0, 1).toUpperCase() + conf.substring(1);
+        notify(new VcMatchConfigurationEvent(client.getUsername(), skulls, frenzy, actualConf));
+
+    }
+
+    //------------------------------------------//
+
+    //------------------Turn Management-------------------//
+
+    @Override
+    public void dispatch(StartFirstTurnEvent message) {
+        semControllerSync.acquireUninterruptibly();
+        semControllerSync.acquireUninterruptibly();
+        pointColorSpawnMap = message.getSpawnPoints();
+        for(Point p: message.getSpawnPoints().keySet())
+            notify(new UiHighlightTileEvent(p, false));
+        notify(new UiPutPowerUp(message.getFirstPowerUpName()));
+        notify(new UiPutPowerUp(message.getSecondPowerUpName()));
+        notify(new UiSpawn());
+    }
+
+    @Override
+    public void dispatch(TurnEvent message) {
+        notify(new UiStartTurn());
+        for(String c: message.getCombos())
+            notify(new UiAvailableMove(c));
+    }
+
+    public void endTurn(){
+        notify(new EndOfTurnEvent(client.getUsername()));
+        notify(new UiTurnEnd());
+    }
+
+    //-----------------------------------Figure movements-----------------------------------//
+    @Override
+    public void dispatch(AllowedMovementsEvent message) {
+        for (Point p:
+                message.getAllowedPositions()) {
+            notify(new UiHighlightTileEvent(p, false));
+        }
+    }
+
+    @Override
+    public void dispatch(MVMoveEvent message) {
+        notify(new UiMoveFigure(getPlayerOnUsername(message.getUsername()).getPlayerColor(), message.getFinalPosition()));
+
+    }
+
+    public Point getPosition(String figure){
+        return getPlayerOnColour(figure).getPosition();
+    }
+
+    public Point getPosition(){
+        return getPlayerOnUsername(client.getUsername()).getPosition();
+    }
+    //--------------------------------------------------------------------------------------//
+    //-----------------------------------Grabbing-------------------------------------------//
+
+    @Override
+    public void dispatch(GrabbablesEvent message) {
+        if(isSpawn(usernameToPlayer(client.getUsername()).getPosition()) != null)
+            notify(new UiGrabWeapon(pointColorSpawnMap.get(isSpawn(usernameToPlayer(client.getUsername()).getPosition()))));
+        else
+            notify(new UiGrabLoot(getPlayerOnUsername(client.getUsername()).getPosition()));
+    }
+
+    //------------------------------------Selling--------------------------------------------//
+
+    @Override
+    public void dispatch(UpdateHpEvent message) {
+        MockPlayer attacked = getPlayerOnUsername(message.getAttacked());
+        MockPlayer attacker = getPlayerOnUsername(message.getAttacker());
+        List<String> newHp = attacked.getHp();
+        newHp.add(attacker.getPlayerColor().toLowerCase());
+        attacked.setHp(newHp);
+
+
+
+    }
+
+
+    //---------------------------------------------------------------------------------------//
+    //--------------------------------------------------------------------------------------//
+
+    //----------------------------------Shooting---------------------------------------------//
+
+    @Override
+    public void dispatch(AllowedWeaponsEvent message) {
+        notify(new UiActivateWeapons());
+    }
+
+    @Override
+    public void dispatch(PossibleEffectsEvent message) {
+        notify(new UiActivateWeaponEffects(message.getWeaponName(), message.getEffects()));
+    }
+
+    @Override
+    public void dispatch(PartialSelectionEvent message) {
+        if((message.getTargetPlayers() == null && message.getTargetTiles() == null) ||
+                (message.getTargetPlayers() != null && message.getTargetTiles() != null))
+            throw new IllegalArgumentException("Could not handle targeting, wrong event format");
+
+        if(message.getTargetTiles() != null) {
+            for (Point tile : message.getTargetTiles())
+                notify(new UiHighlightTileEvent(tile, true));
+        }else{
+            for(String figure: message.getTargetPlayers())
+                notify(new UiHighlightPlayer(getPlayerOnUsername(figure).getPlayerColor()));
+        }
+
+    }
+
+    //---------------------------------------------------------------------------------------//
+
+    @Override
+    public void dispatch(ReloadableWeaponsEvent message) {
+        notify(new UiReload());
+    }
+
+
+    @Override
+    public void dispatch(UsablePowerUpEvent message) {
+        new UiAvailablePowerup(message.getUsablePowerUp());
     }
 
     private MockPlayer getPlayerOnColour(String figure){
@@ -114,36 +310,9 @@ public class ViewGUI extends View {
         return getPlayerOnUsername(client.getUsername()).getPlayerColor();
     }
 
-    public void useCombo(String combo){
-        notify(new ChosenComboEvent(client.getUsername(), combo));
-    }
-
-    public void lockPlayers(List<String> figuresToLock){
-        notify(new UiLockPlayers(figuresToLock));
-    }
-
-    public void unlockPlayers(){
-        notify(new UiUnlockPlayers());
-    }
-
-    public void showPlayers(List<String> figuresToShow){
-        notify(new UiShowPlayers(figuresToShow));
-    }
-
-    public void hidePlayers(List<String> figuresToHide){
-        notify(new UiHidePlayers(figuresToHide));
-    }
-
-    public Point getPosition(String figure){
-        return getPlayerOnColour(figure).getPosition();
-    }
 
     public void setPosition(String figure, Point position){
         getPlayerOnColour(figure).setPosition(position);
-    }
-
-    public void contextSwitch(String figure){
-        notify(new UiContextSwitch(figure));
     }
 
     private MockPlayer getPlayerOnUsername(String username){
@@ -154,38 +323,7 @@ public class ViewGUI extends View {
         throw new IllegalArgumentException("Could not find any player with username: " + username);
     }
 
-    public void gameSetup(int skulls, boolean frenzy, String conf){
-        String actualConf = conf.substring(0, 1).toUpperCase() + conf.substring(1);
-        notify(new VcMatchConfigurationEvent(client.getUsername(), skulls, frenzy, actualConf));
 
-    }
-
-    public void show(String weapon){
-        notify(new UiShowWeapon(weapon));
-    }
-
-    public void hide(String weapon){
-        notify(new UiHideWeapon(weapon));
-    }
-
-    public void mapConfigSetup(List<String> config){
-        notify(new UiMapConfigEvent(config));
-    }
-
-    @Override
-    public void addPlayer(String username) {
-        Log.fine("notifying add player");
-        notify(new UiAddPlayer(username));
-    }
-
-    public  void registerController(GuiController controller){
-        register(controller);
-        semControllerSync.release();
-    }
-
-    public void deregisterController(GuiController controller){
-        deregister(controller);
-    }
 
     public Point spawnPointOnColour(String colour){
         for(Map.Entry<Point, String> m : pointColorSpawnMap.entrySet()){
@@ -218,80 +356,22 @@ public class ViewGUI extends View {
         notify(new SpawnEvent(client.getUsername(),colour, powerupToKeep));
     }
 
-    public void endTurn(){
-        notify(new EndOfTurnEvent(client.getUsername()));
-        notify(new UiTurnEnd());
-    }
 
-    @Override
-    public void dispatch(MVMoveEvent message) {
-        notify(new UiMoveFigure(getPlayerOnUsername(message.getUsername()).getPlayerColor(), message.getFinalPosition()));
-
-    }
-
-    @Override
-    public void dispatch(TimerEvent message) {
-        Log.fine("Time to go: " + message.getTimeToGo());
-        if (!timerGoing) {
-            notify(new UiTimerStart(message.getTimeToGo()));
-            timerGoing = true;
+    private Point isSpawn(Point p){
+        for(Point spawn: pointColorSpawnMap.keySet()){
+            if(spawn.getX() == p.getX() && spawn.getY() == p.getY())
+                return spawn;
         }
-        if (message.getTimeToGo() <= 1000) {
-            notify(new UiTimerStop());
-            timerGoing = false;
-        }
-        notify(new UiTimerTick(message.getTimeToGo()));
-    }
-
-    @Override
-    public void dispatch(SetUpEvent message) {
-        semControllerSync.release();
-        for (String user : message.getUserToColour().keySet())
-            players.add(new MockPlayer(user, message.getUserToColour().get(user)));
-        semControllerSync.acquireUninterruptibly();
-        notify(new UiCloseSetup());
-        semControllerSync.acquireUninterruptibly();
-        notify(new UiBoardInitialization(message.getWeaponSpots(), message.getLootCards(), message.getLeftConfig(), message.getRightConfig(), message.getSkulls()));
-        notify(new UiSetPlayerBoard(getPlayerOnUsername(client.getUsername()).getPlayerColor()));
-    }
-
-    @Override
-    public void dispatch(UsernameDeletionEvent message) {
-        notify(new UiRemovePlayer(message.getUsername()));
+        return null;
     }
 
 
-    @Override
-    public void dispatch(StartFirstTurnEvent message) {
-        semControllerSync.acquireUninterruptibly();
-        semControllerSync.acquireUninterruptibly();
-        pointColorSpawnMap = message.getSpawnPoints();
-        for(Point p: message.getSpawnPoints().keySet())
-            notify(new UiHighlightTileEvent(p));
-        notify(new UiPutPowerUp(message.getFirstPowerUpName()));
-        notify(new UiPutPowerUp(message.getSecondPowerUpName()));
-        notify(new UiSpawn());
-    }
 
-    @Override
-    public void dispatch(AllowedMovementsEvent message) {
-        for (Point p:
-                message.getAllowedPositions()) {
-            notify(new UiHighlightTileEvent(p));
-        }
-    }
-
-    @Override
-    public synchronized void dispatch(MatchConfigurationEvent message)
-    {
-        notify(new UiCloseMatchMaking());
-    }
 
     private void resetPlayer(String username){
         MockPlayer player = usernameToPlayer(username);
         player.setHp(new ArrayList<>());
         player.setMark(new ArrayList<>());
-        player.decreaseValue();
     }
 
     private MockPlayer usernameToPlayer(String username){
@@ -303,24 +383,8 @@ public class ViewGUI extends View {
         throw new IllegalStateException("Could not find player with given username");
     }
 
-    @Override
-    public void dispatch(AllowedWeaponsEvent message) {
-        //TODO
-    }
 
 
-    @Override
-    public void update(MVEvent message) {
-        try {
-            Log.fine("Received: " + message);
-            eventBuffer.put(message);
-        }catch (UnsupportedOperationException e){
-            Log.severe("Unsupported event in view");
-            throw new UnsupportedOperationException("Error: " + e.getMessage(), e);
-        }catch (InterruptedException e){
-            Log.severe("Interrupted while adding to buffer in ViewGUI");
-        }
-    }
 
 }
 

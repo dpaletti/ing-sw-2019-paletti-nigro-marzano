@@ -5,13 +5,19 @@ import it.polimi.se2019.view.UiDispatcher;
 
 public class UiHighlightTileEvent extends UiEvent {
     private Point tile;
+    private boolean targeting;
 
-    public UiHighlightTileEvent(Point tile){
+    public UiHighlightTileEvent(Point tile, boolean targeting){
         this.tile = tile;
+        this.targeting = targeting;
     }
 
     public Point getTile() {
         return tile;
+    }
+
+    public boolean isTargeting() {
+        return targeting;
     }
 
     @Override

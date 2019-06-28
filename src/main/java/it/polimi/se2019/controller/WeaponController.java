@@ -1,7 +1,9 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.mv_events.*;
+import it.polimi.se2019.model.mv_events.MVWeaponEndEvent;
+import it.polimi.se2019.model.mv_events.PartialSelectionEvent;
+import it.polimi.se2019.model.mv_events.PossibleEffectsEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
@@ -9,9 +11,9 @@ import it.polimi.se2019.utility.Point;
 import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.*;
 
-import java.lang.annotation.Target;
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class WeaponController extends CardController {
     private int partialGraphLayer = -1;
@@ -41,12 +43,6 @@ public class WeaponController extends CardController {
         }
     }
 
-    @Override
-    public void dispatch(ShootEvent message) {
-        currentPlayer = model.userToPlayer(message.getSource());
-        model.send(new AvailableWeaponsEvent(message.getSource(),
-                Card.cardStringify(Card.cardToCard(model.userToPlayer(message.getSource()).getWeapons()))));
-    }
 
     @Override
     public void dispatch(ChosenWeaponEvent message) {

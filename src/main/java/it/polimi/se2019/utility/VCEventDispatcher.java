@@ -57,9 +57,6 @@ public interface VCEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("EndOfTurnEvent not supported");
     }
 
-    default void dispatch (ShootEvent message){
-        throw new UnsupportedOperationException("ShootEvent not supported");
-    }
 
     default void dispatch (VCSelectionEvent message) {
         throw new UnsupportedOperationException("VCSelectionEvent not supported");
@@ -92,4 +89,5 @@ public interface VCEventDispatcher extends EventDispatcher {
     default void dispatch (VCPartialEffectEvent message){
         throw new UnsupportedOperationException("VCPartialEffectEvent not supported");
     }
+
 }

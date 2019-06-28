@@ -2,12 +2,15 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.ui_events.*;
+import it.polimi.se2019.view.vc_events.ChosenComboEvent;
+import it.polimi.se2019.view.vc_events.DiscardedPowerUpEvent;
+import it.polimi.se2019.view.vc_events.DiscardedWeaponEvent;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -15,6 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -51,6 +55,9 @@ public class GuiControllerTable extends GuiController {
     @FXML
     private ImageView showedCard;
 
+    @FXML
+    private Label turnTimer;
+
     //----- match_setup attributes ---//
     private GridPane choiceGrid;
     private CheckBox frenzyBox;
@@ -76,6 +83,11 @@ public class GuiControllerTable extends GuiController {
     private List<String> availableMoves = new ArrayList<>();
 
     private List<String> lockedPlayers = null;
+    private List<String> highlightedLockedPlayers = null;
+
+    private String headPlayer;
+
+    private String lockedCard = null;
 
     public static class TableModel {
         StringProperty username;
@@ -112,19 +124,59 @@ public class GuiControllerTable extends GuiController {
     }
 
 
+    //----------------------------------------------------------Timer-------------------------------------------------//
+    @Override
+    public void dispatch(UiTimerStart message) {
+        int timeToSet = message.getDuration() / 1000;
+        timerText.set(((Integer) timeToSet).toString());
+    }
+
+    @Override
+    public void dispatch(UiTimerTick message) {
+        int timeToSet = message.getTimeToGo() / 1000;
+        timerText.set((((Integer) timeToSet).toString()));
+    }
+
+    @Override
+    public void dispatch(UiTimerStop message) {
+        timerText.set("");
+    }
+    //-----------------------------------------------------------------------------------------------------------------//
+
+
+    //----------------------------------------------Match Making--------------------------------------------------------//
+
+    @Override
+    public void dispatch(UiAddPlayer message) {
+        TableModel t = new TableModel(message.getPlayer(), "0");
+        rowTrack.add(t);
+        leaderboard.getItems().add(t);
+        int oldMissing = missingPlayers;
+        missingPlayers--;
+        titleText.set(titleText.get().replace(((Integer) oldMissing).toString(), ((Integer) missingPlayers).toString()));
+    }
+
+    @Override
+    public void dispatch(UiRemovePlayer message) {
+        for (TableModel t : rowTrack) {
+            if (t.getUsername().equals(message.getPlayer())) {
+                rowTrack.remove(t);
+                leaderboard.getItems().remove(t);
+                return;
+            }
+        }
+    }
+
+
     @Override
     public void dispatch(UiMapConfigEvent message) {
         try {
-            leave.setOnMouseClicked((MouseEvent event) ->{
-                System.exit(0);
-            });
-            leave.setOnMouseEntered((MouseEvent event) -> {
-                clickable();
-            });
-            leave.setOnMouseExited((MouseEvent event) -> {
-                notClickable();
-            });
+            leave.setOnMouseClicked((MouseEvent event) -> System.exit(0));
+            leave.setOnMouseEntered(clickable(scene));
+            leave.setOnMouseExited(notClickable(scene));
+
             disableSetupInteraction();
+
             List<Integer> mapLayout = new ArrayList<>();
             mapLayout.add(1);
             mapLayout.add(0);
@@ -197,6 +249,68 @@ public class GuiControllerTable extends GuiController {
 
     }
 
+
+    //-----------------------------------------------------------------------------------------------------------------//
+
+
+    //---------------------------------------------------------Setup---------------------------------------------------//
+
+    @Override
+    public synchronized void dispatch(UiCloseMatchMaking message) {
+
+        initializeSendButton();
+        initializeMapSelection();
+        initializeCheckBox();
+        initializeSkullSelection();
+        titleText.set("Choose preferred options");
+    }
+
+    private void initializeSendButton(){
+        endTurn.setDisable(false);
+        endTurn.setOnMouseClicked((MouseEvent event) ->
+        {
+            ViewGUI.getInstance().gameSetup(skulls, frenzy, chosenMap);
+            endTurn.setDisable(true);
+            endTurn.setOnMouseClicked(null);
+        });
+
+        endTurn.setOnMouseEntered(clickable(scene));
+        endTurn.setOnMouseExited(notClickable(scene));
+    }
+
+    private void initializeMapSelection() {
+
+        for(String map: mapsAdded){
+            ImageView holder = (ImageView) scene.lookup("#" + map);
+            holder.setDisable(false);
+            holder.setOnMouseEntered((MouseEvent event) -> {
+                highlight(event, holder.getId());
+                clickableNoHandler(scene);
+            });
+            holder.setOnMouseExited((MouseEvent event) -> {
+                if(!holder.isDisabled())
+                    darken(event, holder.getId());
+                notClickableNoHandler(scene);
+            });
+            holder.setOnMouseClicked((MouseEvent event) -> {
+                clickOnMap((ImageView) event.getSource());
+            });
+        }
+        ImageView defaultMap = (ImageView) scene.lookup("#"+mapsAdded.get(0));
+        clickOnMap(defaultMap);
+    }
+
+    public void clickOnMap(ImageView map){
+        if(chosenMap != null) {
+            ImageView oldMap = (ImageView) scene.lookup("#" + chosenMap);
+            darken(oldMap, oldMap.getId());
+            oldMap.setDisable(false);
+        }
+        map.setDisable(true);
+        highlight(map, map.getId());
+        chosenMap = map.getId();
+    }
+
     public void highlight(MouseEvent event, String conf) {
         try {
             String path = MAP_DIR + "map_" + conf.toLowerCase() + HIGHLIGHTED + ".png";
@@ -236,157 +350,45 @@ public class GuiControllerTable extends GuiController {
         }
     }
 
-    @Override
-    public void dispatch(UiAddPlayer message) {
-        TableModel t = new TableModel(message.getPlayer(), "0");
-        rowTrack.add(t);
-        leaderboard.getItems().add(t);
-        int oldMissing = missingPlayers;
-        missingPlayers--;
-        titleText.set(titleText.get().replace(((Integer) oldMissing).toString(), ((Integer) missingPlayers).toString()));
-    }
 
-    @Override
-    public void dispatch(UiRemovePlayer message) {
-        for (TableModel t : rowTrack) {
-            if (t.getUsername().equals(message.getPlayer())) {
-                rowTrack.remove(t);
-                leaderboard.getItems().remove(t);
+    private void initializeCheckBox () {
+        frenzyBox.setDisable(false);
+        frenzyBox.setOnAction((ActionEvent event) -> {
+            if (((CheckBox) event.getSource()).isSelected()) {
+                frenzy = true;
                 return;
             }
-        }
-    }
-
-    @FXML
-    private void clickable() {
-        currentPlayer.getScene().setCursor(Cursor.HAND);
-    }
-
-    @FXML
-    private void notClickable() {
-        currentPlayer.getScene().setCursor(Cursor.DEFAULT);
-    }
-
-
-    @Override
-    public void dispatch(UiTimerStart message) {
-        int timeToSet = message.getDuration() / 1000;
-        timerText.set(((Integer) timeToSet).toString());
-    }
-
-    @Override
-    public void dispatch(UiTimerTick message) {
-        int timeToSet = message.getTimeToGo() / 1000;
-        timerText.set((((Integer) timeToSet).toString()));
-    }
-
-    @Override
-    public void dispatch(UiTimerStop message) {
-        timerText.set("");
-    }
-
-
-    @Override
-    public synchronized void dispatch(UiCloseMatchMaking message) {
-
-        initializeSendButton();
-        initializeMapSelection();
-        initializeCheckBox();
-        initializeSkullSelection();
-        titleText.set("Choose preferred options");
-    }
-
-
-    public void initializeSendButton(){
-        endTurn.setDisable(false);
-        endTurn.setOnMouseClicked((MouseEvent event) ->
-        {
-            ViewGUI.getInstance().gameSetup(skulls, frenzy, chosenMap);
-            endTurn.setDisable(true);
+            frenzy = false;
         });
-        endTurn.setOnMouseEntered((MouseEvent event) -> {
-            clickable();
-        });
-        endTurn.setOnMouseExited((MouseEvent event) -> notClickable());
     }
 
-    public void clickOnMap(ImageView map){
-        if(chosenMap != null) {
-            ImageView oldMap = (ImageView) scene.lookup("#" + chosenMap);
-            darken(oldMap, oldMap.getId());
-            oldMap.setDisable(false);
+    private void initializeSkullSelection () {
+        RadioButton r;
+        for (int i = 5; i <= 8; i++) {
+            r = ((RadioButton) scene.lookup("#skulls" + i));
+            r.setDisable(false);
+            r.setOnAction(
+                    (ActionEvent event) -> {
+                        if (((RadioButton) event.getSource()).getId().equals("skulls5"))
+                            skulls = 5;
+                        if (((RadioButton) event.getSource()).getId().equals("skulls6"))
+                            skulls = 6;
+                        if (((RadioButton) event.getSource()).getId().equals("skulls7"))
+                            skulls = 7;
+                        if (((RadioButton) event.getSource()).getId().equals("skulls7"))
+                            skulls = 8;
+                    }
+            );
         }
-        map.setDisable(true);
-        highlight(map, map.getId());
-        chosenMap = map.getId();
+
     }
 
-    public void initializeMapSelection() {
-
-        for(String map: mapsAdded){
-            ImageView holder = (ImageView) scene.lookup("#" + map);
-            holder.setDisable(false);
-            holder.setOnMouseEntered((MouseEvent event) -> {
-                highlight(event, holder.getId());
-                clickable();
-            });
-            holder.setOnMouseExited((MouseEvent event) -> {
-                if(!holder.isDisabled())
-                    darken(event, holder.getId());
-                notClickable();
-            });
-            holder.setOnMouseClicked((MouseEvent event) -> {
-                clickOnMap((ImageView) event.getSource());
-            });
-        }
-        ImageView defaultMap = (ImageView) scene.lookup("#"+mapsAdded.get(0));
-        clickOnMap(defaultMap);
-    }
-
-        public void initializeCheckBox () {
-            frenzyBox.setDisable(false);
-            frenzyBox.setOnAction((ActionEvent event) -> {
-                if (((CheckBox) event.getSource()).isSelected()) {
-                    frenzy = true;
-                    return;
-                }
-                frenzy = false;
-            });
-        }
-
-        public void initializeSkullSelection () {
-            RadioButton r;
-            for (int i = 5; i <= 8; i++) {
-                r = ((RadioButton) scene.lookup("#skulls" + i));
-                r.setDisable(false);
-                r.setOnAction(
-                        (ActionEvent event) -> {
-                            if (((RadioButton) event.getSource()).getId().equals("skulls5"))
-                                skulls = 5;
-                            if (((RadioButton) event.getSource()).getId().equals("skulls6"))
-                                skulls = 6;
-                            if (((RadioButton) event.getSource()).getId().equals("skulls7"))
-                                skulls = 7;
-                            if (((RadioButton) event.getSource()).getId().equals("skulls7"))
-                                skulls = 8;
-                        }
-                );
-            }
-
-        }
 
     @Override
     public void dispatch(UiCloseSetup message) {
         try {
             root.getChildren().remove(choiceGrid.getParent());
-            root.getChildren().remove(choiceGrid);
-            root.getChildren().remove(timer);
-            root.getChildren().remove(title);
-            root.getChildren().remove(frenzyBox);
-            endTurn.setText("End turn");
-            endTurn.setOnAction((ActionEvent event) -> ViewGUI.getInstance().endTurn());
-            ((Label)scene.lookup("#directions")).textProperty().bind(directionsText);
-            directionsText.set("Please wait for your turn");
+
             FXMLLoader loader = new FXMLLoader(Paths.get("files/fxml/board.fxml").toUri().toURL());
             GridPane board = loader.load();
             loader = new FXMLLoader(Paths.get("files/fxml/weapon.fxml").toUri().toURL());
@@ -394,11 +396,13 @@ public class GuiControllerTable extends GuiController {
             root.getChildren().add(loader.load());
             loader = new FXMLLoader(Paths.get("files/fxml/powerup.fxml").toUri().toURL());
             root.getChildren().add(loader.load());
-            board.toFront();
+
+            buttonSetup();
+            directionSetup();
         }catch (MalformedURLException e){
             Log.severe("Could not get board.fxml");
         }catch (IOException e){
-        Log.severe("Could not load AnchorPane in board");
+            Log.severe("Could not load AnchorPane in board");
         }
     }
 
@@ -406,9 +410,122 @@ public class GuiControllerTable extends GuiController {
     public void dispatch(UiSetPlayerBoard message) {
         try {
             currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + message.getColour().toLowerCase() + ".png").toUri().toURL().toString()));
+            headPlayer = message.getColour().toLowerCase();
         }catch (MalformedURLException e){
             Log.severe("Could not get " + message.getColour() + "player board");
         }
+    }
+
+    private void buttonSetup(){
+        endTurn.setText("End turn");
+        endTurn.setOnAction((ActionEvent event) -> ViewGUI.getInstance().endTurn());
+    }
+
+    private void directionSetup(){
+        ((Label)scene.lookup("#directions")).textProperty().bind(directionsText);
+        directionsText.set("Please wait for your turn");
+    }
+
+    //----------------------------------------------------------------------------------------------------------------//
+
+    //--------------------------------------------------------Turn----------------------------------------------------//
+
+    @Override
+    public void dispatch(UiSpawn message) {
+        turnTimer.textProperty().bind(timerText);
+        directionsText.set("Please choose a powerup to discard");
+    }
+
+    public void dispatch(UiStartTurn message){
+        endTurn.setDisable(false);
+    }
+
+    @Override
+    public void dispatch(UiAvailableMove message) {
+        try {
+            directionsText.set("Please choose one of the highlighted combos");
+            ImageView available;
+            available =((ImageView) scene.lookup("#" + message.getCombo()));
+            availableMoves.add(message.getCombo());
+            available.setDisable(false);
+            available.setImage(
+                    new Image(Paths.get("files/assets/rectangle_" + ViewGUI.getInstance().getColour().toLowerCase()).toUri().toURL().toString() + ".png"));
+            available.setOnMouseEntered(clickable(scene));
+            available.setOnMouseExited(notClickable(scene));
+            available.setOnMouseClicked((MouseEvent event) -> {
+                ViewGUI.getInstance().send(new ChosenComboEvent(ViewGUI.getInstance().getUsername(), message.getCombo()));
+                for(String s: availableMoves)
+                    scene.lookup("#" + s).setDisable(true);
+            });
+        }catch (MalformedURLException e){
+            Log.severe("Cannot retrieve rectangle for overlay");
+        }
+    }
+
+    @Override
+    public void dispatch(UiContextSwitch message) {
+        try {
+            currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + message.getNewContext().toLowerCase() + ".png").toUri().toURL().toString()));
+            disableAllCombos();
+            String oldDirections = directionsText.get();
+            directionsText.set("Looking at player " + message.getNewContext().toLowerCase());
+
+            endTurn.setText("Back");
+            endTurn.setOnMouseClicked((MouseEvent event) ->{
+                try {
+                    currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + headPlayer + ".png").toUri().toURL().toString()));
+                    enableAllCombos();
+                    buttonSetup();
+                    directionsText.set(oldDirections);
+
+                }catch (MalformedURLException e){
+                    Log.severe("Could not retrieve old Image for player board");
+                }
+
+            });
+        }catch (MalformedURLException e){
+            Log.severe("Wrong URL for context switching");
+        }
+    }
+
+    private void disableAllCombos(){
+        List<Node> nodes = ((Pane)scene.lookup("#playerCombo")).getChildren();
+        nodes.addAll(((Pane) scene.lookup("#playerComboDamaged")).getChildren());
+        for(Node n: nodes)
+            n.setDisable(true);
+    }
+
+    private void enableAllCombos(){
+        List<Node> nodes = ((Pane)scene.lookup("#playerCombo")).getChildren();
+        nodes.addAll(((Pane) scene.lookup("#playerComboDamaged")).getChildren());
+        for(Node n: nodes)
+            n.setDisable(false);
+
+    }
+
+    @Override
+    public void dispatch(UiShowFourth message) {
+        try {
+            if (lockedCard != null)
+                throw new IllegalStateException("Trying to show fourth card when still showing previous one");
+            lockedCard = message.getCard();
+            showedCard.setImage(new Image(Paths.get("files/assets/cards/" + message.getCard() + ".png").toUri().toURL().toString()));
+            directionsText.set("Please choose card to discard");
+            showedCard.setOnMouseClicked((MouseEvent event) ->{
+                if(message.isWeapon())
+                    ViewGUI.getInstance().send(new DiscardedWeaponEvent(
+                            ViewGUI.getInstance().getUsername(),lockedCard));
+                else
+                    ViewGUI.getInstance().send(new DiscardedPowerUpEvent(
+                            ViewGUI.getInstance().getUsername(), lockedCard));
+                showedCard.setOnMouseClicked(null);
+                showedCard.setImage(null);
+                lockedCard = null;
+        });
+        }catch (MalformedURLException e){
+            Log.severe(e.getMessage());
+        }
+
     }
 
     @Override
@@ -422,27 +539,39 @@ public class GuiControllerTable extends GuiController {
 
     @Override
     public void dispatch(UiHideWeapon message) {
-        showedCard.setImage(null);
+        try {
+            if (lockedCard != null) {
+                showedCard.setImage(new Image(Paths.get("files/assets/cards/" + lockedCard + ".png").toUri().toURL().toString()));
+            }
+            else {
+                showedCard.setImage(null);
+            }
+        }catch (MalformedURLException e){
+            Log.severe("Could not retrieve locked card for showing");
+        }
     }
 
     @Override
     public void dispatch(UiHidePlayers message) {
-            for (int i = 1; i < 6; i++) {
-                ((ImageView) scene.lookup("#figure" + i)).setImage(null);
-            }
-            if (lockedPlayers != null)
-                dispatch(new UiShowPlayers(lockedPlayers));
-            }
+        for (int i = 1; i < 6; i++) {
+            ((ImageView) scene.lookup("#figure" + i)).setImage(null);
+        }
+        if (lockedPlayers != null)
+            dispatch(new UiShowPlayers(lockedPlayers, highlightedLockedPlayers));
+    }
 
     @Override
     public void dispatch(UiLockPlayers message) {
         lockedPlayers = new ArrayList<>();
+        highlightedLockedPlayers = new ArrayList<>();
         lockedPlayers.addAll(message.getFiguresToLock());
+        highlightedLockedPlayers.addAll(message.getHighlighted());
     }
 
     @Override
     public void dispatch(UiUnlockPlayers message) {
         lockedPlayers = null;
+        highlightedLockedPlayers = null;
         dispatch(new UiHidePlayers(null));
     }
 
@@ -452,38 +581,16 @@ public class GuiControllerTable extends GuiController {
             int i = 0;
             for (String f : message.getFiguresToShow()) {
                 i++;
-                ((ImageView) scene.lookup("#figure" + i)).setImage(new Image(Paths.get("files/assets/player/figure_" + f.toLowerCase() + ".png").toUri().toURL().toString()));
+                if(!message.getHighlightedFigures().contains(f))
+                    ((ImageView) scene.lookup("#figure" + i)).setImage(new Image
+                            (Paths.get("files/assets/player/figure_" + f.toLowerCase() + ".png").toUri().toURL().toString()));
+                else
+                    ((ImageView) scene.lookup("#figure" + i)).setImage(new Image
+                            (Paths.get("files/assets/player/figure_" + f.toLowerCase() + "_targeted.png").toUri().toURL().toString()));
 
             }
         }catch (MalformedURLException e){
             Log.severe("Wrong URL in reshowing locked selection");
-        }
-    }
-
-    @Override
-    public void dispatch(UiSpawn message) {
-        directionsText.set("Please choose a powerup to discard");
-    }
-
-    @Override
-    public void dispatch(UiAvailableMove message) {
-        try {
-            directionsText.set("Please choose one of the highlighted combos");
-            ImageView available;
-            available =((ImageView) scene.lookup("#" + message.getCombo()));
-            availableMoves.add(message.getCombo());
-            available.setDisable(false);
-            available.setImage(
-                    new Image(Paths.get("files/assets/rectangle_" + ViewGUI.getInstance().getColour().toLowerCase()).toUri().toURL().toString() + ".png"));
-            available.setOnMouseEntered((MouseEvent event) -> clickable());
-            available.setOnMouseExited((MouseEvent event) -> notClickable());
-            available.setOnMouseClicked((MouseEvent event) -> {
-                ViewGUI.getInstance().useCombo(message.getCombo());
-                for(String s: availableMoves)
-                    scene.lookup("#" + s).setDisable(true);
-            });
-        }catch (MalformedURLException e){
-            Log.severe("Cannot retrieve rectangle for overlay");
         }
     }
 
@@ -493,9 +600,19 @@ public class GuiControllerTable extends GuiController {
 
     }
 
-    public void dispatch(UiStartTurn message){
-        endTurn.setDisable(false);
-    }
+    //----------------------------------------------------------------------------------------------------------------//
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 

@@ -6,13 +6,19 @@ import java.util.List;
 
 public class UiLockPlayers extends UiEvent {
     private List<String> figuresToLock;
+    private List<String> highlighted;
 
-    public UiLockPlayers(List<String> figuresToLock) {
+    public UiLockPlayers(List<String> figuresToLock, List<String> highlighted) {
         this.figuresToLock = figuresToLock;
+        this.highlighted = highlighted;
     }
 
     public List<String> getFiguresToLock() {
         return figuresToLock;
+    }
+
+    public List<String> getHighlighted() {
+        return highlighted;
     }
 
     @Override

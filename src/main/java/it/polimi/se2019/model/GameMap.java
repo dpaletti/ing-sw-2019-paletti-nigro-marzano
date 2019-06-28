@@ -68,7 +68,7 @@ public class GameMap{
 
     public Tile getTile (Point position){
         for (Tile t: getTiles()){
-            if (position.equals(t.position))
+            if (position.getX() == t.getPosition().getX() && position.getY() == t.getPosition().getY())
                 return t;
         }
         throw new NullPointerException("tile with given position not found");

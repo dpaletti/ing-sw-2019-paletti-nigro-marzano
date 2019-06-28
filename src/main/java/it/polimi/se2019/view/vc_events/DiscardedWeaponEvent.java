@@ -3,10 +3,16 @@ package it.polimi.se2019.view.vc_events;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
 
-public class ShootEvent extends VCEvent {
+public class DiscardedWeaponEvent extends VCEvent {
+    private String weapon;
 
-    public ShootEvent(String source){
+    public DiscardedWeaponEvent(String source, String weapon) {
         super(source);
+        this.weapon = weapon;
+    }
+
+    public String getWeapon() {
+        return weapon;
     }
 
     @Override

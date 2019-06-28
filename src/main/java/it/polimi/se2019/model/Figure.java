@@ -55,12 +55,10 @@ public class Figure {
     }
 
     public void run (Point destination, int distance){
-        if (player.getGameMap().getAllowedMovements(tile, distance).contains(destination)){
             if(tile != null)
                 tile.removeFigure(this);
             tile = player.getGameMap().getTile(destination);
             tile.addFigure(this);
-        }
     }
 
     public void grab(String grabbed){

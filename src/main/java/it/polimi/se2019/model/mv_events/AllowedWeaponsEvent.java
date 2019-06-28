@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AllowedWeaponsEvent extends MVEvent {
-    ArrayList<String> weapons;
+    private ArrayList<String> weapons;
 
     public AllowedWeaponsEvent (String destination, List<String> weapon){
         super(destination);

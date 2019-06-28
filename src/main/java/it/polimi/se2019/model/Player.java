@@ -258,7 +258,7 @@ public class Player implements Targetable{
         if (powerUps.size() == 4)
             drawnPowerUp = powerUps.get(3).name;
         game.getPowerUpDeck().discard(game.nameToPowerUp(discardedPowerUp));
-        game.send(new DiscardedPowerUpEvent("*", game.playerToUser(this), drawnPowerUp, discardedPowerUp));
+        //game.send(new DiscardedPowerUpEvent("*", game.playerToUser(this), drawnPowerUp, discardedPowerUp));
         powerUps.remove(game.nameToPowerUp(discardedPowerUp));
     }
 

@@ -1,68 +1,153 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.view.ui_events.UiTurnEnd;
+import it.polimi.se2019.utility.Log;
+import it.polimi.se2019.view.ui_events.*;
+import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
+import it.polimi.se2019.view.vc_events.ChosenWeaponEvent;
+import it.polimi.se2019.view.vc_events.DiscardedWeaponEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 
 public class GuiControllerWeapon extends GuiController {
 
     @FXML
     private ImageView weaponLeft;
 
-    @FXML
-    private ImageView effectBaseLeft;
-
-    @FXML
-    private ImageView effectAlternateLeft;
-
-    @FXML
-    private ImageView effectOptional1Left; //optional 1 is on the left
-
-    @FXML
-    private ImageView effectOptional2Left;
-
 
     @FXML
     private ImageView weaponMiddle;
-
-    @FXML
-    private ImageView effectBaseMiddle;
-
-    @FXML
-    private ImageView effectAlternateMiddle;
-
-    @FXML
-    private ImageView effectOptional1Middle;
-
-    @FXML
-    private ImageView effectOptional2Middle;
 
 
     @FXML
     private ImageView weaponRight;
 
-    @FXML
-    private ImageView effectBaseRight;
+    private String left;
+    private String middle;
+    private String right;
 
-    @FXML
-    private ImageView effectAlternateRight;
-
-    @FXML
-    private ImageView effectOptional1Right;
-
-    @FXML
-    private ImageView effectOptional2Right;
-
-    private List<ImageView> active;
+    private Scene scene;
 
     @Override
     public void dispatch(UiTurnEnd message) {
-        for(ImageView i: active)
-            i.setDisable(false);
-        active = new ArrayList<>();
+        removeHandlers(weaponLeft);
+        removeHandlers(weaponMiddle);
+        removeHandlers(weaponRight);
+    }
+
+    @Override
+    public void dispatch(UiShowFourth message) {
+        handleDiscard(weaponRight, right);
+        handleDiscard(weaponLeft, left);
+        handleDiscard(weaponMiddle, middle);
+    }
+
+    private void handleDiscard(ImageView weapon, String toDiscard){
+        weapon.setOnMouseClicked((MouseEvent event) -> {
+            ViewGUI.getInstance().send(new DiscardedWeaponEvent(ViewGUI.getInstance().getUsername(), toDiscard));
+            ((ImageView) event.getSource()).setOnMouseClicked(null);
+        });
+        weapon.setOnMouseEntered(clickable(scene));
+        weapon.setOnMouseExited(notClickable(scene));
+    }
+
+
+    @Override
+    public void dispatch(UiPutWeapon message) {
+        if (scene != null)
+            scene = weaponLeft.getScene();
+        try {
+            if (weaponLeft.getImage() == null) {
+                weaponLeft.setImage(new Image(
+                        Paths.get("files/assets/cards/" + message.getWeapon() + ".png").toUri().toURL().toString()
+
+                ));
+                left = message.getWeapon();
+            }
+            if (weaponMiddle.getImage() == null) {
+                weaponMiddle.setImage(new Image(
+                        Paths.get("files/assets/cards/" + message.getWeapon() + ".png").toUri().toURL().toString()
+
+                ));
+                middle = message.getWeapon();
+                if (weaponRight.getImage() == null) {
+                    weaponRight.setImage(new Image(
+                            Paths.get("files/assets/cards/" + message.getWeapon() + ".png").toUri().toURL().toString()
+
+                    ));
+                    right = message.getWeapon();
+                }
+            } else
+                ViewGUI.getInstance().send(new UiShowFourth(message.getWeapon(), true));
+        } catch (MalformedURLException e) {
+            Log.severe("Could not retrieve weapon asset for: " + message.getWeapon());
+        }
+    }
+
+    @Override
+    public void dispatch(UiActivateWeapons message) {
+        handleChoice(weaponRight, right);
+        handleChoice(weaponLeft, left);
+        handleChoice(weaponMiddle, middle);
+    }
+
+    private void handleChoice(ImageView weapon, String toSend){
+        weapon.setOnMouseClicked((MouseEvent event) ->{
+            ViewGUI.getInstance().send(new ChosenWeaponEvent(ViewGUI.getInstance().getUsername(), toSend));
+            ((ImageView) event.getSource()).setOnMouseClicked(null);
+            ((ImageView) event.getSource()).setOnMouseEntered(null);
+            ((ImageView) event.getSource()).setOnMouseExited(null);
+        });
+
+        weapon.setOnMouseEntered(clickable(scene));
+        weapon.setOnMouseExited(clickable(scene));
+    }
+
+    @Override
+    public void dispatch(UiActivateWeaponEffects message) {
+        String position;
+        if(message.getWeaponName().equals(left))
+            position = "Left";
+        else if (message.getWeaponName().equals(middle))
+            position = "Middle";
+        else if (message.getWeaponName().equals(right))
+            position = "Right";
+        else
+            throw new IllegalArgumentException("Could not find: " + message.getWeaponName() + "while showing effects");
+
+        ImageView effectSpot;
+        for(String effect: message.getEffects().keySet()){
+            if(message.getEffects().get(effect) == -1) {
+                effectSpot = ((ImageView) scene.lookup("#" + "effectBase" + position + ".png"));
+            }
+            else if(message.getEffects().get(effect) >= 0 && message.getEffects().get(effect) <= 2) {
+                effectSpot = (ImageView) scene.lookup("#" + "effectAlternate" + message.getEffects().get(effect) + position + ".png");
+            }
+            else
+                throw new IllegalArgumentException("Could not highlight effect with: " + message.getEffects().get(effect) + "as position descriptor");
+            highlight(effectSpot, message.getWeaponName(), effect);
+        }
+    }
+
+    private void highlight(ImageView weaponEffect, String weaponName, String effectName){
+        try {
+            weaponEffect.setImage(new Image(
+                    Paths.get("files/assets/rectangle_black.png").toUri().toURL().toString()
+            ));
+            weaponEffect.setOnMouseEntered(clickable(scene));
+            weaponEffect.setOnMouseExited(notClickable(scene));
+            weaponEffect.setOnMouseClicked((MouseEvent event) -> {
+                ViewGUI.getInstance().send(new ChosenEffectEvent(ViewGUI.getInstance().getUsername(), weaponName, effectName));
+                removeHandlers(weaponEffect);
+            });
+        }catch (MalformedURLException e){
+            Log.severe("Could not retrieve rectangle for highlighting weapon effects");
+        }
     }
 
 }

@@ -1,21 +1,18 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.utility.Log;
-import it.polimi.se2019.view.ui_events.UiAvailablePowerup;
-import it.polimi.se2019.view.ui_events.UiPutPowerUp;
-import it.polimi.se2019.view.ui_events.UiSpawn;
-import it.polimi.se2019.view.ui_events.UiTurnEnd;
+import it.polimi.se2019.view.ui_events.*;
+import it.polimi.se2019.view.vc_events.PowerUpUsageEvent;
+import it.polimi.se2019.view.vc_events.SpawnEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GuiControllerPowerUp extends GuiController {
 
@@ -23,39 +20,18 @@ public class GuiControllerPowerUp extends GuiController {
     private ImageView powerupLeft;
 
     @FXML
-    private ImageView effectLeft;
-
-    @FXML
-    private ImageView ammoLeft;
-
-
-
-    @FXML
     private ImageView powerupMiddle;
-
-    @FXML
-    private ImageView effectMiddle;
-
-    @FXML
-    private ImageView ammoMiddle;
-
 
     @FXML
     private ImageView powerupRight;
 
-    @FXML
-    private ImageView effectRight;
 
-    @FXML
-    private ImageView ammoRight;
+    private Scene scene;
 
     private String path = "files/assets/cards/";
     private String left;
     private String middle;
     private String right;
-
-    private List<ImageView> active = new ArrayList<>();
-
 
     @Override
     public void dispatch(UiPutPowerUp message) {
@@ -73,160 +49,81 @@ public class GuiControllerPowerUp extends GuiController {
                 right = message.getPowerup();
             }
             else
-                ViewGUI.getInstance().fourthPowerUp(message.getPowerup());
+                ViewGUI.getInstance().send(new UiShowFourth(message.getPowerup(), false));
 
         }catch (MalformedURLException e){
             Log.severe("Wrong URL for: " + message.getPowerup());
         }
     }
 
-    @FXML
-    private void clickable() {
-        powerupLeft.getScene().setCursor(Cursor.HAND);
-    }
-
-    @FXML
-    private void notClickable() {
-        powerupLeft.getScene().setCursor(Cursor.DEFAULT);
-    }
     @Override
     public void dispatch(UiSpawn message) {
-        enable(powerupLeft);
-        powerupLeft.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                ViewGUI.getInstance().chooseSpawn(left, middle);
-                disable(powerupLeft);
-                disable(powerupMiddle);
-                powerupLeft.setImage(null);
+        scene = powerupLeft.getScene();
+
+        powerupLeft.setOnMouseClicked(spawnPowerUp(powerupLeft, left));
+        powerupLeft.setOnMouseEntered(clickable(scene));
+        powerupLeft.setOnMouseExited(notClickable(scene));
+
+        powerupMiddle.setOnMouseClicked(spawnPowerUp(powerupMiddle, left));
+        powerupMiddle.setOnMouseEntered(clickable(scene));
+        powerupMiddle.setOnMouseExited(notClickable(scene));
+
+    }
+
+    private EventHandler<MouseEvent> spawnPowerUp(ImageView powerup, String powerupName){
+        return (MouseEvent event) -> {
+            String powerUpToKeep;
+            if(powerupName.equals(left)) {
                 left = null;
-                notClickable();
-            }
-        });
-        powerupLeft.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                clickable();
-            }
-        });
-        powerupLeft.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                notClickable();
-            }
-        });
-
-        enable(powerupMiddle);
-        powerupMiddle.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                ViewGUI.getInstance().chooseSpawn(middle, left);
-                disable(powerupMiddle);
-                disable(powerupLeft);
-                powerupMiddle.setImage(null);
+                powerUpToKeep = middle;
+            }else if (powerupName.equals(middle)){
                 middle = null;
-                notClickable();
-            }
-        });
-        powerupMiddle.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                clickable();
-            }
-        });
-        powerupMiddle.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                notClickable();
-            }
-        });
+                powerUpToKeep = left;
+            }else
+                throw new IllegalArgumentException("Could not find powerUp: " + powerupName);
+
+            ViewGUI.getInstance().send(new SpawnEvent(ViewGUI.getInstance().getUsername(), powerupName, powerUpToKeep));
+            powerup.setImage(null);
+            removeHandlers(powerup);
+        };
     }
 
-    private void enable(ImageView imageView){
-        imageView.setDisable(false);
-        active.add(imageView);
-    }
 
-    private void disable(ImageView imageView){
-        imageView.setDisable(true);
-        active.remove(imageView);
+    public void activatePowerup(String position, String powerUp){
+        try {
+            ImageView effect = ((ImageView) scene.lookup("#effect" + position));
+            effect.setImage(new Image(Paths.get("files/assets/rectangle_black.png").toUri().toURL().toString()));
+            effect.setOnMouseEntered(clickable(scene));
+            effect.setOnMouseExited(notClickable(scene));
+            effect.setOnMouseClicked((MouseEvent event) -> {
+                ViewGUI.getInstance().send(new PowerUpUsageEvent(ViewGUI.getInstance().getUsername(), powerUp));
+                effect.setImage(null);
+                removeHandlers(effect);
+            });
+        }catch (MalformedURLException e){
+            Log.severe("Could not retrieve asset for highlighting powerup effect");
+        }
     }
 
     @Override
     public void dispatch(UiAvailablePowerup message) {
-        if(message.getPowerUp().equalsIgnoreCase(left)){
-            enable(powerupLeft);
-            powerupLeft.setOnMouseClicked((MouseEvent event) -> {
-                ViewGUI.getInstance().usePowerUp(message.getPowerUp());
-                disable(powerupLeft);
-                powerupLeft.setImage(null);
-                left = null;
-            });
-
-            powerupLeft.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    clickable();
-                }
-            });
-            powerupLeft.setOnMouseExited(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    notClickable();
-                }
-            });
-        }
-        if(message.getPowerUp().equalsIgnoreCase(right)){
-            enable(powerupRight);
-            powerupRight.setOnMouseClicked((MouseEvent event) -> {
-                ViewGUI.getInstance().usePowerUp(message.getPowerUp());
-                disable(powerupRight);
-                powerupRight.setImage(null);
-                right = null;
-            });
-
-            powerupRight.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    clickable();
-                }
-            });
-            powerupRight.setOnMouseExited(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    notClickable();
-                }
-            });
-        }
-        if(message.getPowerUp().equalsIgnoreCase(middle)){
-            enable(powerupMiddle);
-            powerupMiddle.setOnMouseClicked((MouseEvent event) -> {
-                ViewGUI.getInstance().usePowerUp(message.getPowerUp());
-                disable(powerupMiddle);
-                powerupMiddle.setImage(null);
-                middle = null;
-            });
-
-            powerupMiddle.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    clickable();
-                }
-            });
-            powerupRight.setOnMouseExited(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    notClickable();
-                }
-            });
-
-        }
+        String position;
+        if(message.getPowerUp().equalsIgnoreCase(left))
+            position = "Left";
+        else if(message.getPowerUp().equalsIgnoreCase(right))
+            position = "Right";
+        else if(message.getPowerUp().equalsIgnoreCase(middle))
+            position = "Middle";
+        else
+            throw new IllegalArgumentException("Could not find powerup");
+        activatePowerup(position, message.getPowerUp());
     }
 
     @Override
     public void dispatch(UiTurnEnd message){
-        for (ImageView i: active)
-            disable(i);
+        removeHandlers(powerupLeft);
+        removeHandlers(powerupMiddle);
+        removeHandlers(powerupRight);
 
     }
 }

@@ -96,5 +96,31 @@ public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiStartTurn message){
         throw new UnsupportedOperationException("UiStartTurn not supported");
     }
-
+    default void dispatch(UiGrabWeapon message){
+        throw new UnsupportedOperationException("UiGrabWeapon not supported");
+    }
+    default void dispatch(UiGrabLoot message){
+        throw new UnsupportedOperationException("UiGrabLoot not supported");
+    }
+    default void dispatch(UiReload message){
+        throw new UnsupportedOperationException("UiReload not supported");
+    }
+    default void dispatch(UiShowFourth message){
+        throw new UnsupportedOperationException("UiShowFourth not supported");
+    }
+    default void dispatch(UiActivateWeapons message){
+        throw new UnsupportedOperationException("UiActivateWeapons not supported");
+    }
+    default void dispatch(UiActivateWeaponEffects message){
+        throw new UnsupportedOperationException("UiActivateWeaponEffects not supported");
+    }
+    default void dispatch(UiHighlightPlayer message){
+        throw new UnsupportedOperationException("UiHighlighPlayer not supported");
+    }
+    default void dispatch(UiSellPowerups message){
+        throw new UnsupportedOperationException("UiSellPowerups not supported");
+    }
+    default void dispatch(UiRemoveMarks message){
+        throw new UnsupportedOperationException("UiRemoveMarks not supported");
+    }
 }

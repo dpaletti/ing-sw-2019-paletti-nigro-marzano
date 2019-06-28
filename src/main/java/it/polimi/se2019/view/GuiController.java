@@ -4,8 +4,13 @@ import it.polimi.se2019.utility.Event;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Observer;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
 import java.net.MalformedURLException;
@@ -46,6 +51,30 @@ public abstract class GuiController implements Observer<Event>, Initializable, U
         else
             Platform.runLater(action);
     }
+
+    protected EventHandler<MouseEvent> clickable(Scene scene) {
+        return (MouseEvent event) -> scene.setCursor(Cursor.HAND);
+    }
+
+
+    protected EventHandler<MouseEvent> notClickable(Scene scene) {
+        return (MouseEvent event) -> scene.setCursor(Cursor.DEFAULT);
+    }
+
+    protected void clickableNoHandler(Scene scene){
+        scene.setCursor(Cursor.HAND);
+    }
+
+    protected void notClickableNoHandler(Scene scene){
+        scene.setCursor(Cursor.DEFAULT);
+    }
+
+    public void removeHandlers(ImageView image){
+        image.setOnMouseClicked(null);
+        image.setOnMouseExited(null);
+        image.setOnMouseExited(null);
+    }
+
 
     protected String getUrl(Path path){
         try {
