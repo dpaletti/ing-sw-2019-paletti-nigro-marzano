@@ -189,8 +189,8 @@ public class Player implements Targetable{
         reloadPrice.add(weapon.cardColour);
         if (pay(new ArrayList<>(reloadPrice)))
             figure.reload(weapon);
-        /*else
-           game.send(new SellPowerUpEvent());*/
+/*        else
+           game.send(new MVSellPowerUpEvent(game.playerToUser(this), ));*/
     }
 
     public void sellPowerUp (String powerUp){
@@ -279,7 +279,10 @@ public class Player implements Targetable{
         drawPowerUp(game.getPowerUpDeck().draw().getName());
     }
 
-    public boolean pay (List<Ammo> ammoToPay){
+    public boolean pay (List<Ammo> ammoToPay){  //missingAmmos
+        return true;
+        /*List<Ammo> ammosMissing = new ArrayList<>();
+        return ammosMissing;
         List<Ammo> ammosOwned = new ArrayList<>(ammo);
         for  (Ammo a : ammoToPay){
             if (ammosOwned.contains(a))
@@ -288,7 +291,7 @@ public class Player implements Targetable{
                 return false;
         }
         useAmmos(ammoToPay);
-        return true;
+        return true;*/
     }
 
     public void addWeapon (Weapon weapon){
