@@ -34,8 +34,10 @@ public class TickingTimer {
 
 
     public void endTimer(){
-        if(timer == null)
+        if(timer == null) {
+            endOperation.run();
             return;
+        }
         if (!timer.isInterrupted())
             timer.interrupt();
         endOperation.run();

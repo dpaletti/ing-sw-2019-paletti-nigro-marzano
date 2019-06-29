@@ -121,17 +121,7 @@ public class TestWeaponController {
         game.setTurnMemory(turnMemory);
         partial = machineGun.getDefinition().getListLayer(3).get(0).getKey().getEffectGraph().getListLayer(1).get(0).getKey();
         targetables = new ArrayList<>(Arrays.asList(blue));
-        assertTrue(weaponController.generateTargetSet(partial, magenta).containsAll(targetables));
-    }
-
-    @Test
-    public void testDispatchChosenEffect(){
-        weaponController.dispatch(chosenEffectEvent);
-        ArrayList<ArrayList<String>> targets = new ArrayList<>();
-        targets.add(new ArrayList<>(Arrays.asList("green")));
-        assertEquals("magenta", testModelHelper.getCurrent().getDestination());
-        assertTrue(((MVSelectionEvent)testModelHelper.getCurrent()).getActionOnTiles().isEmpty());
-        assertTrue(((MVSelectionEvent)testModelHelper.getCurrent()).getActionOnPlayers().values().contains(targets));
+        //assertTrue(weaponController.generateTargetSet(partial, magenta).containsAll(targetables));
     }
 
     //Testing the use of the whisper in the case of choosing to use the basic effect and to skip it
@@ -169,6 +159,10 @@ public class TestWeaponController {
         MVWeaponEndEvent event= (MVWeaponEndEvent)testModelHelper.getCurrent();
         assertEquals(game.playerToUser(magenta),event.getDestination());
         //Now i want to test the skip case
+        VCWeaponEndEvent endEvent=new VCWeaponEndEvent(game.playerToUser(magenta));
+        weaponController.update(endEvent);
+        assertTrue(!magenta.getWeapons().get(0).getLoaded());
+        magenta.reload(magenta.getWeapons().get(0));
         turnController.update(shoot);
         weaponController.update(chosenWeaponEvent);
         weaponController.update(chosenEffectEvent);
