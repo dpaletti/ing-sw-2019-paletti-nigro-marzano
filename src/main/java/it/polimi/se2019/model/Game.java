@@ -180,10 +180,10 @@ public class Game extends Observable<MVEvent> {
                 killshotTrack.getNumberOfSkulls()==killshotTrack.getKillshot().size()
                 ));
         playersWaitingToRespawn.add(playerToUser(deadPlayer));
-        killshotTrack.addKillshot(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
+        updateKillshotTrack(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
     }
 
-     public void updateKillshotTrack(FigureColour killer, boolean overkill){
+     public void updateKillshotTrack (FigureColour killer, boolean overkill){
         killshotTrack.addKillshot(killer, overkill);
          if (killshotTrack.getKillshot().size()==killshotTrack.getNumberOfSkulls())
              notify(new FinalFrenzyStartingEvent("*"));
@@ -204,20 +204,6 @@ public class Game extends Observable<MVEvent> {
             notify(new AllowedMovementsEvent(username, allowedPositions, target));
         else
             throw new NullPointerException("List of possible movements is empty");
-    }
-
-    //TODO: understand where and how this method should be used
-    public void sendPossibleTargets (String username, List<Player> players, List<Tile> tiles, boolean isArea) {
-        List<String> usernames = new ArrayList<>();
-        List<Point> points = new ArrayList<>();
-
-        for (Player p : players)
-            usernames.add(playerToUser(p));
-    }
-
-    //TODO: same as above
-    public GraphNode<GraphWeaponEffect> getWeaponEffects (String weapon){
-        return nameToWeapon(weapon).getDefinition();
     }
 
     // all players without any damage change their boards to final frenzy boards

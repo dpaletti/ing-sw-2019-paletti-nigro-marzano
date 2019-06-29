@@ -7,9 +7,10 @@ public class UpdatePointsEvent extends MVEvent {
     private int points;
     private String username;
 
-    public UpdatePointsEvent (String destination, int points){
+    public UpdatePointsEvent (String username, String destination, int points){
         super(destination);
-        this.points= points;
+        this.points = points;
+        this.username = username;
     }
 
     public int getPoints() {

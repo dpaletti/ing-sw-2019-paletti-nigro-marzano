@@ -102,7 +102,7 @@ public abstract class AbstractDeathController extends Controller {
 
     private void updatePoints (String username, int points){
         model.userToPlayer(username).setPoints(model.userToPlayer(username).getPoints()+points);
-        model.send(new UpdatePointsEvent(username, model.userToPlayer(username).getPoints()));
+        model.send(new UpdatePointsEvent(username,"*" , model.userToPlayer(username).getPoints()));
     }
 
     private List<Integer> getPointsToAssign (String username){

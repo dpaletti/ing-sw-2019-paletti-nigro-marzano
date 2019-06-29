@@ -70,12 +70,12 @@ public class PowerUpController extends CardController {
             throw new NullPointerException("Could not find " + message.getEffectName() + " in " + message.getPowerUp());
         layersVisitedPartial = 1;
         currentLayer= weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
-        for(GraphNode<PartialWeaponEffect> p: currentLayer)
+        /*for(GraphNode<PartialWeaponEffect> p: currentLayer)
             model.addToSelection(message.getSource(),
                     p.getKey().getActions(),
                     generateTargetSet(p.getKey(),
                             model.userToPlayer(message.getSource())));
 
-        model.sendPossibleTargets();
+        model.sendPossibleTargets();*/
     }
 }

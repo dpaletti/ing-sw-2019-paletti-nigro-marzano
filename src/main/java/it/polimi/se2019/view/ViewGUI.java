@@ -320,7 +320,7 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(PossibleEffectsEvent message) {
-        notify(new UiActivateWeaponEffects(message.getWeaponName(), message.getEffects()));
+        //notify(new UiActivateWeaponEffects(message.getWeaponName(), message.getEffects()));
     }
 
     @Override
