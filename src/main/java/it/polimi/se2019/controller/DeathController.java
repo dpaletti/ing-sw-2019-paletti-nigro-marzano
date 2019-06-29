@@ -48,7 +48,7 @@ public class DeathController extends AbstractDeathController{
             new FinalFrenzyDeathController(server, getRoomNumber(), model, this);
             return;
         }
-        winnerPointCalculation(message.getSource(), model.getKillshotTrack().getKillshot());
+        winnerPointCalculation(model.getKillshotTrack().getKillshot());
     }
 
     private boolean overkill (List<Tear> hp){

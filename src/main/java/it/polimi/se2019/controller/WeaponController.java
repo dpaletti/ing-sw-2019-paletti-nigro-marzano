@@ -78,6 +78,7 @@ public class WeaponController extends CardController {
         layersVisitedPartial = 0;
         currentLayer = null;
         weaponEffect = null;
+        model.getTurnMemory().end();
     }
 
     @Override
@@ -122,13 +123,18 @@ public class WeaponController extends CardController {
         }
         else {
             if (message.getTargetPlayer() != null) {
+                List<Targetable> targetables = new ArrayList<>(Arrays.asList(model.userToPlayer(message.getTargetPlayer())));
                 model.apply(model.playerToUser(currentPlayer),
                         new ArrayList<>(Arrays.asList(model.userToPlayer(message.getTargetPlayer()))),
                         currentLayer.get(partialGraphLayer).getKey());
                 usablePowerUps(new ArrayList<>(Arrays.asList(message.getTargetPlayer())));
                 previousTargets.add(message.getTargetPlayer());
+                model.getTurnMemory().hit(currentLayer.get(partialGraphLayer).getKey().getName(),
+                        targetables,
+                        targetables.get(0)); //not sure this is needed
             }
             else if (message.getTargetTile() != null) {
+                List<Targetable> targetables = new ArrayList<>(Arrays.asList(model.getTile(message.getTargetTile())));
                 List<Player> targets = new ArrayList<>();
                 List<String> users = new ArrayList<>();
                 for (Targetable t : model.getTile(message.getTargetTile()).getPlayers()) {
@@ -138,6 +144,9 @@ public class WeaponController extends CardController {
                 model.apply(model.playerToUser(currentPlayer), targets, currentLayer.get(partialGraphLayer).getKey());
                 usablePowerUps(users);
                 previousTargets.addAll(users);
+                model.getTurnMemory().hit(currentLayer.get(partialGraphLayer).getKey().getName(),
+                        targetables,
+                        model.getTile(message.getTargetTile()));
             }
 
             layersVisitedPartial++;

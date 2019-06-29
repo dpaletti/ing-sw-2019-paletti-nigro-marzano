@@ -7,6 +7,7 @@ import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.VCEvent;
+import it.polimi.se2019.view.vc_events.VCEndOfTurnEvent;
 
 import java.util.Map;
 
@@ -26,6 +27,12 @@ public class FinalFrenzyDeathController extends AbstractDeathController {
             //ignore events that this controller does not support
             Log.fine("DeathController ignored " + JsonHandler.serialize(message));
         }
+    }
+
+    @Override
+    public void dispatch(VCEndOfTurnEvent message) {
+        finalFrenzyPointCalculation(message.getSource());
+        winnerPointCalculation(model.getKillshotTrack().getKillshot());
     }
 
     private void finalFrenzyPointCalculation (String user){

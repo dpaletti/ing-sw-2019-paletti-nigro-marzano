@@ -91,21 +91,23 @@ public abstract class AbstractDeathController extends Controller {
     }
 
     //8, 6, 4, 2, 1, 1, overkills give a +1 and ties are solved in favour of the first to kill
-    protected void winnerPointCalculation (String user, List<Skull> killshotTrack){
+    protected void winnerPointCalculation (List<Skull> killshotTrack){
         List<Tear> killshot= new ArrayList<>();
         for (Skull s: killshotTrack)
             killshot.add(s.getTear());
         Map<FigureColour, Integer> figuresToKills = calculateHits(killshot);
-        assignPoints(figuresToKills, user, killshot);
+        assignPoints(figuresToKills, "", killshot);
         calculateOverkills(killshotTrack);
     }
 
     private void updatePoints (String username, int points){
         model.userToPlayer(username).setPoints(model.userToPlayer(username).getPoints()+points);
-        model.send(new UpdatePointsEvent(username, model.userToPlayer(username).getPoints()));
+        model.send(new UpdatePointsEvent(username,"*" , model.userToPlayer(username).getPoints()));
     }
 
     private List<Integer> getPointsToAssign (String username){
+        if (username.equalsIgnoreCase(""))
+            return model.getPointsToAssign();
         Player player = model.userToPlayer(username);
         List<Integer> points;
         //checks whether player is in FinalFrenzy
