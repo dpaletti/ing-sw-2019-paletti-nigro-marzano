@@ -4,18 +4,18 @@ import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.view.MVEvent;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class ReloadableWeaponsEvent extends MVEvent {
-    private ArrayList<String> reloadableWeapons;
+    private HashMap<String, ArrayList<String>> priceMap;
 
-    public ReloadableWeaponsEvent(String destination, List<String> reloadableWeapons) {
+    public ReloadableWeaponsEvent(String destination, HashMap<String, ArrayList<String>> priceMap) {
         super(destination);
-        this.reloadableWeapons = new ArrayList<>(reloadableWeapons);
+        this.priceMap = priceMap;
     }
 
-    public List<String> getReloadableWeapons() {
-        return reloadableWeapons;
+    public HashMap<String, ArrayList<String>> getPriceMap() {
+        return priceMap;
     }
 
     @Override
