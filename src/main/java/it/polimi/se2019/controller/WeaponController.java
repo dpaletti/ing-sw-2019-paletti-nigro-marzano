@@ -13,6 +13,7 @@ import it.polimi.se2019.view.vc_events.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class WeaponController extends CardController {
@@ -54,7 +55,7 @@ public class WeaponController extends CardController {
         List<GraphWeaponEffect> list = new ArrayList<>();
         layersVisited = layersVisited + 1;
         for (GraphNode<GraphWeaponEffect> g: current.getDefinition().getListLayer(layersVisited)) {
-            if (enoughAmmos(g.getKey()))
+            if (enoughAmmos(g.getKey()).isEmpty() || !enoughPowerUps(g.getKey()).isEmpty())
                 list.add(g.getKey());
         }
         if (!list.isEmpty()) {
@@ -90,6 +91,7 @@ public class WeaponController extends CardController {
         if(weaponEffect == null)
             throw new NullPointerException("Could not find " + message.getEffectName() + " in " + message.getWeapon());
 
+        //currentPlayer.pay();
         layersVisitedPartial = layersVisitedPartial + 1;
         currentLayer= weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
         partialGraphLayer++;
@@ -152,10 +154,9 @@ public class WeaponController extends CardController {
         model.usablePowerUps("onAttack", true, currentPlayer);
         model.apply(model.playerToUser(currentPlayer), targets, currentLayer.get(layersVisitedPartial).getKey());
         nextWeaponEffect();
-        //should this be sent later?
-        for (Player p : targets) {
+        for (Player p : targets)
             disablePowerUps(model.playerToUser(p), "onDamage");
-        }
+
     }
 
     @Override
@@ -187,15 +188,35 @@ public class WeaponController extends CardController {
         }
     }
 
-    private boolean enoughAmmos (GraphWeaponEffect effect){
+    private List<Ammo> enoughAmmos (GraphWeaponEffect effect){
         List<Ammo> ownedAmmos = new ArrayList<>(currentPlayer.getAmmo());
-        for (PowerUp p : currentPlayer.getPowerUps())
-            ownedAmmos.add(new Ammo (stringToAmmo(p.getColour())));
+        List<Ammo> toReturn = new ArrayList<>();
         for (Ammo a : effect.getPrice()){
             if (!ownedAmmos.remove(a))
-                return false;
+                toReturn.add(a);
         }
-        return true;
+        return toReturn;
+    }
+
+    private List<Ammo> enoughPowerUps (GraphWeaponEffect effect){
+        List<PowerUp> ownedPowerUps = new ArrayList<>(currentPlayer.getPowerUps());
+        List<Ammo> missingAmmos = enoughAmmos(effect);
+        List<Ammo> toReturn = new ArrayList<>();
+        boolean flag = false;
+
+        for (Ammo a : missingAmmos){
+            for (PowerUp p : ownedPowerUps) {
+                if (a.getColour().name().equalsIgnoreCase(p.getColour())) {
+                    ownedPowerUps.remove(p);
+                    toReturn.add(a);
+                    flag = true;
+                }
+            }
+            if (!flag)
+                return Collections.emptyList();
+            flag = false;
+        }
+        return toReturn;
     }
 
 }

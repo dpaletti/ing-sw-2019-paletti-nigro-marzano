@@ -1,5 +1,6 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.mv_events.GrabbedWeaponEvent;
 import it.polimi.se2019.model.mv_events.MVSellPowerUpEvent;
 import it.polimi.se2019.utility.Log;
 
@@ -45,8 +46,10 @@ public class Weapon extends Card implements Grabbable, Drawable, Jsonable{
         if (index == -1)
             throw new UnsupportedOperationException(grabbed + "\t is not in the current weapon spot and cannot be grabbed");
         if (player.getWeapons().size() < 3){
-            if(player.missingAmmos(((Weapon)player.getFigure().getTile().grabbables.get(index)).price).isEmpty())  //price could be and was paid
-                player.addWeapon((Weapon)player.getFigure().getTile().grabbables.get(index));
+            if(player.missingAmmos(((Weapon)player.getFigure().getTile().grabbables.get(index)).price).isEmpty()) {  //price could be and was paid
+                player.addWeapon((Weapon) player.getFigure().getTile().grabbables.get(index));
+                game.send(new GrabbedWeaponEvent("*", this.getName(), game.playerToUser(player)));
+            }
             else{
                 if (!player.powerUpsToPay(((Weapon)player.getFigure().getTile().grabbables.get(index)).price).isEmpty()) {
                     Map<String, Integer> colourToMissing = new HashMap<>();
