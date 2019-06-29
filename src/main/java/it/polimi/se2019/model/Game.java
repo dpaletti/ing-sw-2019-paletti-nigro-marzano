@@ -33,8 +33,6 @@ public class Game extends Observable<MVEvent> {
     private List <Integer> pointsToAssign= new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1, 1, 1));
     private List <Integer> frenzyPointsToAssign= new ArrayList<>(Arrays.asList(2, 1, 1, 1, 1));
 
-    private MVSelectionEvent selectionEventHolder = null;
-
     public Game(){
         weaponDeck= new Deck(new ArrayList<>(weaponHelper.getWeapons()));
         powerUpDeck= new Deck(new ArrayList<>(powerUpHelper.getPowerUps()));
@@ -49,18 +47,6 @@ public class Game extends Observable<MVEvent> {
     public void apply (String playing, List<Player> players, PartialWeaponEffect partialWeaponEffect){
        for (Player p : players)
            userToPlayer(playing).apply(p, partialWeaponEffect);
-    }
-
-    public void addToSelection(String playerSelecting, List<Action> actions, List<Targetable> targetables){
-        if(selectionEventHolder == (null))
-            selectionEventHolder = new MVSelectionEvent(playerSelecting);
-        if(!targetables.isEmpty())
-            targetables.get(0).addToSelectionEvent(selectionEventHolder, targetables, actions);
-    }
-
-    public void sendPossibleTargets (){
-        notify(selectionEventHolder);
-        selectionEventHolder = null;
     }
 
     public void pausePlayer (String username){
@@ -194,17 +180,7 @@ public class Game extends Observable<MVEvent> {
                 killshotTrack.getNumberOfSkulls()==killshotTrack.getKillshot().size()
                 ));
         playersWaitingToRespawn.add(playerToUser(deadPlayer));
-        //TODO: Changed for it to work in the tests
         killshotTrack.addKillshot(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
-        //if number of skulls equals dimension of killshot track, match is over
-        //calculate points of all players, move all lines beneath this in DeathController
-        //in DeathController for (Player p: players) calculatePoints and then verify if FF
-        if (killshotTrack.getKillshot().size()==killshotTrack.getNumberOfSkulls()){
-            if (finalFrenzy){
-                frenzyUpdatePlayerStatus(deadPlayer);
-                notify(new FinalFrenzyStartingEvent("*"));
-            }
-        }
     }
 
      public void updateKillshotTrack(FigureColour killer, boolean overkill){

@@ -277,8 +277,9 @@ public class Player implements Targetable{
     }
 
     public void useAmmos (List<Ammo> usedAmmo){
-       for (Ammo ammo: usedAmmo)
-           useAmmo(ammo);
+       for (Ammo a: usedAmmo)
+           useAmmo(a);
+       game.send(new FinanceUpdateEvent("*", game.playerToUser(this), ammoToString(ammo)));
     }
 
     private void useAmmo  (Ammo usedAmmo){
@@ -287,6 +288,7 @@ public class Player implements Targetable{
 
     public void addAmmo (Ammo ammo){
         this.ammo.add(ammo);
+        game.send(new FinanceUpdateEvent("*", game.playerToUser(this), ammoToString(this.ammo)));
     }
 
     public void drawPowerUp (){
@@ -352,4 +354,12 @@ public class Player implements Targetable{
         }
         return toPay;
  }
+
+ private List<String> ammoToString (List<Ammo> ammos){
+        List<String> ammoNames = new ArrayList<>();
+        for (Ammo a : ammos)
+            ammoNames.add(a.getColour().name());
+        return ammoNames;
+ }
+
 }
