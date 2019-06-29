@@ -6,4 +6,8 @@ public abstract class GenericWeaponEffect extends Effect{
     protected List<Ammo> price;
     protected int maxHeight;
     protected int effectType;
+
+    public List<Ammo> getPrice() {
+        return price;
+    }
 }

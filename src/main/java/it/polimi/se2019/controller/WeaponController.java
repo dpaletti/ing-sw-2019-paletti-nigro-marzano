@@ -53,8 +53,10 @@ public class WeaponController extends CardController {
     private void nextWeaponEffect (){
         List<GraphWeaponEffect> list = new ArrayList<>();
         layersVisited = layersVisited + 1;
-        for (GraphNode<GraphWeaponEffect> g: current.getDefinition().getListLayer(layersVisited))
-            list.add(g.getKey());
+        for (GraphNode<GraphWeaponEffect> g: current.getDefinition().getListLayer(layersVisited)) {
+            if (enoughAmmos(g.getKey()))
+                list.add(g.getKey());
+        }
         if (!list.isEmpty()) {
             PossibleEffectsEvent event = new PossibleEffectsEvent(model.playerToUser(currentPlayer), current.getName());
             for (GraphWeaponEffect w: list)
@@ -183,6 +185,17 @@ public class WeaponController extends CardController {
             for (String s : targets)
                 model.usablePowerUps("onDamage", false, model.userToPlayer(s));
         }
+    }
+
+    private boolean enoughAmmos (GraphWeaponEffect effect){
+        List<Ammo> ownedAmmos = new ArrayList<>(currentPlayer.getAmmo());
+        for (PowerUp p : currentPlayer.getPowerUps())
+            ownedAmmos.add(new Ammo (stringToAmmo(p.getColour())));
+        for (Ammo a : effect.getPrice()){
+            if (!ownedAmmos.remove(a))
+                return false;
+        }
+        return true;
     }
 
 }

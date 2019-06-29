@@ -212,15 +212,6 @@ public class TurnController extends Controller {
             new FinalFrenzyController(server, getRoomNumber(), model, this);
     }
 
-    private AmmoColour stringToAmmo (String ammoName){
-        for (AmmoColour ammoColour: AmmoColour.values()){
-            if (ammoColour.toString().equalsIgnoreCase(ammoName)){
-                return ammoColour;
-            }
-        }
-        throw new NullPointerException("This ammo doesn't exist");
-    }
-
     private void run (String username, Point destination, int distance){
         model.userToPlayer(username).run(destination, distance);
     }

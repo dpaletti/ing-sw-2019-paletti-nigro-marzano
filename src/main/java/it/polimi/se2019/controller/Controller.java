@@ -1,5 +1,6 @@
 package it.polimi.se2019.controller;
 
+import it.polimi.se2019.model.AmmoColour;
 import it.polimi.se2019.model.Game;
 import it.polimi.se2019.model.Player;
 import it.polimi.se2019.model.PowerUp;
@@ -79,6 +80,15 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
             if (p.getConstraint().equalsIgnoreCase(constraint))
                 model.send(new DisablePowerUpEvent(currentPlayer, p.getName()));
         }
+    }
+
+    protected AmmoColour stringToAmmo (String ammoName){
+        for (AmmoColour ammoColour: AmmoColour.values()){
+            if (ammoColour.toString().equalsIgnoreCase(ammoName)){
+                return ammoColour;
+            }
+        }
+        throw new NullPointerException("This ammo doesn't exist");
     }
 
 }
