@@ -19,6 +19,7 @@ import java.util.List;
 public class WeaponController extends CardController {
     private int partialGraphLayer = -1;
     private GraphWeaponEffect weaponEffect = null;
+    private List<String> previousTargets = new ArrayList<>();
     /* when should this be sent?
                 send(new PossibleEffectsEvent(username,
                 weaponName,
@@ -108,6 +109,9 @@ public class WeaponController extends CardController {
 
     @Override
     public void dispatch(VCPartialEffectEvent message) {
+        for (String s : previousTargets)
+            disablePowerUps(s, "onDamage");
+        previousTargets.clear();
         if (message.isSkip()){
             partialGraphLayer++;
             if (partialGraphLayer == currentLayer.size()) {
@@ -123,6 +127,7 @@ public class WeaponController extends CardController {
                         new ArrayList<>(Arrays.asList(model.userToPlayer(message.getTargetPlayer()))),
                         currentLayer.get(partialGraphLayer).getKey());
                 usablePowerUps(new ArrayList<>(Arrays.asList(message.getTargetPlayer())));
+                previousTargets.add(message.getTargetPlayer());
             }
             else if (message.getTargetTile() != null) {
                 List<Player> targets = new ArrayList<>();
@@ -133,6 +138,7 @@ public class WeaponController extends CardController {
                 }
                 model.apply(model.playerToUser(currentPlayer), targets, currentLayer.get(partialGraphLayer).getKey());
                 usablePowerUps(users);
+                previousTargets.addAll(users);
             }
 
             layersVisitedPartial++;
@@ -144,19 +150,6 @@ public class WeaponController extends CardController {
                 handlePartial(currentLayer.get(partialGraphLayer).getKey());
             }
         }
-    }
-
-    @Override
-    public void dispatch(VCSelectionEvent message) {
-        List<Player> targets = new ArrayList<>();
-        for (String s : message.getSelectedPlayers())
-            targets.add(model.userToPlayer(s));
-        model.usablePowerUps("onAttack", true, currentPlayer);
-        model.apply(model.playerToUser(currentPlayer), targets, currentLayer.get(layersVisitedPartial).getKey());
-        nextWeaponEffect();
-        for (Player p : targets)
-            disablePowerUps(model.playerToUser(p), "onDamage");
-
     }
 
     @Override
