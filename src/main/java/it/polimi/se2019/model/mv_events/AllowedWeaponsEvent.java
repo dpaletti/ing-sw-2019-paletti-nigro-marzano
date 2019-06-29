@@ -18,4 +18,9 @@ public class AllowedWeaponsEvent extends MVEvent {
     public void handle(MVEventDispatcher dispatcher) {
         dispatcher.dispatch(this);
     }
+
+    public ArrayList<String> getWeapons() {
+        return weapons;
+    }
+
 }

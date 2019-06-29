@@ -3,6 +3,7 @@ import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.mv_events.NotEnoughPlayersConnectedEvent;
 import it.polimi.se2019.model.mv_events.StartFirstTurnEvent;
 import it.polimi.se2019.model.mv_events.TurnEvent;
+import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.BiSet;
 import it.polimi.se2019.utility.Pair;
 import it.polimi.se2019.utility.PartialCombo;
@@ -12,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -24,6 +26,7 @@ public class TestTurnController {
     Player wallace= new Player(new Figure(FigureColour.MAGENTA),game);
     Player ciro= new Player(new Figure(FigureColour.YELLOW),game);
     TestModelHelper testModelHelper=new TestModelHelper();
+    Server server=new Server(1);
 
     @Before
     public void setup(){
@@ -44,7 +47,7 @@ public class TestTurnController {
         users.add(game.playerToUser(wallace));
         users.add(game.playerToUser(ciro));
         game.setUsernames(users);
-        turnController=new TurnController(game);
+        turnController=new TurnController(game,server);
         WeaponHelper weaponHelper=game.getWeaponHelper();
         Point redSpawnPoint= new Point(0,1);
         game.getGameMap().getTile(redSpawnPoint).add((Weapon)weaponHelper.findByName("Heatseeker"));
@@ -65,7 +68,7 @@ public class TestTurnController {
 
     @Test
     public void testReloadEventDispatch(){
-       ReloadEvent event= new ReloadEvent(game.playerToUser(leiva),"Heatseeker");
+       ReloadEvent event= new ReloadEvent(game.playerToUser(leiva),new ArrayList<>(Arrays.asList("Heatseeker")));
        turnController.update(event);
        assertTrue(leiva.getWeapons().get(0).getLoaded());
        assertEquals(0,turnController.getComboIndex());
@@ -80,7 +83,7 @@ public class TestTurnController {
         turnController.update(event);
         VCMoveEvent moveChoice= new VCMoveEvent(game.playerToUser(leiva),new Point(0,2),false);
         turnController.update(moveChoice);
-        ReloadEvent reloadEvent= new ReloadEvent(game.playerToUser(leiva),"Heatseeker");
+        ReloadEvent reloadEvent= new ReloadEvent(game.playerToUser(leiva),new ArrayList<>(Arrays.asList("Heatseeker")));
         turnController.update(reloadEvent);
         assertEquals(new Point(0,2),leiva.getPosition());
         assertTrue(leiva.getWeapons().get(0).getLoaded());
@@ -113,9 +116,11 @@ public class TestTurnController {
         ComboHelper comboHelper= game.getComboHelper();
         LootCardHelper lootCardHelper= game.getLootCardHelper();
         ChosenComboEvent chosenComboEvent= new ChosenComboEvent(game.playerToUser(leiva), "GrabStuff");
-        leiva.getFigure().spawn(new Point(2,1));
-        game.getGameMap().getTile(new Point(2,1)).add((LootCard)lootCardHelper.findByName("PBR"));
+        game.getGameMap().getTile(new Point(0,2)).add((LootCard)lootCardHelper.findByName("PBR"));
+        VCMoveEvent moveEvent= new VCMoveEvent(game.playerToUser(leiva),new Point(0,2),false);
         turnController.update(chosenComboEvent);
+        turnController.update(moveEvent);
+        assertEquals(new Point(0,2),leiva.getPosition());
         GrabEvent grabEvent= new GrabEvent(game.playerToUser(leiva),"PBR");
         turnController.update(grabEvent);
     }

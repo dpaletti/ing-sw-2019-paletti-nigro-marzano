@@ -103,7 +103,7 @@ public class TestGame {
         ReloadableWeaponsEvent message= (ReloadableWeaponsEvent)testModelHelper.getCurrent();
         List<String> names= new ArrayList<>();
         names.add(leiva.getWeapons().get(0).getName());
-        assertEquals(names,message.getReloadableWeapons());
+        assertEquals(names,message.getPriceMap().keySet());
    }
 
    @Test

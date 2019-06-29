@@ -352,4 +352,21 @@ public class Player implements Targetable{
         }
         return toPay;
  }
+
+ public Weapon getWeaponByName(String name){
+        for (Weapon w: weapons){
+            if (w.getName().equalsIgnoreCase(name))
+                return w;
+        }
+        throw new NullPointerException("Weapon not found");
+ }
+
+ public List<Weapon> getLoadedWeapons(){
+     List<Weapon> loadedWeapons=new ArrayList<>();
+     for (Weapon w: weapons){
+         if(w.getLoaded())
+             loadedWeapons.add(w);
+     }
+     return loadedWeapons;
+ }
 }

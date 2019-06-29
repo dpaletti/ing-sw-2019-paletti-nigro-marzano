@@ -23,28 +23,33 @@ public class TurnController extends Controller {
     private int comboUsed= 0;
     private boolean reloaded = false;
     private int turnCounter=0;
-    private TickingTimer interTurnTimer = new TickingTimer(model, this::endTurn);
-    private TickingTimer turnTimer = new TickingTimer(model, this::endTurn);
+    private TickingTimer interTurnTimer;
+    private TickingTimer turnTimer;
 
     //should if(currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.WHATEVER)) be checked for Move, grab and shoot as well as reload?
 
     public TurnController (Game model, Server server, int roomNumber){
         super(model, server, roomNumber);
         currentPlayer = model.getUsernames().get(0);
+        turnTimer= new TickingTimer(model, this::endTurn);
+        interTurnTimer= new TickingTimer(model, this::endTurn);
         //turn controller is registered to virtualView in closeMatchMaking() inside MatchMaking controller
         //either leave things like this or take that one out and add server.addController(this) here
     }
 
-    public TurnController (Game game){
+    //Test constructor
+    public TurnController (Game game,Server server){
         this.model = game;
         currentPlayer = model.getUsernames().get(0);
+        this.server=server;
+        turnTimer= new TickingTimer(model, this::endTurn);
+        interTurnTimer= new TickingTimer(model, this::endTurn);
     }
 
     @Override
     public void update(VCEvent message) {
         try {
-            if(message.getSource().equals(currentPlayer))
-                message.handle(this);
+            message.handle(this);
         }catch (UnsupportedOperationException e){
             //ignore events that this controller does not support
             Log.fine("TurnController ignored " + JsonHandler.serialize(message));
@@ -163,7 +168,7 @@ public class TurnController extends Controller {
             model.unloadedWeapons(currentPlayer);
             return;
         }
-        model.send(new TurnEvent(currentPlayer, fromPartialToStringCombo(model.userToPlayer(currentPlayer).getHealthState().getMoves())));
+        model.send(new TurnEvent(currentPlayer, fromPartialToStringCombo(getAllowedMoves())));
         model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
     }
 
@@ -229,8 +234,6 @@ public class TurnController extends Controller {
 
     //Create an event to assure that whenever a player leaves he forces spawn in a point
     private void endTurn(){
-        //add timer and wait for players to spawn
-        //if timer runs out, set isActive to false
         String previouslyPlaying = currentPlayer;
         comboUsed = 0;
         comboIndex = 0;
@@ -248,8 +251,7 @@ public class TurnController extends Controller {
                 model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
                 disablePowerUps(previouslyPlaying,"onTurn");
                 model.send(new TurnEvent(currentPlayer,
-                        fromPartialToStringCombo(model.userToPlayer(currentPlayer).
-                                getHealthState().getMoves())));
+                        fromPartialToStringCombo(getAllowedMoves())));
                 turnTimer.startTimer(server.getTurnTimer());
             }
         }
@@ -269,6 +271,19 @@ public class TurnController extends Controller {
         return currentPlayer;
     }
 
+    private List<ArrayList<PartialCombo>> getAllowedMoves(){
+        List<ArrayList<PartialCombo>> allowed=new ArrayList<>();
+        if(model.userToPlayer(currentPlayer).getLoadedWeapons().isEmpty()){
+            for(ArrayList<PartialCombo> c: model.userToPlayer(currentPlayer).getHealthState().getMoves()){
+                if(!c.contains(PartialCombo.SHOOT) || (c.contains(PartialCombo.SHOOT) && c.contains(PartialCombo.RELOAD))){
+                    allowed.add(c);
+                }
+            }
+        }else {
+            allowed=model.userToPlayer(currentPlayer).getHealthState().getMoves();
+        }
+        return allowed;
+    }
     private void interTurn(){
         if (!model.getPlayersWaitingToRespawn().isEmpty()){
             for (String s : model.getPlayersWaitingToRespawn())

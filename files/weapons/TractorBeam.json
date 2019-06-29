@@ -121,10 +121,10 @@
             "invalidEffects": [],
             "price": [
                 {
-                    "color": "RED"
+                    "colour": "RED"
                 },
                 {
-                    "color": "YELLOW"
+                    "colour": "YELLOW"
                 }
             ],
             "maxHeight":1,

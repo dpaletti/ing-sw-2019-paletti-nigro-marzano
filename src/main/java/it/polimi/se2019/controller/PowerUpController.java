@@ -21,7 +21,7 @@ public class PowerUpController extends CardController {
     }
 
     public PowerUpController(Game model) {
-        this.model = model;
+        super(model);
     }
 
     @Override

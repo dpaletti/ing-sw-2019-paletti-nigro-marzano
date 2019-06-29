@@ -72,7 +72,7 @@
                         {
                             "actionType": "MOVE",
                             "value": 1,
-                          "area": false
+                            "area": false
                         }
                     ],
                     "endable": false,

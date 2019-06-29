@@ -27,6 +27,8 @@ public class GameMap{
             this.lootTiles.addAll(castTileLoot(leftHalf.getLootTiles()));
             this.lootTiles.addAll(castTileLoot(rightHalf.getLootTiles()));
             this.root=leftHalf.root;
+            connectTiles(spawnTiles);
+            connectTiles(lootTiles);
             graphMap=mapToGraph();
         }catch (IOException c){
             Log.severe("Map not found in given directory");
@@ -35,6 +37,11 @@ public class GameMap{
         }catch (ClassNotFoundException e){
             Log.severe("Error in json file, type");
         }
+    }
+    //This method initializes the gamemap field in the tile objects
+    private void connectTiles(List<Tile> tiles){
+        for (Tile t: tiles)
+            t.setGameMap(this);
     }
 
     private String readFile (String path) throws IOException {

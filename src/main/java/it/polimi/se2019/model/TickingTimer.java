@@ -26,7 +26,7 @@ public class TickingTimer {
                 }
                 endTimer();
             }catch (InterruptedException e){
-                Log.severe("MatchMaking timer interrupted");
+                Log.severe("Timer interrupted");
                 Thread.currentThread().interrupt();
             }});
         timer.start();
@@ -34,6 +34,8 @@ public class TickingTimer {
 
 
     public void endTimer(){
+        if(timer == null)
+            return;
         if (!timer.isInterrupted())
             timer.interrupt();
         endOperation.run();

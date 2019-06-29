@@ -24,7 +24,8 @@ public class CardController extends Controller {
         super(model, server, roomNumber);
     }
 
-    public CardController (){
+    public CardController (Game model){
+        this.model=model;
     }
 
     @Override
@@ -142,6 +143,12 @@ public class CardController extends Controller {
             for(Tile t: model.getGameMap().getTiles()) {
                 if (!model.getGameMap().getTile(source.getPosition()).getColour().equals(t.getColour()))
                     targetables.add(t);
+            }
+            return targetables;
+        }
+        if (innerRadius == outerRadius){
+            for(Point p:model.getGameMap().getAllowedMovements(model.getTile(source.getPosition()), innerRadius)){
+                targetables.add(model.getTile(p));
             }
             return targetables;
         }

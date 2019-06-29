@@ -11,7 +11,7 @@
         "invalidEffects": [],
         "price":[],
         "maxHeight":3,
-        "effectType":-1,
+        "effectType": -1,
             "effects":[
                 {
                     "priority": 3,
@@ -29,7 +29,7 @@
                             "first": 1,
                             "second": 1
                         },
-                        "visible": -1,
+                        "visible": 1,
                         "enlarge": 0
                     },
                     "actions": [
@@ -61,7 +61,7 @@
                             "first": 1  ,
                             "second": 1
                         },
-                        "visible": -1,
+                        "visible": 1,
                         "enlarge": 0
                     },
                     "actions": [
@@ -90,7 +90,7 @@
                             "first": 1,
                             "second": 1
                         },
-                        "visible": -1,
+                        "visible": 1,
                         "enlarge": 0
                     },
                     "actions": [
@@ -112,7 +112,7 @@
             "invalidEffects": [],
             "price":[
                 {
-                    "color": "YELLOW"
+                    "colour": "YELLOW"
                 }
             ],
             "maxHeight":1,
@@ -134,7 +134,7 @@
                             "first": 1,
                             "second": 1
                         },
-                        "visible": -1,
+                        "visible": 1,
                         "enlarge": 0
                     },
                     "actions": [

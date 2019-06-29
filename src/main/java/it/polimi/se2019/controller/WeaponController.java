@@ -28,11 +28,11 @@ public class WeaponController extends CardController {
 
     public WeaponController (Server server, int roomNumber, Game model){
         super(model, server, roomNumber);
+        currentPlayer=model.getPlayers().get(0);
     }
 
     public WeaponController (Game model){
-        super();
-        this.model = model;
+        super(model);
     }
 
     @Override
@@ -49,6 +49,7 @@ public class WeaponController extends CardController {
     @Override
     public void dispatch(ChosenWeaponEvent message) {
         current = model.nameToWeapon(message.getWeapon());
+        currentPlayer=model.userToPlayer(message.getSource());
         nextWeaponEffect();
     }
 
@@ -67,7 +68,6 @@ public class WeaponController extends CardController {
         }
         else {
             model.send(new MVWeaponEndEvent(model.playerToUser(currentPlayer)));
-            endUsage();
         }
     }
 
@@ -116,7 +116,6 @@ public class WeaponController extends CardController {
             partialGraphLayer++;
             if (partialGraphLayer == currentLayer.size()) {
                 model.send(new MVWeaponEndEvent(message.getSource()));
-                endUsage();
             }
             else
                 handlePartial(currentLayer.get(partialGraphLayer).getKey());
@@ -154,6 +153,7 @@ public class WeaponController extends CardController {
 
     @Override
     public void dispatch(VCWeaponEndEvent message) {
+        currentPlayer.getWeaponByName(current.getName()).setLoaded(false);
         endUsage();
         layersVisitedPartial = 0;
         currentLayer = null;
@@ -168,7 +168,9 @@ public class WeaponController extends CardController {
 
     private List<String> targetableToPlayer (List<Targetable> targetables){
         List<String> players = new ArrayList<>();
-        //for (Targetable t : targetables)
+        for (Targetable t : targetables){
+            players.add(model.playerToUser((Player)t));
+        }
         return players;
     }
 

@@ -27,6 +27,10 @@ public class Tile implements Targetable{
         this.position=t.position;
     }
 
+    public void setGameMap(GameMap gameMap) {
+        this.gameMap = gameMap;
+    }
+
     public List<Grabbable> grab (){throw new UnsupportedOperationException("Can't grab from generic tile");}
 
     public List<Grabbable> getGrabbables() {
@@ -84,7 +88,7 @@ public class Tile implements Targetable{
         List<Tile> hit= new ArrayList<>();
         for (String s: effects){
             if (turnMemory.getHitTiles().get(s) != null)
-            hit.addAll(turnMemory.getHitTiles().get(s));
+                 hit.addAll(turnMemory.getHitTiles().get(s));
         }
         return new ArrayList<>(hit);
     }

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.BiSet;
 import it.polimi.se2019.utility.Pair;
 import it.polimi.se2019.utility.Point;
@@ -25,6 +26,7 @@ public class TestDeathController {
     TestModelHelper testModelHelper=new TestModelHelper();
     DeathController deathController=new DeathController(game);
     private KillshotTrack killshotTrack= new KillshotTrack(1);
+    Server server=new Server(1);
     @Before
     public void setup(){
         BiSet<FigureColour, String> look= new BiSet<>();
@@ -44,7 +46,7 @@ public class TestDeathController {
         users.add(game.playerToUser(wallace));
         users.add(game.playerToUser(ciro));
         game.setUsernames(users);
-        turnController=new TurnController(game);
+        turnController=new TurnController(game,server);
         LootCardHelper lootCardHelper=game.getLootCardHelper();
         Point casualLoot= new Point(1,1);
         game.getGameMap().getTile(casualLoot).add((LootCard)lootCardHelper.findByName("PBR"));

@@ -14,6 +14,7 @@ public class GraphWeaponEffect extends GenericWeaponEffect {
         this.name=weaponEffect.name;
         this.price=weaponEffect.price;
         this.maxHeight=weaponEffect.maxHeight;
+        this.effectType=weaponEffect.effectType;
         card.generateGraph(weaponEffect.getEffects(), effectGraph, weaponEffect.maxHeight, weaponEffect.maxHeight);
     }
 

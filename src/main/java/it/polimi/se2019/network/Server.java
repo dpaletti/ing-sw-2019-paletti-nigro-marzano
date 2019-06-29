@@ -52,7 +52,10 @@ public class Server implements ServerInterface {
         }catch (IOException e){
             Log.severe("IO error while starting network up");
         }
+    }
 
+    public Server(int roomNumber){
+        this.roomNumber=roomNumber;
     }
 
     public int getTurnTimer(){
