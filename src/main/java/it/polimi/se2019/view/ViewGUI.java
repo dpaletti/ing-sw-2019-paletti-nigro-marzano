@@ -31,6 +31,7 @@ public class ViewGUI extends View {
     private static ViewGUI instance = null;
     private Map<Point, String> pointColorSpawnMap;
     private String currentlyShownFigure = getPlayerOnUsername(client.getUsername()).getPlayerColor();
+    private boolean respawning = false;
 
 
     private class EventListener implements Runnable{
@@ -209,11 +210,18 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(PausedPlayerEvent message) {
+        notify(new UiPausePlayer(message.getPausedPlayer()));
     }
 
     public void endTurn(){
         notify(new VCEndOfTurnEvent(client.getUsername()));
         notify(new UiTurnEnd());
+    }
+
+
+    @Override
+    public void dispatch(UpdatePointsEvent message) {
+        notify(new UiPointsEvent(message.getUsername(), message.getPoints()));
     }
 
     //-----------------------------------Figure movements-----------------------------------//
@@ -254,6 +262,7 @@ public class ViewGUI extends View {
         List<String> weapons = getPlayerOnUsername(message.getUser()).getWeapons();
         weapons.add(message.getWeapon());
     }
+
 
     //------------------------------------MockPlayer Manipulation--------------------------------------------//
 
@@ -308,6 +317,25 @@ public class ViewGUI extends View {
         getPlayerOnUsername(message.getUsername()).setAmmos(message.getUpdatedAmmos());
     }
 
+    @Override
+    public void dispatch(MVDeathEvent message) {
+        if(message.isMatchOver()){
+            notify(new CalculatePointsEvent(client.getUsername()));
+            return;
+        }
+        notify(new UiMoveFigure(getPlayerOnUsername(message.getDead()).getPlayerColor(), new Point(-1, -1)));
+        notify(new UiAddKillOnSkulls(message.isOverkill(), getPlayerOnUsername(message.getKiller()).getPlayerColor()));
+        if(getPlayerOnUsername(message.getDead()).getPlayerColor().equalsIgnoreCase(currentlyShownFigure))
+            notify(new UiHpReset());
+        getPlayerOnUsername(message.getDead()).setHp(new ArrayList<>());
+    }
+
+    public void dispatch(MVRespawnEvent message){
+        respawning = true;
+        dispatch(new UiPutPowerUp(message.getDrawnPowerUpName()));
+        dispatch(new UiRespawnEvent());
+    }
+
     //---------------------------------------------------------------------------------------//
     //--------------------------------------------------------------------------------------//
 
@@ -320,7 +348,7 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(PossibleEffectsEvent message) {
-        //notify(new UiActivateWeaponEffects(message.getWeaponName(), message.getEffects()));
+        notify(new UiActivateWeaponEffects(message.getName(), message.getEffects()));
     }
 
     @Override
@@ -328,6 +356,8 @@ public class ViewGUI extends View {
         if((message.getTargetPlayers() == null && message.getTargetTiles() == null) ||
                 (message.getTargetPlayers() != null && message.getTargetTiles() != null))
             throw new IllegalArgumentException("Could not handle targeting, wrong event format");
+
+        notify(new UiSkip(message.isSkippable()));
 
         if(message.getTargetTiles() != null) {
             for (Point tile : message.getTargetTiles())
@@ -343,6 +373,11 @@ public class ViewGUI extends View {
     @Override
     public void dispatch(ReloadableWeaponsEvent message) {
         notify(new UiReloading(message.getPriceMap()));
+    }
+
+    @Override
+    public void dispatch(MVWeaponEndEvent message) {
+        notify(new UiWeaponEnd());
     }
 
     //---------------------------------------------------------------------------------------//
@@ -373,6 +408,14 @@ public class ViewGUI extends View {
     //-------------------------------------Utility methods-------------------------------------//
 
 
+    public boolean isRespawning() {
+        return respawning;
+    }
+
+    public void setRespawning(boolean respawning) {
+        this.respawning = respawning;
+    }
+
     public List<String> getWeapons(){
         return getPlayerOnColour(currentlyShownFigure).getWeapons();
     }
@@ -383,6 +426,11 @@ public class ViewGUI extends View {
 
     public List<String> getAmmos(){
         return getPlayerOnColour(currentlyShownFigure).getAmmos();
+    }
+
+    public List<String> getHeadPlayerAmmos(){
+        return getPlayerOnUsername(client.getUsername()).getAmmos();
+
     }
 
     private MockPlayer getPlayerOnColour(String figure){

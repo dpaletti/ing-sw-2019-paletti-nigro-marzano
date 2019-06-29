@@ -147,4 +147,28 @@ public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiStopReloading message){
         throw new UnsupportedOperationException("UiStopReloading not supported");
     }
+    default void dispatch(UiWeaponEnd message){
+        throw new UnsupportedOperationException("UiWeaponEnd not supported");
+    }
+    default void dispatch(UiHpReset message){
+        throw new UnsupportedOperationException("UiHpReset not supported");
+    }
+    default void dispatch(UiAddKillOnSkulls message){
+        throw new UnsupportedOperationException("UiAddKillOnSkulls not supported");
+    }
+    default void dispatch(UiRespawnEvent message){
+        throw new UnsupportedOperationException("UiRespawnEvent not supported");
+    }
+    default void dispatch(UiPointsEvent message){
+        throw new UnsupportedOperationException("UiPointsEvent not supported");
+    }
+    default void dispatch(UiShowFourthEnd message){
+        throw new UnsupportedOperationException("UiShowFourthEnd not supported");
+    }
+    default void dispatch(UiSkip message){
+        throw new UnsupportedOperationException("UiSkip not supported");
+    }
+    default void dispatch(UiPartialSkippedEvent message){
+        throw new UnsupportedOperationException("UiPartialSkipped not supported");
+    }
 }

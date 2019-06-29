@@ -2,6 +2,7 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.ui_events.*;
+import it.polimi.se2019.view.vc_events.DiscardedPowerUpEvent;
 import it.polimi.se2019.view.vc_events.PowerUpUsageEvent;
 import it.polimi.se2019.view.vc_events.SpawnEvent;
 import it.polimi.se2019.view.vc_events.VCSellPowerUpEvent;
@@ -35,9 +36,9 @@ public class GuiControllerPowerUp extends GuiController {
 
     private String path = "files/assets/cards/";
 
-    private String left;
-    private String middle;
-    private String right;
+    private String left = null;
+    private String middle = null;
+    private String right = null;
 
     private int blueSold = 0;
     private int yellowSold = 0;
@@ -48,24 +49,53 @@ public class GuiControllerPowerUp extends GuiController {
     @Override
     public void dispatch(UiPutPowerUp message) {
         try {
-            if (powerupLeft.getImage() == null) {
+            if (left == null) {
+                removeHandlers(powerupLeft);
                 powerupLeft.setImage(new Image(Paths.get(path + message.getPowerup()).toUri().toURL().toString() + ".png"));
                 left = message.getPowerup();
             }
-            else if (powerupMiddle.getImage() == null) {
+            else if (middle == null) {
+                removeHandlers(powerupMiddle);
                 powerupMiddle.setImage(new Image(Paths.get(path + message.getPowerup()).toUri().toURL().toString() + ".png"));
                 middle = message.getPowerup();
             }
-            else if (powerupRight.getImage() == null) {
+            else if (right == null) {
+                removeHandlers(powerupRight);
                 powerupRight.setImage(new Image(Paths.get(path + message.getPowerup()).toUri().toURL().toString() + ".png"));
                 right = message.getPowerup();
             }
-            else
+            else {
                 ViewGUI.getInstance().send(new UiShowFourth(message.getPowerup(), false));
+                powerupRight.setOnMouseEntered(clickable(scene));
+                powerupRight.setOnMouseExited(notClickable(scene));
+                powerupRight.setOnMouseClicked(handleDiscard(right));
+
+                powerupLeft.setOnMouseEntered(clickable(scene));
+                powerupLeft.setOnMouseExited(notClickable(scene));
+                powerupLeft.setOnMouseClicked(handleDiscard(left));
+
+                powerupMiddle.setOnMouseEntered(clickable(scene));
+                powerupMiddle.setOnMouseExited(notClickable(scene));
+                powerupMiddle.setOnMouseClicked(handleDiscard(middle));
+            }
 
         }catch (MalformedURLException e){
             Log.severe("Wrong URL for: " + message.getPowerup());
         }
+    }
+
+    private EventHandler<MouseEvent> handleDiscard(String powerUpName){
+        return (MouseEvent event) -> {
+            ViewGUI.getInstance().send(new DiscardedPowerUpEvent(ViewGUI.getInstance().getUsername(), powerUpName));
+            removeHandlers((ImageView) event.getSource());
+            notClickableNoHandler(scene);
+            if(powerUpName.equals(left))
+                left = null;
+            else if(powerUpName.equals(middle))
+                middle = null;
+            else if(powerUpName.equals(right))
+                right = null;
+        };
     }
 
     @Override
@@ -80,6 +110,14 @@ public class GuiControllerPowerUp extends GuiController {
         powerupMiddle.setOnMouseEntered(clickable(scene));
         powerupMiddle.setOnMouseExited(notClickable(scene));
 
+        powerupRight.setOnMouseClicked(spawnPowerUp(powerupMiddle, left));
+        powerupRight.setOnMouseEntered(clickable(scene));
+        powerupRight.setOnMouseExited(notClickable(scene));
+    }
+
+    @Override
+    public void dispatch(UiRespawnEvent message) {
+        dispatch(new UiSpawn());
     }
 
     private EventHandler<MouseEvent> spawnPowerUp(ImageView powerup, String powerupName){
@@ -91,6 +129,13 @@ public class GuiControllerPowerUp extends GuiController {
             }else if (powerupName.equals(middle)){
                 middle = null;
                 powerUpToKeep = left;
+            }else if(powerupName.equals(right) && ViewGUI.getInstance().isRespawning()){
+                right = null;
+                ViewGUI.getInstance().send(new SpawnEvent(ViewGUI.getInstance().getUsername(), powerupName));
+                powerup.setImage(null);
+                removeHandlers(powerup);
+                ViewGUI.getInstance().setRespawning(false);
+                return;
             }else
                 throw new IllegalArgumentException("Could not find powerUp: " + powerupName);
 
@@ -99,6 +144,7 @@ public class GuiControllerPowerUp extends GuiController {
             removeHandlers(powerup);
         };
     }
+
 
 
     public void activatePowerup(String position, String powerUp){

@@ -103,9 +103,9 @@ public class WeaponController extends CardController {
     private void handlePartial (PartialWeaponEffect partial){
         List<Targetable> targets = generateTargetSet(partial, currentPlayer);
         if (partial.getTargetSpecification().getTile())
-            model.send(new PartialSelectionEvent(targetableToTile(targets), model.playerToUser(currentPlayer)));
+            model.send(new PartialSelectionEvent(targetableToTile(targets), model.playerToUser(currentPlayer), partial.isEndable()));
         else
-            model.send(new PartialSelectionEvent(model.playerToUser(currentPlayer), targetableToPlayer(targets)));
+            model.send(new PartialSelectionEvent(model.playerToUser(currentPlayer), targetableToPlayer(targets), partial.isEndable()));
     }
 
     @Override

@@ -9,12 +9,15 @@ import it.polimi.se2019.view.vc_events.VCPartialEffectEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -40,6 +43,7 @@ public class GuiControllerBoard extends GuiController {
     private String path = "files/assets/board/board_" ;
 
     private Scene scene;
+    private int skullToAdd = 0;
 
     private List<String> redEmpty = new ArrayList<>();
     private List<String> yellowEmpty = new ArrayList<>();
@@ -454,6 +458,42 @@ public class GuiControllerBoard extends GuiController {
 
 
     //----------------------------------------------------------------------------------------------------------------//
+
+    //-------------------------------------------------------------Skulls--------------------------------------------------//
+
+    @Override
+    public void dispatch(UiAddKillOnSkulls message) {
+        try {
+            FXMLLoader loader;
+            Pane pane;
+            if (message.isOverkill())
+                pane= new FXMLLoader(Paths.get("files/fxml/tear_board_stacked.fxml").toUri().toURL()).load();
+            else
+                pane= new FXMLLoader(Paths.get("files/fxml/tear_board_single.fxml").toUri().toURL()).load();
+
+            for(Node n: pane.getChildren()){
+                if(message.getColour().equalsIgnoreCase("blue"))
+                    ((Circle) n).setFill(Color.BLUE);
+                else if(message.getColour().equalsIgnoreCase("green"))
+                    ((Circle) n).setFill(Color.GREEN);
+                else if(message.getColour().equalsIgnoreCase("yellow"))
+                    ((Circle) n).setFill(Color.YELLOW);
+                else if(message.getColour().equalsIgnoreCase("red"))
+                    ((Circle) n).setFill(Color.RED);
+                else if(message.getColour().equalsIgnoreCase("grey"))
+                    ((Circle) n).setFill(Color.GREY);
+                else
+                    throw new IllegalArgumentException("Could not find colour: " + message.getColour() + " while setting colour for drops on skulls");
+            }
+        }catch (MalformedURLException e){
+            Log.severe("Could not retrieve fxml to put on skull board");
+        }catch (IOException e){
+            Log.severe("Could not load fxml to put on skull board");
+        }
+    }
+
+
+    //---------------------------------------------------------------------------------------------------------------------//
 
 //--------------------------------------------------------------------------------------------------------------------------//
 

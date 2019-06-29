@@ -2,10 +2,7 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.ui_events.*;
-import it.polimi.se2019.view.vc_events.ChosenComboEvent;
-import it.polimi.se2019.view.vc_events.DiscardedPowerUpEvent;
-import it.polimi.se2019.view.vc_events.DiscardedWeaponEvent;
-import it.polimi.se2019.view.vc_events.VCChooseAmmoToPayEvent;
+import it.polimi.se2019.view.vc_events.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -102,6 +99,7 @@ public class GuiControllerTable extends GuiController {
     private String headPlayer;
 
     private String lockedCard = null;
+    private boolean isLockedWeapon = false;
 
     private String oldDirections = null;
 
@@ -452,6 +450,11 @@ public class GuiControllerTable extends GuiController {
         directionsText.set("Please choose a powerup to discard");
     }
 
+    @Override
+    public void dispatch(UiRespawnEvent message) {
+        dispatch(new UiSpawn());
+    }
+
     public void dispatch(UiStartTurn message){
         endTurn.setDisable(false);
     }
@@ -492,6 +495,8 @@ public class GuiControllerTable extends GuiController {
                 ViewGUI.getInstance().send(new UiContextSwitchEnd());
             });
 
+            resetHp();
+
             for(String drop: ViewGUI.getInstance().getHp())
                 dispatch(new UiAddDamage(drop, ViewGUI.getInstance().getHp().indexOf(drop), false));
 
@@ -528,6 +533,25 @@ public class GuiControllerTable extends GuiController {
             }
     }
 
+    private void resetHp(){
+        Pane pane;
+        for (int i = 0; i < 12; i++){
+            pane = (Pane) scene.lookup("#" + i);
+            if(pane != null)
+                ((Pane)pane.getParent()).getChildren().remove(pane);
+        }
+    }
+
+    private void resetMark(){
+        List<Integer> position = new ArrayList<>();
+        for (int j = 0; j<2; j++){
+            for (int i=0; i < 10; i++){
+                position.add(i + 9*10);
+            }
+        }
+        dispatch(new UiRemoveMarks(position));
+    }
+
     private void disableAllCombos(){
         List<Node> nodes = ((Pane)scene.lookup("#playerCombo")).getChildren();
         nodes.addAll(((Pane) scene.lookup("#playerComboDamaged")).getChildren());
@@ -548,6 +572,8 @@ public class GuiControllerTable extends GuiController {
         try {
             if (lockedCard != null)
                 throw new IllegalStateException("Trying to show fourth card when still showing previous one");
+            if(message.isWeapon())
+                isLockedWeapon = true;
             lockedCard = message.getCard();
             showedCard.setImage(new Image(Paths.get("files/assets/cards/" + message.getCard() + ".png").toUri().toURL().toString()));
             directionsText.set("Please choose card to discard");
@@ -555,9 +581,15 @@ public class GuiControllerTable extends GuiController {
                 if(message.isWeapon())
                     ViewGUI.getInstance().send(new DiscardedWeaponEvent(
                             ViewGUI.getInstance().getUsername(),lockedCard));
-                else
-                    ViewGUI.getInstance().send(new DiscardedPowerUpEvent(
-                            ViewGUI.getInstance().getUsername(), lockedCard));
+                else {
+                    if(!ViewGUI.getInstance().isRespawning())
+                        ViewGUI.getInstance().send(new DiscardedPowerUpEvent(
+                                ViewGUI.getInstance().getUsername(), lockedCard));
+                    else {
+                        ViewGUI.getInstance().setRespawning(false);
+                        ViewGUI.getInstance().send(new SpawnEvent(ViewGUI.getInstance().getUsername(), lockedCard));
+                    }
+                }
                 showedCard.setOnMouseClicked(null);
                 showedCard.setImage(null);
                 lockedCard = null;
@@ -568,6 +600,16 @@ public class GuiControllerTable extends GuiController {
 
     }
 
+
+    @Override
+    public void dispatch(UiShowFourthEnd message) {
+        if(isLockedWeapon)
+            ViewGUI.getInstance().send(new UiPutWeapon(lockedCard));
+        else
+            ViewGUI.getInstance().send(new UiPutPowerUp(lockedCard));
+        lockedCard = null;
+    }
+
     @Override
     public void dispatch(UiShowWeapon message) {
         try {
@@ -575,6 +617,17 @@ public class GuiControllerTable extends GuiController {
         }catch (MalformedURLException e){
             Log.severe("Could not show card: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void dispatch(UiSkip message) {
+        directionsText.set("Please choose a target or skip");
+        endTurn.setText("Skip");
+        endTurn.setOnAction((ActionEvent event) -> {
+            ViewGUI.getInstance().send(new UiPartialSkippedEvent());
+            ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername()));
+        });
+
     }
 
     @Override
@@ -649,6 +702,7 @@ public class GuiControllerTable extends GuiController {
             setCircleFill(hit, message.getColour());
             if(!message.isMark()) {
                 hp.add(pane, message.getPosition(), 0);
+                hp.setId("hp" + message.getPosition());
             }
             else{
                 if(message.getPosition() > 9) {
@@ -765,14 +819,27 @@ public class GuiControllerTable extends GuiController {
     }
 
     @Override
+    public void dispatch(UiPointsEvent message) {
+        for(TableModel t: rowTrack){
+            if(t.getUsername().equalsIgnoreCase(message.getUsername())) {
+                t.setScore(((Integer) message.getPoints()).toString());
+                break;
+            }
+        }
+    }
+
+    @Override
     public void dispatch(UiReloading message){
         directionsText.set("Please choose weapon to reload");
         endTurn.setText("End reloading");
-        endTurn.setOnAction((ActionEvent event) ->{
-            ViewGUI.getInstance().send(new UiStopReloading());
-            directionsText.set("Reloading is over");
-            buttonSetup();
-        });
+        endTurn.setOnAction((ActionEvent event) -> ViewGUI.getInstance().send(new UiStopReloading()));
+
+    }
+
+    @Override
+    public void dispatch(UiStopReloading message){
+        directionsText.set("Reloading is over");
+        buttonSetup();
     }
 
     @Override

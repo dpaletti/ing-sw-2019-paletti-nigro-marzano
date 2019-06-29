@@ -1,13 +1,15 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.mv_events.*;
+import it.polimi.se2019.model.mv_events.HandshakeEndEvent;
+import it.polimi.se2019.model.mv_events.MvJoinEvent;
+import it.polimi.se2019.model.mv_events.SetUpEvent;
+import it.polimi.se2019.model.mv_events.UsernameDeletionEvent;
 import it.polimi.se2019.network.Connection;
 import it.polimi.se2019.network.ConnectionBroadcast;
 import it.polimi.se2019.network.EventLoop;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.*;
 import it.polimi.se2019.view.vc_events.DisconnectionEvent;
-import it.polimi.se2019.view.vc_events.VCWeaponEndEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,11 +111,6 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         public void dispatch(SetUpEvent message) {
             server.endMatchMaking();
             submit(getConnectionOnToken(message.getDestination()), message);
-        }
-
-        @Override
-        public void dispatch (MVWeaponEndEvent message){
-            notify (new VCWeaponEndEvent(biTokenUsername.getSecond(message.getDestination())));
         }
 
     @Override
