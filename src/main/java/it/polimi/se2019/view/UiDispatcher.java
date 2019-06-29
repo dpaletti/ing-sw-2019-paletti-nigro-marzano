@@ -102,9 +102,6 @@ public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiGrabLoot message){
         throw new UnsupportedOperationException("UiGrabLoot not supported");
     }
-    default void dispatch(UiReload message){
-        throw new UnsupportedOperationException("UiReload not supported");
-    }
     default void dispatch(UiShowFourth message){
         throw new UnsupportedOperationException("UiShowFourth not supported");
     }
@@ -143,5 +140,11 @@ public interface UiDispatcher extends EventDispatcher {
     }
     default void dispatch(UiDiscardPowerUps message){
         throw new UnsupportedOperationException("UiDiscardPowerUps not supported");
+    }
+    default void dispatch(UiReloading message){
+        throw new UnsupportedOperationException("UiReloading not supported");
+    }
+    default void dispatch(UiStopReloading message){
+        throw new UnsupportedOperationException("UiStopReloading not supported");
     }
 }

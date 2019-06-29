@@ -190,6 +190,11 @@ public class GuiControllerWeapon extends GuiController {
 
     }
 
+    @Override
+    public void dispatch(UiReloading message) {
+        
+    }
+
     private void highlight(ImageView weaponEffect, String weaponName, String effectName){
         try {
             weaponEffect.setImage(new Image(

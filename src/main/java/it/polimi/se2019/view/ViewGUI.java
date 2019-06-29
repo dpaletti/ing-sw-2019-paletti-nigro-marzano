@@ -342,7 +342,7 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(ReloadableWeaponsEvent message) {
-        
+        notify(new UiReloading(message.getPriceMap()));
     }
 
     //---------------------------------------------------------------------------------------//
