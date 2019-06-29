@@ -20,7 +20,6 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
     protected Game model;
     protected Server server;
     private int roomNumber;
-    protected Thread timer;
 
     public Controller(Game model, Server server, int roomNumber){
         this.model = model;
@@ -35,28 +34,6 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
 
     public int getRoomNumber() {
         return roomNumber;
-    }
-
-    protected void startTimer (int duration){
-        timer = new Thread(() ->{
-            int time = 0;
-            try {
-                while(time < duration && !Thread.currentThread().isInterrupted()){
-                    model.send(new TimerEvent("*", duration - time));
-                    time += 1000;
-                    sleep(1000);
-                }
-                endTimer();
-            }catch (InterruptedException e){
-                Log.severe("MatchMaking timer interrupted");
-                Thread.currentThread().interrupt();
-            }});
-        timer.start();
-    }
-
-    protected void endTimer(){
-        if (!timer.isInterrupted())
-            timer.interrupt();
     }
 
     public boolean enoughActivePlayers (){

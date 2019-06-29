@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Game;
+import it.polimi.se2019.model.TickingTimer;
 import it.polimi.se2019.model.mv_events.*;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.Log;
@@ -20,6 +21,7 @@ public class MatchMakingController extends Controller {
     private AtomicBoolean matchMade = new AtomicBoolean(false);
     private AtomicBoolean timerRunning = new AtomicBoolean(false);
     private List<String> usernames = new CopyOnWriteArrayList<>();
+    private TickingTimer matchMakingTimer = new TickingTimer(model, this::onTimerEnd);
 
     public MatchMakingController(Game model, Server server, int roomNumber){
         super(model, server, roomNumber);
@@ -48,12 +50,12 @@ public class MatchMakingController extends Controller {
         Log.info("Players in match making: " + playerCount);
         if (playerCount.get() == 3) {
             Log.fine("Timer started");
-            startTimer(server.getMatchMakingTimer());
+            matchMakingTimer.startTimer(server.getMatchMakingTimer());
             timerRunning.set(true);
         }
         if (playerCount.get() == 5) {
             timerRunning.set(false);
-            endTimer();
+            matchMakingTimer.endTimer();
         }
     }
 
@@ -67,7 +69,7 @@ public class MatchMakingController extends Controller {
                 playerCount.set(playerCount.decrementAndGet());
                 Log.info(disconnectionEvent.getSource() + " just disconnected, players in match making; " + playerCount);
                 if (playerCount.get() < 3 && timerRunning.get()) {
-                    timer.interrupt();
+                    matchMakingTimer.endTimer();
                     timerRunning.set(false);
                     model.send(new TimerEvent("*", -1));  //negative time to go signals countdown interruption
                     Log.info("Timer stopped");
@@ -101,9 +103,7 @@ public class MatchMakingController extends Controller {
         return new ArrayList<>(usernames);
     }
 
-    @Override
-    protected void endTimer() {
-        super.endTimer();
+    protected void onTimerEnd() {
         Log.fine("closing match making");
         matchMade.set(true);
         List<String> actualUsernames = new ArrayList<>(usernames);

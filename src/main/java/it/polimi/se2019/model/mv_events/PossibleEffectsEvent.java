@@ -7,12 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PossibleEffectsEvent extends MVEvent {
-    private String weaponName;
+    private String name;
     private HashMap<String, Integer> effects = new HashMap<>();
+    private boolean isWeapon;
 
-    public PossibleEffectsEvent(String destination, String weaponName){
-        super (destination);
-        this.weaponName=weaponName;
+    public PossibleEffectsEvent(String destination, String name, boolean isWeapon) {
+        super(destination);
+        this.name = name;
+        this.isWeapon = isWeapon;
     }
 
     @Override
@@ -29,7 +31,11 @@ public class PossibleEffectsEvent extends MVEvent {
         effects.put(effectName, effectType);
     }
 
-    public String getWeaponName() {
-        return weaponName;
+    public String getName() {
+        return name;
+    }
+
+    public boolean isWeapon() {
+        return isWeapon;
     }
 }

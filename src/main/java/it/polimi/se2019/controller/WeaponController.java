@@ -60,7 +60,7 @@ public class WeaponController extends CardController {
                 list.add(g.getKey());
         }
         if (!list.isEmpty()) {
-            PossibleEffectsEvent event = new PossibleEffectsEvent(model.playerToUser(currentPlayer), current.getName());
+            PossibleEffectsEvent event = new PossibleEffectsEvent(model.playerToUser(currentPlayer), current.getName(), true);
             for (GraphWeaponEffect w: list)
                 event.addEffect(w.getName(), w.getEffectType());
             model.send(event);
@@ -92,7 +92,7 @@ public class WeaponController extends CardController {
         if(weaponEffect == null)
             throw new NullPointerException("Could not find " + message.getEffectName() + " in " + message.getWeapon());
 
-        //currentPlayer.pay();
+        currentPlayer.useAmmos(weaponEffect.getPrice());
         layersVisitedPartial = layersVisitedPartial + 1;
         currentLayer= weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
         partialGraphLayer++;

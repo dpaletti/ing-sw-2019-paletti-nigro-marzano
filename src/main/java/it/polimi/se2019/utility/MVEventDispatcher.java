@@ -6,14 +6,6 @@ import it.polimi.se2019.model.mv_events.*;
 
 public interface MVEventDispatcher extends EventDispatcher {
 
-    default void dispatch(MVSelectionEvent message){
-        throw new UnsupportedOperationException("MVSelectionEvent not supported");
-    }
-
-    default void dispatch(FigureToAttackEvent message){
-        throw new UnsupportedOperationException("FigureToAttackEvent not supported");
-    }
-
     default void dispatch(TeleportEvent message){
         throw new UnsupportedOperationException("TeleportEvent not supported");
     }
@@ -173,4 +165,7 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("DisablePowerUpEvent not supported");
     }
 
+    default void dispatch (MVRespawnEvent message){
+
+    }
 }

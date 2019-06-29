@@ -11,17 +11,13 @@ public class MVDeathEvent extends MVEvent { //notifies users when one dies
     private String killer;
     private boolean overkill;
     private boolean isMatchOver;
-    private String drawedPowerUpName;
-    private HashMap<Point, String> spawnPoints;
 
-    public MVDeathEvent(String destination, String dead, String killer, boolean overkill, boolean isMatchOver,String drawedPowerUpName,HashMap<Point, String> spawnPoints){
+    public MVDeathEvent(String destination, String dead, String killer, boolean overkill, boolean isMatchOver){
         super(destination);
         this.dead= dead;
         this.killer=killer;
         this.overkill= overkill;
         this.isMatchOver= isMatchOver;
-        this.drawedPowerUpName=drawedPowerUpName;
-        this.spawnPoints=spawnPoints;
     }
 
     @Override
@@ -43,13 +39,5 @@ public class MVDeathEvent extends MVEvent { //notifies users when one dies
 
     public boolean isMatchOver() {
         return isMatchOver;
-    }
-
-    public String getDrawedPowerUpName() {
-        return drawedPowerUpName;
-    }
-
-    public HashMap<Point, String> getSpawnPoints() {
-        return spawnPoints;
     }
 }

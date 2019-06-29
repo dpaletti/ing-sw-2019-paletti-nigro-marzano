@@ -1,9 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.mv_events.MVWeaponEndEvent;
 import it.polimi.se2019.model.mv_events.PossibleEffectsEvent;
-import it.polimi.se2019.model.mv_events.PossiblePowerUpEffectsEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
 import it.polimi.se2019.utility.Log;
@@ -44,7 +42,7 @@ public class PowerUpController extends CardController {
         for (GraphNode<GraphWeaponEffect> g: current.getDefinition().getListLayer(layersVisited))
             list.add(g.getKey());
         if (!list.isEmpty()) {
-            PossiblePowerUpEffectsEvent event = new PossiblePowerUpEffectsEvent(model.playerToUser(currentPlayer), current.getName());
+            PossibleEffectsEvent event = new PossibleEffectsEvent(model.playerToUser(currentPlayer), current.getName(), false);
             for (GraphWeaponEffect w: list)
                 event.addEffect(w.getName(), w.getEffectType());
             model.send(event);

@@ -15,7 +15,7 @@ public class TickingTimer {
         this.endOperation = endOperation;
     }
 
-    protected void startTimer (int duration){
+    public void startTimer (int duration){
         timer = new Thread(() ->{
             int time = 0;
             try {
@@ -33,9 +33,10 @@ public class TickingTimer {
     }
 
 
-    protected void endTimer(){
+    public void endTimer(){
         if (!timer.isInterrupted())
             timer.interrupt();
         endOperation.run();
     }
+
 }

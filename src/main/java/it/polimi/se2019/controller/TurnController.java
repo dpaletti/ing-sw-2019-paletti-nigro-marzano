@@ -11,10 +11,7 @@ import it.polimi.se2019.view.VCEvent;
 import it.polimi.se2019.view.vc_events.*;
 import it.polimi.se2019.view.vc_events.DiscardedPowerUpEvent;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class TurnController extends Controller {
     private ArrayList<String> effects= new ArrayList<>();
@@ -26,12 +23,8 @@ public class TurnController extends Controller {
     private int comboUsed= 0;
     private boolean reloaded = false;
     private int turnCounter=0;
-
-    @Override
-    protected void endTimer() {
-        super.endTimer();
-        endTurn();
-    }
+    private TickingTimer interTurnTimer = new TickingTimer(model, this::endTurn);
+    private TickingTimer turnTimer = new TickingTimer(model, this::endTurn);
 
     //should if(currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.WHATEVER)) be checked for Move, grab and shoot as well as reload?
 
@@ -60,22 +53,28 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(SpawnEvent message) {
-        if (!message.getPowerUpToKeep().equals("")) {
-            spawn(message.getSource(), stringToAmmo(message.getDiscardedPowerUpColour()), message.getPowerUpToKeep()); }
+        boolean isRespawn = false;
+        if (model.getPlayersWaitingToRespawn().contains(message.getSource())) {
+            model.removeFromWaitingList(message.getSource());
+            isRespawn = true;
+        }
+        spawn(message.getSource(), stringToAmmo(message.getDiscardedPowerUpColour()), message.getPowerUpToKeep(), isRespawn);
+        if (isRespawn){
+            if (model.getPlayersWaitingToRespawn().isEmpty())
+                interTurnTimer.endTimer();
+        }
     }
 
     @Override
     public void dispatch(ReloadEvent message) {
-        if(currentCombo == null) {
+        for (String s : message.getReloadedWeapons())
+            reloadWeapon(message.getSource(), s);
+        if (currentCombo == null)
             reloaded = true;
-            reloadWeapon(message.getSource(), message.getReloadedWeapons());
-        }
-        else if (currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.RELOAD)) {
-            reloadWeapon(message.getSource(), message.getReloadedWeapons());
+        else if (currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.RELOAD))
             nextPartialCombo();
-        }
         if (comboUsed==2 || reloaded)
-            endTurn();
+            turnTimer.endTimer();
         }
 
         private boolean isCombo(List<PartialCombo> combos,Combo combo){
@@ -140,7 +139,7 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(VCEndOfTurnEvent message) {
-        endTurn();
+        turnTimer.endTimer();
     }
 
     @Override
@@ -206,12 +205,6 @@ public class TurnController extends Controller {
         nextPartialCombo();
     }
 
-    @Override
-    public void dispatch(CalculatePointsEvent message) {
-        if (model.isFinalFrenzy())
-            new FinalFrenzyController(server, getRoomNumber(), model, this);
-    }
-
     private void run (String username, Point destination, int distance){
         model.userToPlayer(username).run(destination, distance);
     }
@@ -220,7 +213,7 @@ public class TurnController extends Controller {
         model.userToPlayer(username).reload(model.nameToWeapon(weaponName));
     }
 
-    private void spawn (String username, AmmoColour spawnColour, String powerUpName) {
+    private void spawn (String username, AmmoColour spawnColour, String powerUpName, boolean respawn) {
         for (Tile tile : model.getGameMap().getSpawnTiles()) {
             if (tile.getColour().toString().equals(spawnColour.toString()))
                 model.userToPlayer(username).getFigure().spawn(tile.getPosition());
@@ -228,12 +221,16 @@ public class TurnController extends Controller {
         if (model.nameToPowerUp(powerUpName) != null)
             model.userToPlayer(username).drawPowerUp(powerUpName);
         model.send(new MVMoveEvent("*", username, model.userToPlayer(username).getFigure().getPosition()));
-        model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
-        model.send(new TurnEvent(username, fromPartialToStringCombo(model.userToPlayer(username).getHealthState().getMoves())));
+        if (!respawn) {
+            model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
+            model.send(new TurnEvent(username, fromPartialToStringCombo(model.userToPlayer(username).getHealthState().getMoves())));
+        }
     }
 
     //Create an event to assure that whenever a player leaves he forces spawn in a point
     private void endTurn(){
+        //add timer and wait for players to spawn
+        //if timer runs out, set isActive to false
         String previouslyPlaying = currentPlayer;
         comboUsed = 0;
         comboIndex = 0;
@@ -249,10 +246,11 @@ public class TurnController extends Controller {
                         model.getPowerUpDeck().draw().getName(),false,model.getGameMap().getMappedSpawnPoints()));
             else {
                 model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
-                disablePowerUps(currentPlayer,"onTurn");
-                model.send(new TurnEvent(currentPlayer, fromPartialToStringCombo(model.userToPlayer(currentPlayer).getHealthState().getMoves())));
-                //This line is commented out only to pass the serverless tests
-                //startTimer(server.getTurnTimer());
+                disablePowerUps(previouslyPlaying,"onTurn");
+                model.send(new TurnEvent(currentPlayer,
+                        fromPartialToStringCombo(model.userToPlayer(currentPlayer).
+                                getHealthState().getMoves())));
+                turnTimer.startTimer(server.getTurnTimer());
             }
         }
         else
@@ -271,5 +269,12 @@ public class TurnController extends Controller {
         return currentPlayer;
     }
 
+    private void interTurn(){
+        if (!model.getPlayersWaitingToRespawn().isEmpty()){
+            for (String s : model.getPlayersWaitingToRespawn())
+                model.send(new MVRespawnEvent(s, model.getPowerUpDeck().draw().getName()));
+            interTurnTimer.startTimer(server.getInterTurnTimer());
+        }
+    }
 
 }

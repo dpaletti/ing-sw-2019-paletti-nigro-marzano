@@ -21,6 +21,7 @@ public class Game extends Observable<MVEvent> {
     private List<Player> players= new ArrayList<>();
     private BiSet<FigureColour, String> userLookup = new BiSet<>();
     private List<String> usernames= new ArrayList<>();
+    private List<String> playersWaitingToRespawn = new ArrayList<>();
 
     private TurnMemory turnMemory = new TurnMemory();
 
@@ -120,6 +121,10 @@ public class Game extends Observable<MVEvent> {
         return usernames;
     }
 
+    public List<String> getPlayersWaitingToRespawn() {
+        return new ArrayList<>(playersWaitingToRespawn);
+    }
+
     public BiSet<FigureColour, String> getUserLookup() {
         return userLookup;
     }
@@ -186,8 +191,9 @@ public class Game extends Observable<MVEvent> {
                 colourToUser(deadPlayer.getFigure().getColour()),
                 colourToUser(deadPlayer.getHp().get(10).getColour()),
                 (deadPlayer.getHp().size()==12),
-                killshotTrack.getNumberOfSkulls()==killshotTrack.getKillshot().size(),
-                ((PowerUp)powerUpDeck.draw()).getName(),gameMap.getMappedSpawnPoints()));
+                killshotTrack.getNumberOfSkulls()==killshotTrack.getKillshot().size()
+                ));
+        playersWaitingToRespawn.add(playerToUser(deadPlayer));
         //TODO: Changed for it to work in the tests
         killshotTrack.addKillshot(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
         //if number of skulls equals dimension of killshot track, match is over
@@ -271,10 +277,15 @@ public class Game extends Observable<MVEvent> {
     }
 
     public void unloadedWeapons (String username){
-        Player player= userToPlayer(username);
-        List<String> unloadedWeapons= new ArrayList<>();
-        for (Weapon w: player.getWeapons())
-            unloadedWeapons.add(w.getName());
+        HashMap<String, ArrayList<String>> unloadedWeapons= new HashMap<>();
+        ArrayList<String> ammos = new ArrayList<>();
+        for (Weapon w: userToPlayer(username).getWeapons()) {
+            for (Ammo a : w.getPrice())
+                ammos.add(a.getColour().name());
+            ammos.add(w.cardColour.getColour().name());
+            unloadedWeapons.put(w.getName(), ammos);
+            ammos.clear();
+        }
         send(new ReloadableWeaponsEvent(username, unloadedWeapons));
     }
 
@@ -305,5 +316,9 @@ public class Game extends Observable<MVEvent> {
                     send(new UsablePowerUpEvent(playerToUser(currentPlayer), p.getName(), costs));
             }
         }
+    }
+
+    public void removeFromWaitingList (String player){
+        playersWaitingToRespawn.remove(player);
     }
 }

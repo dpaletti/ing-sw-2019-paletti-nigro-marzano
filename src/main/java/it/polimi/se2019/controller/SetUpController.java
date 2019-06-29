@@ -18,10 +18,11 @@ public class SetUpController extends Controller {
     private List<Boolean> isFinalFrenzy = new ArrayList<>();
     private int counter = 0;
     private Random random = new Random();
+    private TickingTimer setUpTimer = new TickingTimer(model, this::endTimer);
 
     public SetUpController(Game model, Server server, int roomNumber) {
         super(model, server, roomNumber);
-        startTimer(server.getMatchSetupTimer());
+        setUpTimer.startTimer(server.getMatchSetupTimer());
     }
 
     @Override
@@ -42,15 +43,12 @@ public class SetUpController extends Controller {
         configs.add(message.getConf());
         isFinalFrenzy.add(message.isFrenzy());
         counter++;
-        if (counter==5) {
-            endTimer();
-        }
+        if (counter==5)
+            setUpTimer.endTimer();
 
     }
 
-    @Override
     protected void endTimer() {
-        super.endTimer();
         int skull = 8;
         String config = "Large";
         boolean finalFrenzy = true;
