@@ -5,6 +5,7 @@ import it.polimi.se2019.view.ui_events.*;
 import it.polimi.se2019.view.vc_events.ChosenComboEvent;
 import it.polimi.se2019.view.vc_events.DiscardedPowerUpEvent;
 import it.polimi.se2019.view.vc_events.DiscardedWeaponEvent;
+import it.polimi.se2019.view.vc_events.VCChooseAmmoToPayEvent;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -19,11 +20,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GuiControllerTable extends GuiController {
@@ -58,6 +62,16 @@ public class GuiControllerTable extends GuiController {
     @FXML
     private Label turnTimer;
 
+    @FXML
+    private Label redAmmo;
+
+    @FXML
+    private Label blueAmmo;
+
+    @FXML
+    private Label yellowAmmo;
+
+
     //----- match_setup attributes ---//
     private GridPane choiceGrid;
     private CheckBox frenzyBox;
@@ -88,6 +102,8 @@ public class GuiControllerTable extends GuiController {
     private String headPlayer;
 
     private String lockedCard = null;
+
+    private String oldDirections = null;
 
     public static class TableModel {
         StringProperty username;
@@ -467,25 +483,49 @@ public class GuiControllerTable extends GuiController {
         try {
             currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + message.getNewContext().toLowerCase() + ".png").toUri().toURL().toString()));
             disableAllCombos();
-            String oldDirections = directionsText.get();
+            oldDirections = directionsText.get();
             directionsText.set("Looking at player " + message.getNewContext().toLowerCase());
 
             endTurn.setText("Back");
-            endTurn.setOnMouseClicked((MouseEvent event) ->{
-                try {
-                    currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + headPlayer + ".png").toUri().toURL().toString()));
-                    enableAllCombos();
-                    buttonSetup();
-                    directionsText.set(oldDirections);
-
-                }catch (MalformedURLException e){
-                    Log.severe("Could not retrieve old Image for player board");
-                }
-
+            endTurn.setOnMouseClicked((MouseEvent event) -> {
+                ViewGUI.getInstance().setCurrentlyShownFigure(headPlayer);
+                ViewGUI.getInstance().send(new UiContextSwitchEnd());
             });
+
+            for(String drop: ViewGUI.getInstance().getHp())
+                dispatch(new UiAddDamage(drop, ViewGUI.getInstance().getHp().indexOf(drop), false));
+
+            for(String drop: ViewGUI.getInstance().getMarks())
+                dispatch(new UiAddDamage(drop, ViewGUI.getInstance().getMarks().indexOf(drop), true));
+
+            dispatch(new UiAmmoUpdate(ViewGUI.getInstance().getAmmos()));
+
         }catch (MalformedURLException e){
             Log.severe("Wrong URL for context switching");
         }
+    }
+
+    @Override
+    public void dispatch(UiContextSwitchEnd message) {
+            try {
+                if(!frenzy)
+                    currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + headPlayer + "_back.png").toUri().toURL().toString()));
+                else
+                    currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + headPlayer + ".png").toUri().toURL().toString()));
+
+                enableAllCombos();
+                buttonSetup();
+                directionsText.set(oldDirections);
+                for(String drop: ViewGUI.getInstance().getHp())
+                    dispatch(new UiAddDamage(drop, ViewGUI.getInstance().getHp().indexOf(drop), false));
+
+                for(String drop: ViewGUI.getInstance().getMarks())
+                    dispatch(new UiAddDamage(drop, ViewGUI.getInstance().getMarks().indexOf(drop), true));
+
+                dispatch(new UiAmmoUpdate(ViewGUI.getInstance().getAmmos()));
+            } catch (MalformedURLException e) {
+                Log.severe("Could not retrieve old Image for player board");
+            }
     }
 
     private void disableAllCombos(){
@@ -592,6 +632,136 @@ public class GuiControllerTable extends GuiController {
         }catch (MalformedURLException e){
             Log.severe("Wrong URL in reshowing locked selection");
         }
+    }
+
+    @Override
+    public void dispatch(UiAddDamage message) {
+        FXMLLoader loader;
+        int row;
+        int column;
+        try {
+            if (!message.isMark())
+                 loader = new FXMLLoader(Paths.get("files/fxml/hp.fxml").toUri().toURL());
+            else
+                loader = new FXMLLoader(Paths.get("files/fxml/mark.fxml").toUri().toURL());
+            Pane pane = loader.load();
+            Circle hit = (Circle) (pane).getChildren().get(0);
+            setCircleFill(hit, message.getColour());
+            if(!message.isMark()) {
+                hp.add(pane, message.getPosition(), 0);
+            }
+            else{
+                if(message.getPosition() > 9) {
+                    row = 1;
+                    column = message.getPosition() - 10;
+                }
+                else {
+                    row = 0;
+                    column = message.getPosition();
+                }
+                mark.add(hit, column, row);
+                hit.setId("mark" + column + row);
+            }
+        }catch (MalformedURLException e){
+            Log.severe("Could not retrieve hp asset");
+        }catch (IOException e){
+            Log.severe("Could not load hit asset");
+        }
+    }
+
+    private void setCircleFill(Circle circle, String colour){
+        if(colour.equalsIgnoreCase("blue"))
+            circle.setFill(Color.BLUE);
+        else if (colour.equalsIgnoreCase("red"))
+            circle.setFill(Color.RED);
+        else if (colour.equalsIgnoreCase("yellow"))
+            circle.setFill(Color.YELLOW);
+        else if (colour.equalsIgnoreCase("gray"))
+            circle.setFill(Color.GRAY);
+        else if (colour.equalsIgnoreCase("green"))
+            circle.setFill(Color.GREEN);
+        else
+            throw new IllegalArgumentException("Could not find such colour: " + colour);
+
+    }
+    @Override
+    public void dispatch(UiRemoveMarks message) {
+        int column;
+        int row;
+        for(Integer i: message.getPositon()){
+            row = 0;
+            column = i;
+            if(i > 9) {
+                row = 1;
+                column = i - 10;
+            }
+            mark.getChildren().remove(scene.lookup("#mark" + column + row));
+            column++;
+            if(column == 10){
+                row = 1;
+                column = 0;
+            }
+            while(scene.lookup("mark" + column + row) != null){
+                dispatch(new UiAddDamage(ViewGUI.getInstance().getMarks().get(column + (9 * row)), (column - 1) + (9*row), true));
+                column++;
+                if(column == 10){
+                    row = 1;
+                    column = 0;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void dispatch(UiAmmoUpdate message) {
+        redAmmo.setText("Blue: " + Collections.frequency(message.getAmmos(), "BLUE"));
+        blueAmmo.setText("Red: " + Collections.frequency(message.getAmmos(), "RED"));
+        yellowAmmo.setText("Yellow" + Collections.frequency(message.getAmmos(), "YELLOW"));
+    }
+
+    @Override
+    public void dispatch(UiChooseAmmoToPay message) {
+        Label label;
+        for(String colour: message.getAvailable()){
+            label = (Label) scene.lookup("#" + colour.toLowerCase() + "Ammo");
+            label.setOnMouseEntered(clickable(scene));
+            label.setOnMouseExited(notClickable(scene));
+            label.setOnMouseClicked((MouseEvent event) -> {
+                for (String cc: message.getAvailable()){
+                    scene.lookup("#" + colour.toLowerCase() + "Ammo").setOnMouseEntered(null);
+                    scene.lookup("#" + colour.toLowerCase() + "Ammo").setOnMouseExited(null);
+                    scene.lookup("#" + colour.toLowerCase() + "Ammo").setOnMouseClicked(null);
+                }
+                ViewGUI.getInstance().send(new VCChooseAmmoToPayEvent(ViewGUI.getInstance().getUsername(), colour));
+            });
+        }
+    }
+
+    @Override
+    public void dispatch(UiFinalFrenzy message) {
+        try {
+            frenzy = true;
+            currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + headPlayer + ".png").toUri().toURL().toString()));
+            FXMLLoader loader = new FXMLLoader(Paths.get("files/fxml/frenzy.fxml").toUri().toURL());
+            ((Pane)scene.lookup("#playerCombo")).getChildren().add(loader.load());
+        }catch (MalformedURLException e){
+            Log.severe("Could not retrieve final frenzy board for: " + headPlayer);
+        }catch (IOException e){
+            Log.severe("Could not load final frenzy board for: " + headPlayer);
+        }
+    }
+
+    @Override
+    public void dispatch(UiPausePlayer message) {
+        int position = 0;
+        for(TableModel t: rowTrack){
+            if(t.getUsername().equalsIgnoreCase(message.getPlayerToPause()))
+                break;
+            position++;
+        }
+        leaderboard.requestFocus();
+        leaderboard.getSelectionModel().select(position);
+        leaderboard.getFocusModel().focus(position);
     }
 
     @Override

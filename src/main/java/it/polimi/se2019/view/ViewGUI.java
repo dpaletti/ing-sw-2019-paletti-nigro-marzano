@@ -30,6 +30,7 @@ public class ViewGUI extends View {
     private boolean timerGoing=false;
     private static ViewGUI instance = null;
     private Map<Point, String> pointColorSpawnMap;
+    private String currentlyShownFigure = getPlayerOnUsername(client.getUsername()).getPlayerColor();
 
 
     private class EventListener implements Runnable{
@@ -201,6 +202,15 @@ public class ViewGUI extends View {
             notify(new UiAvailableMove(c));
     }
 
+    @Override
+    public void dispatch(FinalFrenzyStartingEvent message) {
+        notify(new UiFinalFrenzy());
+    }
+
+    @Override
+    public void dispatch(PausedPlayerEvent message) {
+    }
+
     public void endTurn(){
         notify(new VCEndOfTurnEvent(client.getUsername()));
         notify(new UiTurnEnd());
@@ -239,7 +249,13 @@ public class ViewGUI extends View {
             notify(new UiGrabLoot(getPlayerOnUsername(client.getUsername()).getPosition()));
     }
 
-    //------------------------------------Selling--------------------------------------------//
+    @Override
+    public void dispatch(GrabbedWeaponEvent message) {
+        List<String> weapons = getPlayerOnUsername(message.getUser()).getWeapons();
+        weapons.add(message.getWeapon());
+    }
+
+    //------------------------------------MockPlayer Manipulation--------------------------------------------//
 
     @Override
     public void dispatch(UpdateHpEvent message) {
@@ -247,12 +263,50 @@ public class ViewGUI extends View {
         MockPlayer attacker = getPlayerOnUsername(message.getAttacker());
         List<String> newHp = attacked.getHp();
         newHp.add(attacker.getPlayerColor().toLowerCase());
+
+        if(attacked.getPlayerColor().equals(currentlyShownFigure)){
+            notify(new UiAddDamage(attacker.getPlayerColor().toLowerCase(), attacked.getHp().size(), false));
+        }
         attacked.setHp(newHp);
-
-
-
     }
 
+    @Override
+    public void dispatch(UpdateMarkEvent message) {
+        MockPlayer marked = getPlayerOnUsername(message.getMarked());
+        MockPlayer marker = getPlayerOnUsername(message.getMarker());
+        List<Integer> marksToTake =  new ArrayList<>();
+        List<String> newMarks = marked.getMark();
+        if(!message.isAdding()){
+            int i = 0;
+            for (String colour : marked.getMark()) {
+                if (colour.equalsIgnoreCase(marker.getPlayerColor())) {
+                    marksToTake.add(i);
+                    newMarks.remove(colour);
+                }
+                i++;
+            }
+            if(marked.getPlayerColor().equals(currentlyShownFigure))
+                notify(new UiRemoveMarks(marksToTake));
+        }else{
+            newMarks.add(marked.getPlayerColor().toLowerCase());
+
+            if(marked.getPlayerColor().equals(currentlyShownFigure))
+                notify(new UiAddDamage(marker.getPlayerColor(), marked.getMark().size(), true));
+        }
+        marked.setMark(newMarks);
+    }
+
+    public List<String> getMarks (){
+        //return marks of showed player
+        return getPlayerOnColour(currentlyShownFigure).getMark();
+    }
+
+    @Override
+    public void dispatch(FinanceUpdateEvent message) {
+        if(getPlayerOnUsername(message.getUsername()).getPlayerColor().equals(currentlyShownFigure))
+            notify(new UiAmmoUpdate(message.getUpdatedAmmos()));
+        getPlayerOnUsername(message.getUsername()).setAmmos(message.getUpdatedAmmos());
+    }
 
     //---------------------------------------------------------------------------------------//
     //--------------------------------------------------------------------------------------//
@@ -285,17 +339,50 @@ public class ViewGUI extends View {
 
     }
 
-    //---------------------------------------------------------------------------------------//
 
     @Override
     public void dispatch(ReloadableWeaponsEvent message) {
-        notify(new UiReload());
+        
     }
 
+    //---------------------------------------------------------------------------------------//
+
+    //-----------------------------------PowerUp----------------------------------------------//
 
     @Override
     public void dispatch(UsablePowerUpEvent message) {
-        new UiAvailablePowerup(message.getUsablePowerUp());
+        notify(new UiAvailablePowerup(message.getUsablePowerUp()));
+    }
+
+    @Override
+    public void dispatch(DisablePowerUpEvent message) {
+        notify(new UiDisablePowerUpEvent(message.getPowerUp()));
+    }
+
+    @Override
+    public void dispatch(MVChooseAmmoToPayEvent message) {
+        notify(new UiChooseAmmoToPay(message.getAvailableAmmos()));
+    }
+
+    @Override
+    public void dispatch(MVSellPowerUpEvent message) {
+        notify(new UiSellPowerups(message.getPowerUpsToSell(), message.getColoursToMissing()));
+    }
+    //----------------------------------------------------------------------------------------//
+
+    //-------------------------------------Utility methods-------------------------------------//
+
+
+    public List<String> getWeapons(){
+        return getPlayerOnColour(currentlyShownFigure).getWeapons();
+    }
+
+    public List<String> getHp(){
+        return getPlayerOnColour(currentlyShownFigure).getHp();
+    }
+
+    public List<String> getAmmos(){
+        return getPlayerOnColour(currentlyShownFigure).getAmmos();
     }
 
     private MockPlayer getPlayerOnColour(String figure){
@@ -305,6 +392,7 @@ public class ViewGUI extends View {
         }
         throw new IllegalArgumentException("Could not find player with figure colour: " + figure);
     }
+
 
     public String getColour(){
         return getPlayerOnUsername(client.getUsername()).getPlayerColor();
@@ -365,9 +453,6 @@ public class ViewGUI extends View {
         return null;
     }
 
-
-
-
     private void resetPlayer(String username){
         MockPlayer player = usernameToPlayer(username);
         player.setHp(new ArrayList<>());
@@ -383,8 +468,8 @@ public class ViewGUI extends View {
         throw new IllegalStateException("Could not find player with given username");
     }
 
-
-
-
+    public void setCurrentlyShownFigure(String currentlyShownFigure) {
+        this.currentlyShownFigure = currentlyShownFigure;
+    }
 }
 

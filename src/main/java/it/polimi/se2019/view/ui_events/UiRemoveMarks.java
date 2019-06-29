@@ -2,15 +2,17 @@ package it.polimi.se2019.view.ui_events;
 
 import it.polimi.se2019.view.UiDispatcher;
 
-public class UiRemoveMarks extends UiEvent {
-    private String colour;
+import java.util.List;
 
-    public UiRemoveMarks(String colour) {
-        this.colour = colour;
+public class UiRemoveMarks extends UiEvent {
+    private List<Integer> positon;
+
+    public UiRemoveMarks(List<Integer> positon) {
+        this.positon = positon;
     }
 
-    public String getColour() {
-        return colour;
+    public List<Integer> getPositon() {
+        return positon;
     }
 
     @Override

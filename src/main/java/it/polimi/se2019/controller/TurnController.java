@@ -68,10 +68,10 @@ public class TurnController extends Controller {
     public void dispatch(ReloadEvent message) {
         if(currentCombo == null) {
             reloaded = true;
-            reloadWeapon(message.getSource(), message.getWeaponName());
+            reloadWeapon(message.getSource(), message.getReloadedWeapons());
         }
         else if (currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.RELOAD)) {
-            reloadWeapon(message.getSource(), message.getWeaponName());
+            reloadWeapon(message.getSource(), message.getReloadedWeapons());
             nextPartialCombo();
         }
         if (comboUsed==2 || reloaded)

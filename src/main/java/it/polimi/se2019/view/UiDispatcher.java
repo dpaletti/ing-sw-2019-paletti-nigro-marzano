@@ -123,4 +123,25 @@ public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiRemoveMarks message){
         throw new UnsupportedOperationException("UiRemoveMarks not supported");
     }
+    default void dispatch(UiAddDamage message){
+        throw new UnsupportedOperationException("UiAddDamage not supported");
+    }
+    default void dispatch(UiAmmoUpdate message){
+        throw new UnsupportedOperationException("UiAmmoUpdate not supported");
+    }
+    default void dispatch(UiDisablePowerUpEvent message){
+        throw new UnsupportedOperationException("UiDisablePowerUpEvent not supported");
+    }
+    default void dispatch(UiContextSwitchEnd message){
+        throw new UnsupportedOperationException("UiContextSwitchEnd not supported");
+    }
+    default void dispatch(UiFinalFrenzy message){
+        throw new UnsupportedOperationException("UiFinalFrenzy not supported");
+    }
+    default void dispatch(UiChooseAmmoToPay message){
+        throw new UnsupportedOperationException("UiChooseAmmoToPay not supported");
+    }
+    default void dispatch(UiDiscardPowerUps message){
+        throw new UnsupportedOperationException("UiDiscardPowerUps not supported");
+    }
 }

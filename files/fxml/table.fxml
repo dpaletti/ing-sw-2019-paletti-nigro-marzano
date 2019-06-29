@@ -180,17 +180,17 @@
                <Font size="24.0" />
             </font>
          </Label>
-         <Label layoutY="30.0" prefHeight="50.0" prefWidth="90.0" text="Red: 3">
+         <Label fx:id="redAmmo" layoutY="30.0" prefHeight="50.0" prefWidth="90.0" text="Red: 3">
             <font>
                <Font size="19.0" />
             </font>
          </Label>
-         <Label layoutY="60.0" prefHeight="50.0" prefWidth="90.0" text="Yellow: 3">
+         <Label fx:id="yellowAmmo" layoutY="60.0" prefHeight="50.0" prefWidth="90.0" text="Yellow: 3">
             <font>
                <Font size="19.0" />
             </font>
          </Label>
-         <Label layoutY="90.0" prefHeight="50.0" prefWidth="90.0" text="Blue: 3">
+         <Label fx:id="blueAmmo" layoutY="90.0" prefHeight="50.0" prefWidth="90.0" text="Blue: 3">
             <font>
                <Font size="19.0" />
             </font>

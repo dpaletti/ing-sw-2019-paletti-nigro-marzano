@@ -6,6 +6,7 @@ import it.polimi.se2019.view.vc_events.ChosenEffectEvent;
 import it.polimi.se2019.view.vc_events.ChosenWeaponEvent;
 import it.polimi.se2019.view.vc_events.DiscardedWeaponEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,6 +14,8 @@ import javafx.scene.input.MouseEvent;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiControllerWeapon extends GuiController {
 
@@ -132,6 +135,59 @@ public class GuiControllerWeapon extends GuiController {
                 throw new IllegalArgumentException("Could not highlight effect with: " + message.getEffects().get(effect) + "as position descriptor");
             highlight(effectSpot, message.getWeaponName(), effect);
         }
+    }
+
+    @Override
+    public void dispatch(UiContextSwitch message) {
+        try {
+            List<ImageView> weaponSpot = new ArrayList<>();
+            weaponSpot.add(weaponLeft);
+            weaponSpot.add(weaponMiddle);
+            weaponSpot.add(weaponRight);
+            int i = 0;
+            for (String w : ViewGUI.getInstance().getWeapons()) {
+
+                weaponSpot.get(i).setImage(new Image(
+                        Paths.get("files/assets/cards/" + w + ".png").toUri().toURL().toString()
+
+                ));
+                i++;
+            }
+            for (ImageView w: weaponSpot){
+                for(Node n: w.getParent().getChildrenUnmodifiable()){
+                    n.setDisable(true);
+                }
+            }
+        }catch (MalformedURLException e){
+            Log.severe("Could not retrieve weapon during context switch");
+        }
+    }
+
+    @Override
+    public void dispatch(UiContextSwitchEnd message) {
+        try {
+            List<ImageView> weaponSpot = new ArrayList<>();
+            weaponSpot.add(weaponLeft);
+            weaponSpot.add(weaponMiddle);
+            weaponSpot.add(weaponRight);
+            int i = 0;
+            for (String w : ViewGUI.getInstance().getWeapons()) {
+
+                weaponSpot.get(i).setImage(new Image(
+                        Paths.get("files/assets/cards/" + w + ".png").toUri().toURL().toString()
+
+                ));
+                i++;
+            }
+            for (ImageView w : weaponSpot) {
+                for (Node n : w.getParent().getChildrenUnmodifiable()) {
+                    n.setDisable(false);
+                }
+            }
+        }catch (MalformedURLException e){
+            Log.severe("Could not retrieve weapon while ending ContextSwitching");
+        }
+
     }
 
     private void highlight(ImageView weaponEffect, String weaponName, String effectName){

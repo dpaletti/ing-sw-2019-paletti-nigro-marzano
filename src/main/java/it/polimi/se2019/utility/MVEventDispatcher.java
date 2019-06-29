@@ -172,4 +172,5 @@ public interface MVEventDispatcher extends EventDispatcher {
     default void dispatch (DisablePowerUpEvent message){
         throw new UnsupportedOperationException("DisablePowerUpEvent not supported");
     }
+
 }

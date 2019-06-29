@@ -13,12 +13,12 @@
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
     </columnConstraints>
-   <Pane prefHeight="200.0" prefWidth="47.0">
-       <ImageView fx:id="powerupLeft" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
-       </ImageView>
-         <ImageView fx:id="ammoLeft" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true" />
-         <ImageView fx:id="effectLeft" fitHeight="48.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true" />
-   </Pane>
+    <Pane prefHeight="200.0" prefWidth="47.0">
+        <ImageView fx:id="powerupLeft" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+        </ImageView>
+        <ImageView fx:id="ammoLeft" fitHeight="28.0" fitWidth="34.0" layoutX="40.0" layoutY="150.0" pickOnBounds="true" />
+        <ImageView fx:id="effectLeft" fitHeight="48.0" fitWidth="93.0" layoutX="14.0" layoutY="93.0" pickOnBounds="true" />
+    </Pane>
    <Pane prefHeight="200.0" prefWidth="86.0" GridPane.columnIndex="1">
        <ImageView fx:id="powerupMiddle" fitHeight="203.0" fitWidth="116.0" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
        </ImageView>

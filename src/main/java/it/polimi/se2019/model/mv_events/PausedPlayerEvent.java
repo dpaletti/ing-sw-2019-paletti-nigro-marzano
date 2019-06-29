@@ -4,7 +4,7 @@ import it.polimi.se2019.utility.MVEventDispatcher;
 import it.polimi.se2019.view.MVEvent;
 
 public class PausedPlayerEvent extends MVEvent {
-    String pausedPlayer;
+    private String pausedPlayer;
 
     public PausedPlayerEvent (String destination, String pausedPlayer){
         super(destination);

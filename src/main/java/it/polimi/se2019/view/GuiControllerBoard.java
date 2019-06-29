@@ -294,7 +294,10 @@ public class GuiControllerBoard extends GuiController {
     }
 
     private EventHandler<MouseEvent> handleFigureOnClick(String figure) {
-        return (MouseEvent event)-> ViewGUI.getInstance().send(new UiContextSwitch(figure));
+        return (MouseEvent event)-> {
+            ViewGUI.getInstance().setCurrentlyShownFigure(figure);
+            ViewGUI.getInstance().send(new UiContextSwitch(figure));
+        };
     }
 
 
