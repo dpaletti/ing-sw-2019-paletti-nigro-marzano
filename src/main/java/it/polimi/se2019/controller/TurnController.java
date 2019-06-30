@@ -14,13 +14,13 @@ import it.polimi.se2019.view.vc_events.DiscardedPowerUpEvent;
 import java.util.*;
 
 public class TurnController extends Controller {
-    private ArrayList<String> effects= new ArrayList<>();
-    private ArrayList<ArrayList<String>> targets= new ArrayList<>();
-    private boolean isFirstTurn= true; //TODO: set to false after first turn
+    private ArrayList<String> effects = new ArrayList<>();
+    private ArrayList<ArrayList<String>> targets = new ArrayList<>();
+    private boolean isFirstTurn = true; //TODO: set to false after first turn
     private String currentPlayer;
     private Combo currentCombo;
-    private int comboIndex= 0;
-    private int comboUsed= 0;
+    private int comboIndex = 0;
+    private int comboUsed = 0;
     private boolean reloaded = false;
     private int turnCounter=0;
     private TickingTimer interTurnTimer;
@@ -136,7 +136,7 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(ChosenComboEvent message) {
-        comboIndex=0;
+        comboIndex = 0;
         currentCombo = (Combo) model.getComboHelper().findByName(message.getChosenCombo());
         currentCombo.getPartialCombos().get(comboIndex).use(model, message.getSource());
 
@@ -164,7 +164,7 @@ public class TurnController extends Controller {
 
     private void nextCombo(){
         comboUsed++;
-        if (comboUsed==2) {
+        if (comboUsed == 2) {
             model.unloadedWeapons(currentPlayer);
             return;
         }
@@ -175,9 +175,11 @@ public class TurnController extends Controller {
     private void nextPartialCombo (){
         comboIndex++;
         if (comboIndex < currentCombo.getPartialCombos().size())
-            currentCombo.getPartialCombos().get(comboIndex).use(model,currentPlayer);
-        if (comboIndex == currentCombo.getPartialCombos().size())
+            currentCombo.getPartialCombos().get(comboIndex).use(model, currentPlayer);
+        if (comboIndex == currentCombo.getPartialCombos().size()) {
+            comboIndex = 0;
             nextCombo();
+        }
     }
 
     private Set<PartialCombo> getSetCombo(){

@@ -1,5 +1,7 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.mv_events.DrawnPowerUpEvent;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,8 +48,11 @@ public class LootCard implements Grabbable, Drawable,Jsonable{
                     addAmmo(c, player);
             }
 
-            if (name.contains("P"))
+            if (name.contains("P")) {
                 player.drawPowerUp();
+                game.send (new DrawnPowerUpEvent(game.playerToUser(player),
+                        player.getPowerUps().get(player.getPowerUps().size() - 1).name));
+            }
             player.getFigure().getTile().removeGrabbed(grabbed);
         }
     }
