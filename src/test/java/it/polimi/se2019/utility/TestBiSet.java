@@ -1,5 +1,7 @@
 package it.polimi.se2019.utility;
 
+import it.polimi.se2019.commons.utility.BiSet;
+import it.polimi.se2019.commons.utility.Pair;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

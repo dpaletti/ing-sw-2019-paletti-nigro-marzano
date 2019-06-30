@@ -1,5 +1,5 @@
 {
-	"type": "it.polimi.se2019.model.PowerUp",
+	"type": "it.polimi.se2019.server.model.PowerUp",
     "cardColour": {
 		"colour": "BLUE"
 	},

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane fx:id="board" prefHeight="673.0" prefWidth="858.0" stylesheets="@../css/match.css" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerBoard">
+<GridPane fx:id="board" prefHeight="673.0" prefWidth="858.0" stylesheets="@../css/match.css" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.client.view.GuiControllerBoard">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" percentWidth="57.0" />
         <ColumnConstraints hgrow="SOMETIMES" percentWidth="43.0" />

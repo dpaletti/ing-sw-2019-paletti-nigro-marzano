@@ -1,5 +1,5 @@
 {
-  "type":"it.polimi.se2019.model.Combo",
+  "type":"it.polimi.se2019.server.model.Combo",
   "name":"FrenzyMoveMoveGrab",
   "partialCombos":[
     "MOVE",

@@ -1,6 +1,6 @@
 
 {
-  "type": "it.polimi.se2019.model.Weapon",
+  "type": "it.polimi.se2019.server.model.Weapon",
   "cardColour": {
     "colour": "BLUE"
   },
