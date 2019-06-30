@@ -13,6 +13,8 @@ public class Game extends Observable<MVEvent> {
     private GameMap gameMap;
     private boolean finalFrenzy= true;
     private KillshotTrack killshotTrack;
+    private List<Point> emptyLootTiles = new ArrayList<>();
+    private List<Point> emptySpawnTiles = new ArrayList<>();
 
     private Deck weaponDeck;
     private Deck powerUpDeck;
@@ -282,5 +284,21 @@ public class Game extends Observable<MVEvent> {
 
     public void removeFromWaitingList (String player){
         playersWaitingToRespawn.remove(player);
+    }
+
+    public void addEmptyLootTile (Point point){
+        emptyLootTiles.add(point);
+    }
+
+    public void addEmptySpawnTile (Point point){
+        emptySpawnTiles.add(point);
+    }
+
+    public List<Point> getEmptyLootTiles() {
+        return new ArrayList<>(emptyLootTiles);
+    }
+
+    public List<Point> getEmptySpawnTiles() {
+        return new ArrayList<>(emptySpawnTiles);
     }
 }

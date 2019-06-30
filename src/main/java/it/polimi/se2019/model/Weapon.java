@@ -49,6 +49,7 @@ public class Weapon extends Card implements Grabbable, Drawable, Jsonable{
             if(player.missingAmmos(((Weapon)player.getFigure().getTile().grabbables.get(index)).price).isEmpty()) {  //price could be and was paid
                 player.addWeapon((Weapon) player.getFigure().getTile().grabbables.get(index));
                 game.send(new GrabbedWeaponEvent("*", this.getName(), game.playerToUser(player)));
+                game.addEmptySpawnTile(player.getPosition());
             }
             else{
                 if (!player.powerUpsToPay(((Weapon)player.getFigure().getTile().grabbables.get(index)).price).isEmpty()) {

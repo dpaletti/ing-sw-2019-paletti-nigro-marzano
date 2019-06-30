@@ -166,6 +166,14 @@ public interface MVEventDispatcher extends EventDispatcher {
     }
 
     default void dispatch (MVRespawnEvent message){
+        throw new UnsupportedOperationException("MVRespawnEvent not supported");
+    }
 
+    default void dispatch (BoardRefreshEvent message){
+        throw new UnsupportedOperationException("BoardRefreshEvent not supported");
+    }
+
+    default void dispatch (GrabbedLootCardEvent message){
+        throw new UnsupportedOperationException("GrabbedLootCardEvent not supported");
     }
 }

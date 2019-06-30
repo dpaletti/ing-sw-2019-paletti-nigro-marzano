@@ -250,6 +250,7 @@ public class TurnController extends Controller {
                         model.getPowerUpDeck().draw().getName(),
                         model.getPowerUpDeck().draw().getName(),false,model.getGameMap().getMappedSpawnPoints()));
             else {
+                refreshBoard();
                 model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
                 disablePowerUps(previouslyPlaying,"onTurn");
                 model.send(new TurnEvent(currentPlayer,
@@ -292,6 +293,18 @@ public class TurnController extends Controller {
                 model.send(new MVRespawnEvent(s, model.getPowerUpDeck().draw().getName()));
             interTurnTimer.startTimer(server.getInterTurnTimer());
         }
+    }
+
+    private void refreshBoard() {
+        HashMap<Point, String> loot = new HashMap<>();
+        HashMap<String, String> spawn = new HashMap<>();
+
+        for (Point p : model.getEmptyLootTiles())
+            loot.put(p, model.getLootDeck().draw().getName());
+        for (Point p : model.getEmptySpawnTiles())
+            spawn.put(model.getWeaponDeck().draw().getName(), model.getTile(p).getColour().name());
+
+        model.send(new BoardRefreshEvent("*", spawn, loot));
     }
 
 }
