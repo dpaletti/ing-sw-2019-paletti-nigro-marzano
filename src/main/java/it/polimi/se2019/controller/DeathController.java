@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.mv_events.EndOfMatchEvent;
 import it.polimi.se2019.model.mv_events.MVMoveEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.*;
@@ -75,4 +76,9 @@ public class DeathController extends AbstractDeathController{
         model.send(new MVMoveEvent("*", user, model.userToPlayer(user).getFigure().getPosition()));
     }
 
+    @Override
+    public void dispatch(DisconnectionEvent message) {
+        if (!enoughActivePlayers())
+            endOfMatch();
+    }
 }

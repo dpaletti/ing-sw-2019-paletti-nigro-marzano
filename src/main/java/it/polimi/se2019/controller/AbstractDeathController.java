@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.mv_events.EndOfMatchEvent;
 import it.polimi.se2019.model.mv_events.UpdatePointsEvent;
 import it.polimi.se2019.network.Server;
 import it.polimi.se2019.utility.JsonHandler;
@@ -117,5 +118,13 @@ public abstract class AbstractDeathController extends Controller {
             points = model.getPointsToAssign();
         int index = points.indexOf(player.getPlayerValue().getMaxValue());
         return new ArrayList<>(model.getPointsToAssign().subList(index, model.getPointsToAssign().size()));
+    }
+
+    public void endOfMatch(){
+        winnerPointCalculation(model.getKillshotTrack().getKillshot());
+        HashMap<String, Integer> points = new HashMap<>();
+        for (Player p : model.getPlayers())
+            points.put(model.playerToUser(p), p.getPoints());
+        new EndOfMatchEvent("*", points);
     }
 }

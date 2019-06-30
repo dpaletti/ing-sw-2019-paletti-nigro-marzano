@@ -64,5 +64,4 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
         }
         throw new NullPointerException("This ammo doesn't exist: " + ammoName);
     }
-
 }

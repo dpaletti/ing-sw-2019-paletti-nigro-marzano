@@ -212,6 +212,11 @@ public class TurnController extends Controller {
         nextPartialCombo();
     }
 
+    @Override
+    public void dispatch(CalculatePointsEvent message) {
+        model.frenzyUpdatePlayerStatus(model.userToPlayer(message.getSource()));
+    }
+
     private void run (String username, Point destination, int distance){
         model.userToPlayer(username).run(destination, distance);
     }
@@ -241,6 +246,7 @@ public class TurnController extends Controller {
         comboIndex = 0;
         currentCombo = null;
         turnCounter++;
+        refreshBoard();
         if (enoughActivePlayers()){
             currentPlayer = getNextActiveUser(currentPlayer);
             if (turnCounter== model.getUsernames().size())
@@ -250,7 +256,6 @@ public class TurnController extends Controller {
                         model.getPowerUpDeck().draw().getName(),
                         model.getPowerUpDeck().draw().getName(),false,model.getGameMap().getMappedSpawnPoints()));
             else {
-                refreshBoard();
                 model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
                 disablePowerUps(previouslyPlaying,"onTurn");
                 model.send(new TurnEvent(currentPlayer,
@@ -258,9 +263,6 @@ public class TurnController extends Controller {
                 turnTimer.startTimer(server.getTurnTimer());
             }
         }
-        /*
-        else
-            model.send(new NotEnoughPlayersConnectedEvent("*"));*/
     }
 
     public int getComboIndex() {
