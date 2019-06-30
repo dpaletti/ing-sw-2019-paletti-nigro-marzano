@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane layoutX="-5.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+<Pane layoutX="-5.0" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1">
 <children>
     <ImageView fx:id="FrenzyMoveReloadShoot" fitHeight="17.0" fitWidth="60.0" layoutX="5.0" pickOnBounds="true" preserveRatio="true" />
     <ImageView fx:id="FrenzyMoveFour" fitHeight="17.0" fitWidth="60.0" layoutX="2.0" layoutY="32.0" pickOnBounds="true" preserveRatio="true" />

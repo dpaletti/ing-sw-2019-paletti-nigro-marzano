@@ -256,26 +256,21 @@ public class GuiControllerBoard extends GuiController {
 
             ImageView centerToUpdate = (ImageView) scene.lookup("#center" + toUpdate.getX() + toUpdate.getY());
 
-            Point actualEntry = null;
-            for(Point p: figuresOnTile.keySet()){
-                if(p.equals(toUpdate)) {
-                    actualEntry = p;
-                    figuresOnTile.get(p).add(figureEntering);
-                }
+
+
+            if(figuresOnTile.get(toUpdate) != null)
+                figuresOnTile.get(toUpdate).add(figureEntering);
+            else {
+                figuresOnTile.put(toUpdate, new ArrayList<>());
+                figuresOnTile.get(toUpdate).add(figureEntering);
             }
 
-            if(actualEntry == null) {
-                actualEntry = toUpdate;
-                figuresOnTile.put(actualEntry, new ArrayList<>());
-                figuresOnTile.get(actualEntry).add(figureEntering);
-            }
-
-            if (figuresOnTile.get(actualEntry).size() == 1) {
+            if (figuresOnTile.get(toUpdate).size() == 1) {
                 centerToUpdate.setImage(new Image(Paths.get("files/assets/player/figure_" + figureEntering.toLowerCase() + ".png").toUri().toURL().toString()));
                 toFigure(centerToUpdate, figureEntering.toLowerCase());
-            } else if (figuresOnTile.get(actualEntry).size() >= 2) {
+            } else if (figuresOnTile.get(toUpdate).size() >= 2) {
                 centerToUpdate.setImage(new Image(Paths.get("files/assets/black_hole.png").toUri().toURL().toString()));
-                toBlackHole(centerToUpdate, actualEntry);
+                toBlackHole(centerToUpdate, toUpdate);
             }
         }catch (MalformedURLException e){
             Log.severe("Could not position " + figureEntering + "on tile: wrong URL");
@@ -371,6 +366,7 @@ public class GuiControllerBoard extends GuiController {
         loot.setOnMouseExited(notClickable(scene));
     }
 
+
     public String getGrabbed(Point grabPoint){
         for(Point p: lootsOnTile.keySet()){
             if(grabPoint.getX() == p.getX() && grabPoint.getY() == p.getY())
@@ -394,15 +390,14 @@ public class GuiControllerBoard extends GuiController {
 
         for(String position: positions){
             currentSpot = ((ImageView) scene.lookup("#" + message.getColour().toLowerCase() + position));
+            currentSpot.setOnMouseEntered(show(postionToWeapon(message.getColour().toLowerCase() + position)));
+            currentSpot.setOnMouseExited(hide(postionToWeapon(message.getColour().toLowerCase() + position)));
             currentSpot.setOnMouseClicked((MouseEvent event) -> {
                 ViewGUI.getInstance().send(new GrabEvent(ViewGUI.getInstance().getUsername(),
                         (postionToWeapon(message.getColour().toLowerCase() + position))));
                 ViewGUI.getInstance().send(new UiPutWeapon(postionToWeapon(message.getColour().toLowerCase() + position)));
                 removeHandlers((ImageView) event.getSource());
-                ((ImageView) event.getSource()).setImage(null);
             });
-            currentSpot.setOnMouseEntered(clickable(scene));
-            currentSpot.setOnMouseExited(clickable(scene));
         }
     }
 
@@ -413,6 +408,44 @@ public class GuiControllerBoard extends GuiController {
         }
         return null;
     }
+
+    @Override
+    public void dispatch(UiRemoveWeaponFromSpot message) {
+        String position = null;
+
+        for(String pos: fromPositionToWeapon.keySet()){
+            if(fromPositionToWeapon.get(pos).equals(message.getWeapon())) {
+                position = pos;
+                break;
+            }
+        }
+        if(position == null)
+            throw new IllegalArgumentException("Could not find such weapon" +
+                    "among weapon in weaponSpots: " + message.getWeapon());
+
+        ((ImageView)scene.lookup("#" + position)).setImage(null);
+        fromPositionToWeapon.remove(position);
+
+    }
+
+    @Override
+    public void dispatch(UiGrabbedLoot message) {
+        for(Point p: lootsOnTile.keySet()){
+            if(lootsOnTile.get(p).equals(message.getGrabbed())){
+                lootsOnTile.remove(p);
+                ((ImageView)scene.lookup("#loot" + p.getX() + p.getY())).setImage(null);
+                break;
+            }
+
+        }
+    }
+
+    @Override
+    public void dispatch(UiBoardRefresh message) {
+        initializeSpots(message.getWeaponSpots());
+        initializeLoot(message.getLootCards());
+    }
+
     //----------------------------------------------------------------------------------------------------------------//
 
     //--------------------------------------------------Highlighting--------------------------------------------------//

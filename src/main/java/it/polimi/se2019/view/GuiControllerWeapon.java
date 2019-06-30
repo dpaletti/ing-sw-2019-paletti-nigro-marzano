@@ -72,7 +72,7 @@ public class GuiControllerWeapon extends GuiController {
 
     @Override
     public void dispatch(UiPutWeapon message) {
-        if (scene != null)
+        if (scene == null)
             scene = weaponLeft.getScene();
         try {
             if (left == null) {
@@ -168,10 +168,13 @@ public class GuiControllerWeapon extends GuiController {
         ImageView effectSpot;
         for(String effect: message.getEffects().keySet()){
             if(message.getEffects().get(effect) == -1) {
-                effectSpot = ((ImageView) scene.lookup("#" + "effectBase" + position + ".png"));
+                effectSpot = ((ImageView) scene.lookup("#" + "effectBase" + position));
             }
-            else if(message.getEffects().get(effect) >= 0 && message.getEffects().get(effect) <= 2) {
-                effectSpot = (ImageView) scene.lookup("#" + "effectAlternate" + message.getEffects().get(effect) + position + ".png");
+            else if(message.getEffects().get(effect) == 0) {
+                effectSpot = (ImageView) scene.lookup("#" + "effectAlternate" + position);
+            }
+            else if(message.getEffects().get(effect) >= 1 && message.getEffects().get(effect) <= 2) {
+                effectSpot = (ImageView) scene.lookup("#" + "effectAlternate" + message.getEffects().get(effect) + position);
             }
             else
                 throw new IllegalArgumentException("Could not highlight effect with: " + message.getEffects().get(effect) + "as position descriptor");
@@ -291,11 +294,12 @@ public class GuiControllerWeapon extends GuiController {
         removeHandlers(weaponMiddle);
         removeHandlers(weaponRight);
 
+
+        ViewGUI.getInstance().send(new ReloadEvent(ViewGUI.getInstance().getUsername(), reloadedWeapons));
+
         reloadableWeapons = new ArrayList<>();
         spentAmmos = new ArrayList<>();
         reloadedWeapons = new ArrayList<>();
-
-        ViewGUI.getInstance().send(new ReloadEvent(ViewGUI.getInstance().getUsername(), reloadedWeapons));
     }
 
     @Override
@@ -402,7 +406,7 @@ public class GuiControllerWeapon extends GuiController {
             weaponEffect.setOnMouseEntered(clickable(scene));
             weaponEffect.setOnMouseExited(notClickable(scene));
             weaponEffect.setOnMouseClicked((MouseEvent event) -> {
-                ViewGUI.getInstance().send(new ChosenEffectEvent(ViewGUI.getInstance().getUsername(), weaponName, effectName));
+                ViewGUI.getInstance().send(new ChosenEffectEvent(ViewGUI.getInstance().getUsername(), effectName, weaponName));
                 removeHandlers(weaponEffect);
             });
         }catch (MalformedURLException e){

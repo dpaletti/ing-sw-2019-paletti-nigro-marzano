@@ -1,10 +1,11 @@
 package it.polimi.se2019.utility;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Point implements Serializable {
-    private Integer x;
-    private Integer y;
+    private int x;
+    private int y;
 
     public Point (int x, int y){
         this.x = x;
@@ -31,6 +32,11 @@ public class Point implements Serializable {
         Point point = (Point) o;
         return x == point.x &&
                 y == point.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 
     @Override

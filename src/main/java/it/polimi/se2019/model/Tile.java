@@ -154,6 +154,11 @@ public class Tile implements Targetable{
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(position);
+    }
+
+    @Override
     public String toString() {
         return "Tile{" +
                 "colour=" + colour +

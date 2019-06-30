@@ -55,7 +55,6 @@ public class ViewGUI extends View {
     private ViewGUI(Client client){
         super(client);
         new Thread(new EventListener()).start();
-        currentlyShownFigure = client.getUsername();
     }
 
     public static void create(Client client){
@@ -168,6 +167,7 @@ public class ViewGUI extends View {
         semControllerSync.release();
         for (String user : message.getUserToColour().keySet())
             players.add(new MockPlayer(user, message.getUserToColour().get(user).toLowerCase()));
+        currentlyShownFigure = getPlayerOnUsername(client.getUsername()).getPlayerColor();
 
         semControllerSync.acquireUninterruptibly();
         notify(new UiCloseSetup());
@@ -227,6 +227,12 @@ public class ViewGUI extends View {
         notify(new UiPointsEvent(message.getUsername(), message.getPoints()));
     }
 
+    @Override
+    public void dispatch(MVEndOfTurnEvent message) {
+        notify(new UiTurnEnd());
+    }
+
+
     //-----------------------------------Figure movements-----------------------------------//
     @Override
     public void dispatch(AllowedMovementsEvent message) {
@@ -272,8 +278,24 @@ public class ViewGUI extends View {
     public void dispatch(GrabbedWeaponEvent message) {
         List<String> weapons = getPlayerOnUsername(message.getUser()).getWeapons();
         weapons.add(message.getWeapon());
+        notify(new UiRemoveWeaponFromSpot(message.getWeapon()));
+
     }
 
+    @Override
+    public void dispatch(DrawnPowerUpEvent message) {
+        notify(new UiPutPowerUp(message.getDrawn()));
+    }
+
+    @Override
+    public void dispatch(GrabbedLootCardEvent message) {
+        notify(new UiGrabbedLoot(message.getGrabbedLootCard()));
+    }
+
+    @Override
+    public void dispatch(BoardRefreshEvent message) {
+        notify(new UiBoardRefresh(message.getWeaponSpots(), message.getLootCards()));
+    }
 
     //------------------------------------MockPlayer Manipulation--------------------------------------------//
 
@@ -331,8 +353,10 @@ public class ViewGUI extends View {
     @Override
     public void dispatch(MVDeathEvent message) {
         if(message.isMatchOver()){
-            notify(new CalculatePointsEvent(client.getUsername()));
-            return;
+            if(client.getUsername().equals(message.getDead())){
+                notify(new CalculatePointsEvent(client.getUsername()));
+                return;
+            }
         }
         notify(new UiMoveFigure(getPlayerOnUsername(message.getDead()).getPlayerColor(), new Point(-1, -1)));
         notify(new UiAddKillOnSkulls(message.isOverkill(), getPlayerOnUsername(message.getKiller()).getPlayerColor()));

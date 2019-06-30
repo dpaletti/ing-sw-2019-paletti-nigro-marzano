@@ -11,6 +11,10 @@ public class GrabbedLootCardEvent extends MVEvent {
         this.grabbedLootCard = grabbedLootCard;
     }
 
+    public String getGrabbedLootCard() {
+        return grabbedLootCard;
+    }
+
     @Override
     public void handle(MVEventDispatcher dispatcher) {
         dispatcher.dispatch(this);

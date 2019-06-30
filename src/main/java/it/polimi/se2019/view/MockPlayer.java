@@ -18,6 +18,11 @@ public class MockPlayer {
     public MockPlayer(String username, String colour){
         this.username = username;
         this.playerColor = colour;
+        for(int i = 0; i < 3; i++) {
+            ammos.add("BLUE");
+            ammos.add("YELLOW");
+            ammos.add("RED");
+        }
     }
 
     public void setWeapons(List<String> weapons) {
@@ -41,7 +46,7 @@ public class MockPlayer {
         return position;
     }
 
-    public synchronized void setPosition(Point position) {
+    public  void setPosition(Point position) {
         this.position = position;
     }
 

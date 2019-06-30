@@ -331,6 +331,11 @@ public class Player implements Targetable{
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(figure);
+    }
+
+    @Override
     public String toString() {
         return "Player{" +
                 "figure=" + figure.toString() +

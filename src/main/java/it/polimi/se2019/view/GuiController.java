@@ -53,12 +53,18 @@ public abstract class GuiController implements Observer<Event>, Initializable, U
     }
 
     protected EventHandler<MouseEvent> clickable(Scene scene) {
-        return (MouseEvent event) -> scene.setCursor(Cursor.HAND);
+        return (MouseEvent event) -> {
+            if(scene != null)
+                scene.setCursor(Cursor.HAND);
+        };
     }
 
 
     protected EventHandler<MouseEvent> notClickable(Scene scene) {
-        return (MouseEvent event) -> scene.setCursor(Cursor.DEFAULT);
+        return (MouseEvent event) -> {
+            if(scene != null)
+                scene.setCursor(Cursor.DEFAULT);
+        };
     }
 
     protected void clickableNoHandler(Scene scene){

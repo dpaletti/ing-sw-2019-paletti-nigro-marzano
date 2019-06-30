@@ -3,6 +3,8 @@ package it.polimi.se2019.model;
 import it.polimi.se2019.utility.Action;
 import it.polimi.se2019.utility.Point;
 
+import java.util.Objects;
+
 public class Figure {
     private Tile tile;
     private FigureColour colour;
@@ -89,6 +91,11 @@ public class Figure {
         if (o == null || getClass() != o.getClass()) return false;
         Figure figure = (Figure) o;
         return colour == figure.colour;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(colour);
     }
 
     @Override

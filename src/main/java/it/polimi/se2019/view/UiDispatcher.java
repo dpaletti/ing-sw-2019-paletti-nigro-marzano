@@ -171,4 +171,13 @@ public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiPartialSkippedEvent message){
         throw new UnsupportedOperationException("UiPartialSkipped not supported");
     }
+    default void dispatch(UiRemoveWeaponFromSpot message){
+        throw new UnsupportedOperationException("UiRemoveWeaponFromSpot not supported");
+    }
+    default void dispatch(UiGrabbedLoot message){
+        throw new UnsupportedOperationException("UiGrabLoot not supported");
+    }
+    default void dispatch(UiBoardRefresh message){
+        throw new UnsupportedOperationException("UiBoardRefresh not supported");
+    }
 }

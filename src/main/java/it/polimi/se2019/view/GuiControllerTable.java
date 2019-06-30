@@ -172,10 +172,13 @@ public class GuiControllerTable extends GuiController {
 
     @Override
     public void dispatch(UiRemovePlayer message) {
+        int oldMissing;
         for (TableModel t : rowTrack) {
             if (t.getUsername().equals(message.getPlayer())) {
                 rowTrack.remove(t);
                 leaderboard.getItems().remove(t);
+                oldMissing = missingPlayers;
+                missingPlayers++;
                 return;
             }
         }
@@ -432,6 +435,7 @@ public class GuiControllerTable extends GuiController {
 
     private void buttonSetup(){
         endTurn.setText("End turn");
+        endTurn.setDisable(false);
         endTurn.setOnAction((ActionEvent event) -> ViewGUI.getInstance().endTurn());
     }
 
@@ -490,6 +494,7 @@ public class GuiControllerTable extends GuiController {
             directionsText.set("Looking at player " + message.getNewContext().toLowerCase());
 
             endTurn.setText("Back");
+            endTurn.setDisable(false);
             endTurn.setOnMouseClicked((MouseEvent event) -> {
                 ViewGUI.getInstance().setCurrentlyShownFigure(headPlayer);
                 ViewGUI.getInstance().send(new UiContextSwitchEnd());
@@ -513,7 +518,7 @@ public class GuiControllerTable extends GuiController {
     @Override
     public void dispatch(UiContextSwitchEnd message) {
             try {
-                if(!frenzy)
+                if(frenzy)
                     currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + headPlayer + "_back.png").toUri().toURL().toString()));
                 else
                     currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + headPlayer + ".png").toUri().toURL().toString()));
@@ -670,16 +675,24 @@ public class GuiControllerTable extends GuiController {
 
     @Override
     public void dispatch(UiShowPlayers message) {
+        ImageView holder;
         try {
             int i = 0;
             for (String f : message.getFiguresToShow()) {
                 i++;
-                if(!message.getHighlightedFigures().contains(f))
-                    ((ImageView) scene.lookup("#figure" + i)).setImage(new Image
+                if(!message.getHighlightedFigures().contains(f)) {
+                    holder = ((ImageView) scene.lookup("#figure" + i));
+                    holder.setImage(new Image
                             (Paths.get("files/assets/player/figure_" + f.toLowerCase() + ".png").toUri().toURL().toString()));
-                else
-                    ((ImageView) scene.lookup("#figure" + i)).setImage(new Image
+                }
+                else{
+                    holder = ((ImageView) scene.lookup("#figure" + i));
+                    holder.setImage(new Image
                             (Paths.get("files/assets/player/figure_" + f.toLowerCase() + "_targeted.png").toUri().toURL().toString()));
+                }
+                holder.setOnMouseEntered(clickable(scene));
+                holder.setOnMouseExited(clickable(scene));
+                holder.setOnMouseClicked((MouseEvent event) -> dispatch(new UiContextSwitch(f.toLowerCase())));
 
             }
         }catch (MalformedURLException e){
@@ -768,9 +781,9 @@ public class GuiControllerTable extends GuiController {
 
     @Override
     public void dispatch(UiAmmoUpdate message) {
-        redAmmo.setText("Blue: " + Collections.frequency(message.getAmmos(), "BLUE"));
-        blueAmmo.setText("Red: " + Collections.frequency(message.getAmmos(), "RED"));
-        yellowAmmo.setText("Yellow" + Collections.frequency(message.getAmmos(), "YELLOW"));
+        redAmmo.setText("Red: " + Collections.frequency(message.getAmmos(), "RED"));
+        blueAmmo.setText("Blue: " + Collections.frequency(message.getAmmos(), "BLUE"));
+        yellowAmmo.setText("Yellow: " + Collections.frequency(message.getAmmos(), "YELLOW"));
     }
 
     @Override
@@ -860,7 +873,17 @@ public class GuiControllerTable extends GuiController {
     @Override
     public void dispatch(UiTurnEnd message) {
         directionsText.set("Please wait for your turn");
+        endTurn.setDisable(true);
+    }
 
+    @Override
+    public void dispatch(UiHighlightTileEvent message) {
+        directionsText.set("Please choose a tile");
+    }
+
+    @Override
+    public void dispatch(UiPutWeapon message) {
+        showedCard.setImage(null);
     }
 
     //----------------------------------------------------------------------------------------------------------------//

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UiAmmoUpdate extends UiEvent {
-    List<String> ammos = new ArrayList<>();
+    private List<String> ammos = new ArrayList<>();
 
     @Override
     public void handle(UiDispatcher uiDispatcher) {

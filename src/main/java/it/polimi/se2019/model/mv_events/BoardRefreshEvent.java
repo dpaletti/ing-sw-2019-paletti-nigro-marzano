@@ -17,6 +17,14 @@ public class BoardRefreshEvent extends MVEvent {
         this.lootCards = new HashMap<>(lootCards);
     }
 
+    public Map<String, String> getWeaponSpots() {
+        return weaponSpots;
+    }
+
+    public Map<Point, String> getLootCards() {
+        return lootCards;
+    }
+
     @Override
     public void handle(MVEventDispatcher dispatcher) {
         dispatcher.dispatch(this);
