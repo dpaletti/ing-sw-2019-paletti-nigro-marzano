@@ -28,12 +28,8 @@ public class App extends Application {
         ((GridPane)scene.lookup("#root")).add(pane, 3, 2);
 
         primaryStage.setTitle("Adrenaline");
-        primaryStage.setMaxWidth(1920.0);
-        primaryStage.setMaxHeight(1080.0);
-        primaryStage.setWidth(1920.0);
-        primaryStage.setHeight(1080.0);
+        primaryStage.setMaximized(true);
         primaryStage.setResizable(false);
-        //primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

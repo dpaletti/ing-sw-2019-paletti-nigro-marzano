@@ -5,15 +5,10 @@ import it.polimi.se2019.model.Game;
 import it.polimi.se2019.model.Player;
 import it.polimi.se2019.model.PowerUp;
 import it.polimi.se2019.model.mv_events.DisablePowerUpEvent;
-import it.polimi.se2019.model.mv_events.TimerEvent;
-import it.polimi.se2019.model.mv_events.UsablePowerUpEvent;
 import it.polimi.se2019.network.Server;
-import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.utility.Observer;
 import it.polimi.se2019.utility.VCEventDispatcher;
 import it.polimi.se2019.view.VCEvent;
-
-import static java.lang.Thread.sleep;
 
 public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher {
     //TODO evaluate the need for storing a reference to the model, probably needed
@@ -65,7 +60,7 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
                 return ammoColour;
             }
         }
-        throw new NullPointerException("This ammo doesn't exist");
+        throw new NullPointerException("This ammo doesn't exist: " + ammoName);
     }
 
 }

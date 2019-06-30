@@ -273,7 +273,7 @@ public class GuiControllerBoard extends GuiController {
             if (figuresOnTile.get(actualEntry).size() == 1) {
                 centerToUpdate.setImage(new Image(Paths.get("files/assets/player/figure_" + figureEntering.toLowerCase() + ".png").toUri().toURL().toString()));
                 toFigure(centerToUpdate, figureEntering.toLowerCase());
-            } else if (figuresOnTile.get(actualEntry).size() == 2) {
+            } else if (figuresOnTile.get(actualEntry).size() >= 2) {
                 centerToUpdate.setImage(new Image(Paths.get("files/assets/black_hole.png").toUri().toURL().toString()));
                 toBlackHole(centerToUpdate, actualEntry);
             }
@@ -398,9 +398,11 @@ public class GuiControllerBoard extends GuiController {
                 ViewGUI.getInstance().send(new GrabEvent(ViewGUI.getInstance().getUsername(),
                         (postionToWeapon(message.getColour().toLowerCase() + position))));
                 ViewGUI.getInstance().send(new UiPutWeapon(postionToWeapon(message.getColour().toLowerCase() + position)));
-                ((ImageView) event.getSource()).setOnMouseClicked(null);
+                removeHandlers((ImageView) event.getSource());
                 ((ImageView) event.getSource()).setImage(null);
             });
+            currentSpot.setOnMouseEntered(clickable(scene));
+            currentSpot.setOnMouseExited(clickable(scene));
         }
     }
 
@@ -430,11 +432,15 @@ public class GuiControllerBoard extends GuiController {
             toHighlight.setOnMouseEntered(clickable(scene));
             toHighlight.setOnMouseExited(notClickable(scene));
             if(!message.isTargeting()) //moving
-                toHighlight.setOnMouseClicked((MouseEvent event) ->
-                        ViewGUI.getInstance().send(new VCMoveEvent(ViewGUI.getInstance().getUsername(), message.getTile(), false)));
+                toHighlight.setOnMouseClicked((MouseEvent event) -> {
+                    ViewGUI.getInstance().send(new VCMoveEvent(ViewGUI.getInstance().getUsername(), message.getTile(), false));
+                    removeHandlers(toHighlight);
+                });
             else //shooting
-                toHighlight.setOnMouseClicked((MouseEvent event) ->
-                        ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), message.getTile())));
+                toHighlight.setOnMouseClicked((MouseEvent event) -> {
+                    ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), message.getTile()));
+                    removeHandlers(toHighlight);
+                });
         }catch (MalformedURLException e){
             Log.severe("Could not get image for highlighting correct tiles");
         }

@@ -106,11 +106,11 @@ public class GuiControllerPowerUp extends GuiController {
         powerupLeft.setOnMouseEntered(clickable(scene));
         powerupLeft.setOnMouseExited(notClickable(scene));
 
-        powerupMiddle.setOnMouseClicked(spawnPowerUp(powerupMiddle, left));
+        powerupMiddle.setOnMouseClicked(spawnPowerUp(powerupMiddle, middle));
         powerupMiddle.setOnMouseEntered(clickable(scene));
         powerupMiddle.setOnMouseExited(notClickable(scene));
 
-        powerupRight.setOnMouseClicked(spawnPowerUp(powerupMiddle, left));
+        powerupRight.setOnMouseClicked(spawnPowerUp(powerupRight, right));
         powerupRight.setOnMouseEntered(clickable(scene));
         powerupRight.setOnMouseExited(notClickable(scene));
     }
@@ -139,7 +139,16 @@ public class GuiControllerPowerUp extends GuiController {
             }else
                 throw new IllegalArgumentException("Could not find powerUp: " + powerupName);
 
-            ViewGUI.getInstance().send(new SpawnEvent(ViewGUI.getInstance().getUsername(), powerupName, powerUpToKeep));
+            String colour;
+            if(powerupName.contains("Red"))
+                colour = "RED";
+            else if(powerupName.contains("Blue"))
+                colour = "BLUE";
+            else if(powerupName.contains("Yellow"))
+                colour = "YELLOW";
+            else
+                throw new IllegalArgumentException(powerupName + " could not be converted to colour");
+            ViewGUI.getInstance().send(new SpawnEvent(ViewGUI.getInstance().getUsername(), colour, powerUpToKeep));
             powerup.setImage(null);
             removeHandlers(powerup);
         };

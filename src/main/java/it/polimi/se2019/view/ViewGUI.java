@@ -30,8 +30,10 @@ public class ViewGUI extends View {
     private boolean timerGoing=false;
     private static ViewGUI instance = null;
     private Map<Point, String> pointColorSpawnMap;
-    private String currentlyShownFigure = getPlayerOnUsername(client.getUsername()).getPlayerColor();
+    private String currentlyShownFigure;
     private boolean respawning = false;
+
+    private Semaphore movementSem = new Semaphore(1, true);
 
 
     private class EventListener implements Runnable{
@@ -53,6 +55,7 @@ public class ViewGUI extends View {
     private ViewGUI(Client client){
         super(client);
         new Thread(new EventListener()).start();
+        currentlyShownFigure = client.getUsername();
     }
 
     public static void create(Client client){
@@ -234,9 +237,15 @@ public class ViewGUI extends View {
     }
 
     @Override
-    public void dispatch(MVMoveEvent message) {
+    public  void dispatch(MVMoveEvent message) {
+        movementSem.acquireUninterruptibly();
         notify(new UiMoveFigure(getPlayerOnUsername(message.getUsername()).getPlayerColor(), message.getFinalPosition()));
 
+    }
+
+    public void setPosition(String figure, Point position){
+        getPlayerOnColour(figure).setPosition(position);
+        movementSem.release();
     }
 
     public Point getPosition(String figure){
@@ -251,6 +260,8 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(GrabbablesEvent message) {
+        movementSem.acquireUninterruptibly();
+        movementSem.release();
         if(isSpawn(usernameToPlayer(client.getUsername()).getPosition()) != null)
             notify(new UiGrabWeapon(pointColorSpawnMap.get(isSpawn(usernameToPlayer(client.getUsername()).getPosition()))));
         else
@@ -447,9 +458,6 @@ public class ViewGUI extends View {
     }
 
 
-    public void setPosition(String figure, Point position){
-        getPlayerOnColour(figure).setPosition(position);
-    }
 
     private MockPlayer getPlayerOnUsername(String username){
         for(MockPlayer m: players){
@@ -519,5 +527,6 @@ public class ViewGUI extends View {
     public void setCurrentlyShownFigure(String currentlyShownFigure) {
         this.currentlyShownFigure = currentlyShownFigure;
     }
+
 }
 

@@ -83,7 +83,7 @@ public class GuiControllerWeapon extends GuiController {
                 ));
                 left = message.getWeapon();
             }
-            if (middle == null) {
+            else if (middle == null) {
                 removeHandlers(weaponMiddle);
                 weaponMiddle.setImage(new Image(
                         Paths.get("files/assets/cards/" + message.getWeapon() + ".png").toUri().toURL().toString()
@@ -91,7 +91,7 @@ public class GuiControllerWeapon extends GuiController {
                 ));
                 middle = message.getWeapon();
             }
-            if (right == null) {
+            else if (right == null) {
                 removeHandlers(weaponRight);
                 weaponRight.setImage(new Image(
                         Paths.get("files/assets/cards/" + message.getWeapon() + ".png").toUri().toURL().toString()

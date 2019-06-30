@@ -831,9 +831,24 @@ public class GuiControllerTable extends GuiController {
     @Override
     public void dispatch(UiReloading message){
         directionsText.set("Please choose weapon to reload");
-        endTurn.setText("End reloading");
+        endTurn.setText("Stop");
         endTurn.setOnAction((ActionEvent event) -> ViewGUI.getInstance().send(new UiStopReloading()));
 
+    }
+
+    @Override
+    public void dispatch(UiGrabWeapon message) {
+        directionsText.set("Please choose weapon to grab");
+    }
+
+    @Override
+    public void dispatch(UiGrabLoot message) {
+        directionsText.set("Please click on loot to grab it");
+    }
+
+    @Override
+    public void dispatch(UiActivateWeapons message) {
+        directionsText.set("Please choose weapon");
     }
 
     @Override
