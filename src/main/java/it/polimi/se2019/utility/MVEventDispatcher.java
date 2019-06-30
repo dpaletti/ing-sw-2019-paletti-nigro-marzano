@@ -122,10 +122,6 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("NewAmmosEvent not supported");
     }
 
-    default void dispatch (NotEnoughPlayersConnectedEvent message){
-        throw new UnsupportedOperationException("NotEnoughPlayersConnectedEvent not supported");
-    }
-
     default void dispatch(UsablePowerUpEvent message){
         throw new UnsupportedOperationException("UsablePowerUpEvent not supported");
     }
@@ -175,5 +171,9 @@ public interface MVEventDispatcher extends EventDispatcher {
 
     default void dispatch (GrabbedLootCardEvent message){
         throw new UnsupportedOperationException("GrabbedLootCardEvent not supported");
+    }
+
+    default void dispatch (EndOfMatchEvent message){
+        throw new UnsupportedOperationException("EndOfMatchEvent not supported");
     }
 }

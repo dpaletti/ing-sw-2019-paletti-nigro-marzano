@@ -62,8 +62,7 @@ public class Figure {
     }
 
     public void grab(String grabbed){
-        for (Grabbable g : tile.getGrabbables())
-            g.grab(player, grabbed, player.getGame());
+        tile.getGrabbables().get(0).grab(player, grabbed, player.getGame());
     }
 
     public void reload (Weapon weapon){

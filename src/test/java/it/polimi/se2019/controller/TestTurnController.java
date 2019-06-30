@@ -1,6 +1,5 @@
 package it.polimi.se2019.controller;
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.mv_events.NotEnoughPlayersConnectedEvent;
 import it.polimi.se2019.model.mv_events.StartFirstTurnEvent;
 import it.polimi.se2019.model.mv_events.TurnEvent;
 import it.polimi.se2019.network.Server;
@@ -125,13 +124,5 @@ public class TestTurnController {
         turnController.update(grabEvent);
     }
 
-    @Test
-    public void testDisconnection(){
-        DisconnectionEvent event= new DisconnectionEvent(game.playerToUser(wallace));
-        turnController.update(event);
-        NotEnoughPlayersConnectedEvent message= (NotEnoughPlayersConnectedEvent)testModelHelper.getCurrent();
-        assertEquals("*",message.getDestination());
-        assertTrue(wallace.isPaused());
-    }
 
 }

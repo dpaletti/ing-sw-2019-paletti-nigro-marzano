@@ -192,8 +192,8 @@ public class TurnController extends Controller {
     @Override
     public void dispatch(DisconnectionEvent message) {
         model.pausePlayer(message.getSource());
-        if (!enoughActivePlayers())
-            model.send(new NotEnoughPlayersConnectedEvent("*"));
+       /* if (!enoughActivePlayers())
+            model.send(new NotEnoughPlayersConnectedEvent("*"));*/
     }
 
     @Override
@@ -258,8 +258,9 @@ public class TurnController extends Controller {
                 turnTimer.startTimer(server.getTurnTimer());
             }
         }
+        /*
         else
-            model.send(new NotEnoughPlayersConnectedEvent("*"));
+            model.send(new NotEnoughPlayersConnectedEvent("*"));*/
     }
 
     public int getComboIndex() {
