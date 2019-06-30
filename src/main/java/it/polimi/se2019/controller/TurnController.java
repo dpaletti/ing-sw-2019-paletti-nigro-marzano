@@ -298,11 +298,18 @@ public class TurnController extends Controller {
     private void refreshBoard() {
         HashMap<Point, String> loot = new HashMap<>();
         HashMap<String, String> spawn = new HashMap<>();
+        Drawable card;
 
-        for (Point p : model.getEmptyLootTiles())
-            loot.put(p, model.getLootDeck().draw().getName());
-        for (Point p : model.getEmptySpawnTiles())
-            spawn.put(model.getWeaponDeck().draw().getName(), model.getTile(p).getColour().name());
+        for (Point p : model.getEmptyLootTiles()) {
+            card = model.getLootDeck().draw();
+            loot.put(p, card.getName());
+            model.getTile(p).add((LootCard)card);
+        }
+        for (Point p : model.getEmptySpawnTiles()) {
+            card = model.getWeaponDeck().draw();
+            spawn.put(card.getName(), model.getTile(p).getColour().name());
+            model.getTile(p).add((Weapon)card);
+        }
 
         model.send(new BoardRefreshEvent("*", spawn, loot));
     }

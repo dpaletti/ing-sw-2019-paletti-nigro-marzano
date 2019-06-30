@@ -2,6 +2,8 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.model.mv_events.DrawnPowerUpEvent;
 import it.polimi.se2019.model.mv_events.GrabbedLootCardEvent;
+import it.polimi.se2019.model.mv_events.UsablePowerUpEvent;
+import it.polimi.se2019.view.vc_events.PowerUpUsageEvent;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,6 +55,7 @@ public class LootCard implements Grabbable, Drawable,Jsonable{
                 player.drawPowerUp();
                 game.send (new DrawnPowerUpEvent(game.playerToUser(player),
                         player.getPowerUps().get(player.getPowerUps().size() - 1).name));
+                game.usablePowerUps("onTurn", false, player);
             }
             player.getFigure().getTile().removeGrabbed(grabbed);
             game.addEmptyLootTile(player.getPosition());
