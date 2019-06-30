@@ -140,7 +140,7 @@ public class TestPlayer {
     assertEquals(7,lulic.getAmmo().size());
   }
 
-  @Test
+  /*@Test
   public void testPowerUpToLeave(){
       Point randomLoot= new Point(1,1);
       LootCardHelper lootCardHelper= model.getLootCardHelper();
@@ -158,7 +158,7 @@ public class TestPlayer {
       model.getGameMap().getTile(randomLoot).add(loot);
       lulic.grabStuff("PYB");
       assertEquals(Card.cardStringify(Card.cardToCard(lulic.getPowerUps())),((PowerUpToLeaveEvent)(testModelHelper.getCurrent())).getDiscardablePowerUps());
-  }
+  }*/
 
   @Test(expected = UnsupportedOperationException.class)
     public void testPowerUpNotOwnedSell(){
