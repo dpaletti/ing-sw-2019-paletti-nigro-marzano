@@ -4,10 +4,7 @@ import it.polimi.se2019.utility.Log;
 import it.polimi.se2019.view.UIMode;
 import it.polimi.se2019.view.View;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.*;
@@ -72,19 +69,22 @@ public class Client {
     public void writePreference(String property, String value){
         hidden.put(property, value);
         try{
-            FileOutputStream f =new FileOutputStream(Client.class.getClassLoader().getResource("hidden.properties").getFile());
+            FileOutputStream f =new FileOutputStream(Paths.get("files/"+getToken()+".properties").toFile());
             hidden.store(f, "updating");
         }catch (FileNotFoundException e){
             Log.severe("Could not find local properties file");
         }catch (IOException e){
             Log.severe("Could not store data in this hidden property file");
         }
+
+
     }
 
     public void openSession(String token, List<String> roomUsernames, List<String> allUsernames, List<String> configs){
         mapConfigs = configs;
         if(!networkHandler.isReconnection()) {
             networkHandler.setToken(token);
+            createPropertyFile(token);
             view.matchMaking(usernameSelection(allUsernames, roomUsernames), configs);
         }
         else
@@ -155,7 +155,6 @@ public class Client {
     public void initializePropertiesAndPreferences() {
         try {
             properties.load(new FileInputStream(Paths.get("files/client.properties").toFile()));
-            properties.load(Client.class.getClassLoader().getResourceAsStream("hidden.properties"));
         } catch (IOException e) {
             Log.severe("Could not load properties file");
         }
@@ -167,5 +166,26 @@ public class Client {
 
     public static void main(String[] args) {
         new Client();
+    }
+
+    private void createPropertyFile(String token){
+        try {
+            File dynamicProp=new File(Paths.get("files").toFile(),token+".properties");
+            boolean created=dynamicProp.createNewFile();
+            if (!created){
+                Log.severe("File not created");
+            }
+        }catch (IOException e){
+            Log.severe("IO Exception in storing the property file/or crating it");
+        }
+    }
+
+    public void closeSession(){
+        File dynamicProp= Paths.get("files/"+getToken()+".properties").toFile();
+        boolean bool=dynamicProp.delete();
+        if (!bool){
+            Log.severe("File not deleted");
+        }
+
     }
 }
