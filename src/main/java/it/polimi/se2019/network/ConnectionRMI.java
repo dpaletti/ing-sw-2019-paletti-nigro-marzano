@@ -110,6 +110,7 @@ public class ConnectionRMI implements Connection{
                 }
             }catch (RemoteException e){
                 push(new DisconnectionEvent(token));
+                disconnect();
             }catch (InterruptedException e){
                 Log.severe("Interrupted");
                 Thread.currentThread().interrupt();

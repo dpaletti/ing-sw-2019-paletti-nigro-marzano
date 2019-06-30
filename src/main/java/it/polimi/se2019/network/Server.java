@@ -94,6 +94,10 @@ public class Server implements ServerInterface {
         usernames.add(username);
     }
 
+    public void deleteUsername(String username){
+        usernames.remove(username);
+    }
+
     public void addController(Controller controller, int roomNumber){
         virtualViews.get(roomNumber).register(controller);
     }

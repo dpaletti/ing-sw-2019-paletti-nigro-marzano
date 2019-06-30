@@ -69,7 +69,7 @@ public class MatchMakingController extends Controller {
                 playerCount.set(playerCount.decrementAndGet());
                 Log.info(disconnectionEvent.getSource() + " just disconnected, players in match making; " + playerCount);
                 if (playerCount.get() < 3 && timerRunning.get()) {
-                    matchMakingTimer.endTimer();
+                    matchMakingTimer.stop();
                     timerRunning.set(false);
                     model.send(new TimerEvent("*", -1));  //negative time to go signals countdown interruption
                     Log.info("Timer stopped");

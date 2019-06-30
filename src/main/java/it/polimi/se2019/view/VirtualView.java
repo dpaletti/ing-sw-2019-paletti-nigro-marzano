@@ -103,6 +103,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
         @Override
         public void dispatch(UsernameDeletionEvent message) {
+            server.deleteUsername(message.getUsername());
             submit(new ConnectionBroadcast(connections), message);
             sem.release();
         }
