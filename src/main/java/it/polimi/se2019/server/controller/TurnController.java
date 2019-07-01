@@ -249,6 +249,8 @@ public class TurnController extends Controller {
         refreshBoard();
         if (enoughActivePlayers()){
             currentPlayer = getNextActiveUser(currentPlayer);
+            model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
+            disablePowerUps(previouslyPlaying,"onTurn");
             if (turnCounter== model.getUsernames().size())
                 isFirstTurn=false;
             if (isFirstTurn) {
@@ -260,8 +262,6 @@ public class TurnController extends Controller {
                 turnTimer.startTimer(server.getTurnTimer());
             }
             else {
-                model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
-                disablePowerUps(previouslyPlaying,"onTurn");
                 model.send(new TurnEvent(currentPlayer,
                         fromPartialToStringCombo(getAllowedMoves())));
                 turnTimer.startTimer(server.getTurnTimer());
