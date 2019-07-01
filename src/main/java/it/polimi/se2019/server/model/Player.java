@@ -8,14 +8,21 @@ import java.util.*;
 public class Player implements Targetable{
     private Figure figure;
     private boolean isPaused= false;
+
     private List<Tear> hp = new ArrayList<>();
+    private List<Tear> marks = new ArrayList<>();
+    private Integer points = 0;
+
     private PlayerDamage healthState = new Healthy();
     private PlayerValue playerValue = new NoDeaths();
-    private List<Tear> marks = new ArrayList<>();
+
     private List<Weapon> weapons = new ArrayList<>();
     private List<PowerUp> powerUps = new ArrayList<>();
-    private Integer points = 0;
     private List<Ammo> ammo = new ArrayList<>();
+
+    private PowerUp firstPowerUp;
+    private PowerUp secondPowerUp;
+
     private Game game;
 
     public Player (Figure figure, Game game){
@@ -161,6 +168,22 @@ public class Player implements Targetable{
 
     public boolean isPaused() {
         return isPaused;
+    }
+
+    public PowerUp getFirstPowerUp() {
+        return firstPowerUp;
+    }
+
+    public PowerUp getSecondPowerUp() {
+        return secondPowerUp;
+    }
+
+    public void setFirstPowerUp(PowerUp firstPowerUp) {
+        this.firstPowerUp = firstPowerUp;
+    }
+
+    public void setSecondPowerUp(PowerUp secondPowerUp) {
+        this.secondPowerUp = secondPowerUp;
     }
 
     public void emptyHp (){
