@@ -25,6 +25,10 @@ public class SetUpController extends Controller {
         setUpTimer.startTimer(server.getMatchSetupTimer());
     }
 
+    public SetUpController(Game model){
+        this.model = model;
+    }
+
     @Override
     public void update(VCEvent message)
     {
@@ -43,12 +47,15 @@ public class SetUpController extends Controller {
         configs.add(message.getConf());
         isFinalFrenzy.add(message.isFrenzy());
         counter++;
-        if (counter==5)
+        System.out.println(counter);
+        if (counter == model.getUsernames().size()) {
+            System.out.println("here");
             setUpTimer.endTimer();
+        }
 
     }
 
-    protected void endTimer() {
+     void endTimer() {
         int skull = 8;
         String config = "Large";
         boolean finalFrenzy = true;
@@ -115,7 +122,7 @@ public class SetUpController extends Controller {
         return userToColour;
     }
 
-    private <T> T mostVoted (List<T> objects){
+     private <T> T mostVoted (List<T> objects){
         Map<T, Integer> votes= new HashMap<>();
         int maximum = -1;
         List<T> mostVoted= new ArrayList<>();
@@ -131,6 +138,18 @@ public class SetUpController extends Controller {
                 mostVoted.add(e.getKey());
         }
         return mostVoted.get(random.nextInt(mostVoted.size()));
+    }
+
+    public void setConfigs(List<String> configs) {
+        this.configs = configs;
+    }
+
+    public void setSkulls(List<Integer> skulls) {
+        this.skulls = skulls;
+    }
+
+    public void setIsFinalFrenzy(List<Boolean> isFinalFrenzy) {
+        this.isFinalFrenzy = isFinalFrenzy;
     }
 
 }

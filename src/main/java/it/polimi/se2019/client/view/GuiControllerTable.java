@@ -391,7 +391,7 @@ public class GuiControllerTable extends GuiController {
                             skulls = 6;
                         if (((RadioButton) event.getSource()).getId().equals("skulls7"))
                             skulls = 7;
-                        if (((RadioButton) event.getSource()).getId().equals("skulls7"))
+                        if (((RadioButton) event.getSource()).getId().equals("skulls8"))
                             skulls = 8;
                     }
             );

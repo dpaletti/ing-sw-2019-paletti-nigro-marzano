@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane fx:id="rightGrid" layoutX="14.0" layoutY="97.0" prefHeight="522.0" prefWidth="318.0" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane fx:id="rightGrid" layoutX="14.0" layoutY="97.0" prefHeight="522.0" prefWidth="318.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -31,7 +31,7 @@
                 <ImageView fx:id="tile21" fitHeight="143.0" fitWidth="164.0" layoutX="-4.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
          </ImageView>
                 <ImageView fx:id="loot21" fitHeight="35.0" fitWidth="37.0" layoutX="36.0" layoutY="96.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fitHeight="63.75" fitWidth="62.0" layoutX="63.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="center21" fitHeight="63.75" fitWidth="62.0" layoutX="63.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true" />
         </Pane>
         <Pane fx:id="pane31" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                 <ImageView fx:id="tile31" fitHeight="139.0" fitWidth="132.0" layoutX="11.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
