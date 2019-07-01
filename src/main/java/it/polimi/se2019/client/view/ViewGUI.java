@@ -110,7 +110,9 @@ public class ViewGUI extends View {
     @Override
     public void update(MVEvent message) {
         try {
-            Log.fine("Received: " + message);
+            if (!(message instanceof TimerEvent)){
+                Log.fine("Received: " + message);
+            }
             eventBuffer.put(message);
         }catch (UnsupportedOperationException e){
             Log.severe("Unsupported event in view");
