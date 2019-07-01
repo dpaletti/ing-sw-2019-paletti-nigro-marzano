@@ -488,6 +488,10 @@ public class GuiControllerBoard extends GuiController {
                 imageToUpdate = ((ImageView) scene.lookup("#center" + tile.getX() + tile.getY()));
                 imageToUpdate.setImage(new Image(Paths.get("files/assets/player/figure_" + message.getToHighlight().toLowerCase() + "_targeted.png").toUri().toURL().toString()));
                 highlightedFigures.add(message.getToHighlight().toLowerCase());
+                imageToUpdate.setOnMouseClicked((MouseEvent event) -> {
+                    ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), message.getToHighlight().toLowerCase()));
+                    ((ImageView) event.getSource()).setOnMouseClicked(handleFigureOnClick(message.getToHighlight().toLowerCase()));
+                });
             }
         }
         }catch (MalformedURLException e){

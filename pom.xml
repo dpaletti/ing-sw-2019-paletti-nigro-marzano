@@ -58,6 +58,7 @@
   </dependencies>
 
   <build>
+
     <plugins>
 
       <!-- Export the project as two runnable JAR, one for client and the other one for server-->

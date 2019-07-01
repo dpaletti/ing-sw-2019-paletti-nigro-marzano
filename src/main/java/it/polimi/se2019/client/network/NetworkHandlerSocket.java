@@ -33,18 +33,6 @@ public class NetworkHandlerSocket extends NetworkHandler {
     }
 
 
-    public NetworkHandlerSocket(String token, Client client , String ip, int port){
-        super(token, client);
-        try {
-            socket = new Socket(ip, port);
-            in = new Scanner(socket.getInputStream());
-            out = new PrintWriter(socket.getOutputStream(), true);
-            listenToEvent();
-        }
-        catch(IOException e){
-            Log.severe("Could not establish connection " + e.getMessage());
-       }
-    }
 
 
     public void update(Event message) {

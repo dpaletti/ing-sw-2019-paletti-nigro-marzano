@@ -1,10 +1,11 @@
 package it.polimi.se2019.client.network;
 
-import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.client.view.UIMode;
 import it.polimi.se2019.client.view.View;
+import it.polimi.se2019.commons.utility.Log;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.*;
@@ -14,9 +15,10 @@ public class Client {
     private NetworkHandler networkHandler;
     private View view;
     private Properties properties = new Properties();
-    private Properties hidden = new Properties();
     private Scanner in = new Scanner(System.in);
     private List<String> mapConfigs = new ArrayList<>();
+    private String username;
+    private String token;
 
 
     public Client() {
@@ -40,6 +42,14 @@ public class Client {
         return Integer.parseInt(properties.getProperty("SERVER_PORT"));
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
     private ConnectionMode getConnectionMode() {
         return ConnectionMode.parseConnectionMode(properties.getProperty("CONNECTION_MODE"));
     }
@@ -56,38 +66,10 @@ public class Client {
         return properties.getProperty("SERVER_NAME");
     }
 
-    public String getUsername() {
-        return hidden.getProperty("username");
-    }
-
-    public String getToken() {
-        return hidden.getProperty("token");
-    }
-
-
-    public void writePreference(String property, String value) {
-        hidden.put(property, value);
-        try {
-
-            String file = Client.class.getClassLoader().getResource("reconnection.properties").getFile();
-            FileOutputStream f = new FileOutputStream(file);
-            hidden.store(f, "updating");
-        } catch (FileNotFoundException e) {
-            Log.severe("Could not find local properties file");
-        } catch (IOException e) {
-            Log.severe("Could not store data in this hidden property file");
-        }
-
-
-    }
-
     public void openSession(String token, List<String> roomUsernames, List<String> allUsernames, List<String> configs) {
         mapConfigs = configs;
-        if (!networkHandler.isReconnection()) {
-            networkHandler.setToken(token);
-            view.matchMaking(usernameSelection(allUsernames, roomUsernames), configs);
-        } else
-            networkHandler.reconnect(token);
+        networkHandler.setToken(token);
+        view.matchMaking(usernameSelection(allUsernames, roomUsernames), configs);
     }
 
     public void connectionRefused(String cause) {
@@ -97,45 +79,41 @@ public class Client {
             Log.info("Goodbye!");
             System.exit(0);
         } else {
-            writePreference("token", "");
             networkHandler.stopListening();
             main(new String[]{"a", "b", "c"});
         }
     }
 
     private List<String> usernameSelection(List<String> allUsernames, List<String> roomUsernames) {
-        String username;
+        String localUsername;
         if (!isTesting()) {
             in = new Scanner(System.in);
 
             Log.input("Insert username");
 
-            username = in.nextLine();
+            localUsername = in.nextLine();
 
-            while (allUsernames.contains(username)) {
+            while (allUsernames.contains(localUsername)) {
                 Log.input("Choose another username please, '" + getUsername() + "' already in use");
-                username = in.nextLine();
+                localUsername = in.nextLine();
             }
         } else {
             Random r = new SecureRandom();
-            username = ((Integer) r.nextInt(getTestUsernameBound())).toString();
-            while (allUsernames.contains(username)) {
-                username = ((Integer) r.nextInt(getTestUsernameBound())).toString();
+            localUsername = ((Integer) r.nextInt(getTestUsernameBound())).toString();
+            while (allUsernames.contains(localUsername)) {
+                localUsername = ((Integer) r.nextInt(getTestUsernameBound())).toString();
             }
         }
 
-        writePreference("username", username);
-        networkHandler.chooseUsername(username);
+        networkHandler.chooseUsername(localUsername);
 
-        roomUsernames.add(username);
+        roomUsernames.add(localUsername);
         roomUsernames.remove("*");
         return roomUsernames;
 
     }
 
-    private boolean isReconnection() {
-        return !isTesting() && (getToken().length() != 0);
-    }
+
 
     public void viewInitialization() {
         view = getUiMode().createView(this);
@@ -143,10 +121,7 @@ public class Client {
 
     public void networkInitialization() {
         //Ip and port are always given for it.polimi.se2019.client.network handling, they are ignored if connection mode is RMI
-        if (!isReconnection())
-            networkHandler = getConnectionMode().createNetworkHandler(this, getServerIP(), getServerPort());
-        else
-            networkHandler = getConnectionMode().createNetworkHandler(this, getServerIP(), getServerPort(), getToken());
+        networkHandler = getConnectionMode().createNetworkHandler(this, getServerIP(), getServerPort());
     }
 
     public void initializePropertiesAndPreferences() {

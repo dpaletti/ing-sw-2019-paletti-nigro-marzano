@@ -33,20 +33,6 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
     }
 
 
-    public NetworkHandlerRMI(String token, Client client){
-        super(token, client);
-        try {
-            Registry importRegistry = LocateRegistry.getRegistry();
-            gameServer = (ServerInterface) importRegistry.lookup(client.getRemoteServerName());
-
-            UnicastRemoteObject.exportObject(this, 0);
-            gameServer.startListening(this);
-        }catch (RemoteException e){
-            Log.severe("Could not get RMI registry " + e.getMessage());
-        }catch (NotBoundException e) {
-            Log.severe("Could not bind " + client.getRemoteServerName());
-        }
-    }
 
     @Override
     public void update(Event message) {

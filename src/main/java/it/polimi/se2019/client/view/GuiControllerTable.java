@@ -184,7 +184,6 @@ public class GuiControllerTable extends GuiController {
         }
     }
 
-
     @Override
     public void dispatch(UiMapConfigEvent message) {
         try {

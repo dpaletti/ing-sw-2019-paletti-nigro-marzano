@@ -1,14 +1,12 @@
-package it.polimi.se2019.client.view;
+package it.polimi.se2019.server.network;
 
+import it.polimi.se2019.client.view.MVEvent;
+import it.polimi.se2019.client.view.VCEvent;
 import it.polimi.se2019.commons.mv_events.HandshakeEndEvent;
 import it.polimi.se2019.commons.mv_events.MvJoinEvent;
 import it.polimi.se2019.commons.mv_events.SetUpEvent;
 import it.polimi.se2019.commons.mv_events.UsernameDeletionEvent;
 import it.polimi.se2019.commons.utility.*;
-import it.polimi.se2019.server.network.Connection;
-import it.polimi.se2019.server.network.ConnectionBroadcast;
-import it.polimi.se2019.server.network.EventLoop;
-import it.polimi.se2019.server.network.Server;
 import it.polimi.se2019.commons.vc_events.DisconnectionEvent;
 
 import java.util.ArrayList;
@@ -55,7 +53,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     public void reconnect(String token){
         if(!biTokenUsername.containsFirst(token))
             throw new IllegalArgumentException("Trying to reconnect invalid player in room " + roomNumber);
-        getConnectionOnToken(token).reconnect();
+        getConnectionOnToken(token).reconnect(server.sync(roomNumber, biTokenUsername.getSecond(token), token));
     }
 
     public void refuseReconnection(String token){
@@ -64,28 +62,24 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     }
 
     public void disconnect(Connection connection){
-        if (biTokenUsername.containsFirst(connection.getToken()))
+        if (biTokenUsername.containsFirst(connection.getToken())) {
             notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken())));
+            server.disconnectUsername(biTokenUsername.getSecond(connection.getToken()));
+        }
+
         else {
             notify(new DisconnectionEvent(connection.getToken()));
             connection.disconnect();
         }
     }
 
-    public void removePlayer(String id){
+    public void removePlayer(String token){
         try {
-            String token = id;
-            if (!biTokenUsername.containsFirst(id)) {
-                token = biTokenUsername.getFirst(id);
-            }
-            biTokenUsername.removeFirst(token);
-            sem.release();
             connections.remove(getConnectionOnToken(token));
             Log.fine("Interrupting event loop");
             eventLoops.get(token).interrupt();
             eventLoops.remove(token);
-            if (!biTokenUsername.containsFirst(id) && !biTokenUsername.containsSecond(id))
-                return;
+            sem.release();
         }catch (NullPointerException e){
             throw new NullPointerException("Could not remove unregistred player");
         }
@@ -93,6 +87,14 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
         @Override
         public void dispatch(MvJoinEvent message) {
+            if (server.isReconnection(message.getUsername())) {
+                //reconnection case
+                VirtualView toReJoin = server.getPlayerRoomOnId(message.getUsername());
+                String tokenToReJoin = toReJoin.getBiTokenUsername().getFirst(message.getUsername());
+                toReJoin.reconnect(tokenToReJoin);
+            }
+
+            //new connection
             biTokenUsername.add(new Pair<>(message.getDestination(), message.getUsername()));
             List<Connection> toBroadcast = new ArrayList<>(connections);
             toBroadcast.remove(getConnectionOnToken(message.getDestination()));
@@ -100,6 +102,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             connection.submit(message);
             sem.release();
         }
+
 
         @Override
         public void dispatch(UsernameDeletionEvent message) {
@@ -149,16 +152,18 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
 
     public void startListening (Connection connection){
-            sem.acquireUninterruptibly();
-            connections.add(connection);
-            Thread t = new Thread(new EventLoop(this, connection));
-            t.start();
-            eventLoops.put(connection.getToken(), t);
-            List<String> roomUsernames = new ArrayList<>();
-            for(Pair<String, String> p: biTokenUsername){
+        sem.acquireUninterruptibly();
+        connections.add(connection);
+        Thread t = new Thread(new EventLoop(this, connection));
+        t.start();
+        eventLoops.put(connection.getToken(), t);
+        List<String> roomUsernames = new ArrayList<>();
+        for(Pair<String, String> p: biTokenUsername){
+            if(!getConnectionOnToken(p.getFirst()).isDisconnected())
+                //player can reconnect inputting disconnected username
                 roomUsernames.add(p.getSecond());
-            }
-            submit(connection, new HandshakeEndEvent(connection.getToken(), roomUsernames, server.getUsernames(), server.getMapConfigs(roomNumber)));
+        }
+        submit(connection, new HandshakeEndEvent(connection.getToken(), roomUsernames, server.getActiveUsernames(), server.getMapConfigs(roomNumber)));
     }
 
 

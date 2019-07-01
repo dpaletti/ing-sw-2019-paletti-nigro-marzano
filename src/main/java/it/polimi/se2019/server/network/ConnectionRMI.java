@@ -1,22 +1,19 @@
 package it.polimi.se2019.server.network;
 
+import it.polimi.se2019.client.view.MVEvent;
+import it.polimi.se2019.client.view.VCEvent;
 import it.polimi.se2019.commons.mv_events.SyncEvent;
 import it.polimi.se2019.commons.network.CallbackInterface;
 import it.polimi.se2019.commons.utility.Log;
-import it.polimi.se2019.client.view.MVEvent;
-import it.polimi.se2019.client.view.VCEvent;
 import it.polimi.se2019.commons.vc_events.DisconnectionEvent;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 
 public class ConnectionRMI implements Connection{
     private SynchronousQueue<VCEvent> in = new SynchronousQueue<>();
     private SynchronousQueue<MVEvent> out = new SynchronousQueue<>();
     private boolean remoteClientRetrieving = false;
-    private List<MVEvent> eventBuffer = new ArrayList<>();
     private boolean disconnected = false;
 
 
@@ -52,9 +49,9 @@ public class ConnectionRMI implements Connection{
     }
 
     @Override
-    public void reconnect() {
+    public void reconnect(SyncEvent sync) {
         disconnected = false;
-        submit(new SyncEvent(getToken(), eventBuffer));
+        submit(sync);
     }
 
     @Override
@@ -67,9 +64,7 @@ public class ConnectionRMI implements Connection{
                     remoteClientRetrieving = true;
                 }
                 out.put(mvEvent);
-                return;
             }
-            eventBuffer.add(mvEvent);
         }catch (InterruptedException e){
             Log.severe("Submitting interrupted");
             submit(mvEvent);
@@ -81,6 +76,11 @@ public class ConnectionRMI implements Connection{
     @Override
     public void disconnect() {
         disconnected = true;
+    }
+
+    @Override
+    public boolean isDisconnected() {
+        return disconnected;
     }
 
     public MVEvent pull(){

@@ -2,13 +2,14 @@ package it.polimi.se2019.server.network;
 
 import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.client.view.VCEvent;
-import it.polimi.se2019.client.view.VirtualView;
+import it.polimi.se2019.commons.mv_events.SyncEvent;
 import it.polimi.se2019.commons.network.CallbackInterface;
 import it.polimi.se2019.commons.network.ServerInterface;
 import it.polimi.se2019.commons.utility.Log;
+import it.polimi.se2019.commons.utility.Point;
 import it.polimi.se2019.server.controller.Controller;
 import it.polimi.se2019.server.controller.MatchMakingController;
-import it.polimi.se2019.server.model.Game;
+import it.polimi.se2019.server.model.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,18 +22,16 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 
 public class Server implements ServerInterface {
     private ServerSocket serverSocket;
-    private List<VirtualView> virtualViews = new ArrayList<>();
+    private List<VirtualView> rooms = new ArrayList<>();
     private List<Game> models = new ArrayList<>();
     private int roomNumber = -1;
     private List<String> usernames = new ArrayList<>();
+    private List<String> activeUsernames = new ArrayList<>();
     private List<String> tokens = new ArrayList<>();
     private Properties properties = new Properties();
 
@@ -44,6 +43,7 @@ public class Server implements ServerInterface {
 
     public Server(){
         usernames.add("*");
+        activeUsernames.add("*");
 
         try {
             fillProperties();
@@ -76,6 +76,10 @@ public class Server implements ServerInterface {
         return new ArrayList<>(usernames);
     }
 
+    public List<String> getActiveUsernames() {
+        return activeUsernames;
+    }
+
     public List<String> getTokens() {
         return new ArrayList<>(tokens);
     }
@@ -94,18 +98,32 @@ public class Server implements ServerInterface {
 
     public void addUsername(String username){
         usernames.add(username);
+        activeUsernames.add(username);
     }
 
     public void deleteUsername(String username){
         usernames.remove(username);
+        activeUsernames.remove(username);
+    }
+
+    public void disconnectUsername(String username){
+        activeUsernames.remove(username);
+    }
+
+    public boolean isReconnection(String username){
+        for(VirtualView v: rooms){
+            if(v.getBiTokenUsername().containsFirst(username))
+                return true;
+        }
+        return false;
     }
 
     public void addController(Controller controller, int roomNumber){
-        virtualViews.get(roomNumber).register(controller);
+        rooms.get(roomNumber).register(controller);
     }
 
     public void removeController(Controller controller, int roomNumber){
-        virtualViews.get(roomNumber).deregister(controller);
+        rooms.get(roomNumber).deregister(controller);
     }
 
     public void kickPlayer(String toKick) {
@@ -114,6 +132,84 @@ public class Server implements ServerInterface {
             room.removePlayer(toKick);
         else
             throw new IllegalArgumentException("Kick is impossible, player to kick cannot be found");
+    }
+
+    public synchronized SyncEvent sync(int roomNumber, String usernameReconnecting, String token){
+        Game model = models.get(roomNumber);
+        boolean isFrenzy = model.isFinalFrenzy();
+        String leftConfig = model.getGameMap().getConfig().getLeftHalf();
+        String rightConfig = model.getGameMap().getConfig().getRightHalf();
+        List<String> configs = model.getMapConfigs();
+        List<String> roomUsernames = new ArrayList<>();
+        List<String> pausedPlayer = new ArrayList<>();
+        int skulls = model.getKillshotTrack().getNumberOfSkulls() - model.getKillshotTrack().getKillshot().size();
+        Map<String, Integer> points = new HashMap<>();
+        List<String> powerup = new ArrayList<>();
+        Map<String, ArrayList<String>> finance = new HashMap<>();
+        Map<String, String> colour = new HashMap<>();
+        Map<String, ArrayList<String>> weapon = new HashMap<>();
+        Map<String, ArrayList<String>> mark = new HashMap<>();
+        Map<String, ArrayList<String>> hp = new HashMap<>();
+        Map<Point, String> loot = new HashMap<>();
+        Map<String, String> weaponSpots = new HashMap<>();
+        Map<Point, ArrayList<String>> figurePosition = new HashMap<>();
+
+        ArrayList<String> stringStore;
+
+        for(Tile s: model.getGameMap().getLootTiles())
+            loot.put(s.getPosition(), s.getGrabbables().get(0).getName());
+
+        for(Tile s: model.getGameMap().getSpawnTiles()){
+            for(Grabbable g: s.getGrabbables())
+                weaponSpots.put(g.getName(), s.getColour().name());
+        }
+
+        for (Tile s: model.getGameMap().getTiles()){
+            figurePosition.put(s.getPosition(), new ArrayList<>());
+            for(Figure g: s.getFigures())
+                figurePosition.get(s.getPosition()).add(g.getColour().name());
+        }
+
+        String currentUsername;
+        for(Player p: model.getPlayers()){
+            currentUsername = model.playerToUser(p);
+
+            roomUsernames.add(currentUsername);
+
+            if(p.isPaused())//paused
+                pausedPlayer.add(currentUsername);
+
+            if(currentUsername.equals(usernameReconnecting)){//powerups
+                for(PowerUp po: p.getPowerUps())
+                    powerup.add(po.getName());
+            }
+
+            stringStore = new ArrayList<>();
+            for(Ammo a: p.getAmmo())
+                stringStore.add(a.getColour().name());
+            finance.put(currentUsername, stringStore);
+
+            colour.put(currentUsername, p.getFigure().getColour().name());
+
+            stringStore = new ArrayList<>();
+            for(Weapon w: p.getWeapons())
+                stringStore.add(w.getName());
+            weapon.put(currentUsername, stringStore);
+
+            stringStore = new ArrayList<>();
+            for(Tear t: p.getMarks())
+                stringStore.add(t.getColour().name());
+            mark.put(currentUsername, stringStore);
+
+            stringStore = new ArrayList<>();
+            for(Tear t: p.getHp())
+                stringStore.add(t.getColour().name());
+            hp.put(currentUsername, stringStore);
+
+
+            points.put(currentUsername, p.getPoints());
+        }
+        return new SyncEvent(token, figurePosition, weaponSpots, loot, hp, mark, weapon, colour, finance, powerup, points, skulls, pausedPlayer, roomUsernames, configs,leftConfig, rightConfig, isFrenzy);
     }
 
     public void handleReconnection(String source, String oldToken){
@@ -127,8 +223,8 @@ public class Server implements ServerInterface {
             throw new IllegalArgumentException("Reconnection to handle is not valid");
     }
 
-    private VirtualView getPlayerRoomOnId(String id){
-        for (VirtualView v : virtualViews) {
+    public VirtualView getPlayerRoomOnId(String id){
+        for (VirtualView v : rooms) {
             if (v.getBiTokenUsername().containsFirst(id)) {
                 return v;
             }
@@ -153,14 +249,14 @@ public class Server implements ServerInterface {
 
         Game model = new Game();
         models.add(model);
-        virtualViews.add(new VirtualView(roomNumber, this));
+        rooms.add(new VirtualView(roomNumber, this));
         new MatchMakingController(model, this, roomNumber);
 
 
-        model.register(virtualViews.get(roomNumber));
+        model.register(rooms.get(roomNumber));
         if(suspendedConnection != null) {
             Log.fine("Un-suspending connection");
-            virtualViews.get(roomNumber).startListening(suspendedConnection);
+            rooms.get(roomNumber).startListening(suspendedConnection);
             suspendedConnection = null;
         }
         Log.info("Server ready");
@@ -180,7 +276,7 @@ public class Server implements ServerInterface {
                 suspendedConnection = new ConnectionSocket(generateToken(), socket);
                 return;
             }
-            virtualViews.get(roomNumber).startListening(new ConnectionSocket(generateToken(), socket));
+            rooms.get(roomNumber).startListening(new ConnectionSocket(generateToken(), socket));
           }
     }
 
@@ -230,14 +326,14 @@ public class Server implements ServerInterface {
             newMatch();
             return;
         }
-        virtualViews.get(roomNumber).startListening(new ConnectionRMI(generateToken(), client));
+        rooms.get(roomNumber).startListening(new ConnectionRMI(generateToken(), client));
         semRMI.release();
     }
 
     @Override
     public MVEvent pullEvent(String token) throws RemoteException {
         try {
-            return ((ConnectionRMI) virtualViews.get(roomNumber).getConnectionOnToken(token)).pull();
+            return ((ConnectionRMI) rooms.get(roomNumber).getConnectionOnToken(token)).pull();
         } catch (NullPointerException e) {
             Log.fine("Invalid token");
             throw new NullPointerException("You detain an invalid token");
@@ -247,7 +343,7 @@ public class Server implements ServerInterface {
     @Override
     public void pushEvent(String token, VCEvent vcEvent) throws RemoteException {
         try{
-            ((ConnectionRMI) virtualViews.get(roomNumber).getConnectionOnToken(token)).push(vcEvent);
+            ((ConnectionRMI) rooms.get(roomNumber).getConnectionOnToken(token)).push(vcEvent);
         }catch (NullPointerException e){
             Log.fine("Invalid token");
             throw new NullPointerException("You detain an invalid token");

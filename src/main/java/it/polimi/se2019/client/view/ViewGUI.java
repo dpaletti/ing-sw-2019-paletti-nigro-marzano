@@ -235,6 +235,31 @@ public class ViewGUI extends View {
         notify(new UiTurnEnd());
     }
 
+    @Override
+    public void dispatch(SyncEvent message) {
+        matchMaking(message.getUsernames(), message.getConfigs());
+
+        dispatch(new MatchConfigurationEvent(client.getUsername(), message.getConfigs()));
+
+        dispatch(new SetUpEvent(client.getUsername(), message.getColours(), message.getWeaponSpots(), message.getLootSpots(), message.getSkulls(), message.getLeftConfig(), message.getRightConfig(), message.isFrenzy()));
+        
+
+        for(String paused: message.getPaused())
+            dispatch(new PausedPlayerEvent(client.getUsername(), paused));
+
+        for(String username: message.getUsernames()){
+
+            for(String hit: message.getHp().get(username))
+                dispatch(new UpdateHpEvent(client.getUsername(), username, hit));
+
+            for(String mark: message.getMark().get(username))
+                dispatch(new UpdateMarkEvent(client.getUsername(), username, mark, true));
+
+
+
+        }
+
+    }
 
     //-----------------------------------Figure movements-----------------------------------//
     @Override

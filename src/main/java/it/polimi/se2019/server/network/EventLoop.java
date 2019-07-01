@@ -1,7 +1,5 @@
 package it.polimi.se2019.server.network;
 
-import it.polimi.se2019.client.view.VirtualView;
-
 import java.util.NoSuchElementException;
 
 public class EventLoop implements Runnable {

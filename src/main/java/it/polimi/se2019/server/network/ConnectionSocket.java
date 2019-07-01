@@ -1,17 +1,15 @@
 package it.polimi.se2019.server.network;
 
 
+import it.polimi.se2019.client.view.MVEvent;
+import it.polimi.se2019.client.view.VCEvent;
 import it.polimi.se2019.commons.mv_events.SyncEvent;
 import it.polimi.se2019.commons.utility.JsonHandler;
 import it.polimi.se2019.commons.utility.Log;
-import it.polimi.se2019.client.view.MVEvent;
-import it.polimi.se2019.client.view.VCEvent;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class ConnectionSocket implements Connection{
@@ -21,7 +19,6 @@ public class ConnectionSocket implements Connection{
     private String token;
 
     private boolean disconnected = false;
-    private List<MVEvent> eventBuffer = new ArrayList<>();
 
     public ConnectionSocket(String token, Socket socket){
         try{
@@ -34,9 +31,14 @@ public class ConnectionSocket implements Connection{
     }
 
     @Override
-    public void reconnect() {
+    public void reconnect(SyncEvent sync) {
         disconnected = false;
-        submit(new SyncEvent(getToken(), eventBuffer));
+        submit(sync);
+    }
+
+    @Override
+    public boolean isDisconnected() {
+        return disconnected;
     }
 
     @Override
@@ -46,11 +48,8 @@ public class ConnectionSocket implements Connection{
 
     @Override
     public void submit(MVEvent mvEvent) {
-
         if(!disconnected)
             out.println(JsonHandler.serialize(mvEvent));
-        else
-            eventBuffer.add(mvEvent);
     }
 
     @Override
