@@ -88,4 +88,8 @@ public interface VCEventDispatcher extends EventDispatcher {
     default void dispatch (VCChooseAmmoToPayEvent message){
         throw new UnsupportedOperationException("VCChooseAmmoToPayEvent not supported");
     }
+
+    default void dispatch (VCCardEndEvent message){
+        throw new UnsupportedOperationException("VCChooseAmmoToPayEvent not supported");
+    }
 }

@@ -1,5 +1,8 @@
 package it.polimi.se2019.server.controller;
 
+import it.polimi.se2019.commons.mv_events.MVCardEndEvent;
+import it.polimi.se2019.commons.mv_events.PartialSelectionEvent;
+import it.polimi.se2019.commons.mv_events.PossibleEffectsEvent;
 import it.polimi.se2019.server.model.*;
 import it.polimi.se2019.server.network.Server;
 import it.polimi.se2019.commons.utility.JsonHandler;
@@ -7,10 +10,7 @@ import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.commons.utility.Point;
 import it.polimi.se2019.client.view.VCEvent;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CardController extends Controller {
     protected Card current;
@@ -18,6 +18,9 @@ public class CardController extends Controller {
     protected Player currentPlayer;
     protected int layersVisitedPartial = 0;
     protected List<GraphNode<PartialWeaponEffect>> currentLayer= new ArrayList<>();
+    protected int partialGraphLayer = -1;
+    protected GraphWeaponEffect weaponEffect = null;
+    protected List<String> previousTargets = new ArrayList<>();
 
 
     public CardController(Game model, Server server, int roomNumber) {
@@ -47,7 +50,8 @@ public class CardController extends Controller {
         return finalSet;
     }
 
-    protected void endUsage(){
+    protected void endUsage(boolean isWeapon){
+        model.send(new MVCardEndEvent(model.playerToUser(currentPlayer), isWeapon));
         layersVisited = 0;
         currentPlayer = null;
         current = null;
@@ -232,4 +236,87 @@ public class CardController extends Controller {
     public int getLayersVisitedPartial() {
         return layersVisitedPartial;
     }
+
+    protected List<Ammo> enoughPowerUps (GraphWeaponEffect effect){
+        List<PowerUp> ownedPowerUps = new ArrayList<>(currentPlayer.getPowerUps());
+        List<Ammo> missingAmmos = enoughAmmos(effect);
+        List<Ammo> toReturn = new ArrayList<>();
+        boolean flag = false;
+
+        for (Ammo a : missingAmmos){
+            for (PowerUp p : ownedPowerUps) {
+                if (a.getColour().name().equalsIgnoreCase(p.getColour())) {
+                    ownedPowerUps.remove(p);
+                    toReturn.add(a);
+                    flag = true;
+                }
+            }
+            if (!flag)
+                return Collections.emptyList();
+            flag = false;
+        }
+        return toReturn;
+    }
+
+
+    protected List<Ammo> enoughAmmos (GraphWeaponEffect effect){
+        List<Ammo> ownedAmmos = new ArrayList<>(currentPlayer.getAmmo());
+        List<Ammo> toReturn = new ArrayList<>();
+        for (Ammo a : effect.getPrice()){
+            if (!ownedAmmos.remove(a))
+                toReturn.add(a);
+        }
+        return toReturn;
+    }
+
+
+    protected void handlePartial (PartialWeaponEffect partial){
+        List<Targetable> targets = generateTargetSet(partial, currentPlayer);
+        if (partial.getTargetSpecification().getTile())
+            model.send(new PartialSelectionEvent(targetableToTile(targets), model.playerToUser(currentPlayer), partial.isEndable()));
+        else
+            model.send(new PartialSelectionEvent(model.playerToUser(currentPlayer), targetableToPlayer(targets), partial.isEndable()));
+    }
+
+
+    private List<Point> targetableToTile (List<Targetable> targetables){
+        List<Point> points = new ArrayList<>();
+        for (Targetable t : targetables)
+            points.add(t.getPosition());
+        return points;
+    }
+
+    private List<String> targetableToPlayer (List<Targetable> targetables){
+        List<String> players = new ArrayList<>();
+        for (Targetable t : targetables){
+            players.add(model.playerToUser((Player)t));
+        }
+        return players;
+    }
+
+    protected void handleEffect (){
+        currentPlayer.useAmmos(weaponEffect.getPrice());
+        layersVisitedPartial = layersVisitedPartial + 1;
+        currentLayer= weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
+        partialGraphLayer++;
+        handlePartial(currentLayer.get(partialGraphLayer).getKey());
+    }
+
+    protected void nextWeaponEffect (boolean isWeapon){
+        List<GraphWeaponEffect> list = new ArrayList<>();
+        layersVisited = layersVisited + 1;
+        for (GraphNode<GraphWeaponEffect> g: current.getDefinition().getListLayer(layersVisited)) {
+            if (enoughAmmos(g.getKey()).isEmpty() || !enoughPowerUps(g.getKey()).isEmpty())
+                list.add(g.getKey());
+        }
+        if (!list.isEmpty()) {
+            PossibleEffectsEvent event = new PossibleEffectsEvent(model.playerToUser(currentPlayer), current.getName(), isWeapon);
+            for (GraphWeaponEffect w: list)
+                event.addEffect(w.getName(), w.getEffectType());
+            model.send(event);
+        }
+        else
+            model.send(new MVCardEndEvent(model.playerToUser(currentPlayer), isWeapon));
+    }
+
 }
