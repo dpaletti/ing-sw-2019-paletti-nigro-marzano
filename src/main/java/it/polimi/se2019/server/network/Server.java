@@ -52,7 +52,7 @@ public class Server implements ServerInterface {
         }catch (AlreadyBoundException e){
             Log.severe("Could not bind RMI interface");
         }catch (IOException e){
-            Log.severe("IO error while starting network up");
+            Log.severe("IO error while starting it.polimi.se2019.client.network up");
         }
     }
 

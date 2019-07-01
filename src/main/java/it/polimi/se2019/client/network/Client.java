@@ -68,7 +68,9 @@ public class Client {
     public void writePreference(String property, String value) {
         hidden.put(property, value);
         try {
-            FileOutputStream f = new FileOutputStream(Client.class.getClassLoader().getResource("reconnection.properties").getFile());
+
+            String file = Client.class.getClassLoader().getResource("reconnection.properties").getFile();
+            FileOutputStream f = new FileOutputStream(file);
             hidden.store(f, "updating");
         } catch (FileNotFoundException e) {
             Log.severe("Could not find local properties file");
@@ -83,7 +85,6 @@ public class Client {
         mapConfigs = configs;
         if (!networkHandler.isReconnection()) {
             networkHandler.setToken(token);
-            createPropertyFile(token);
             view.matchMaking(usernameSelection(allUsernames, roomUsernames), configs);
         } else
             networkHandler.reconnect(token);
@@ -141,7 +142,7 @@ public class Client {
     }
 
     public void networkInitialization() {
-        //Ip and port are always given for network handling, they are ignored if connection mode is RMI
+        //Ip and port are always given for it.polimi.se2019.client.network handling, they are ignored if connection mode is RMI
         if (!isReconnection())
             networkHandler = getConnectionMode().createNetworkHandler(this, getServerIP(), getServerPort());
         else
@@ -162,23 +163,5 @@ public class Client {
 
     public static void main(String[] args) {
         new Client();
-    }
-
-    private void createPropertyFile(String token) {
-        try {
-            File dynamicProp = new File(Paths.get("files").toFile(), token + ".properties");
-            boolean created = dynamicProp.createNewFile();
-            if (!created) {
-                Log.severe("File not created");
-            }
-        } catch (IOException e) {
-            Log.severe("IO Exception in storing the property file/or crating it");
-        }
-    }
-
-    public void closeSession() {
-        File dynamicProp =  new File(Client.class.getResource("reconnection.properties").getFile());
-        if (!dynamicProp.delete())
-            Log.severe("File not deleted");
     }
 }
