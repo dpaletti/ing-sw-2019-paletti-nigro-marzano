@@ -42,7 +42,7 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
 
     public String getNextActiveUser (String user){
         if (model.getUsernames().indexOf(user) + 1 >= model.getUsernames().size())
-            return getNextActiveUser(model.getUsernames().get(0));
+            return model.getUsernames().get(0);
 
         if (model.userToPlayer(model.getUsernames().get(model.getUsernames().indexOf(user) + 1)).isPaused())
             return getNextActiveUser(model.getUsernames().get(model.getUsernames().indexOf(user) + 1));

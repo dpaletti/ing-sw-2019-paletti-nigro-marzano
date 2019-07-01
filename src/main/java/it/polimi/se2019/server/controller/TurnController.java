@@ -259,13 +259,12 @@ public class TurnController extends Controller {
                 model.send(new StartFirstTurnEvent(currentPlayer,
                         model.getPowerUpDeck().draw().getName(),
                         model.getPowerUpDeck().draw().getName(), false, model.getGameMap().getMappedSpawnPoints()));
-                turnTimer.startTimer(server.getTurnTimer());
             }
             else {
                 model.send(new TurnEvent(currentPlayer,
                         fromPartialToStringCombo(getAllowedMoves())));
-                turnTimer.startTimer(server.getTurnTimer());
             }
+            turnTimer.startTimer(server.getTurnTimer());
         }
     }
 
@@ -317,8 +316,9 @@ public class TurnController extends Controller {
             spawn.put(card.getName(), model.getTile(p).getColour().name());
             model.getTile(p).add((Weapon)card);
         }
-
         model.send(new BoardRefreshEvent("*", spawn, loot));
+        model.emptyEmptyLootTile();
+        model.emptyEmptySpawnTile();
     }
 
 }
