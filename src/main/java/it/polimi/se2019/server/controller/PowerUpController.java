@@ -43,7 +43,7 @@ public class PowerUpController extends CardController {
         layersVisited = layersVisited + 1;
         List<GraphWeaponEffect> list = new ArrayList<>();
         for (GraphNode<GraphWeaponEffect> g: current.getDefinition().getListLayer(layersVisited)) {
-            if (enoughAmmos(g.getKey()).isEmpty() || !enoughPowerUps(g.getKey()).isEmpty())
+            if (missingAmmos(g.getKey()).isEmpty() || enoughPowerUps(g.getKey()))
                 list.add(g.getKey());
         }
         if (!list.isEmpty()) {
@@ -85,6 +85,8 @@ public class PowerUpController extends CardController {
 
     @Override
     public void dispatch(VCPartialEffectEvent message) {
+        if (current == null)
+            return;
         if (message.isSkip()){
             partialGraphLayer++;
             if (partialGraphLayer == currentLayer.size()) {
@@ -93,6 +95,7 @@ public class PowerUpController extends CardController {
             else
                 handlePartial(currentLayer.get(partialGraphLayer).getKey());
         }
+
         else {
             if (message.getTargetPlayer() != null) {
                 model.apply(model.playerToUser(currentPlayer),
@@ -111,8 +114,10 @@ public class PowerUpController extends CardController {
 
             layersVisitedPartial++;
             currentLayer = weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
-            if (currentLayer.isEmpty())
+            if (currentLayer.isEmpty()) {
+                layersVisitedPartial = 0;
                 nextWeaponEffect(false);
+            }
             else {
                 partialGraphLayer = 0;
                 handlePartial(currentLayer.get(partialGraphLayer).getKey());

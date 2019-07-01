@@ -107,8 +107,10 @@ public class WeaponController extends CardController {
 
             layersVisitedPartial++;
             currentLayer = weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
-            if (currentLayer.isEmpty())
+            if (currentLayer.isEmpty()) {
+                layersVisitedPartial = 0;
                 nextWeaponEffect(true);
+            }
             else {
                 partialGraphLayer = 0;
                 handlePartial(currentLayer.get(partialGraphLayer).getKey());

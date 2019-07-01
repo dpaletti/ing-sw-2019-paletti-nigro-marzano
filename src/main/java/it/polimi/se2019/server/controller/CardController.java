@@ -53,8 +53,13 @@ public class CardController extends Controller {
     protected void endUsage(boolean isWeapon){
         model.send(new MVCardEndEvent(model.playerToUser(currentPlayer), isWeapon));
         layersVisited = 0;
+        layersVisitedPartial = 0;
         currentPlayer = null;
         current = null;
+        currentLayer = null;
+        partialGraphLayer = -1;
+        weaponEffect = null;
+        previousTargets.clear();
     }
 
     protected List<Targetable> generateTargetSet (PartialWeaponEffect effect, Player player){
@@ -229,37 +234,33 @@ public class CardController extends Controller {
         }
     }
 
-    public int getLayersVisited() {
-        return layersVisited;
-    }
+    // enoughPowerUps() uses missingAmmos() to calculate whether any ammos are missing.
+    // If ammos are missing, it calculates if those can be replaced by power ups and,
+    // in case player does not own enough power ups to pay, it returns false,
 
-    public int getLayersVisitedPartial() {
-        return layersVisitedPartial;
-    }
-
-    protected List<Ammo> enoughPowerUps (GraphWeaponEffect effect){
+    protected boolean enoughPowerUps (GraphWeaponEffect effect){
         List<PowerUp> ownedPowerUps = new ArrayList<>(currentPlayer.getPowerUps());
-        List<Ammo> missingAmmos = enoughAmmos(effect);
-        List<Ammo> toReturn = new ArrayList<>();
+        List<Ammo> missingAmmos = missingAmmos(effect);
         boolean flag = false;
 
         for (Ammo a : missingAmmos){
             for (PowerUp p : ownedPowerUps) {
                 if (a.getColour().name().equalsIgnoreCase(p.getColour())) {
                     ownedPowerUps.remove(p);
-                    toReturn.add(a);
                     flag = true;
                 }
             }
             if (!flag)
-                return Collections.emptyList();
+                return false;
             flag = false;
         }
-        return toReturn;
+        return true;
     }
 
+    // missingAmmos returns missing ammos to pay a price, therefore,
+    // when price can be fully payed with ammos, it returns an empty list.
 
-    protected List<Ammo> enoughAmmos (GraphWeaponEffect effect){
+    protected List<Ammo> missingAmmos(GraphWeaponEffect effect){
         List<Ammo> ownedAmmos = new ArrayList<>(currentPlayer.getAmmo());
         List<Ammo> toReturn = new ArrayList<>();
         for (Ammo a : effect.getPrice()){
@@ -306,7 +307,7 @@ public class CardController extends Controller {
         List<GraphWeaponEffect> list = new ArrayList<>();
         layersVisited = layersVisited + 1;
         for (GraphNode<GraphWeaponEffect> g: current.getDefinition().getListLayer(layersVisited)) {
-            if (enoughAmmos(g.getKey()).isEmpty() || !enoughPowerUps(g.getKey()).isEmpty())
+            if (missingAmmos(g.getKey()).isEmpty() || enoughPowerUps(g.getKey()))
                 list.add(g.getKey());
         }
         if (!list.isEmpty()) {
