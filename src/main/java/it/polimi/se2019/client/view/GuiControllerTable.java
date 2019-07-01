@@ -885,6 +885,18 @@ public class GuiControllerTable extends GuiController {
         showedCard.setImage(null);
     }
 
+    @Override
+    public void dispatch(UiWeaponEnd message) {
+        buttonSetup();
+        directionsText.set("Weapon is over");
+    }
+
+    @Override
+    public void dispatch(UiPowerUpEnd message) {
+        buttonSetup();
+        directionsText.set("PowerUp is over");
+    }
+
     //----------------------------------------------------------------------------------------------------------------//
 
 

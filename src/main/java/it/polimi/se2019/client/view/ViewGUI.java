@@ -455,8 +455,11 @@ public class ViewGUI extends View {
     }
 
     @Override
-    public void dispatch(MVWeaponEndEvent message) {
-        notify(new UiWeaponEnd());
+    public void dispatch(MVCardEndEvent message) {
+        if(message.isWeapon())
+            notify(new UiWeaponEnd());
+        else
+            notify(new UiPowerUpEnd());
     }
 
     //---------------------------------------------------------------------------------------//

@@ -180,4 +180,7 @@ public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiBoardRefresh message){
         throw new UnsupportedOperationException("UiBoardRefresh not supported");
     }
+    default void dispatch(UiPowerUpEnd message){
+        throw new UnsupportedOperationException("UiPowerUpEnd not supported");
+    }
 }
