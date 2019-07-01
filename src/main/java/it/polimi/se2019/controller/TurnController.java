@@ -251,10 +251,14 @@ public class TurnController extends Controller {
             currentPlayer = getNextActiveUser(currentPlayer);
             if (turnCounter== model.getUsernames().size())
                 isFirstTurn=false;
-            if (isFirstTurn)
+            if (isFirstTurn) {
+                model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
+                disablePowerUps(previouslyPlaying,"onTurn");
                 model.send(new StartFirstTurnEvent(currentPlayer,
                         model.getPowerUpDeck().draw().getName(),
-                        model.getPowerUpDeck().draw().getName(),false,model.getGameMap().getMappedSpawnPoints()));
+                        model.getPowerUpDeck().draw().getName(), false, model.getGameMap().getMappedSpawnPoints()));
+                turnTimer.startTimer(server.getTurnTimer());
+            }
             else {
                 model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
                 disablePowerUps(previouslyPlaying,"onTurn");
