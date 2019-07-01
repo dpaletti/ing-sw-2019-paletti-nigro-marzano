@@ -1,5 +1,5 @@
 {
-  "type": "it.polimi.se2019.model.MapConfig",
+  "type": "it.polimi.se2019.server.model.MapConfig",
   "name": "mediumRight",
   "leftHalf": "left1",
   "rightHalf": "right1"

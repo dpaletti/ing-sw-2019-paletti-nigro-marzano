@@ -1,5 +1,6 @@
 package it.polimi.se2019.utility;
 
+import it.polimi.se2019.commons.utility.Pair;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +19,7 @@ public class TestPair <T, S>{
     @Mock
     S s1;
 
-    private Pair<T, S>  pair;
+    private Pair<T, S> pair;
 
     @Test
     public void testSet(){

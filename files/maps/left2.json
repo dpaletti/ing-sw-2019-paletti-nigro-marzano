@@ -1,5 +1,5 @@
 {
-  "type":"it.polimi.se2019.model.GameMap",
+  "type":"it.polimi.se2019.server.model.GameMap",
   "root":{
     "x":0,
     "y":0

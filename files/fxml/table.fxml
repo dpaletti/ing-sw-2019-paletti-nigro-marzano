@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="root" depthTest="DISABLE" hgap="10.0" maxHeight="1080" maxWidth="1920" minHeight="0" minWidth="0" prefHeight="977.0" prefWidth="1904.0" stylesheets="@../css/match.css" vgap="10.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerTable">
+<GridPane fx:id="root" depthTest="DISABLE" hgap="10.0" maxHeight="1080" maxWidth="1920" minHeight="0" minWidth="0" prefHeight="977.0" prefWidth="1904.0" stylesheets="@../css/match.css" vgap="10.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.client.view.GuiControllerTable">
           <columnConstraints>
               <ColumnConstraints hgrow="NEVER" percentWidth="5.0" />
               <ColumnConstraints hgrow="NEVER" maxWidth="675.92" minWidth="10.0" prefWidth="403.6666564941406" />

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane hgap="10.0" GridPane.columnIndex="5" GridPane.rowIndex="4" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.GuiControllerPowerUp">
+<GridPane hgap="10.0" GridPane.columnIndex="5" GridPane.rowIndex="4" xmlns="http://javafx.com/javafx/1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.client.view.GuiControllerPowerUp">
     <columnConstraints>
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
         <ColumnConstraints hgrow="NEVER" percentWidth="33" />
