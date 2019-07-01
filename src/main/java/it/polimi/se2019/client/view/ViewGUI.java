@@ -242,7 +242,6 @@ public class ViewGUI extends View {
         dispatch(new MatchConfigurationEvent(client.getUsername(), message.getConfigs()));
 
         dispatch(new SetUpEvent(client.getUsername(), message.getColours(), message.getWeaponSpots(), message.getLootSpots(), message.getSkulls(), message.getLeftConfig(), message.getRightConfig(), message.isFrenzy()));
-        
 
         for(String paused: message.getPaused())
             dispatch(new PausedPlayerEvent(client.getUsername(), paused));
@@ -255,7 +254,15 @@ public class ViewGUI extends View {
             for(String mark: message.getMark().get(username))
                 dispatch(new UpdateMarkEvent(client.getUsername(), username, mark, true));
 
+            for(Point p: message.getFigurePosition().keySet()){
+                for(String figure: message.getFigurePosition().get(p))
+                    dispatch(new MVMoveEvent(client.getUsername(), figure, p));
+            }
 
+            for(String powerup: message.getPowerup())
+                dispatch(new DrawnPowerUpEvent(client.getUsername(), powerup));
+
+            //for(String weapon: message.getWeapons().get(username))
 
         }
 

@@ -105,6 +105,9 @@ public class Client {
             }
         }
 
+
+        username = localUsername;
+
         networkHandler.chooseUsername(localUsername);
 
         roomUsernames.add(localUsername);
