@@ -25,9 +25,11 @@ public class MatchController extends Controller {
     }
 
     private void startMatch(){
+        model.getPlayers().get(0).setFirstPowerUp((PowerUp)model.getPowerUpDeck().draw());
+        model.getPlayers().get(0).setSecondPowerUp((PowerUp)model.getPowerUpDeck().draw());
         model.send(new StartFirstTurnEvent(model.playerToUser(model.getPlayers().get(0)),
-                ((PowerUp)model.getPowerUpDeck().draw()).getName(),
-                ((PowerUp)model.getPowerUpDeck().draw()).getName(),
+                model.getPlayers().get(0).getFirstPowerUp().getName(),
+                model.getPlayers().get(0).getSecondPowerUp().getName(),
                 true, model.getGameMap().getMappedSpawnPoints()));
     }
 

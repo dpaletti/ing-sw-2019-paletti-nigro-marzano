@@ -14,15 +14,17 @@ import it.polimi.se2019.commons.vc_events.DiscardedPowerUpEvent;
 import java.util.*;
 
 public class TurnController extends Controller {
-    private ArrayList<String> effects = new ArrayList<>();
-    private ArrayList<ArrayList<String>> targets = new ArrayList<>();
-    private boolean isFirstTurn = true; //TODO: set to false after first turn
+    private boolean isFirstTurn = true;
     private String currentPlayer;
     private Combo currentCombo;
+
     private int comboIndex = 0;
     private int comboUsed = 0;
     private boolean reloaded = false;
-    private int turnCounter=0;
+    private boolean spawning = true;
+
+    private int turnCounter = 0;
+
     private TickingTimer interTurnTimer;
     private TickingTimer turnTimer;
 
@@ -59,6 +61,7 @@ public class TurnController extends Controller {
     @Override
     public void dispatch(SpawnEvent message) {
         boolean isRespawn = false;
+        spawning = false;
         if (model.getPlayersWaitingToRespawn().contains(message.getSource())) {
             model.removeFromWaitingList(message.getSource());
             isRespawn = true;
@@ -192,8 +195,6 @@ public class TurnController extends Controller {
     @Override
     public void dispatch(DisconnectionEvent message) {
         model.pausePlayer(message.getSource());
-       /* if (!enoughActivePlayers())
-            model.send(new NotEnoughPlayersConnectedEvent("*"));*/
     }
 
     @Override
@@ -241,24 +242,41 @@ public class TurnController extends Controller {
 
     //Create an event to assure that whenever a player leaves he forces spawn in a point
     private void endTurn(){
+        if(spawning) {
+            spawn(currentPlayer,
+                    model.userToPlayer(currentPlayer).getFirstPowerUp().getCardColour().getColour(),
+                    model.userToPlayer(currentPlayer).getSecondPowerUp().getName(),
+                    false);
+            model.userToPlayer(currentPlayer).setFirstPowerUp(null);
+            model.userToPlayer(currentPlayer).setSecondPowerUp(null);
+        }
         String previouslyPlaying = currentPlayer;
         comboUsed = 0;
         comboIndex = 0;
         currentCombo = null;
         turnCounter++;
+        interTurn();
         refreshBoard();
+
         if (enoughActivePlayers()){
             currentPlayer = getNextActiveUser(currentPlayer);
             model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
             disablePowerUps(previouslyPlaying,"onTurn");
-            if (turnCounter== model.getUsernames().size())
-                isFirstTurn=false;
+            if (turnCounter == model.getUsernames().size())
+                isFirstTurn = false;
             if (isFirstTurn) {
+                model.userToPlayer(currentPlayer).setFirstPowerUp((PowerUp) model.getPowerUpDeck().draw());
+                model.userToPlayer(currentPlayer).setSecondPowerUp((PowerUp) model.getPowerUpDeck().draw());
+
                 model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
                 disablePowerUps(previouslyPlaying,"onTurn");
                 model.send(new StartFirstTurnEvent(currentPlayer,
-                        model.getPowerUpDeck().draw().getName(),
-                        model.getPowerUpDeck().draw().getName(), false, model.getGameMap().getMappedSpawnPoints()));
+                        model.userToPlayer(currentPlayer).getFirstPowerUp().getName(),
+                                model.userToPlayer(currentPlayer).getSecondPowerUp().getName(),
+                        false,
+                        model.getGameMap().getMappedSpawnPoints()));
+                spawning = true;
+                turnTimer.startTimer(server.getTurnTimer());
             }
             else {
                 model.send(new TurnEvent(currentPlayer,
@@ -293,10 +311,14 @@ public class TurnController extends Controller {
         }
         return allowed;
     }
+
     private void interTurn(){
         if (!model.getPlayersWaitingToRespawn().isEmpty()){
-            for (String s : model.getPlayersWaitingToRespawn())
-                model.send(new MVRespawnEvent(s, model.getPowerUpDeck().draw().getName()));
+            for (String s : model.getPlayersWaitingToRespawn()) {
+                model.userToPlayer(s).setFirstPowerUp((PowerUp)model.getPowerUpDeck().draw());
+                model.userToPlayer(s).setSecondPowerUp(null);
+                model.send(new MVRespawnEvent(s, model.userToPlayer(s).getFirstPowerUp().getName()));
+            }
             interTurnTimer.startTimer(server.getInterTurnTimer());
         }
     }
@@ -306,15 +328,18 @@ public class TurnController extends Controller {
         HashMap<String, String> spawn = new HashMap<>();
         Drawable card;
 
-        for (Point p : model.getEmptyLootTiles()) {
-            card = model.getLootDeck().draw();
-            loot.put(p, card.getName());
-            model.getTile(p).add((LootCard)card);
-        }
+        for (Point p : model.getEmptyLootTiles())
+            model.getTile(p).add((LootCard)model.getLootDeck().draw());
+
         for (Point p : model.getEmptySpawnTiles()) {
-            card = model.getWeaponDeck().draw();
-            spawn.put(card.getName(), model.getTile(p).getColour().name());
-            model.getTile(p).add((Weapon)card);
+            model.getTile(p).add((Weapon) model.getWeaponDeck().draw());
+        }
+        for (Tile t : model.getGameMap().getSpawnTiles()){
+            for (int i = 0; i < t.getGrabbables().size(); i++)
+                spawn.put(t.getGrabbables().get(i).getName(), t.getColour().name());
+        }
+        for(Tile t : model.getGameMap().getLootTiles()){
+            loot.put(t.getPosition(), t.getGrabbables().get(0).getName());
         }
         model.send(new BoardRefreshEvent("*", spawn, loot));
         model.emptyEmptyLootTile();

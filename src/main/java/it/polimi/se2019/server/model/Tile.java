@@ -38,8 +38,10 @@ public class Tile implements Targetable{
 
     public void removeGrabbed(String grabbed){
         for (Grabbable g: getGrabbables()){
-            if(g.getName().equalsIgnoreCase(grabbed))
+            if(g.getName().equalsIgnoreCase(grabbed)) {
                 grabbables.remove(g);
+                break;
+            }
         }
     }
 

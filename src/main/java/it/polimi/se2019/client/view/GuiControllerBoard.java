@@ -433,7 +433,6 @@ public class GuiControllerBoard extends GuiController {
         for(Point p: lootsOnTile.keySet()){
             if(lootsOnTile.get(p).equals(message.getGrabbed())){
                 lootsOnTile.remove(p);
-                ((ImageView)scene.lookup("#loot" + p.getX() + p.getY())).setImage(null);
                 break;
             }
 

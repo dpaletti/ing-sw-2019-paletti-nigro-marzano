@@ -14,6 +14,7 @@ public class StartFirstTurnEvent extends MVEvent {
     private String secondPowerUpName;
     private boolean isFirstPlayer;
     private HashMap<Point, String> spawnPoints; //keeps relationship between SpawnPoint and color
+
     public StartFirstTurnEvent(String destination,
                                String firstPowerUpName,
                                String secondPowerUpName,
