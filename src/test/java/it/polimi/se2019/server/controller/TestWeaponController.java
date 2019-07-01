@@ -38,6 +38,8 @@ public class TestWeaponController {
     private Weapon lockRifle = new Weapon(Paths.get("files/weapons/LockRifle.json").toString());
     private Weapon machineGun = new Weapon(Paths.get("files/weapons/MachineGun.json").toString());
     private Weapon shockwave = new Weapon(Paths.get("files/weapons/Shockwave.json").toString());
+    private Weapon grenadeLauncher = new Weapon(Paths.get("files/weapons/GrenadeLauncher.json").toString());
+
 
     private PartialWeaponEffect partial;
 
@@ -227,10 +229,46 @@ public class TestWeaponController {
         //The turnController is sending back a AllowedWeaponsEvent
         AllowedWeaponsEvent weapons= (AllowedWeaponsEvent)testModelHelper.getCurrent();
         assertTrue(weapons.getWeapons().isEmpty());
-
     }
 
-
+    @Test
+    public void testGrenadeLauncher(){
+        //Magenta is grabbing the grenadeLauncher
+        magenta.getFigure().spawn(new Point(3,0));
+        game.getGameMap().getTile(new Point(3,0)).add(grenadeLauncher);
+        magenta.grabStuff(grenadeLauncher.getName());
+        //Setting the targets in the right places
+        green.getFigure().spawn(new Point(2,0));
+        blue.getFigure().spawn(new Point(3,1));
+        //Magenta decided to shoot and sends a ChosenComboEvent
+        ChosenComboEvent shoot= new ChosenComboEvent(game.playerToUser(magenta),"ShootPeople");
+        turnController.update(shoot);
+        //The turnController is sending back a AllowedWeaponsEvent
+        AllowedWeaponsEvent availableWeapons= (AllowedWeaponsEvent)testModelHelper.getCurrent();
+        assertEquals("GrenadeLauncher",availableWeapons.getWeapons().get(0));
+        ChosenWeaponEvent chosen = new ChosenWeaponEvent("magenta", "GrenadeLauncher");
+        weaponController.update(chosen);
+        //The weaponController is sending back a PossibleEffectsEvent,sending a possible WeaponEffect
+        PossibleEffectsEvent possibles=(PossibleEffectsEvent)testModelHelper.getCurrent();
+        HashMap<String,Integer> effectMap= new HashMap<>();
+        effectMap.put("basicEffect",-1);
+        effectMap.put("withExtraGrenade",0);
+        assertEquals(effectMap,possibles.getEffects());
+        //Now i have to send a ChosenEffectEvent
+        ChosenEffectEvent chosenBasic=new ChosenEffectEvent(game.playerToUser(magenta),"basicEffect","GrenadeLauncher");
+        weaponController.update(chosenBasic);
+        //The controller sends back a PartialSelectionEvent
+        PartialSelectionEvent partialSelectionEvent= (PartialSelectionEvent)testModelHelper.getCurrent();
+        assertTrue(partialSelectionEvent.getTargetPlayers().contains(game.playerToUser(green)));
+        assertTrue(partialSelectionEvent.getTargetPlayers().contains(game.playerToUser(blue)));
+        //Now magenta has to send a VCPartialEffectEvent to specify the target or skip
+        VCPartialEffectEvent partialEffectEvent= new VCPartialEffectEvent(game.playerToUser(magenta),game.playerToUser(green));
+        weaponController.update(partialEffectEvent);
+        assertEquals(1,green.getHp().size());
+        //The controller sends back a PartialSelectionEvent
+        PartialSelectionEvent selectionEvent= (PartialSelectionEvent)testModelHelper.getCurrent();
+        System.out.print(selectionEvent.getTargetPlayers());
+    }
 
 
 }

@@ -95,7 +95,7 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(TimerEvent message) {
-        Log.fine("Time to go: " + message.getTimeToGo());
+        //Log.fine("Time to go: " + message.getTimeToGo());
         if (!timerGoing) {
             notify(new UiTimerStart(message.getTimeToGo()));
             timerGoing = true;

@@ -249,19 +249,22 @@ public class TurnController extends Controller {
         refreshBoard();
         if (enoughActivePlayers()){
             currentPlayer = getNextActiveUser(currentPlayer);
+            model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
+            disablePowerUps(previouslyPlaying,"onTurn");
             if (turnCounter== model.getUsernames().size())
                 isFirstTurn=false;
-            if (isFirstTurn)
-                model.send(new StartFirstTurnEvent(currentPlayer,
-                        model.getPowerUpDeck().draw().getName(),
-                        model.getPowerUpDeck().draw().getName(),false,model.getGameMap().getMappedSpawnPoints()));
-            else {
+            if (isFirstTurn) {
                 model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
                 disablePowerUps(previouslyPlaying,"onTurn");
+                model.send(new StartFirstTurnEvent(currentPlayer,
+                        model.getPowerUpDeck().draw().getName(),
+                        model.getPowerUpDeck().draw().getName(), false, model.getGameMap().getMappedSpawnPoints()));
+            }
+            else {
                 model.send(new TurnEvent(currentPlayer,
                         fromPartialToStringCombo(getAllowedMoves())));
-                turnTimer.startTimer(server.getTurnTimer());
             }
+            turnTimer.startTimer(server.getTurnTimer());
         }
     }
 
@@ -313,8 +316,9 @@ public class TurnController extends Controller {
             spawn.put(card.getName(), model.getTile(p).getColour().name());
             model.getTile(p).add((Weapon)card);
         }
-
         model.send(new BoardRefreshEvent("*", spawn, loot));
+        model.emptyEmptyLootTile();
+        model.emptyEmptySpawnTile();
     }
 
 }

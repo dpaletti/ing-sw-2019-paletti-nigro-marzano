@@ -295,6 +295,10 @@ public class Game extends Observable<MVEvent> {
         emptySpawnTiles.add(point);
     }
 
+    public void emptyEmptySpawnTile(){emptySpawnTiles.clear();}
+
+    public void emptyEmptyLootTile(){emptyLootTiles.clear();}
+
     public List<Point> getEmptyLootTiles() {
         return new ArrayList<>(emptyLootTiles);
     }

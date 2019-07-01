@@ -172,4 +172,8 @@ public interface MVEventDispatcher extends EventDispatcher {
     default void dispatch (EndOfMatchEvent message){
         throw new UnsupportedOperationException("EndOfMatchEvent not supported");
     }
+
+    default void dispatch (MVCardEndEvent message){
+        throw new UnsupportedOperationException("EndOfMatchEvent not supported");
+    }
 }
