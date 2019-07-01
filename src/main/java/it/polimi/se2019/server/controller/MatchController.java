@@ -1,5 +1,7 @@
 package it.polimi.se2019.server.controller;
 
+import it.polimi.se2019.commons.mv_events.MvJoinEvent;
+import it.polimi.se2019.commons.vc_events.VcJoinEvent;
 import it.polimi.se2019.server.model.Game;
 import it.polimi.se2019.server.model.PowerUp;
 import it.polimi.se2019.commons.mv_events.StartFirstTurnEvent;
@@ -51,4 +53,10 @@ public class MatchController extends Controller {
             Log.fine("Handling " + message);
             model.unpausePlayer(message.getUsername());
         }
+
+    @Override
+    public void dispatch(VcJoinEvent message) {
+        model.send(new MvJoinEvent("*", message.getUsername()));
+    }
 }
+

@@ -158,11 +158,8 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         t.start();
         eventLoops.put(connection.getToken(), t);
         List<String> roomUsernames = new ArrayList<>();
-        for(Pair<String, String> p: biTokenUsername){
-            if(!getConnectionOnToken(p.getFirst()).isDisconnected())
-                //player can reconnect inputting disconnected username
-                roomUsernames.add(p.getSecond());
-        }
+        for(Pair<String, String> p: biTokenUsername)
+            roomUsernames.add(p.getSecond());
         submit(connection, new HandshakeEndEvent(connection.getToken(), roomUsernames, server.getActiveUsernames(), server.getMapConfigs(roomNumber)));
     }
 

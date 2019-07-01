@@ -238,9 +238,7 @@ public class ViewGUI extends View {
     }
 
     @Override
-    public void dispatch(SyncEvent message) {
-        matchMaking(message.getUsernames(), message.getConfigs());
-
+    public synchronized void dispatch(SyncEvent message) {
         dispatch(new MatchConfigurationEvent(client.getUsername(), message.getConfigs()));
 
         dispatch(new SetUpEvent(client.getUsername(), message.getColours(), message.getWeaponSpots(), message.getLootSpots(), message.getSkulls(), message.getLeftConfig(), message.getRightConfig(), message.isFrenzy()));
@@ -264,10 +262,18 @@ public class ViewGUI extends View {
             for(String powerup: message.getPowerup())
                 dispatch(new DrawnPowerUpEvent(client.getUsername(), powerup));
 
-            //for(String weapon: message.getWeapons().get(username))
 
+            for(String weapon: message.getWeapons().get(username)){
+                List<String> weapons = getPlayerOnUsername(username).getWeapons();
+                weapons.add(weapon);
+                getPlayerOnUsername(username).setWeapons(weapons);
+                if(getPlayerOnUsername(username).getPlayerColor().equals(currentlyShownFigure))
+                    notify(new UiPutWeapon(weapon));
+            }
+
+            dispatch(new FinanceUpdateEvent(client.getUsername(), username, message.getFinance().get(username)));
+            dispatch(new UpdatePointsEvent(client.getUsername(),username, message.getPoints().get(username)));
         }
-
     }
 
     //-----------------------------------Figure movements-----------------------------------//
@@ -315,6 +321,7 @@ public class ViewGUI extends View {
     public void dispatch(GrabbedWeaponEvent message) {
         List<String> weapons = getPlayerOnUsername(message.getUser()).getWeapons();
         weapons.add(message.getWeapon());
+        getPlayerOnUsername(message.getUser()).setWeapons(weapons);
         notify(new UiRemoveWeaponFromSpot(message.getWeapon()));
 
     }
@@ -505,7 +512,7 @@ public class ViewGUI extends View {
 
     }
 
-    private MockPlayer getPlayerOnColour(String figure){
+    public MockPlayer getPlayerOnColour(String figure){
         for (MockPlayer p: players){
             if(p.getPlayerColor().equalsIgnoreCase(figure))
                 return p;

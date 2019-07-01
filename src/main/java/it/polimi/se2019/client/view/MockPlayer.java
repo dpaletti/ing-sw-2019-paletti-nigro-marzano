@@ -33,6 +33,7 @@ public class MockPlayer {
     public List<String> getWeapons() {
         return weapons;
     }
+    
 
     public List<String> getAmmos() {
         return ammos;

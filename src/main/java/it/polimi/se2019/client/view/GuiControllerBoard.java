@@ -489,7 +489,7 @@ public class GuiControllerBoard extends GuiController {
                 imageToUpdate.setImage(new Image(Paths.get("files/assets/player/figure_" + message.getToHighlight().toLowerCase() + "_targeted.png").toUri().toURL().toString()));
                 highlightedFigures.add(message.getToHighlight().toLowerCase());
                 imageToUpdate.setOnMouseClicked((MouseEvent event) -> {
-                    ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), message.getToHighlight().toLowerCase()));
+                    ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), ViewGUI.getInstance().getPlayerOnColour(message.getToHighlight().toLowerCase()).getUsername()));
                     ((ImageView) event.getSource()).setOnMouseClicked(handleFigureOnClick(message.getToHighlight().toLowerCase()));
                 });
             }
