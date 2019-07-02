@@ -178,6 +178,7 @@ public class ViewGUI extends View {
         notify(new UiCloseSetup());
         semControllerSync.acquireUninterruptibly();
         semControllerSync.acquireUninterruptibly();
+        semControllerSync.acquireUninterruptibly();
 
         notify(new UiBoardInitialization(message.getWeaponSpots(), message.getLootCards(), message.getLeftConfig(), message.getRightConfig(), message.getSkulls()));
         notify(new UiSetPlayerBoard(getPlayerOnUsername(client.getUsername()).getPlayerColor()));
@@ -195,7 +196,7 @@ public class ViewGUI extends View {
 
     @Override
     public synchronized void dispatch(StartFirstTurnEvent message) {
-        semControllerSync.acquireUninterruptibly();
+        //semControllerSync.acquireUninterruptibly();
         pointColorSpawnMap = message.getSpawnPoints();
         for(Point p: message.getSpawnPoints().keySet())
             notify(new UiHighlightTileEvent(p, false));

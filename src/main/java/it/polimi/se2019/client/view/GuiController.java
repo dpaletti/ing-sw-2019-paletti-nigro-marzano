@@ -1,5 +1,6 @@
 package it.polimi.se2019.client.view;
 
+import it.polimi.se2019.client.view.ui_events.UiTimerTick;
 import it.polimi.se2019.commons.utility.Event;
 import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.commons.utility.Observer;
@@ -31,8 +32,11 @@ public abstract class GuiController implements Observer<Event>, Initializable, U
             try {
                 message.handle(this);
             }catch (UnsupportedOperationException e){
-                Log.fine("ignored " +
-                        message);
+                if (!(message instanceof UiTimerTick)){
+                    Log.fine("ignored " +
+                            message);
+                }
+
             }
         });
     }

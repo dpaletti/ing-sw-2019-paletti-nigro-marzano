@@ -17,9 +17,33 @@
         "priority": 3,
         "invalidEffects": [],
         "price":[],
-        "maxHeight":1,
+        "maxHeight":2,
         "effectType":-1,
             "effects":[
+                {
+                    "priority": 3,
+                    "targetSpecification":{
+                        "tile":true,
+                        "different": {
+                            "first": false,
+                            "second": []
+                        },
+                        "previous":{
+                            "first": false,
+                            "second": []
+                        },
+                        "radiusBetween": {
+                            "first": 0,
+                            "second": 0
+                        },
+                        "visible": -1,
+                        "enlarge": -2
+                    },
+                    "actions": [],
+                    "endable": false,
+                    "name": "B1",
+                    "invalidEffects": []
+                },
                 {
                     "priority": 3,
                     "targetSpecification": {
@@ -29,8 +53,10 @@
                             "second": []
                         },
 						"previous":{
-							"first": false,
-							"second": []
+							"first": true,
+							"second": [
+                                "B1"
+                            ]
 						},
                         "radiusBetween": {
                             "first": -1,
@@ -47,7 +73,7 @@
                         }
                     ],
                     "endable": false,
-                    "name": "B1",
+                    "name": "B2",
                     "invalidEffects": []
                 }
             ]
@@ -63,7 +89,7 @@
                 {
                     "priority": 3,
                     "targetSpecification":{
-                        "tile":false,
+                        "tile":true,
                         "different": {
                             "first": false,
                             "second": []
@@ -73,15 +99,15 @@
 							"second": []
 						},
                         "radiusBetween": {
-                            "first": -1,
-                            "second": -1
+                            "first": 0,
+                            "second": 0
                         },
                         "visible": -1,
                         "enlarge": -2
                     },
                     "actions": [],
                     "endable": false,
-                    "name": "B2",
+                    "name": "B3",
                     "invalidEffects": []
                 },
                 {
@@ -95,7 +121,7 @@
                         "previous":{
                             "first": true,
                             "second": [
-                                "B2"
+                                "B3"
                             ]
                         },
                         "radiusBetween": {

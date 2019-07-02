@@ -2,6 +2,7 @@ package it.polimi.se2019.client.network;
 
 import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.client.view.VCEvent;
+import it.polimi.se2019.client.view.ui_events.UiTimerTick;
 import it.polimi.se2019.commons.utility.Event;
 import it.polimi.se2019.commons.utility.JsonHandler;
 import it.polimi.se2019.commons.utility.Log;
@@ -37,7 +38,8 @@ public class NetworkHandlerSocket extends NetworkHandler {
 
     public void update(Event message) {
         try {
-            message.handle(this);
+            if(!(message instanceof UiTimerTick))
+                message.handle(this);
         }catch (UnsupportedOperationException e){
             try{
                 submit((VCEvent) message);

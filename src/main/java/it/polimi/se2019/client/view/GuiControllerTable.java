@@ -283,11 +283,11 @@ public class GuiControllerTable extends GuiController {
 
     private void initializeSendButton(){
         endTurn.setDisable(false);
-        endTurn.setOnMouseClicked((MouseEvent event) ->
+        endTurn.setOnAction((ActionEvent event) ->
         {
             ViewGUI.getInstance().gameSetup(skulls, frenzy, chosenMap);
             endTurn.setDisable(true);
-            endTurn.setOnMouseClicked(null);
+            endTurn.setOnAction(null);
         });
 
         endTurn.setOnMouseEntered(clickable(scene));
@@ -497,6 +497,7 @@ public class GuiControllerTable extends GuiController {
             endTurn.setOnMouseClicked((MouseEvent event) -> {
                 ViewGUI.getInstance().setCurrentlyShownFigure(headPlayer);
                 ViewGUI.getInstance().send(new UiContextSwitchEnd());
+
             });
 
             resetHp();
