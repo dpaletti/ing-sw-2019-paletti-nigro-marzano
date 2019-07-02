@@ -25,6 +25,12 @@
     <sonar.language>java</sonar.language>
 
     <sonar.host.url>http://localhost:9000/</sonar.host.url>
+
+    <sonar.coverage.exclusions>
+      src/main/java/it.polimi.se2019/client/*,
+      src/main/java/it.polimi.se2019/server/network/*,
+      src/main/java/it.polimi.se2019/commons/network/*
+    </sonar.coverage.exclusions>
     <!--sonar.login>admin</sonar.login>
     <sonar.token>admin</sonar.token-->
 
