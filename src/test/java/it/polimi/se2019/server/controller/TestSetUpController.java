@@ -2,6 +2,7 @@ package it.polimi.se2019.server.controller;
 
 import it.polimi.se2019.server.model.Game;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class TestSetUpController {
         setUpController.setSkulls(new ArrayList<>(Arrays.asList(7, 7, 7, 7, 7)));
     }
 
+    @Ignore
     @Test
     public void testEndTimer(){
         setUpController.endTimer();

@@ -199,7 +199,7 @@ public class ViewGUI extends View {
         //semControllerSync.acquireUninterruptibly();
         pointColorSpawnMap = message.getSpawnPoints();
         for(Point p: message.getSpawnPoints().keySet())
-            notify(new UiHighlightTileEvent(p, false));
+            notify(new UiHighlightTileEvent(p, false, client.getUsername()));
         notify(new UiPutPowerUp(message.getFirstPowerUpName()));
         notify(new UiPutPowerUp(message.getSecondPowerUpName()));
         notify(new UiSpawn());
@@ -282,7 +282,7 @@ public class ViewGUI extends View {
     public void dispatch(AllowedMovementsEvent message) {
         for (Point p:
                 message.getAllowedPositions()) {
-            notify(new UiHighlightTileEvent(p, false));
+            notify(new UiHighlightTileEvent(p, false, message.getUserToMove()));
         }
     }
 
@@ -441,7 +441,7 @@ public class ViewGUI extends View {
 
         if(message.getTargetTiles() != null) {
             for (Point tile : message.getTargetTiles())
-                notify(new UiHighlightTileEvent(tile, true));
+                notify(new UiHighlightTileEvent(tile, true, client.getUsername()));
         }else{
             for(String figure: message.getTargetPlayers())
                 notify(new UiHighlightPlayer(getPlayerOnUsername(figure).getPlayerColor()));

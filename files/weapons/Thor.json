@@ -67,8 +67,10 @@
                     "targetSpecification": {
                         "tile": false,
                         "different": {
-                            "first": false,
-                            "second": []
+                            "first": true,
+                            "second": [
+                                "B1"
+                            ]
                         },
 						"previous":{
 							"first": false,
@@ -111,8 +113,10 @@
                     "targetSpecification": {
                         "tile": false,
                         "different": {
-                            "first": false,
-                            "second": []
+                            "first": true,
+                            "second": [
+                                "B1"
+                            ]
                         },
 						"previous":{
 							"first": false,

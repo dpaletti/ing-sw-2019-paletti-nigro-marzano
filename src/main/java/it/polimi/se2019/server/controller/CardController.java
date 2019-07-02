@@ -67,10 +67,16 @@ public class CardController extends Controller {
     protected List<Targetable> generateTargetSet (PartialWeaponEffect effect, Player player){
         Targetable targetable;
         Set<Targetable> targetSet;
-        if(effect.getTargetSpecification().getTile())
-            targetable= player.getFigure().getTile();
-        else
-            targetable= player;
+        Set<Targetable> lastFilter;
+        if(effect.getTargetSpecification().getTile()) {
+            targetable = player.getFigure().getTile();
+            lastFilter=new HashSet<>(targetable.getAll());
+        }
+        else {
+            targetable = player;
+            lastFilter=new HashSet<>(targetable.getAll());
+            lastFilter.remove(targetable);
+        }
 
         targetSet= intersect(handleVisible(effect.getTargetSpecification().getVisible(), targetable),
                 intersect(handleDifferent(targetable,
@@ -81,22 +87,24 @@ public class CardController extends Controller {
                                 effect.getTargetSpecification().getPrevious().getSecond()),
                                 handleRadiusBetween(effect.getTargetSpecification().getRadiusBetween().getFirst(),
                                         effect.getTargetSpecification().getRadiusBetween().getSecond(), targetable, effect.getTargetSpecification().getTile()))));
-        return new ArrayList<>(intersect(handleEnlarge(effect.getTargetSpecification().getEnlarge(), targetSet, effect.getTargetSpecification().getTile()), targetSet));
+        targetSet=intersect(handleEnlarge(effect.getTargetSpecification().getEnlarge(), targetSet, effect.getTargetSpecification().getTile()), targetSet);
+        if(!(effect.getActions().size()==1 && effect.getActions().get(0).getActionType().equals(ActionType.MOVE)))
+            targetSet=intersect(targetSet,lastFilter);
+        return new ArrayList<>(targetSet);
     }
 
 
     private Set<Targetable> getVisible(Targetable t){   //tested
         Set<Targetable> visibleTarget= new HashSet<>();
+        Set<RoomColour> visibleRooms=visibleRooms(t.getPosition());
         for (Targetable tCounter: t.getAll()) {
-            if (visibleRooms(t
-                    .getPosition())
+            if (visibleRooms
                     .contains(model.getGameMap()
                             .getTile(tCounter
                                     .getPosition()).getColour())) {
                 visibleTarget.add(tCounter);
             }
         }
-        visibleTarget.remove(t);
         return visibleTarget;
     }
 
@@ -105,7 +113,6 @@ public class CardController extends Controller {
         if (visible==0) {
             targetables= source.getAll();
             targetables.removeAll(getVisible(source));
-            targetables.remove(source);
             return new HashSet<>(targetables);
         }
 
@@ -159,18 +166,18 @@ public class CardController extends Controller {
                 if (!model.getGameMap().getTile(source.getPosition()).getColour().equals(t.getColour()))
                     targetables.add(t);
             }
-            return targetables;
+            return handleTargetableTiles(isTile,targetables);
         }
         if (innerRadius == outerRadius){
-            if(innerRadius==-1){
+            if (innerRadius==-1){
                 return new HashSet<>(source.getAll());
             }
             for(Point p:model.getGameMap().getAllowedMovements(model.getTile(source.getPosition()), innerRadius)){
                 targetables.add(model.getTile(p));
             }
-            return targetables;
+            return handleTargetableTiles(isTile,targetables);
         }
-        targetables = new HashSet<>(getTileCircle(outerRadius, source.getPosition(), isTile));
+        targetables = getTileCircle(outerRadius, source.getPosition(), isTile);
         targetables.removeAll(getTileCircle(innerRadius, source.getPosition(), isTile));
         return targetables;
 
@@ -305,6 +312,7 @@ public class CardController extends Controller {
     }
 
     protected void handleEffect (){
+        //STOP HERE PORCODIOOOOOOOOOOOOO
         currentPlayer.useAmmos(weaponEffect.getPrice());
         layersVisitedPartial = layersVisitedPartial + 1;
         currentLayer= weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
@@ -313,6 +321,8 @@ public class CardController extends Controller {
     }
 
     protected void nextWeaponEffect (boolean isWeapon){
+        partialGraphLayer=-1;
+        layersVisitedPartial=0;
         List<GraphWeaponEffect> list = new ArrayList<>();
         layersVisited = layersVisited + 1;
         for (GraphNode<GraphWeaponEffect> g: current.getDefinition().getListLayer(layersVisited)) {

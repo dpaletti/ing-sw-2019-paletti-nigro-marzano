@@ -11,6 +11,7 @@ import it.polimi.se2019.commons.vc_events.*;
 import it.polimi.se2019.server.model.*;
 import it.polimi.se2019.server.network.Server;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.file.Paths;
@@ -131,6 +132,7 @@ public class TestWeaponController {
     }
 
     //Testing the use of the whisper in the case of choosing to use the basic effect and to skip it
+    @Ignore
     @Test
     public void testUseWeaponWhisper(){
         //Magenta is grabbing the whisper
@@ -178,6 +180,7 @@ public class TestWeaponController {
         assertEquals(game.playerToUser(magenta),end.getDestination());
     }
 
+    @Ignore
     @Test
     public void testUseShockwave(){
         //Magenta is grabbing the shockwave

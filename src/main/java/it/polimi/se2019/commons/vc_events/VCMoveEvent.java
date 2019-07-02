@@ -7,11 +7,13 @@ import it.polimi.se2019.client.view.VCEvent;
 public class VCMoveEvent extends VCEvent {
     private Point destination;
     private boolean isTeleport;
+    private String toMove;
 
-    public VCMoveEvent(String source, Point destination, boolean isTeleport){
+    public VCMoveEvent(String source, Point destination, boolean isTeleport,String toMove){
         super(source);
         this.destination = destination;
         this.isTeleport = isTeleport;
+        this.toMove=toMove;
     }
 
     public Point getDestination() {
@@ -20,6 +22,10 @@ public class VCMoveEvent extends VCEvent {
 
     public boolean getIsTeleport(){
         return isTeleport;
+    }
+
+    public String getToMove() {
+        return toMove;
     }
 
     @Override

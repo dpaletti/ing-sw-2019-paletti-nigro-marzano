@@ -164,7 +164,7 @@ public class TurnController extends Controller {
         int distance = 1;
         if (message.getIsTeleport())
             distance = -1;
-        run(message.getSource(), message.getDestination(), distance);
+        run(message.getToMove(), message.getDestination(), distance);
         nextPartialCombo();
     }
 

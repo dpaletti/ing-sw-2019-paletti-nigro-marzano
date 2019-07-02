@@ -16,7 +16,7 @@
                 {
                     "priority": 3,
                     "targetSpecification": {
-                        "tile": true,
+                        "tile": false,
                         "different": {
                             "first": false,
                             "second": []
@@ -60,7 +60,7 @@
                 {
                     "priority": 3,
                     "targetSpecification":{
-                        "tile":true,
+                        "tile":false,
                         "different": {
                             "first": false,
                             "second": []

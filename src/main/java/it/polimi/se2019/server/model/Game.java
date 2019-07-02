@@ -192,8 +192,10 @@ public class Game extends Observable<MVEvent> {
              notify(new FinalFrenzyStartingEvent("*"));
      }
 
+
+     //The getter does'nt return a copy but the object to let others update it
      public TurnMemory getTurnMemory (){
-        return new TurnMemory(turnMemory);
+        return turnMemory;
      }
 
     public void allowedMovements (String username, String target, int radius){

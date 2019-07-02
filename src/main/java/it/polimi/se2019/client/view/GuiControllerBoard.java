@@ -465,7 +465,7 @@ public class GuiControllerBoard extends GuiController {
             toHighlight.setOnMouseExited(notClickable(scene));
             if(!message.isTargeting()) //moving
                 toHighlight.setOnMouseClicked((MouseEvent event) -> {
-                    ViewGUI.getInstance().send(new VCMoveEvent(ViewGUI.getInstance().getUsername(), message.getTile(), false));
+                    ViewGUI.getInstance().send(new VCMoveEvent(ViewGUI.getInstance().getUsername(), message.getTile(), false, message.getToMove()));
                     removeHandlers(toHighlight);
                 });
             else //shooting

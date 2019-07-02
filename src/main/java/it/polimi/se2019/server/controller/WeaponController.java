@@ -95,6 +95,8 @@ public class WeaponController extends CardController {
                 List<Targetable> targetables = new ArrayList<>(Arrays.asList(model.getTile(message.getTargetTile())));
                 List<Player> targets = new ArrayList<>();
                 List<String> users = new ArrayList<>();
+                //Put hellion case, one more if with isArea=1 and rb=-3,-3
+                //Add if, isArea for the for iteration
                 for (Targetable t : model.getTile(message.getTargetTile()).getPlayers()) {
                     targets.add((Player) t);
                     users.add(model.playerToUser((Player) t));

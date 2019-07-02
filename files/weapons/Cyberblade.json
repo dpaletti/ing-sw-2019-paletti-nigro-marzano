@@ -22,7 +22,7 @@
                 {
                     "priority": 3,
                     "targetSpecification": {
-                       "tile": true,
+                       "tile": false,
                         "different": {
                             "first": false,
                             "second": []
@@ -47,7 +47,43 @@
                     ],
                     "endable": false,
                     "name": "B1",
-                    "invalidEffects": []
+                    "invalidEffects": [
+                      "B2"
+                    ]
+                },
+                {
+                  "priority": 3,
+                  "targetSpecification": {
+                    "tile": false,
+                    "different": {
+                      "first": true,
+                      "second": [
+                        "B4"
+                      ]
+                    },
+                    "previous":{
+                      "first": false,
+                      "second": []
+                    },
+                    "radiusBetween": {
+                      "first": 0,
+                      "second": 0
+                    },
+                    "visible": 1,
+                    "enlarge": 0
+                  },
+                  "actions": [
+                    {
+                      "actionType": "DAMAGE",
+                      "value": 2,
+                      "area": false
+                    }
+                  ],
+                  "endable": false,
+                  "name": "B2",
+                  "invalidEffects": [
+                    "B1"
+                  ]
                 }
             ]
         },
@@ -86,7 +122,7 @@
                       }
                     ],
                    "endable": false,
-                    "name": "B2",
+                    "name": "B3",
                     "invalidEffects": []
                 }
             ]
@@ -102,48 +138,16 @@
                 "colour": "YELLOW"
               }
             ],
-            "maxHeight":2,
+            "maxHeight":1,
             "effectType":2,
             "effects": [
                 {
-                  "priority": 3,
-                  "targetSpecification": {
-                    "tile": true,
-                    "different": {
-                      "first": false,
-                      "second": []
-                    },
-                    "previous":{
-                      "first": false,
-                      "second": []
-                    },
-                    "radiusBetween": {
-                      "first": 0,
-                      "second": 0
-                    },
-                    "visible": 1,
-                    "enlarge": 0
-                  },
-                  "actions": [
-                    {
-                      "actionType": "DAMAGE",
-                      "value": 2,
-                      "area": false
-                    }
-                  ],
-                  "endable": false,
-                  "name": "B3",
-                  "invalidEffects": []
-                },
-                {
-                    "priority": 2,
+                    "priority": 3,
                     "targetSpecification": {
-                       "tile": true,
+                       "tile": false,
                         "different": {
                             "first": true,
-                            "second": [
-                                "B3"
-							]
+                            "second": []
                         },
 						"previous":{
 							"first": false,
@@ -165,13 +169,48 @@
                       }
                     ],
                     "endable": false,
-                    "name": "E1",
-                    "invalidEffects": []
+                    "name": "B4",
+                    "invalidEffects": [
+                      "B5"
+                    ]
+                },
+                {
+                  "priority": 3,
+                  "targetSpecification": {
+                    "tile": false,
+                    "different": {
+                      "first": true,
+                      "second": [
+                        "B1"
+                      ]
+                    },
+                    "previous":{
+                      "first": false,
+                      "second": []
+                    },
+                    "radiusBetween": {
+                      "first": 0,
+                      "second": 0
+                    },
+                    "visible": 1,
+                    "enlarge": 0
+
+                  },
+                  "actions": [
+                    {
+                      "actionType": "DAMAGE",
+                      "value": 2,
+                      "area": false
+                    }
+                  ],
+                  "endable": false,
+                  "name": "B5",
+                  "invalidEffects": []
                 }
             ]
         }
     ],
     "name": "Cyberblade",
-    "maxHeight": 2,
+    "maxHeight": 3,
    "constraint": ""
 }

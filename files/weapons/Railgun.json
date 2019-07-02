@@ -37,7 +37,7 @@
                             "second": 0
                         },
                         "visible": -1,
-                        "enlarge": -2
+                        "enlarge": 0
                     },
                     "actions": [],
                     "endable": false,
