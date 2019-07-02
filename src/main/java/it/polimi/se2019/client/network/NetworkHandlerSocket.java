@@ -39,6 +39,11 @@ public class NetworkHandlerSocket extends NetworkHandler {
         try {
             message.handle(this);
         }catch (UnsupportedOperationException e){
+            try{
+                submit((VCEvent) message);
+            }catch (ClassCastException ee){
+                Log.fine("Ignored " + e.getMessage());
+            }
             Log.fine("Ignored " + message);
         }
     }

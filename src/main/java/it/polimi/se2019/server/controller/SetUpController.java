@@ -37,8 +37,8 @@ public class SetUpController extends Controller {
             message.handle(this);
         }catch (UnsupportedOperationException e){
             //this is the only controller registered on matchMaking thus it cannot receive unsupported events
-            Log.severe("Received unsupported event " + message);
-            throw new UnsupportedOperationException("SetUpController: " + e.getMessage(), e);
+            Log.fine("Received unsupported event " + message);
+//            throw new UnsupportedOperationException("SetUpController: " + e.getMessage(), e);
         }
     }
 
@@ -79,7 +79,7 @@ public class SetUpController extends Controller {
          new TurnController(model, server, getRoomNumber());
          new WeaponController(server, getRoomNumber(), model);
          new PowerUpController(model, server, getRoomNumber());
-         server.removeController(this, getRoomNumber());
+         //server.removeController(this, getRoomNumber());
 
         model.send(new SetUpEvent("*", figureToUser,
                 spawnTiles, lootTiles, skull, model.getGameMap().getConfig().getLeftHalf(),
