@@ -60,8 +60,8 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
     public void disconnect(Connection connection){
         if (biTokenUsername.containsFirst(connection.getToken())) {
-            notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken()), false));
             server.disconnectUsername(biTokenUsername.getSecond(connection.getToken()));
+            notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken()), false));
         }
 
         else {

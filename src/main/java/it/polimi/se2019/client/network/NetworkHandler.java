@@ -2,6 +2,7 @@ package it.polimi.se2019.client.network;
 
 import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.client.view.VCEvent;
+import it.polimi.se2019.client.view.View;
 import it.polimi.se2019.commons.utility.Event;
 import it.polimi.se2019.commons.utility.Observable;
 import it.polimi.se2019.commons.utility.Observer;
@@ -34,12 +35,14 @@ public abstract class NetworkHandler extends Observable<MVEvent> implements Obse
         update(new VcJoinEvent(token, username));
     }
 
-    public NetworkHandler(Client client){
+    public NetworkHandler(Client client, View view){
         //first connection
         observers = new ArrayList<>();
         this.token = null;
         this.client = client;
         client.setNetworkHandler(this); //this is needed for RMI sync on delayed connections.
+        view.register(this);
+        register(view);
     }
 
 }

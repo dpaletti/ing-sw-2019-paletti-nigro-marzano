@@ -241,7 +241,6 @@ public class Server implements ServerInterface {
 
         Game model = new Game();
         models.add(model);
-        rooms.add(new VirtualView(roomNumber, this));
         new MatchMakingController(model, this, roomNumber);
 
 
@@ -265,6 +264,7 @@ public class Server implements ServerInterface {
             Socket socket = serverSocket.accept();
             if(!isMatchMaking) {
                 isMatchMaking = true;
+                rooms.add(new VirtualView(roomNumber + 1, this));
                 suspendedConnection = new ConnectionSocket(generateToken(), socket);
                 return;
             }
@@ -273,6 +273,7 @@ public class Server implements ServerInterface {
     }
 
     private void newMatch(){
+        rooms.add(new VirtualView(0, this));
         while(!Thread.currentThread().isInterrupted()) {
             semRMI.acquireUninterruptibly();
             roomNumber++;
@@ -314,11 +315,12 @@ public class Server implements ServerInterface {
         if(!isMatchMaking) {
             isMatchMaking = true;
             semRMI.release();
-            suspendedConnection = new ConnectionRMI(generateToken(), client, roomNumber + 1);
+            rooms.add(new VirtualView(roomNumber + 1, this));
+            suspendedConnection = new ConnectionRMI(generateToken(), client, roomNumber + 1, rooms.get(roomNumber + 1));
             newMatch();
             return;
         }
-        rooms.get(roomNumber).startListening(new ConnectionRMI(generateToken(), client, roomNumber));
+        rooms.get(roomNumber).startListening(new ConnectionRMI(generateToken(), client, roomNumber, rooms.get(roomNumber)));
         semRMI.release();
     }
 

@@ -24,9 +24,7 @@ public class Client {
     public Client() {
         initializePropertiesAndPreferences();
         viewInitialization();
-        networkInitialization();
-        view.register(networkHandler);
-        networkHandler.register(view);
+        networkInitialization(view);
 
     }
 
@@ -122,9 +120,9 @@ public class Client {
         view = getUiMode().createView(this);
     }
 
-    public void networkInitialization() {
+    public void networkInitialization(View view) {
         //Ip and port are always given for it.polimi.se2019.client.network handling, they are ignored if connection mode is RMI
-        networkHandler = getConnectionMode().createNetworkHandler(this, getServerIP(), getServerPort());
+        networkHandler = getConnectionMode().createNetworkHandler(this, getServerIP(), getServerPort(), view);
     }
 
     public void initializePropertiesAndPreferences() {

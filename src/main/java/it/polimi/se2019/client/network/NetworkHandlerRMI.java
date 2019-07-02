@@ -2,6 +2,7 @@ package it.polimi.se2019.client.network;
 
 import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.client.view.VCEvent;
+import it.polimi.se2019.client.view.View;
 import it.polimi.se2019.commons.network.CallbackInterface;
 import it.polimi.se2019.commons.network.ServerInterface;
 import it.polimi.se2019.commons.utility.Event;
@@ -17,8 +18,8 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
     private transient ServerInterface gameServer;
     private int roomNumber;
 
-    public NetworkHandlerRMI(Client client){
-        super(client);
+    public NetworkHandlerRMI(Client client, View view){
+        super(client, view);
         try {
             Registry importRegistry = LocateRegistry.getRegistry();
             gameServer = (ServerInterface) importRegistry.lookup(client.getRemoteServerName());

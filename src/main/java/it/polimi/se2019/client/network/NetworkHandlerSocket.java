@@ -2,6 +2,7 @@ package it.polimi.se2019.client.network;
 
 import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.client.view.VCEvent;
+import it.polimi.se2019.client.view.View;
 import it.polimi.se2019.client.view.ui_events.UiTimerTick;
 import it.polimi.se2019.commons.utility.Event;
 import it.polimi.se2019.commons.utility.JsonHandler;
@@ -19,8 +20,8 @@ public class NetworkHandlerSocket extends NetworkHandler {
     private transient Scanner in;
     private transient PrintWriter out;
 
-    public NetworkHandlerSocket(Client client, String ip, int port){
-        super(client);
+    public NetworkHandlerSocket(Client client, String ip, int port, View view){
+        super(client, view);
         try {
             socket = new Socket(ip, port);
             in = new Scanner(socket.getInputStream());

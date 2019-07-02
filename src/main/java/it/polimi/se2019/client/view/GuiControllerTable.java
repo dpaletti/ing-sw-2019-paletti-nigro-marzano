@@ -691,8 +691,14 @@ public class GuiControllerTable extends GuiController {
                     holder.setImage(new Image
                             (Paths.get("files/assets/player/figure_" + f.toLowerCase() + "_targeted.png").toUri().toURL().toString()));
                     holder.setOnMouseClicked((MouseEvent event) ->{
-                        ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), ViewGUI.getInstance().getPlayerOnColour(f.toLowerCase()).getUsername()));
-                        ((ImageView) event.getSource()).setOnMouseClicked((MouseEvent event2) -> dispatch(new UiContextSwitch(f.toLowerCase())));
+                        try {
+                            ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), ViewGUI.getInstance().getPlayerOnColour(f.toLowerCase()).getUsername()));
+                            ((ImageView) event.getSource()).setImage((new Image
+                                    (Paths.get("files/assets/player/figure_" + f.toLowerCase() + ".png").toUri().toURL().toString())));
+                            ((ImageView) event.getSource()).setOnMouseClicked((MouseEvent event2) -> dispatch(new UiContextSwitch(f.toLowerCase())));
+                        }catch (MalformedURLException e){
+                            Log.severe("Wrong URL in reshowing locked figure");
+                        }
                     });
                 }
                 holder.setOnMouseEntered(clickable(scene));

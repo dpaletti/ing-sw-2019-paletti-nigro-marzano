@@ -5,7 +5,6 @@ import it.polimi.se2019.client.view.VCEvent;
 import it.polimi.se2019.commons.mv_events.SyncEvent;
 import it.polimi.se2019.commons.network.CallbackInterface;
 import it.polimi.se2019.commons.utility.Log;
-import it.polimi.se2019.commons.vc_events.DisconnectionEvent;
 
 import java.rmi.RemoteException;
 import java.util.concurrent.SynchronousQueue;
@@ -22,13 +21,23 @@ public class ConnectionRMI implements Connection{
 
     private String token;
 
-    public ConnectionRMI(String token, CallbackInterface gameClient, int roomNumber) {
+    private VirtualView virtualView;
+
+    public ConnectionRMI(String token, CallbackInterface gameClient, int roomNumber, VirtualView virtualView) {
         this.token = token;
         this.gameClient = gameClient;
         this.roomNumber = roomNumber;
+        this.virtualView = virtualView;
         timeOutCheck();
     }
 
+    public void setVirtualView(VirtualView virtualView) {
+        this.virtualView = virtualView;
+    }
+
+    public VirtualView getVirtualView() {
+        return virtualView;
+    }
 
     public CallbackInterface getGameClient() {
         return gameClient;
@@ -120,8 +129,7 @@ public class ConnectionRMI implements Connection{
                     Thread.sleep(1000);
                 }
             }catch (RemoteException e){
-                push(new DisconnectionEvent(token, false));
-                disconnect();
+                virtualView.disconnect(this);
             }catch (InterruptedException e){
                 Log.severe("Interrupted");
                 Thread.currentThread().interrupt();
