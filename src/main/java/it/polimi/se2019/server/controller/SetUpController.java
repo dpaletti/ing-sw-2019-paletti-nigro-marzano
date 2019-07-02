@@ -2,6 +2,7 @@ package it.polimi.se2019.server.controller;
 
 import it.polimi.se2019.client.view.VCEvent;
 import it.polimi.se2019.commons.mv_events.SetUpEvent;
+import it.polimi.se2019.commons.mv_events.StartFirstTurnEvent;
 import it.polimi.se2019.commons.utility.BiSet;
 import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.commons.utility.Pair;
@@ -69,16 +70,22 @@ public class SetUpController extends Controller {
         model.setGameMap(new GameMap(config));
         model.setKillshotTrack(new KillshotTrack(skull));
         model.setFinalFrenzy(finalFrenzy);
-        model.send(new SetUpEvent("*", assignFigureToUser(),
-                weaponSpotsSetUp(), lootTilesSetUp(), skull, model.getGameMap().getConfig().getLeftHalf(),
-                model.getGameMap().getConfig().getRightHalf(), finalFrenzy));
 
-        new MatchController(model, server, model.getUsernames(), getRoomNumber());
-        new TurnController(model, server, getRoomNumber());
-        new WeaponController(server, getRoomNumber(), model);
-        new PowerUpController(model, server, getRoomNumber());
-        server.removeController(this, getRoomNumber());
-    }
+        Map<String, String> figureToUser = assignFigureToUser();
+        Map<Point, String> lootTiles = lootTilesSetUp();
+        Map<String, String> spawnTiles = weaponSpotsSetUp();
+
+         new MatchController(model, server, model.getUsernames(), getRoomNumber());
+         new TurnController(model, server, getRoomNumber());
+         new WeaponController(server, getRoomNumber(), model);
+         new PowerUpController(model, server, getRoomNumber());
+         server.removeController(this, getRoomNumber());
+
+        model.send(new SetUpEvent("*", figureToUser,
+                spawnTiles, lootTiles, skull, model.getGameMap().getConfig().getLeftHalf(),
+                model.getGameMap().getConfig().getRightHalf(), finalFrenzy));
+        startMatch();
+     }
 
     private Map<String, String> weaponSpotsSetUp (){
         Map<String, String> weaponSpots= new HashMap<>();
@@ -138,6 +145,15 @@ public class SetUpController extends Controller {
                 mostVoted.add(e.getKey());
         }
         return mostVoted.get(random.nextInt(mostVoted.size()));
+    }
+
+    private void startMatch(){
+        model.getPlayers().get(0).setFirstPowerUp((PowerUp)model.getPowerUpDeck().draw());
+        model.getPlayers().get(0).setSecondPowerUp((PowerUp)model.getPowerUpDeck().draw());
+        model.send(new StartFirstTurnEvent(model.playerToUser(model.getPlayers().get(0)),
+                model.getPlayers().get(0).getFirstPowerUp().getName(),
+                model.getPlayers().get(0).getSecondPowerUp().getName(),
+                true, model.getGameMap().getMappedSpawnPoints()));
     }
 
     public void setConfigs(List<String> configs) {

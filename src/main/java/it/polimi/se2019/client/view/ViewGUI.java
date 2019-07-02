@@ -168,7 +168,7 @@ public class ViewGUI extends View {
     //------------------Setup-------------------//
 
     @Override
-    public void dispatch(SetUpEvent message) {
+    public synchronized void dispatch(SetUpEvent message) {
         semControllerSync.release();
         for (String user : message.getUserToColour().keySet())
             players.add(new MockPlayer(user, message.getUserToColour().get(user).toLowerCase()));
@@ -176,6 +176,7 @@ public class ViewGUI extends View {
 
         semControllerSync.acquireUninterruptibly();
         notify(new UiCloseSetup());
+        semControllerSync.acquireUninterruptibly();
         semControllerSync.acquireUninterruptibly();
 
         notify(new UiBoardInitialization(message.getWeaponSpots(), message.getLootCards(), message.getLeftConfig(), message.getRightConfig(), message.getSkulls()));
@@ -193,8 +194,7 @@ public class ViewGUI extends View {
     //------------------Turn Management-------------------//
 
     @Override
-    public void dispatch(StartFirstTurnEvent message) {
-        semControllerSync.acquireUninterruptibly();
+    public synchronized void dispatch(StartFirstTurnEvent message) {
         semControllerSync.acquireUninterruptibly();
         pointColorSpawnMap = message.getSpawnPoints();
         for(Point p: message.getSpawnPoints().keySet())

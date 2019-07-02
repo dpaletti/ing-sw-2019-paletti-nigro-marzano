@@ -21,17 +21,8 @@ public class MatchController extends Controller {
     public MatchController(Game model, Server server, List<String> usernames, int roomNumber){
         super(model, server, roomNumber);
         this.activeUsernames = usernames;
-        startMatch();
     }
 
-    private void startMatch(){
-        model.getPlayers().get(0).setFirstPowerUp((PowerUp)model.getPowerUpDeck().draw());
-        model.getPlayers().get(0).setSecondPowerUp((PowerUp)model.getPowerUpDeck().draw());
-        model.send(new StartFirstTurnEvent(model.playerToUser(model.getPlayers().get(0)),
-                model.getPlayers().get(0).getFirstPowerUp().getName(),
-                model.getPlayers().get(0).getSecondPowerUp().getName(),
-                true, model.getGameMap().getMappedSpawnPoints()));
-    }
 
     @Override
     public void update(VCEvent message) {
