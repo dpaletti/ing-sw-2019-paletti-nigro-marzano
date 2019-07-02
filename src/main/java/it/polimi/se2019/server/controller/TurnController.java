@@ -22,6 +22,8 @@ public class TurnController extends Controller {
     private int comboUsed = 0;
     private boolean reloaded = false;
     private boolean spawning = true;
+    private boolean finalFrenzyTurn = false;
+    private int frenzyTurnCounter = 0;
 
     private int turnCounter = 0;
 
@@ -147,6 +149,11 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(VCEndOfTurnEvent message) {
+        if (finalFrenzyTurn) {
+            frenzyTurnCounter++;
+            if (frenzyTurnCounter == model.getPlayers().size())
+                return;
+        }
         turnTimer.endTimer();
     }
 
@@ -247,6 +254,7 @@ public class TurnController extends Controller {
                     model.userToPlayer(currentPlayer).getFirstPowerUp().getCardColour().getColour(),
                     model.userToPlayer(currentPlayer).getSecondPowerUp().getName(),
                     false);
+            model.send(new MVDiscardPowerUpEvent("*", model.userToPlayer(currentPlayer).getFirstPowerUp().getName(), currentPlayer));
             model.userToPlayer(currentPlayer).setFirstPowerUp(null);
             model.userToPlayer(currentPlayer).setSecondPowerUp(null);
         }
@@ -346,4 +354,11 @@ public class TurnController extends Controller {
         model.emptyEmptySpawnTile();
     }
 
+    public void startTimer(){
+        turnTimer.startTimer(server.getTurnTimer());
+    }
+
+    public void setFinalFrenzyTurn(boolean finalFrenzyTurn) {
+        this.finalFrenzyTurn = finalFrenzyTurn;
+    }
 }

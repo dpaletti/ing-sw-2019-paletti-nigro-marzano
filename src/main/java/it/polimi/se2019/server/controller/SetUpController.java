@@ -76,15 +76,16 @@ public class SetUpController extends Controller {
         Map<String, String> spawnTiles = weaponSpotsSetUp();
 
          new MatchController(model, server, model.getUsernames(), getRoomNumber());
-         new TurnController(model, server, getRoomNumber());
+         TurnController turnController = new TurnController(model, server, getRoomNumber());
          new WeaponController(server, getRoomNumber(), model);
          new PowerUpController(model, server, getRoomNumber());
-         //server.removeController(this, getRoomNumber());
+         DeathController deathController = new DeathController(server, getRoomNumber(), model, turnController);
 
         model.send(new SetUpEvent("*", figureToUser,
                 spawnTiles, lootTiles, skull, model.getGameMap().getConfig().getLeftHalf(),
                 model.getGameMap().getConfig().getRightHalf(), finalFrenzy));
         startMatch();
+        turnController.startTimer();
      }
 
     private Map<String, String> weaponSpotsSetUp (){

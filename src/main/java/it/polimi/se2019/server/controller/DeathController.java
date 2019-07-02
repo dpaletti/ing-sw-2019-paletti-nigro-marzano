@@ -8,6 +8,7 @@ import it.polimi.se2019.commons.utility.Point;
 import it.polimi.se2019.commons.vc_events.CalculatePointsEvent;
 import it.polimi.se2019.commons.vc_events.DisconnectionEvent;
 import it.polimi.se2019.commons.vc_events.SpawnEvent;
+import it.polimi.se2019.commons.vc_events.VCEndOfTurnEvent;
 import it.polimi.se2019.server.model.FigureColour;
 import it.polimi.se2019.server.model.Game;
 import it.polimi.se2019.server.model.Player;
@@ -19,9 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 public class DeathController extends AbstractDeathController{
+    private boolean lastTurn = false;
+    private int counter = 0;
+    private TurnController turnController;
 
-    public DeathController(Server server, int roomNumber, Game model){
+    public DeathController(Server server, int roomNumber, Game model, TurnController turnController){
         super(model, server, roomNumber);
+        this.turnController = turnController;
     }
 
     public DeathController(Game game){
@@ -53,11 +58,24 @@ public class DeathController extends AbstractDeathController{
     public void dispatch(CalculatePointsEvent message) {
         for (Player p: model.getPlayers())
             deathPointCalculation(message.getSource(), model.getHp(model.playerToUser(p)));
-        if (model.isFinalFrenzy()){
-            new FinalFrenzyDeathController(server, getRoomNumber(), model, this);
-            return;
+
+        if (!model.isFinalFrenzy())
+            endOfMatch();
+        else{
+            lastTurn = true;
+            turnController.setFinalFrenzyTurn(true);
         }
-        winnerPointCalculation(model.getKillshotTrack().getKillshot());
+    }
+
+    @Override
+    public void dispatch(VCEndOfTurnEvent message) {
+        counter++;
+        if (lastTurn && counter == model.getPlayers().size()) {
+            if (model.isFinalFrenzy()) {
+                finalFrenzyPointCalculation(message.getSource());
+            }
+            winnerPointCalculation(model.getKillshotTrack().getKillshot());
+        }
     }
 
     private boolean overkill (List<Tear> hp){
@@ -88,5 +106,13 @@ public class DeathController extends AbstractDeathController{
     public void dispatch(DisconnectionEvent message) {
         if (!enoughActivePlayers())
             endOfMatch();
+    }
+
+    private void finalFrenzyPointCalculation (String user){
+        Map<FigureColour, Integer> figuresToHits;   //map of shooters to number of hits
+        for (Player p: model.getPlayers()){
+            figuresToHits= calculateHits(p.getHp());
+            assignPoints (figuresToHits, user, p.getHp());
+        }
     }
 }
