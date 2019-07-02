@@ -86,7 +86,11 @@ public class CardController extends Controller {
     private Set<Targetable> getVisible(Targetable t){   //tested
         Set<Targetable> visibleTarget= new HashSet<>();
         for (Targetable tCounter: t.getAll()) {
-            if (visibleRooms(t.getPosition()).contains(model.getGameMap().getTile(tCounter.getPosition()).getColour())) {
+            if (visibleRooms(t
+                    .getPosition())
+                    .contains(model.getGameMap()
+                            .getTile(tCounter
+                                    .getPosition()).getColour())) {
                 visibleTarget.add(tCounter);
             }
         }
@@ -156,6 +160,9 @@ public class CardController extends Controller {
             return targetables;
         }
         if (innerRadius == outerRadius){
+            if(innerRadius==-1){
+                return new HashSet<>(source.getAll());
+            }
             for(Point p:model.getGameMap().getAllowedMovements(model.getTile(source.getPosition()), innerRadius)){
                 targetables.add(model.getTile(p));
             }
@@ -316,8 +323,10 @@ public class CardController extends Controller {
                 event.addEffect(w.getName(), w.getEffectType());
             model.send(event);
         }
-        else
+        else{
             model.send(new MVCardEndEvent(model.playerToUser(currentPlayer), isWeapon));
+            endUsage(isWeapon);
+        }
     }
 
 }

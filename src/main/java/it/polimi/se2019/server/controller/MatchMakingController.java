@@ -38,8 +38,8 @@ public class MatchMakingController extends Controller {
             message.handle(this);
         }catch (UnsupportedOperationException e){
             //this is the only controller registered on matchMaking thus it cannot receive unsupported events
-            Log.severe("Received unsupported event " + message);
-            throw new UnsupportedOperationException("MatchMaking controller: " + e.getMessage(), e);
+            Log.fine("Received unsupported event " + message);
+            //throw new UnsupportedOperationException("MatchMaking controller: " + e.getMessage(), e);
         }
     }
 
@@ -118,7 +118,7 @@ public class MatchMakingController extends Controller {
         actualUsernames.remove("*");
         closeMatchMaking(actualUsernames);
         new SetUpController(model, server, getRoomNumber());
-        server.removeController(this, getRoomNumber());
+        //server.removeController(this, getRoomNumber());
     }
 
     private void closeMatchMaking(List<String> usernames){

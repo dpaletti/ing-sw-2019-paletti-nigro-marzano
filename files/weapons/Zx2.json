@@ -60,7 +60,7 @@
             "price": [],
             "maxHeight":3,
             "invalidEffects": [],
-            "effectType":-1,
+            "effectType":0,
             "effects": [
                 {
                     "priority": 3,
@@ -83,7 +83,7 @@
                     },
                     "actions": [
                         {
-                            "actionType": "DAMAGE",
+                            "actionType": "MARK",
                             "value": 1,
                             "area": false
                         }
@@ -115,7 +115,7 @@
                     },
                     "actions": [
                         {
-                            "actionType": "DAMAGE",
+                            "actionType": "MARK",
                             "value": 1,
                             "area": false
                         }
@@ -148,7 +148,7 @@
                     },
                     "actions": [
                         {
-                            "actionType": "DAMAGE",
+                            "actionType": "MARK",
                             "value": 1,
                             "area": false
                         }

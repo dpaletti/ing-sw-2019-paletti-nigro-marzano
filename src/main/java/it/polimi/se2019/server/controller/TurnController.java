@@ -35,7 +35,7 @@ public class TurnController extends Controller {
     public TurnController (Game model, Server server, int roomNumber){
         super(model, server, roomNumber);
         currentPlayer = model.getUsernames().get(0);
-        turnTimer= new TickingTimer(model, this::endTurn);
+        turnTimer= new TickingTimer(model, this::interTurn);
         interTurnTimer= new TickingTimer(model, this::endTurn);
         //turn controller is registered to virtualView in closeMatchMaking() inside MatchMaking controller
         //either leave things like this or take that one out and add server.addController(this) here
@@ -46,7 +46,7 @@ public class TurnController extends Controller {
         this.model = game;
         currentPlayer = model.getUsernames().get(0);
         this.server=server;
-        turnTimer= new TickingTimer(model, this::endTurn);
+        turnTimer= new TickingTimer(model, this:: interTurn);
         interTurnTimer= new TickingTimer(model, this::endTurn);
     }
 
@@ -263,9 +263,7 @@ public class TurnController extends Controller {
         comboIndex = 0;
         currentCombo = null;
         turnCounter++;
-        interTurn();
         refreshBoard();
-
         if (enoughActivePlayers()){
             currentPlayer = getNextActiveUser(currentPlayer);
             model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
@@ -284,7 +282,6 @@ public class TurnController extends Controller {
                         false,
                         model.getGameMap().getMappedSpawnPoints()));
                 spawning = true;
-                turnTimer.startTimer(server.getTurnTimer());
             }
             else {
                 model.send(new TurnEvent(currentPlayer,
@@ -328,6 +325,8 @@ public class TurnController extends Controller {
                 model.send(new MVRespawnEvent(s, model.userToPlayer(s).getFirstPowerUp().getName()));
             }
             interTurnTimer.startTimer(server.getInterTurnTimer());
+        }else{
+            endTurn();
         }
     }
 

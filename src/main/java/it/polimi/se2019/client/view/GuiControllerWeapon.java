@@ -174,7 +174,7 @@ public class GuiControllerWeapon extends GuiController {
                 effectSpot = (ImageView) scene.lookup("#" + "effectAlternate" + position);
             }
             else if(message.getEffects().get(effect) >= 1 && message.getEffects().get(effect) <= 2) {
-                effectSpot = (ImageView) scene.lookup("#" + "effectAlternate" + message.getEffects().get(effect) + position);
+                effectSpot = (ImageView) scene.lookup("#" + "effectOptional" + message.getEffects().get(effect) + position);
             }
             else
                 throw new IllegalArgumentException("Could not highlight effect with: " + message.getEffects().get(effect) + "as position descriptor");

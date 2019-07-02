@@ -2,10 +2,7 @@ package it.polimi.se2019.server.network;
 
 import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.client.view.VCEvent;
-import it.polimi.se2019.commons.mv_events.HandshakeEndEvent;
-import it.polimi.se2019.commons.mv_events.MvJoinEvent;
-import it.polimi.se2019.commons.mv_events.SetUpEvent;
-import it.polimi.se2019.commons.mv_events.UsernameDeletionEvent;
+import it.polimi.se2019.commons.mv_events.*;
 import it.polimi.se2019.commons.utility.*;
 import it.polimi.se2019.commons.vc_events.DisconnectionEvent;
 
@@ -149,7 +146,9 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     }
 
     private void submit(Connection connection, MVEvent event){
-        Log.fine("Submitting: " + event);
+        if(!(event instanceof TimerEvent)){
+            Log.fine("Submitting: " + event);
+        }
         connection.submit(event);
     }
 

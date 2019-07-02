@@ -13,7 +13,7 @@
     ],
     "weaponEffects": [
         {
-            "name": "Effect",
+            "name": "effect",
             "priority": 3,
             "invalidEffects": [],
             "price":[],
