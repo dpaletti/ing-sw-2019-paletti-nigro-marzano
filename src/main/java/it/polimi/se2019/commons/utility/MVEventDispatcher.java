@@ -176,4 +176,7 @@ public interface MVEventDispatcher extends EventDispatcher {
     default void dispatch (MVCardEndEvent message){
         throw new UnsupportedOperationException("EndOfMatchEvent not supported");
     }
+    default void dispatch (MVDiscardPowerUpEvent message){
+        throw new UnsupportedOperationException("DiscardPowerup not supported");
+    }
 }

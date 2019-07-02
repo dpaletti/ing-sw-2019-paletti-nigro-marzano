@@ -116,7 +116,7 @@ public class ViewGUI extends View {
             eventBuffer.put(message);
         }catch (UnsupportedOperationException e){
             Log.severe("Unsupported event in view");
-            throw new UnsupportedOperationException("Error: " + e.getMessage(), e);
+            //throw new UnsupportedOperationException("Error: " + e.getMessage(), e);
         }catch (InterruptedException e){
             Log.severe("Interrupted while adding to buffer in ViewGUI");
         }
@@ -486,6 +486,12 @@ public class ViewGUI extends View {
     public void dispatch(MVSellPowerUpEvent message) {
         notify(new UiSellPowerups(message.getPowerUpsToSell(), message.getColoursToMissing()));
     }
+
+    @Override
+    public void dispatch(MVDiscardPowerUpEvent message) {
+        notify(new UiRemovePowerUp(message.getDiscardedPowerUp()));
+    }
+
     //----------------------------------------------------------------------------------------//
 
     //-------------------------------------Utility methods-------------------------------------//

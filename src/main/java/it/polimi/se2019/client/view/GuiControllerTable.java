@@ -684,15 +684,19 @@ public class GuiControllerTable extends GuiController {
                     holder = ((ImageView) scene.lookup("#figure" + i));
                     holder.setImage(new Image
                             (Paths.get("files/assets/player/figure_" + f.toLowerCase() + ".png").toUri().toURL().toString()));
+                    holder.setOnMouseClicked((MouseEvent event) -> dispatch(new UiContextSwitch(f.toLowerCase())));
                 }
                 else{
                     holder = ((ImageView) scene.lookup("#figure" + i));
                     holder.setImage(new Image
                             (Paths.get("files/assets/player/figure_" + f.toLowerCase() + "_targeted.png").toUri().toURL().toString()));
+                    holder.setOnMouseClicked((MouseEvent event) ->{
+                        ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), ViewGUI.getInstance().getPlayerOnColour(f.toLowerCase()).getUsername()));
+                        ((ImageView) event.getSource()).setOnMouseClicked((MouseEvent event2) -> dispatch(new UiContextSwitch(f.toLowerCase())));
+                    });
                 }
                 holder.setOnMouseEntered(clickable(scene));
                 holder.setOnMouseExited(clickable(scene));
-                holder.setOnMouseClicked((MouseEvent event) -> dispatch(new UiContextSwitch(f.toLowerCase())));
 
             }
         }catch (MalformedURLException e){

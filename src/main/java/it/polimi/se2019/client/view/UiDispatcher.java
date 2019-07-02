@@ -183,4 +183,7 @@ public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiPowerUpEnd message){
         throw new UnsupportedOperationException("UiPowerUpEnd not supported");
     }
+    default void dispatch(UiRemovePowerUp message){
+        throw new UnsupportedOperationException("UiRemovePowerUp not supported");
+    }
 }

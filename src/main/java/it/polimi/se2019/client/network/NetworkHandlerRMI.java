@@ -63,7 +63,6 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
     @Override
     public void retrieve() {
         try {
-            Log.fine("retrieving on: " + observers);
             notify(gameServer.pullEvent(token));
         }catch (RemoteException e) {
             Log.severe("Server just disconnected");

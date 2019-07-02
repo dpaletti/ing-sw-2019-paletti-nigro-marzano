@@ -289,4 +289,27 @@ public class GuiControllerPowerUp extends GuiController {
         removeHandlers(powerupRight);
 
     }
+
+    @Override
+    public void dispatch(UiRemovePowerUp message) {
+        ImageView toRemove;
+        if(left.equals(message.getPowerUp())) {
+            toRemove = powerupLeft;
+            left = null;
+        }
+        else if(middle.equals(message.getPowerUp())) {
+            toRemove = powerupMiddle;
+            middle = null;
+        }
+        else if(right.equals(message.getPowerUp())) {
+            toRemove = powerupRight;
+            right = null;
+        }
+        else
+            throw new IllegalArgumentException("Could not remove any powerUp");
+
+        toRemove.setImage(null);
+        removeHandlers(toRemove);
+
+    }
 }
