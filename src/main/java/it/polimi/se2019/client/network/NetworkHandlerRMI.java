@@ -1,5 +1,6 @@
 package it.polimi.se2019.client.network;
 
+import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.client.view.VCEvent;
 import it.polimi.se2019.commons.network.CallbackInterface;
 import it.polimi.se2019.commons.network.ServerInterface;
@@ -14,13 +15,13 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterface {
     private transient ServerInterface gameServer;
+    private int roomNumber;
 
     public NetworkHandlerRMI(Client client){
         super(client);
         try {
             Registry importRegistry = LocateRegistry.getRegistry();
             gameServer = (ServerInterface) importRegistry.lookup(client.getRemoteServerName());
-           //TODO test remote call not on localhost
 
             UnicastRemoteObject.exportObject(this, 0);
 
@@ -32,7 +33,10 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
         }
     }
 
-
+    @Override
+    public void setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
+    }
 
     @Override
     public void update(Event message) {
@@ -52,7 +56,7 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
     public void submit(VCEvent vcEvent) {
         try {
             Log.fine("submitted JSON: " + vcEvent);
-            gameServer.pushEvent(token, vcEvent);
+            gameServer.pushEvent(token, vcEvent, roomNumber);
         }catch(RemoteException e) {
             Log.severe("Server just disconnected");
         }catch (NullPointerException e){
@@ -63,7 +67,8 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
     @Override
     public void retrieve() {
         try {
-            notify(gameServer.pullEvent(token));
+            MVEvent event = gameServer.pullEvent(token, roomNumber);
+            notify(event);
         }catch (RemoteException e) {
             Log.severe("Server just disconnected");
             System.exit(0);
@@ -71,13 +76,12 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
     }
 
     @Override
-    public void listenToEvent() {
-        listener = new Thread(() -> {
+    public synchronized void listenToEvent() {
+        new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 retrieve();
             }
-        });
-        listener.start();
+        }).start();
     }
 
     @Override

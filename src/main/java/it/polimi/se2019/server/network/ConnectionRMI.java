@@ -15,21 +15,27 @@ public class ConnectionRMI implements Connection{
     private SynchronousQueue<MVEvent> out = new SynchronousQueue<>();
     private boolean remoteClientRetrieving = false;
     private boolean disconnected = false;
+    private int roomNumber;
 
 
     private CallbackInterface gameClient;
 
     private String token;
 
-    public ConnectionRMI(String token, CallbackInterface gameClient) {
+    public ConnectionRMI(String token, CallbackInterface gameClient, int roomNumber) {
         this.token = token;
         this.gameClient = gameClient;
+        this.roomNumber = roomNumber;
         timeOutCheck();
     }
 
 
     public CallbackInterface getGameClient() {
         return gameClient;
+    }
+
+    public int getRoomNumber() {
+        return roomNumber;
     }
 
     @Override
@@ -62,6 +68,7 @@ public class ConnectionRMI implements Connection{
             if(!disconnected) {
                 if (!remoteClientRetrieving) {
                     gameClient.setToken(token);
+                    gameClient.setRoomNumber(roomNumber);
                     gameClient.listenToEvent();
                     remoteClientRetrieving = true;
                 }
@@ -87,7 +94,8 @@ public class ConnectionRMI implements Connection{
 
     public MVEvent pull(){
         try {
-            return out.take();
+            MVEvent event = out.take();
+            return event;
         }catch (InterruptedException e){
             Log.severe("Pulling interrupted");
             Thread.currentThread().interrupt();

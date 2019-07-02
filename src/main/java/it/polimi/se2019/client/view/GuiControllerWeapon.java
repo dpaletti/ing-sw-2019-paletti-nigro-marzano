@@ -408,6 +408,7 @@ public class GuiControllerWeapon extends GuiController {
             weaponEffect.setOnMouseClicked((MouseEvent event) -> {
                 ViewGUI.getInstance().send(new ChosenEffectEvent(ViewGUI.getInstance().getUsername(), effectName, weaponName));
                 removeHandlers(weaponEffect);
+                weaponEffect.setImage(null);
             });
         }catch (MalformedURLException e){
             Log.severe("Could not retrieve rectangle for highlighting weapon effects");

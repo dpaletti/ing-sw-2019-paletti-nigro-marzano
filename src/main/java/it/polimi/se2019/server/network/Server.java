@@ -313,32 +313,30 @@ public class Server implements ServerInterface {
         Log.fine("Accepted new client");
         if(!isMatchMaking) {
             isMatchMaking = true;
-            suspendedConnection = new ConnectionRMI(generateToken(), client);
             semRMI.release();
+            suspendedConnection = new ConnectionRMI(generateToken(), client, roomNumber + 1);
             newMatch();
             return;
         }
-        rooms.get(roomNumber).startListening(new ConnectionRMI(generateToken(), client));
+        rooms.get(roomNumber).startListening(new ConnectionRMI(generateToken(), client, roomNumber));
         semRMI.release();
     }
 
     @Override
-    public MVEvent pullEvent(String token) throws RemoteException {
+    public MVEvent pullEvent(String token, int playerRoomNumber) throws RemoteException {
         try {
-            return ((ConnectionRMI) rooms.get(roomNumber).getConnectionOnToken(token)).pull();
+            return ((ConnectionRMI) rooms.get(playerRoomNumber).getConnectionOnToken(token)).pull();
         } catch (NullPointerException e) {
-            Log.fine("Invalid token");
-            throw new NullPointerException("You detain an invalid token");
+            throw new NullPointerException("You detain an invalid token: " + token + "on room number: " + playerRoomNumber);
         }
     }
 
     @Override
-    public void pushEvent(String token, VCEvent vcEvent) throws RemoteException {
+    public void pushEvent(String token, VCEvent vcEvent, int playerRoomNumber) throws RemoteException {
         try{
-            ((ConnectionRMI) rooms.get(roomNumber).getConnectionOnToken(token)).push(vcEvent);
+            ((ConnectionRMI) rooms.get(playerRoomNumber).getConnectionOnToken(token)).push(vcEvent);
         }catch (NullPointerException e){
-            Log.fine("Invalid token");
-            throw new NullPointerException("You detain an invalid token");
+            throw new NullPointerException("You detain an invalid token: " + token + "on room number: " + playerRoomNumber);
         }
     }
 

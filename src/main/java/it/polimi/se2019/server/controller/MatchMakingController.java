@@ -34,6 +34,8 @@ public class MatchMakingController extends Controller {
     @Override
     public void update(VCEvent message)
     {
+        if(disabled)
+            return;
         try {
             message.handle(this);
         }catch (UnsupportedOperationException e){
@@ -118,7 +120,7 @@ public class MatchMakingController extends Controller {
         actualUsernames.remove("*");
         closeMatchMaking(actualUsernames);
         new SetUpController(model, server, getRoomNumber());
-        //server.removeController(this, getRoomNumber());
+        this.disable();
     }
 
     private void closeMatchMaking(List<String> usernames){

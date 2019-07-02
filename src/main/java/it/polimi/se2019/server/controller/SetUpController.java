@@ -33,6 +33,8 @@ public class SetUpController extends Controller {
     @Override
     public void update(VCEvent message)
     {
+        if(disabled)
+            return;
         try {
             message.handle(this);
         }catch (UnsupportedOperationException e){
@@ -79,13 +81,15 @@ public class SetUpController extends Controller {
          TurnController turnController = new TurnController(model, server, getRoomNumber());
          new WeaponController(server, getRoomNumber(), model);
          new PowerUpController(model, server, getRoomNumber());
-         DeathController deathController = new DeathController(server, getRoomNumber(), model, turnController);
+         new DeathController(server, getRoomNumber(), model, turnController);
+
 
         model.send(new SetUpEvent("*", figureToUser,
                 spawnTiles, lootTiles, skull, model.getGameMap().getConfig().getLeftHalf(),
                 model.getGameMap().getConfig().getRightHalf(), finalFrenzy));
         startMatch();
         turnController.startTimer();
+        this.disable();
      }
 
     private Map<String, String> weaponSpotsSetUp (){

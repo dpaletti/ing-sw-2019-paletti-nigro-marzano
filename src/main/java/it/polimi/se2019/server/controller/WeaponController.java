@@ -27,6 +27,8 @@ public class WeaponController extends CardController {
 
     @Override
     public void update(VCEvent message) {
+        if(disabled)
+            return;
         try {
             message.handle(this);
         } catch (UnsupportedOperationException e) {

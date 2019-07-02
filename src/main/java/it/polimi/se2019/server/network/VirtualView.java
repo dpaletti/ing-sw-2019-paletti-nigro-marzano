@@ -78,7 +78,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             eventLoops.remove(token);
             sem.release();
         }catch (NullPointerException e){
-            throw new NullPointerException("Could not remove unregistred player: " + token);
+            throw new NullPointerException("Could not remove unregistered player: " + token);
         }
     }
 

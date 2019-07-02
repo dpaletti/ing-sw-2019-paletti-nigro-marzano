@@ -15,6 +15,7 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
     protected Game model;
     protected Server server;
     private int roomNumber;
+    protected boolean disabled = false;
 
     public Controller(Game model, Server server, int roomNumber){
         this.model = model;
@@ -25,6 +26,10 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
 
     public Controller (){
         //empty constructor
+    }
+
+    public void disable(){
+        disabled = true;
     }
 
     public int getRoomNumber() {
