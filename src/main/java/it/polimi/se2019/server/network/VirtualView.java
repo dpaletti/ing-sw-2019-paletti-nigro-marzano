@@ -50,15 +50,18 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     public void reconnect(String oldToken, Connection reconnected){
         if(!biTokenUsername.containsFirst(oldToken))
             throw new IllegalArgumentException("Trying to reconnect invalid player in room " + roomNumber);
-        getConnectionOnToken(oldToken).reconnect(server.sync(roomNumber, biTokenUsername.getSecond(oldToken), oldToken), reconnected);
+        connections.remove(getConnectionOnToken(oldToken));
+        connections.add(reconnected);
         String username = biTokenUsername.getSecond(oldToken);
         biTokenUsername.removeFirst(oldToken);
         biTokenUsername.add(new Pair<>(reconnected.getToken(), username));
+        reconnected.reconnect(server.sync(roomNumber, biTokenUsername.getSecond(oldToken), oldToken));
     }
 
 
 
     public void disconnect(Connection connection){
+        Log.fine("Disconnecting: " + connection.getToken());
         if (biTokenUsername.containsFirst(connection.getToken())) {
             server.disconnectUsername(biTokenUsername.getSecond(connection.getToken()));
             notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken()), false));

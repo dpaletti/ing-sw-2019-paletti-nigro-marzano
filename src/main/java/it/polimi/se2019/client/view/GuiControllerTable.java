@@ -494,10 +494,9 @@ public class GuiControllerTable extends GuiController {
 
             endTurn.setText("Back");
             endTurn.setDisable(false);
-            endTurn.setOnMouseClicked((MouseEvent event) -> {
+            endTurn.setOnAction((ActionEvent event) -> {
                 ViewGUI.getInstance().setCurrentlyShownFigure(headPlayer);
                 ViewGUI.getInstance().send(new UiContextSwitchEnd());
-
             });
 
             resetHp();

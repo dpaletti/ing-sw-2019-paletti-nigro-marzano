@@ -64,10 +64,8 @@ public class ConnectionRMI implements Connection{
     }
 
     @Override
-    public void reconnect(SyncEvent sync, Connection reconnection) {
+    public void reconnect(SyncEvent sync) {
         disconnected = false;
-        gameClient = ((ConnectionRMI) reconnection).getGameClient();
-        token = reconnection.getToken();
         submit(sync);
     }
 

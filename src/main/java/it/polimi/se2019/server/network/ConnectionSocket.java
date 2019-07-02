@@ -31,11 +31,8 @@ public class ConnectionSocket implements Connection{
     }
 
     @Override
-    public void reconnect(SyncEvent sync, Connection reconnected) {
+    public void reconnect(SyncEvent sync) {
         disconnected = false;
-        in = ((ConnectionSocket) reconnected).getIn();
-        out = ((ConnectionSocket) reconnected).getOut();
-        token = reconnected.getToken();
         submit(sync);
     }
 
