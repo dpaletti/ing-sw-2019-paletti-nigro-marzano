@@ -50,25 +50,25 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     }
 
 
-    public void reconnect(String token){
-        if(!biTokenUsername.containsFirst(token))
+    public void reconnect(String oldToken, Connection reconnected){
+        if(!biTokenUsername.containsFirst(oldToken))
             throw new IllegalArgumentException("Trying to reconnect invalid player in room " + roomNumber);
-        getConnectionOnToken(token).reconnect(server.sync(roomNumber, biTokenUsername.getSecond(token), token));
+        getConnectionOnToken(oldToken).reconnect(server.sync(roomNumber, biTokenUsername.getSecond(oldToken), oldToken), reconnected);
+        String username = biTokenUsername.getSecond(oldToken);
+        biTokenUsername.removeFirst(oldToken);
+        biTokenUsername.add(new Pair<>(reconnected.getToken(), username));
     }
 
-    public void refuseReconnection(String token){
-        removePlayer(token);
-        sem.release();
-    }
+
 
     public void disconnect(Connection connection){
         if (biTokenUsername.containsFirst(connection.getToken())) {
-            notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken())));
+            notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken()), false));
             server.disconnectUsername(biTokenUsername.getSecond(connection.getToken()));
         }
 
         else {
-            notify(new DisconnectionEvent(connection.getToken()));
+            notify(new DisconnectionEvent(connection.getToken(), false));
             connection.disconnect();
         }
     }
@@ -81,7 +81,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             eventLoops.remove(token);
             sem.release();
         }catch (NullPointerException e){
-            throw new NullPointerException("Could not remove unregistred player");
+            throw new NullPointerException("Could not remove unregistred player: " + token);
         }
     }
 
@@ -91,7 +91,10 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
                 //reconnection case
                 VirtualView toReJoin = server.getPlayerRoomOnId(message.getUsername());
                 String tokenToReJoin = toReJoin.getBiTokenUsername().getFirst(message.getUsername());
-                toReJoin.reconnect(tokenToReJoin);
+                toReJoin.reconnect(tokenToReJoin, getConnectionOnToken(message.getDestination()));
+                notify(new DisconnectionEvent(message.getUsername(), true));
+                sem.release();
+                return;
             }
 
             //new connection

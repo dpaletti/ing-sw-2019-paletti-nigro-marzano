@@ -35,7 +35,7 @@ public class ConnectionBroadcast implements Connection{
     }
 
     @Override
-    public void reconnect(SyncEvent event) {
+    public void reconnect(SyncEvent event, Connection reconnected) {
         throw new UnsupportedOperationException("Cannot reconnect a broadcast connection");
     }
 

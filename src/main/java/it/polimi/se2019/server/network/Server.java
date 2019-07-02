@@ -112,7 +112,7 @@ public class Server implements ServerInterface {
 
     public boolean isReconnection(String username){
         for(VirtualView v: rooms){
-            if(v.getBiTokenUsername().containsFirst(username))
+            if(v.getBiTokenUsername().containsSecond(username))
                 return true;
         }
         return false;
@@ -128,6 +128,8 @@ public class Server implements ServerInterface {
 
     public void kickPlayer(String toKick) {
         VirtualView room = getPlayerRoomOnId(toKick);
+        usernames.remove(toKick);
+        activeUsernames.remove(toKick);
         if(room!=null)
             room.removePlayer(toKick);
         else
@@ -212,16 +214,6 @@ public class Server implements ServerInterface {
         return new SyncEvent(token, figurePosition, weaponSpots, loot, hp, mark, weapon, colour, finance, powerup, points, skulls, pausedPlayer, roomUsernames, configs,leftConfig, rightConfig, isFrenzy);
     }
 
-    public void handleReconnection(String source, String oldToken){
-        VirtualView oldRoom = getPlayerRoomOnId(oldToken);
-        VirtualView tempRoom = getPlayerRoomOnId(source);
-        if(oldRoom != null)
-           oldRoom.reconnect(oldToken);
-        else if(tempRoom != null){
-            tempRoom.refuseReconnection(source);
-        }else
-            throw new IllegalArgumentException("Reconnection to handle is not valid");
-    }
 
     public VirtualView getPlayerRoomOnId(String id){
         for (VirtualView v : rooms) {

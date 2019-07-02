@@ -94,7 +94,7 @@ public class Client {
             localUsername = in.nextLine();
 
             while (allUsernames.contains(localUsername)) {
-                Log.input("Choose another username please, '" + getUsername() + "' already in use");
+                Log.input("Choose another username please, '" + localUsername + "' already in use");
                 localUsername = in.nextLine();
             }
         } else {

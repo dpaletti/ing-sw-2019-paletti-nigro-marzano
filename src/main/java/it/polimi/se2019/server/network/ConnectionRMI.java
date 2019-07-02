@@ -49,8 +49,10 @@ public class ConnectionRMI implements Connection{
     }
 
     @Override
-    public void reconnect(SyncEvent sync) {
+    public void reconnect(SyncEvent sync, Connection reconnection) {
         disconnected = false;
+        gameClient = ((ConnectionRMI) reconnection).getGameClient();
+        token = reconnection.getToken();
         submit(sync);
     }
 
@@ -110,7 +112,7 @@ public class ConnectionRMI implements Connection{
                     Thread.sleep(1000);
                 }
             }catch (RemoteException e){
-                push(new DisconnectionEvent(token));
+                push(new DisconnectionEvent(token, false));
                 disconnect();
             }catch (InterruptedException e){
                 Log.severe("Interrupted");
@@ -125,4 +127,6 @@ public class ConnectionRMI implements Connection{
         return ("{Connection type: " + "RMI " +
                 "Connection token: " + token + "}");
     }
+
+
 }

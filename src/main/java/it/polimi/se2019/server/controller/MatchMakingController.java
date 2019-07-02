@@ -8,7 +8,6 @@ import it.polimi.se2019.commons.mv_events.UsernameDeletionEvent;
 import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.commons.vc_events.DisconnectionEvent;
 import it.polimi.se2019.commons.vc_events.VcJoinEvent;
-import it.polimi.se2019.commons.vc_events.VcReconnectionEvent;
 import it.polimi.se2019.server.model.Game;
 import it.polimi.se2019.server.model.TickingTimer;
 import it.polimi.se2019.server.network.Server;
@@ -25,6 +24,7 @@ public class MatchMakingController extends Controller {
     private AtomicBoolean timerRunning = new AtomicBoolean(false);
     private List<String> usernames = new CopyOnWriteArrayList<>();
     private TickingTimer matchMakingTimer = new TickingTimer(model, this::onTimerEnd);
+    private boolean reconnection = false;
 
     public MatchMakingController(Game model, Server server, int roomNumber){
         super(model, server, roomNumber);
@@ -48,6 +48,10 @@ public class MatchMakingController extends Controller {
         usernames.add(message.getUsername());
         model.send(new MvJoinEvent(message.getSource(), message.getUsername()));
         server.addUsername(message.getUsername());
+        if(reconnection){
+            reconnection = false;
+            return;
+        }
 
         playerCount.set(playerCount.addAndGet(1));
         Log.info("Players in match making: " + playerCount);
@@ -65,6 +69,11 @@ public class MatchMakingController extends Controller {
     @Override
     public void dispatch(DisconnectionEvent disconnectionEvent) {
         try {
+            if(disconnectionEvent.isReconnection()) {
+                usernames.remove(disconnectionEvent.getSource());
+                reconnection = true;
+                return;
+            }
             server.kickPlayer(disconnectionEvent.getSource());
             model.send(new UsernameDeletionEvent("*", disconnectionEvent.getSource()));
             if (usernames.remove(disconnectionEvent.getSource())) {
@@ -79,15 +88,11 @@ public class MatchMakingController extends Controller {
                 }
             }
         }catch (IllegalArgumentException e){
-            Log.severe("Player that does not belong to any virtualView trying to disconnect, ignoring");
+            Log.severe(disconnectionEvent.getSource() + " could not be found for removal");
         }
 
     }
 
-    @Override
-    public void dispatch(VcReconnectionEvent message) {
-        server.handleReconnection(message.getSource(), message.getOldToken()); //source can be either a username or a token
-    }
 
 
     public int getPlayerCount() {

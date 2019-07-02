@@ -31,8 +31,11 @@ public class ConnectionSocket implements Connection{
     }
 
     @Override
-    public void reconnect(SyncEvent sync) {
+    public void reconnect(SyncEvent sync, Connection reconnected) {
         disconnected = false;
+        in = ((ConnectionSocket) reconnected).getIn();
+        out = ((ConnectionSocket) reconnected).getOut();
+        token = reconnected.getToken();
         submit(sync);
     }
 
@@ -71,5 +74,13 @@ public class ConnectionSocket implements Connection{
     public String toString() {
         return ("{Connection type: " + "Socket " +
                 "Connection token: " + token + "}");
+    }
+
+    public Scanner getIn() {
+        return in;
+    }
+
+    public PrintWriter getOut() {
+        return out;
     }
 }
