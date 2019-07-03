@@ -5,10 +5,7 @@ import it.polimi.se2019.client.view.ui_events.*;
 import it.polimi.se2019.commons.mv_events.*;
 import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.commons.utility.Point;
-import it.polimi.se2019.commons.vc_events.CalculatePointsEvent;
-import it.polimi.se2019.commons.vc_events.SpawnEvent;
-import it.polimi.se2019.commons.vc_events.VCEndOfTurnEvent;
-import it.polimi.se2019.commons.vc_events.VcMatchConfigurationEvent;
+import it.polimi.se2019.commons.vc_events.*;
 import javafx.application.Application;
 
 import java.util.ArrayList;
@@ -478,6 +475,7 @@ public class ViewGUI extends View {
             notify(new UiWeaponEnd());
         else
             notify(new UiPowerUpEnd());
+        notify(new VCCardEndEvent(client.getUsername(), message.isWeapon()));
     }
 
     //---------------------------------------------------------------------------------------//

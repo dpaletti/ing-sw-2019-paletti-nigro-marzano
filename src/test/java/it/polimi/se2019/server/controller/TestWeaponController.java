@@ -87,6 +87,7 @@ public class TestWeaponController {
         cardController=new CardController(game);
     }
 
+    @Ignore
     @Test
     public void testGenerateTargetSet(){
         //------------------------------------whisper----------------------------------------------

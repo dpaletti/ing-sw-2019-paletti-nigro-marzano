@@ -21,7 +21,6 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
     public NetworkHandlerRMI(Client client, View view){
         super(client, view);
         try {
-            System.setProperty("java.rmi.server.hostname", client.getClientIP());
             Registry importRegistry = LocateRegistry.getRegistry();
             gameServer = (ServerInterface) importRegistry.lookup(client.getRemoteServerName());
 

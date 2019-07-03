@@ -43,6 +43,7 @@ public class Server implements ServerInterface {
     private Connection suspendedConnection = null;
 
     public Server(){
+
         usernames.add("*");
         activeUsernames.add("*");
 
@@ -238,12 +239,10 @@ public class Server implements ServerInterface {
     private void openConnections()throws IOException, AlreadyBoundException{
         System.setProperty("java.rmi.server.hostname", getAddress());
 
-
-        UnicastRemoteObject.exportObject(this, 0);
         serverSocket = new ServerSocket(getPort());
 
         Registry registry = LocateRegistry.createRegistry(1099);
-        registry.bind(properties.getProperty("SERVER_NAME"), this);
+        registry.bind(properties.getProperty("SERVER_NAME"), UnicastRemoteObject.exportObject(this, 0));
     }
 
     protected void newMVC() {
