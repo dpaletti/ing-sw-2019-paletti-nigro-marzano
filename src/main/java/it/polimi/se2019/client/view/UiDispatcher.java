@@ -1,7 +1,7 @@
 package it.polimi.se2019.client.view;
 
-import it.polimi.se2019.commons.utility.EventDispatcher;
 import it.polimi.se2019.client.view.ui_events.*;
+import it.polimi.se2019.commons.utility.EventDispatcher;
 
 public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiAddPlayer message){
@@ -185,5 +185,11 @@ public interface UiDispatcher extends EventDispatcher {
     }
     default void dispatch(UiRemovePowerUp message){
         throw new UnsupportedOperationException("UiRemovePowerUp not supported");
+    }
+    default void dispatch(UiDarken message){
+        throw new UnsupportedOperationException("UiDarken not supported");
+    }
+    default void dispatch(UiUnpausePlayer message){
+        throw new UnsupportedOperationException("UiUnpausePlayer not supported");
     }
 }

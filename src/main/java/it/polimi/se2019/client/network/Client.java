@@ -40,6 +40,10 @@ public class Client {
         return Integer.parseInt(properties.getProperty("SERVER_PORT"));
     }
 
+    public String getClientIP(){
+        return properties.getProperty("CLIENT_IP");
+    }
+
     public String getUsername() {
         return username;
     }

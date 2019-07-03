@@ -10,6 +10,6 @@ public interface Connection {
     VCEvent retrieve();
     String getToken();
     void disconnect();
-    void reconnect(SyncEvent sync);
+    void reconnect(SyncEvent sync, int roomNumber); //roomNumber ignored in Socket
     boolean isDisconnected();
 }

@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Circle?>
 <Pane prefHeight="200.0" prefWidth="200.0">
-        <Circle fill="DODGERBLUE" layoutX="17.0" layoutY="28.0" radius="17.0" stroke="DODGERBLUE" strokeType="INSIDE" >
+        <Circle layoutX="17.0" layoutY="28.0" radius="17.0"  >
             <effect>
                 <DropShadow blurType="GAUSSIAN" height="20.0" radius="9.5" width="20.0" />
             </effect>

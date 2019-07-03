@@ -222,6 +222,12 @@ public class ViewGUI extends View {
         notify(new UiPausePlayer(message.getPausedPlayer()));
     }
 
+    @Override
+    public void dispatch(UnpausedPlayerEvent message) {
+        notify(new UiUnpausePlayer(message.getUnpausedPlayer()));
+
+    }
+
     public void endTurn(){
         notify(new VCEndOfTurnEvent(client.getUsername()));
         notify(new UiTurnEnd());
@@ -240,14 +246,23 @@ public class ViewGUI extends View {
 
     @Override
     public synchronized void dispatch(SyncEvent message) {
+        pointColorSpawnMap = message.getPointColorSpawnMap();
+
         dispatch(new MatchConfigurationEvent(client.getUsername(), message.getConfigs()));
 
         dispatch(new SetUpEvent(client.getUsername(), message.getColours(), message.getWeaponSpots(), message.getLootSpots(), message.getSkulls(), message.getLeftConfig(), message.getRightConfig(), message.isFrenzy()));
 
-        for(String paused: message.getPaused())
-            dispatch(new PausedPlayerEvent(client.getUsername(), paused));
+        for(String paused: message.getPaused()) {
+            if(!paused.equals(client.getUsername()))
+                dispatch(new PausedPlayerEvent(client.getUsername(), paused));
+        }
+
+        //notify(new UiAddPlayer(client.getUsername()));
 
         for(String username: message.getUsernames()){
+
+            if(!username.equals(client.getUsername()))
+                notify(new UiAddPlayer(username));
 
             for(String hit: message.getHp().get(username))
                 dispatch(new UpdateHpEvent(client.getUsername(), username, hit));
@@ -257,7 +272,7 @@ public class ViewGUI extends View {
 
             for(Point p: message.getFigurePosition().keySet()){
                 for(String figure: message.getFigurePosition().get(p))
-                    dispatch(new MVMoveEvent(client.getUsername(), figure, p));
+                    dispatch(new MVMoveEvent(client.getUsername(), getPlayerOnColour(figure).getUsername(), p));
             }
 
             for(String powerup: message.getPowerup())
@@ -270,6 +285,8 @@ public class ViewGUI extends View {
                 getPlayerOnUsername(username).setWeapons(weapons);
                 if(getPlayerOnUsername(username).getPlayerColor().equals(currentlyShownFigure))
                     notify(new UiPutWeapon(weapon));
+
+
             }
 
             dispatch(new FinanceUpdateEvent(client.getUsername(), username, message.getFinance().get(username)));
@@ -537,7 +554,7 @@ public class ViewGUI extends View {
 
 
 
-    private MockPlayer getPlayerOnUsername(String username){
+    public MockPlayer getPlayerOnUsername(String username){
         for(MockPlayer m: players){
             if(m.getUsername().equalsIgnoreCase(username))
                 return m;

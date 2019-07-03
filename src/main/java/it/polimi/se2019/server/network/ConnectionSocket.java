@@ -31,7 +31,7 @@ public class ConnectionSocket implements Connection{
     }
 
     @Override
-    public void reconnect(SyncEvent sync) {
+    public void reconnect(SyncEvent sync, int roomNumber) {
         disconnected = false;
         submit(sync);
     }

@@ -64,7 +64,8 @@ public class ConnectionRMI implements Connection{
     }
 
     @Override
-    public void reconnect(SyncEvent sync) {
+    public void reconnect(SyncEvent sync, int roomNumber) {
+        this.roomNumber = roomNumber;
         disconnected = false;
         submit(sync);
     }

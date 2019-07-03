@@ -22,10 +22,7 @@ import javafx.scene.shape.Circle;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GuiControllerBoard extends GuiController {
 
@@ -52,7 +49,7 @@ public class GuiControllerBoard extends GuiController {
     private List<ImageView> highlightedTiles = new ArrayList<>();
     private Map<Point, String> lootsOnTile;
     private Map<String, String> fromPositionToWeapon = new HashMap<>(); //given the id of the slot one can get the weapon that sits there
-    private List<String> highlightedFigures = new ArrayList<>();
+    private Map<String, ImageView> highlightedFigures = new HashMap<>(); //given the name of a figure one can get the weapon
 
 
     //--------------------------------------------Initialization---------------------------------------------//
@@ -132,8 +129,8 @@ public class GuiControllerBoard extends GuiController {
             GridPane gridLeft = loader.load();
             loader = new FXMLLoader(Paths.get("files/fxml/" + rightConfig + "_tiles.fxml").toUri().toURL());
             GridPane gridRight = loader.load();
-            ((Pane)scene.lookup("#leftPane")).getChildren().add(gridLeft);
             ((Pane)scene.lookup("#rightPane")).getChildren().add(gridRight);
+            ((Pane)scene.lookup("#leftPane")).getChildren().add(gridLeft);
 
         }catch (MalformedURLException e){
             Log.severe("Could not find part of the board");
@@ -310,7 +307,7 @@ public class GuiControllerBoard extends GuiController {
 
     private EventHandler<MouseEvent> handleBlackHoleOnFirstClick(Point p){
         return (MouseEvent event)-> {
-            ViewGUI.getInstance().send(new UiLockPlayers(figuresOnTile.get(p), highlightedFigures));
+            ViewGUI.getInstance().send(new UiLockPlayers(figuresOnTile.get(p), new ArrayList<>(highlightedFigures.keySet())));
             ((ImageView) event.getSource()).setOnMouseClicked(handleBlackHoleOnSecondClick(p));
         };
     }
@@ -324,7 +321,7 @@ public class GuiControllerBoard extends GuiController {
 
     private EventHandler<MouseEvent> handleBlackHoleOnEntrance(Point p){
         return (MouseEvent event)-> {
-            ViewGUI.getInstance().send(new UiShowPlayers(figuresOnTile.get(p), highlightedFigures));
+            ViewGUI.getInstance().send(new UiShowPlayers(figuresOnTile.get(p), new ArrayList<>(highlightedFigures.keySet())));
             clickableNoHandler(scene);
         };
     }
@@ -467,11 +464,17 @@ public class GuiControllerBoard extends GuiController {
                 toHighlight.setOnMouseClicked((MouseEvent event) -> {
                     ViewGUI.getInstance().send(new VCMoveEvent(ViewGUI.getInstance().getUsername(), message.getTile(), false, message.getToMove()));
                     removeHandlers(toHighlight);
+                    for(ImageView i: highlightedTiles)
+                        i.setImage(null);
+                    highlightedTiles = new ArrayList<>();
                 });
             else //shooting
                 toHighlight.setOnMouseClicked((MouseEvent event) -> {
                     ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), message.getTile()));
                     removeHandlers(toHighlight);
+                    for(ImageView i: highlightedTiles)
+                        i.setImage(null);
+                    highlightedTiles = new ArrayList<>();
                 });
         }catch (MalformedURLException e){
             Log.severe("Could not get image for highlighting correct tiles");
@@ -479,19 +482,27 @@ public class GuiControllerBoard extends GuiController {
     }
 
     public void dispatch(UiHighlightPlayer message){
+        highlightedFigures.put(message.getToHighlight().toLowerCase(), null);
         try{
-        highlightedFigures.add(message.getToHighlight().toLowerCase());
         ImageView imageToUpdate;
         for(Point tile: figuresOnTile.keySet()){
             if(figuresOnTile.get(tile).size() == 1 && figuresOnTile.get(tile).contains(message.getToHighlight().toLowerCase())){
                 imageToUpdate = ((ImageView) scene.lookup("#center" + tile.getX() + tile.getY()));
                 imageToUpdate.setImage(new Image(Paths.get("files/assets/player/figure_" + message.getToHighlight().toLowerCase() + "_targeted.png").toUri().toURL().toString()));
-                highlightedFigures.add(message.getToHighlight().toLowerCase());
+                highlightedFigures.put(message.getToHighlight().toLowerCase(), imageToUpdate);
                 imageToUpdate.setOnMouseClicked((MouseEvent event) -> {
                     try {
                         ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), ViewGUI.getInstance().getPlayerOnColour(message.getToHighlight().toLowerCase()).getUsername()));
-                        ((ImageView) event.getSource()).setImage(new Image(Paths.get("files/assets/player/figure_" + message.getToHighlight().toLowerCase() + ".png").toUri().toURL().toString()));
-                        ((ImageView) event.getSource()).setOnMouseClicked(handleFigureOnClick(message.getToHighlight().toLowerCase()));
+                        ImageView ii;
+                        for(String s: highlightedFigures.keySet()){
+                            ii = highlightedFigures.get(s);
+                            if(ii != null){
+                                ii.setImage(new Image(Paths.get("files/assets/player/figure_" + s + ".png").toUri().toURL().toString()));
+                                ii.setOnMouseClicked(handleFigureOnClick(message.getToHighlight().toLowerCase()));
+
+                            }
+                        }
+                        highlightedFigures = new HashMap<>();
                     }catch (MalformedURLException e){
                         Log.severe("MalformedURL");
                     }
@@ -503,6 +514,15 @@ public class GuiControllerBoard extends GuiController {
         }
     }
 
+    @Override
+    public void dispatch(UiDarken message) {
+        for(ImageView i: highlightedTiles)
+            i.setImage(null);
+        highlightedTiles = new ArrayList<>();
+        for(Map.Entry<String, ImageView> i: highlightedFigures.entrySet())
+            i.getValue().setImage(null);
+        highlightedFigures = new HashMap<>();
+    }
 
     //----------------------------------------------------------------------------------------------------------------//
 

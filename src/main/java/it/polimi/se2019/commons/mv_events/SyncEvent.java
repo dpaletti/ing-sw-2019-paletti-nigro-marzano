@@ -11,6 +11,7 @@ import java.util.Map;
 
 
 public class SyncEvent extends MVEvent {
+    private HashMap<Point, String> pointColorSpawnMap;
     private HashMap<Point, ArrayList<String>> figurePosition;
     private HashMap<String, String> weaponSpots; //weapon to roomColour
     private HashMap<Point, String> lootSpots;
@@ -29,8 +30,25 @@ public class SyncEvent extends MVEvent {
     private String rightConfig;
     private boolean isFrenzy;
 
-    public SyncEvent(String destination, Map<Point, ArrayList<String>> figurePosition, Map<String, String> weaponSpots, Map<Point, String> lootSpots, Map<String, ArrayList<String>> hp, Map<String, ArrayList<String>> mark, Map<String, ArrayList<String>> weapons, Map<String, String> colours, Map<String, ArrayList<String>> finance, List<String> powerup, Map<String, Integer> points, int skulls, List<String> paused, List<String> usernames, List<String> configs, String leftConfig, String rightConfig, boolean isFrenzy) {
+    public SyncEvent(String destination,
+                     Map<Point, String> pointColorSpawnMap,
+                     Map<Point, ArrayList<String>> figurePosition,
+                     Map<String, String> weaponSpots,
+                     Map<Point, String> lootSpots,
+                     Map<String, ArrayList<String>> hp,
+                     Map<String, ArrayList<String>> mark,
+                     Map<String, ArrayList<String>> weapons,
+                     Map<String, String> colours, Map<String,
+                     ArrayList<String>> finance, List<String> powerup,
+                     Map<String, Integer> points, int skulls,
+                     List<String> paused,
+                     List<String> usernames,
+                     List<String> configs,
+                     String leftConfig,
+                     String rightConfig,
+                     boolean isFrenzy) {
         super(destination);
+        this.pointColorSpawnMap = new HashMap<>(pointColorSpawnMap);
         this.figurePosition = new HashMap<>(figurePosition);
         this.weaponSpots = new HashMap<>(weaponSpots);
         this.lootSpots = new HashMap<>(lootSpots);
@@ -48,6 +66,10 @@ public class SyncEvent extends MVEvent {
         this.leftConfig = leftConfig;
         this.rightConfig = rightConfig;
         this.isFrenzy = isFrenzy;
+    }
+
+    public HashMap<Point, String> getPointColorSpawnMap() {
+        return pointColorSpawnMap;
     }
 
     public boolean isFrenzy() {

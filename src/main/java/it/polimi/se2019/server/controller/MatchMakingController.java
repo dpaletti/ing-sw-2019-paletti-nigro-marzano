@@ -40,7 +40,7 @@ public class MatchMakingController extends Controller {
             message.handle(this);
         }catch (UnsupportedOperationException e){
             //this is the only controller registered on matchMaking thus it cannot receive unsupported events
-            Log.fine("Received unsupported event " + message);
+            Log.fine("Received unsupported event in matchMaking" + message);
             //throw new UnsupportedOperationException("MatchMaking controller: " + e.getMessage(), e);
         }
     }

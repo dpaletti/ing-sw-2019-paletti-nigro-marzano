@@ -435,7 +435,10 @@ public class GuiControllerTable extends GuiController {
     private void buttonSetup(){
         endTurn.setText("End turn");
         endTurn.setDisable(false);
-        endTurn.setOnAction((ActionEvent event) -> ViewGUI.getInstance().endTurn());
+        endTurn.setOnAction((ActionEvent event) -> {
+            ViewGUI.getInstance().send(new UiDarken());
+            ViewGUI.getInstance().endTurn();
+        });
     }
 
     private void directionSetup(){
@@ -476,8 +479,10 @@ public class GuiControllerTable extends GuiController {
             available.setOnMouseExited(notClickable(scene));
             available.setOnMouseClicked((MouseEvent event) -> {
                 ViewGUI.getInstance().send(new ChosenComboEvent(ViewGUI.getInstance().getUsername(), message.getCombo()));
-                for(String s: availableMoves)
-                    scene.lookup("#" + s).setDisable(true);
+                for(String s: availableMoves) {
+                    scene.lookup("#" + s).setOnMouseClicked(null);
+                    ((ImageView) scene.lookup("#" + s)).setImage(null);
+                }
             });
         }catch (MalformedURLException e){
             Log.severe("Cannot retrieve rectangle for overlay");
@@ -488,7 +493,7 @@ public class GuiControllerTable extends GuiController {
     public void dispatch(UiContextSwitch message) {
         try {
             currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + message.getNewContext().toLowerCase() + ".png").toUri().toURL().toString()));
-            disableAllCombos();
+            //disableAllCombos();
             oldDirections = directionsText.get();
             directionsText.set("Looking at player " + message.getNewContext().toLowerCase());
 
@@ -499,38 +504,45 @@ public class GuiControllerTable extends GuiController {
                 ViewGUI.getInstance().send(new UiContextSwitchEnd());
             });
 
-            resetHp();
-
-            for(String drop: ViewGUI.getInstance().getHp())
-                dispatch(new UiAddDamage(drop, ViewGUI.getInstance().getHp().indexOf(drop), false));
-
-            for(String drop: ViewGUI.getInstance().getMarks())
-                dispatch(new UiAddDamage(drop, ViewGUI.getInstance().getMarks().indexOf(drop), true));
-
-            dispatch(new UiAmmoUpdate(ViewGUI.getInstance().getAmmos()));
+            hitUpdate(message.getNewContext());
+            update(new UiAmmoUpdate(ViewGUI.getInstance().getAmmos()));
 
         }catch (MalformedURLException e){
             Log.severe("Wrong URL for context switching");
         }
     }
 
+    private void hitUpdate(String newContext){
+        ViewGUI.getInstance().setCurrentlyShownFigure(newContext);
+        resetHp();
+        resetMark();
+        int i = 0;
+        for(String drop: ViewGUI.getInstance().getHp()) {
+            update(new UiAddDamage(drop, i, false));
+            i++;
+        }
+
+        i = 0;
+        for(String drop: ViewGUI.getInstance().getMarks()) {
+            update(new UiAddDamage(drop, i, true));
+            i++;
+        }
+    }
+
     @Override
     public void dispatch(UiContextSwitchEnd message) {
             try {
+                ViewGUI.getInstance().setCurrentlyShownFigure(headPlayer);
                 if(frenzy)
                     currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + headPlayer + "_back.png").toUri().toURL().toString()));
                 else
                     currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + headPlayer + ".png").toUri().toURL().toString()));
 
-                enableAllCombos();
+                //enableAllCombos();
                 buttonSetup();
                 directionsText.set(oldDirections);
-                for(String drop: ViewGUI.getInstance().getHp())
-                    dispatch(new UiAddDamage(drop, ViewGUI.getInstance().getHp().indexOf(drop), false));
 
-                for(String drop: ViewGUI.getInstance().getMarks())
-                    dispatch(new UiAddDamage(drop, ViewGUI.getInstance().getMarks().indexOf(drop), true));
-
+                hitUpdate(headPlayer);
                 dispatch(new UiAmmoUpdate(ViewGUI.getInstance().getAmmos()));
             } catch (MalformedURLException e) {
                 Log.severe("Could not retrieve old Image for player board");
@@ -540,9 +552,9 @@ public class GuiControllerTable extends GuiController {
     private void resetHp(){
         Pane pane;
         for (int i = 0; i < 12; i++){
-            pane = (Pane) scene.lookup("#" + i);
+            pane = (Pane) scene.lookup("#hp" + i);
             if(pane != null)
-                ((Pane)pane.getParent()).getChildren().remove(pane);
+                hp.getChildren().remove(pane);
         }
     }
 
@@ -550,17 +562,54 @@ public class GuiControllerTable extends GuiController {
         List<Integer> position = new ArrayList<>();
         for (int j = 0; j<2; j++){
             for (int i=0; i < 10; i++){
-                position.add(i + 9*10);
+                position.add(i + 9*j);
             }
         }
         dispatch(new UiRemoveMarks(position));
     }
 
+    @Override
+    public void dispatch(UiAddDamage message) {
+        FXMLLoader loader;
+        int row;
+        int column;
+        try {
+            if (!message.isMark())
+                loader = new FXMLLoader(Paths.get("files/fxml/hp.fxml").toUri().toURL());
+            else
+                loader = new FXMLLoader(Paths.get("files/fxml/mark.fxml").toUri().toURL());
+            Pane pane = loader.load();
+            Circle hit = (Circle) (pane).getChildren().get(0);
+            setCircleFill(hit, message.getColour());
+            if(!message.isMark()) {
+                hp.add(pane, message.getPosition(), 0);
+                pane.setId("hp" + message.getPosition());
+            }
+            else{
+                if(message.getPosition() > 9) {
+                    row = 1;
+                    column = message.getPosition() - 10;
+                }
+                else {
+                    row = 0;
+                    column = message.getPosition();
+                }
+                mark.add(hit, column, row);
+                hit.setId("mark" + column + row);
+            }
+        }catch (MalformedURLException e){
+            Log.severe("Could not retrieve hp asset");
+        }catch (IOException e){
+            Log.severe("Could not load hit asset");
+        }
+    }
+
     private void disableAllCombos(){
         List<Node> nodes = ((Pane)scene.lookup("#playerCombo")).getChildren();
         nodes.addAll(((Pane) scene.lookup("#playerComboDamaged")).getChildren());
-        for(Node n: nodes)
+        for(Node n: nodes) {
             n.setDisable(true);
+        }
     }
 
     private void enableAllCombos(){
@@ -683,21 +732,15 @@ public class GuiControllerTable extends GuiController {
                     holder = ((ImageView) scene.lookup("#figure" + i));
                     holder.setImage(new Image
                             (Paths.get("files/assets/player/figure_" + f.toLowerCase() + ".png").toUri().toURL().toString()));
-                    holder.setOnMouseClicked((MouseEvent event) -> dispatch(new UiContextSwitch(f.toLowerCase())));
+                    holder.setOnMouseClicked((MouseEvent event) -> ViewGUI.getInstance().send(new UiContextSwitch(f.toLowerCase())));
                 }
                 else{
                     holder = ((ImageView) scene.lookup("#figure" + i));
                     holder.setImage(new Image
                             (Paths.get("files/assets/player/figure_" + f.toLowerCase() + "_targeted.png").toUri().toURL().toString()));
                     holder.setOnMouseClicked((MouseEvent event) ->{
-                        try {
                             ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), ViewGUI.getInstance().getPlayerOnColour(f.toLowerCase()).getUsername()));
-                            ((ImageView) event.getSource()).setImage((new Image
-                                    (Paths.get("files/assets/player/figure_" + f.toLowerCase() + ".png").toUri().toURL().toString())));
-                            ((ImageView) event.getSource()).setOnMouseClicked((MouseEvent event2) -> dispatch(new UiContextSwitch(f.toLowerCase())));
-                        }catch (MalformedURLException e){
-                            Log.severe("Wrong URL in reshowing locked figure");
-                        }
+                            dispatch(new UiShowPlayers(message.getFiguresToShow(), new ArrayList<>()));
                     });
                 }
                 holder.setOnMouseEntered(clickable(scene));
@@ -709,41 +752,6 @@ public class GuiControllerTable extends GuiController {
         }
     }
 
-    @Override
-    public void dispatch(UiAddDamage message) {
-        FXMLLoader loader;
-        int row;
-        int column;
-        try {
-            if (!message.isMark())
-                 loader = new FXMLLoader(Paths.get("files/fxml/hp.fxml").toUri().toURL());
-            else
-                loader = new FXMLLoader(Paths.get("files/fxml/mark.fxml").toUri().toURL());
-            Pane pane = loader.load();
-            Circle hit = (Circle) (pane).getChildren().get(0);
-            setCircleFill(hit, message.getColour());
-            if(!message.isMark()) {
-                hp.add(pane, message.getPosition(), 0);
-                hp.setId("hp" + message.getPosition());
-            }
-            else{
-                if(message.getPosition() > 9) {
-                    row = 1;
-                    column = message.getPosition() - 10;
-                }
-                else {
-                    row = 0;
-                    column = message.getPosition();
-                }
-                mark.add(hit, column, row);
-                hit.setId("mark" + column + row);
-            }
-        }catch (MalformedURLException e){
-            Log.severe("Could not retrieve hp asset");
-        }catch (IOException e){
-            Log.severe("Could not load hit asset");
-        }
-    }
 
     private void setCircleFill(Circle circle, String colour){
         if(colour.equalsIgnoreCase("blue"))
@@ -829,15 +837,27 @@ public class GuiControllerTable extends GuiController {
 
     @Override
     public void dispatch(UiPausePlayer message) {
-        int position = 0;
-        for(TableModel t: rowTrack){
-            if(t.getUsername().equalsIgnoreCase(message.getPlayerToPause()))
-                break;
-            position++;
-        }
+        int position = getPositionFromUsername(message.getPlayerToPause());
         leaderboard.requestFocus();
         leaderboard.getSelectionModel().select(position);
         leaderboard.getFocusModel().focus(position);
+    }
+
+    private int getPositionFromUsername(String username){
+        int position = 0;
+        for(TableModel t: rowTrack){
+            if(t.getUsername().equalsIgnoreCase(username))
+                break;
+            position++;
+        }
+        return position;
+    }
+
+    @Override
+    public void dispatch(UiUnpausePlayer message) {
+        int position = getPositionFromUsername(message.getPlayerToUnpause());
+        leaderboard.requestFocus();
+        leaderboard.getSelectionModel().clearSelection(position);
     }
 
     @Override
@@ -907,6 +927,10 @@ public class GuiControllerTable extends GuiController {
         directionsText.set("PowerUp is over");
     }
 
+    @Override
+    public void dispatch(UiActivateWeaponEffects message) {
+        directionsText.set("Please choose an effect");
+    }
     //----------------------------------------------------------------------------------------------------------------//
 
 

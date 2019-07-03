@@ -5,6 +5,7 @@ import it.polimi.se2019.client.view.VCEvent;
 import it.polimi.se2019.commons.mv_events.*;
 import it.polimi.se2019.commons.utility.*;
 import it.polimi.se2019.commons.vc_events.DisconnectionEvent;
+import it.polimi.se2019.commons.vc_events.VcReconnectionEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +56,11 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         String username = biTokenUsername.getSecond(oldToken);
         biTokenUsername.removeFirst(oldToken);
         biTokenUsername.add(new Pair<>(reconnected.getToken(), username));
-        reconnected.reconnect(server.sync(roomNumber, biTokenUsername.getSecond(oldToken), oldToken));
+        reconnected.reconnect(server.sync(roomNumber, biTokenUsername.getSecond(reconnected.getToken()), reconnected.getToken()), roomNumber);
+        Thread t = new Thread(new EventLoop(this, reconnected));
+        t.start();
+        eventLoops.put(reconnected.getToken(), t);
+        notify(new VcReconnectionEvent(reconnected.getToken(), oldToken, username));
     }
 
 
@@ -71,6 +76,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             notify(new DisconnectionEvent(connection.getToken(), false));
             connection.disconnect();
         }
+        eventLoops.get(connection.getToken()).interrupt();
     }
 
     public void removePlayer(String token){
@@ -81,7 +87,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             eventLoops.remove(token);
             sem.release();
         }catch (NullPointerException e){
-            throw new NullPointerException("Could not remove unregistered player: " + token);
+            Log.severe("Could not remove unregistered player: " + token);
         }
     }
 

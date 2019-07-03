@@ -1,5 +1,7 @@
 package it.polimi.se2019.server.network;
 
+import it.polimi.se2019.commons.utility.Log;
+
 import java.util.NoSuchElementException;
 
 public class EventLoop implements Runnable {
@@ -19,6 +21,8 @@ public class EventLoop implements Runnable {
                 virtualView.retrieve(connection);
         } catch (NoSuchElementException e) {
             virtualView.disconnect(connection);
+        } catch (IndexOutOfBoundsException e){
+            Log.severe("Sync problem");
         }
     }
 }

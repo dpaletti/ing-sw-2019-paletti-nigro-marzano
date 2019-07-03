@@ -208,10 +208,15 @@ public class GuiControllerWeapon extends GuiController {
     @Override
     public void dispatch(UiContextSwitch message) {
         try {
+            ViewGUI.getInstance().setCurrentlyShownFigure(message.getNewContext());
             List<ImageView> weaponSpot = new ArrayList<>();
             weaponSpot.add(weaponLeft);
             weaponSpot.add(weaponMiddle);
             weaponSpot.add(weaponRight);
+
+            for (ImageView i: weaponSpot)
+               i.setImage(null);
+
             int i = 0;
             for (String w : ViewGUI.getInstance().getWeapons()) {
 
@@ -220,11 +225,6 @@ public class GuiControllerWeapon extends GuiController {
 
                 ));
                 i++;
-            }
-            for (ImageView w: weaponSpot){
-                for(Node n: w.getParent().getChildrenUnmodifiable()){
-                    n.setDisable(true);
-                }
             }
         }catch (MalformedURLException e){
             Log.severe("Could not retrieve weapon during context switch");
@@ -239,7 +239,11 @@ public class GuiControllerWeapon extends GuiController {
             weaponSpot.add(weaponMiddle);
             weaponSpot.add(weaponRight);
             int i = 0;
-            for (String w : ViewGUI.getInstance().getWeapons()) {
+
+            for(ImageView ii: weaponSpot)
+                ii.setImage(null);
+
+            for (String w : ViewGUI.getInstance().getPlayerOnUsername(ViewGUI.getInstance().getUsername()).getWeapons()) {
 
                 weaponSpot.get(i).setImage(new Image(
                         Paths.get("files/assets/cards/" + w + ".png").toUri().toURL().toString()

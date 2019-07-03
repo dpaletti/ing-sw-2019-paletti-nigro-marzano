@@ -6,6 +6,7 @@ import it.polimi.se2019.commons.mv_events.SyncEvent;
 import it.polimi.se2019.commons.network.CallbackInterface;
 import it.polimi.se2019.commons.network.ServerInterface;
 import it.polimi.se2019.commons.utility.Log;
+import it.polimi.se2019.commons.utility.Pair;
 import it.polimi.se2019.commons.utility.Point;
 import it.polimi.se2019.server.controller.Controller;
 import it.polimi.se2019.server.controller.MatchMakingController;
@@ -66,6 +67,10 @@ public class Server implements ServerInterface {
 
     public int getInterTurnTimer(){
         return Integer.parseInt(properties.getProperty("INTERTURN_TIMER"));
+    }
+
+    private String getAddress(){
+        return properties.getProperty("ADDRESS");
     }
 
     public List<String> getMapConfigs(int roomNumber){
@@ -155,6 +160,7 @@ public class Server implements ServerInterface {
         Map<Point, String> loot = new HashMap<>();
         Map<String, String> weaponSpots = new HashMap<>();
         Map<Point, ArrayList<String>> figurePosition = new HashMap<>();
+        Map<Point, String> poinToColourSpawn = model.getGameMap().getMappedSpawnPoints();
 
         ArrayList<String> stringStore;
 
@@ -191,7 +197,8 @@ public class Server implements ServerInterface {
                 stringStore.add(a.getColour().name());
             finance.put(currentUsername, stringStore);
 
-            colour.put(currentUsername, p.getFigure().getColour().name());
+            for(Pair<FigureColour, String> e :model.getUserLookup())
+                colour.put(e.getSecond(), e.getFirst().name());
 
             stringStore = new ArrayList<>();
             for(Weapon w: p.getWeapons())
@@ -211,7 +218,7 @@ public class Server implements ServerInterface {
 
             points.put(currentUsername, p.getPoints());
         }
-        return new SyncEvent(token, figurePosition, weaponSpots, loot, hp, mark, weapon, colour, finance, powerup, points, skulls, pausedPlayer, roomUsernames, configs,leftConfig, rightConfig, isFrenzy);
+        return new SyncEvent(token, poinToColourSpawn, figurePosition, weaponSpots, loot, hp, mark, weapon, colour, finance, powerup, points, skulls, pausedPlayer, roomUsernames, configs,leftConfig, rightConfig, isFrenzy);
     }
 
 
@@ -229,6 +236,8 @@ public class Server implements ServerInterface {
     }
 
     private void openConnections()throws IOException, AlreadyBoundException{
+        System.setProperty("java.rmi.server.hostname", getAddress());
+
 
         UnicastRemoteObject.exportObject(this, 0);
         serverSocket = new ServerSocket(getPort());
