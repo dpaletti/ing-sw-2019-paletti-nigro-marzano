@@ -5,7 +5,6 @@ import it.polimi.se2019.commons.utility.JsonHandler;
 import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.commons.vc_events.ChosenEffectEvent;
 import it.polimi.se2019.commons.vc_events.ChosenWeaponEvent;
-import it.polimi.se2019.commons.vc_events.VCCardEndEvent;
 import it.polimi.se2019.commons.vc_events.VCPartialEffectEvent;
 import it.polimi.se2019.server.model.*;
 import it.polimi.se2019.server.network.Server;
@@ -128,7 +127,7 @@ public class WeaponController extends CardController {
         }
     }
 
-    @Override
+    /*@Override
     public void dispatch(VCCardEndEvent message) {
         if (message.isWeapon()) {
             currentPlayer.getWeaponByName(current.getName()).setLoaded(false);
@@ -136,7 +135,7 @@ public class WeaponController extends CardController {
             layersVisitedPartial = 0;
             currentLayer = null;
         }
-    }
+    }*/
 
     private void usablePowerUps(List<String> targets) {
         if (targets.size() == 1 && targets.get(0).equals(model.playerToUser(currentPlayer)))
