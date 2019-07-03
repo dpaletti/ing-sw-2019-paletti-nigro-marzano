@@ -119,7 +119,7 @@ public class TurnController extends Controller {
                 if(isCombo(partialCombos,c))
                     return c;
             }
-            throw new IllegalArgumentException("No combo exist with such partialCombos");
+            throw new IllegalArgumentException("No combo exist with such partialCombos: "+partialCombos);
         }
 
         private List<Combo> convertMoves(List<ArrayList<PartialCombo>> partials){
@@ -165,6 +165,8 @@ public class TurnController extends Controller {
         if (message.getIsTeleport())
             distance = -1;
         run(message.getToMove(), message.getDestination(), distance);
+        if (currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.SHOOT))
+            return;
         nextPartialCombo();
     }
 

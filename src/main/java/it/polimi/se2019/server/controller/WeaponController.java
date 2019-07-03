@@ -92,15 +92,21 @@ public class WeaponController extends CardController {
                         targetables,
                         targetables.get(0)); //not sure this is needed
             } else if (message.getTargetTile() != null) {
+                PartialWeaponEffect currentPartial= currentLayer.get(partialGraphLayer).getKey();
                 List<Targetable> targetables = new ArrayList<>(Arrays.asList(model.getTile(message.getTargetTile())));
                 List<Player> targets = new ArrayList<>();
                 List<String> users = new ArrayList<>();
-                //Put hellion case, one more if with isArea=1 and rb=-3,-3
-                //Add if, isArea for the for iteration
-                for (Targetable t : model.getTile(message.getTargetTile()).getPlayers()) {
-                    targets.add((Player) t);
-                    users.add(model.playerToUser((Player) t));
-                }
+                //Check if every effect weapon has every action with isArea as true
+                if (currentPartial.getActions().get(0).isArea()) {
+                    if (currentPartial.getTargetSpecification().getRadiusBetween().getFirst() == -3 && currentPartial.getTargetSpecification().getRadiusBetween().getSecond() == -3) {
+                        //I have to put every player in the room
+                        for (Tile t : model.getGameMap().getRoom(model.getTile(message.getTargetTile()).getColour()))
+                            targets.addAll(getPlayerOnTile(t));
+                    } else
+                        targets = getPlayerOnTile(model.getTile(message.getTargetTile()));
+                }else
+                    targets.add((Player)model.getTile(message.getTargetTile()).getPlayers().get(0));
+                targets.remove(model.userToPlayer(message.getSource()));
                 model.apply(model.playerToUser(currentPlayer), targets, currentLayer.get(partialGraphLayer).getKey());
                 usablePowerUps(users);
                 previousTargets.addAll(users);
@@ -139,6 +145,14 @@ public class WeaponController extends CardController {
             for (String s : targets)
                 model.usablePowerUps("onDamage", false, model.userToPlayer(s));
         }
+    }
+
+    private List<Player> getPlayerOnTile(Tile t){
+        List<Player> players=new ArrayList<>();
+        for (Targetable targetable: t.getPlayers()){
+            players.add((Player)targetable);
+        }
+        return players;
     }
 
 }

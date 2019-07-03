@@ -186,4 +186,14 @@ public class GameMap{
         return spawnPoints;
     }
 
+    //This method gets the tiles of the Roomcolour room
+    public List<Tile> getRoomTiles(RoomColour colour){
+        List<Tile> room= new ArrayList<>();
+        for (Tile t: getTiles()){
+            if (t.getColour().equals(colour))
+                room.add(t);
+        }
+        return room;
+    }
+
 }

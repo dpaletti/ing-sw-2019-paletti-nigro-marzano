@@ -198,7 +198,7 @@ public class GuiControllerWeapon extends GuiController {
 
         for (String position: positions){
             for(String type: types){
-                effectSpot = (ImageView) scene.lookup("#" + type + position);
+                effectSpot = (ImageView) scene.lookup("#effect" + type + position);
                 removeHandlers(effectSpot);
                 effectSpot.setImage(null);
             }

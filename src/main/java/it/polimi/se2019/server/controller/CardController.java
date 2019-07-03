@@ -87,7 +87,10 @@ public class CardController extends Controller {
                                 effect.getTargetSpecification().getPrevious().getSecond()),
                                 handleRadiusBetween(effect.getTargetSpecification().getRadiusBetween().getFirst(),
                                         effect.getTargetSpecification().getRadiusBetween().getSecond(), targetable, effect.getTargetSpecification().getTile()))));
-        targetSet=intersect(handleEnlarge(effect.getTargetSpecification().getEnlarge(), targetSet, effect.getTargetSpecification().getTile()), targetSet);
+        if(effect.getTargetSpecification().getEnlarge()==0)
+            targetSet=intersect(handleEnlarge(effect.getTargetSpecification().getEnlarge(), targetSet, effect.getTargetSpecification().getTile()), targetSet);
+        else
+            targetSet=handleEnlarge(effect.getTargetSpecification().getEnlarge(), targetSet, effect.getTargetSpecification().getTile());
         if(!(effect.getActions().size()==1 && effect.getActions().get(0).getActionType().equals(ActionType.MOVE)))
             targetSet=intersect(targetSet,lastFilter);
         return new ArrayList<>(targetSet);
@@ -119,8 +122,11 @@ public class CardController extends Controller {
         else if (visible==1)
             return new HashSet<>(getVisible(source));
 
-        else if (visible==2)
-            return getVisible(source.getHitTargets(model.getTurnMemory()).get(model.getTurnMemory().getLastEffectUsed()).get(0));
+        else if (visible==2) {
+            Targetable hit=source.getHitTargets(model.getTurnMemory()).get(model.getTurnMemory().getLastEffectUsed()).get(0);
+            Set<Targetable> targetableSet=getVisible(hit);
+            targetableSet.remove(hit);
+        }
         return new HashSet<>(source.getAll());
 
     }
