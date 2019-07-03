@@ -342,7 +342,6 @@ public class CardController extends Controller {
             model.send(event);
         }
         else{
-            model.send(new MVCardEndEvent(model.playerToUser(currentPlayer), isWeapon));
             endUsage(isWeapon);
         }
     }

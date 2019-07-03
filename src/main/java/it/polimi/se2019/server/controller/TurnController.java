@@ -219,7 +219,7 @@ public class TurnController extends Controller {
     }
 
     @Override
-    public void dispatch(VCWeaponEndEvent message) {
+    public void dispatch(VCCardEndEvent message) {
         disablePowerUps(currentPlayer,"onAttack");
         nextPartialCombo();
     }

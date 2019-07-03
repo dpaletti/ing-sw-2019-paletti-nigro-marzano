@@ -8,6 +8,10 @@ import it.polimi.se2019.commons.network.ServerInterface;
 import it.polimi.se2019.commons.utility.Event;
 import it.polimi.se2019.commons.utility.Log;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -21,7 +25,9 @@ public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterfa
     public NetworkHandlerRMI(Client client, View view){
         super(client, view);
         try {
-            Registry importRegistry = LocateRegistry.getRegistry();
+            Log.fine(client.getServerIP());
+            Log.fine(client.getRemoteServerName());
+            Registry importRegistry = LocateRegistry.getRegistry(client.getServerIP(), 1099);
             gameServer = (ServerInterface) importRegistry.lookup(client.getRemoteServerName());
 
             UnicastRemoteObject.exportObject(this, 0);

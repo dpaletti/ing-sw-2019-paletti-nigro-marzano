@@ -28,7 +28,7 @@ public class Client {
 
     }
 
-    private String getServerIP() {
+    public String getServerIP() {
         return properties.getProperty("SERVER_IP");
     }
 
