@@ -16,16 +16,18 @@ public class VCPartialEffectEvent extends VCEvent {
         this.skip = true;
     }
 
-    public VCPartialEffectEvent(String source, String targetPlayer) {
+    public VCPartialEffectEvent(String source, String targetPlayer, boolean isWeapon) {
         super(source);
         this.skip = false;
         this.targetPlayer = targetPlayer;
+        this.isWeapon = isWeapon;
     }
 
-    public VCPartialEffectEvent(String source, Point targetTile) {
+    public VCPartialEffectEvent(String source, Point targetTile, boolean isWeapon) {
         super(source);
         this.skip = false;
         this.targetTile = targetTile;
+        this.isWeapon = isWeapon;
     }
 
     public boolean isSkip() {

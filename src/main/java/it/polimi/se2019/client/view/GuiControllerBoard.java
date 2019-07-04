@@ -449,6 +449,7 @@ public class GuiControllerBoard extends GuiController {
     @Override
     public void dispatch(UiHighlightTileEvent message) {
         try {
+            ViewGUI.getInstance().setIsWeapon(message.isWeapon());
             ImageView toHighlight = (ImageView) scene.lookup("#tile" + message.getTile().getX() + message.getTile().getY());
             highlightedTiles.add(toHighlight);
             String toQuery;
@@ -470,7 +471,7 @@ public class GuiControllerBoard extends GuiController {
                 });
             else //shooting
                 toHighlight.setOnMouseClicked((MouseEvent event) -> {
-                    ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), message.getTile()));
+                    ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), message.getTile(), message.isWeapon()));
                     removeHandlers(toHighlight);
                     for(ImageView i: highlightedTiles)
                         i.setImage(null);
@@ -482,6 +483,7 @@ public class GuiControllerBoard extends GuiController {
     }
 
     public void dispatch(UiHighlightPlayer message){
+        ViewGUI.getInstance().setIsWeapon(message.isWeapon());
         highlightedFigures.put(message.getToHighlight().toLowerCase(), null);
         try{
         ImageView imageToUpdate;
@@ -492,7 +494,7 @@ public class GuiControllerBoard extends GuiController {
                 highlightedFigures.put(message.getToHighlight().toLowerCase(), imageToUpdate);
                 imageToUpdate.setOnMouseClicked((MouseEvent event) -> {
                     try {
-                        ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), ViewGUI.getInstance().getPlayerOnColour(message.getToHighlight().toLowerCase()).getUsername()));
+                        ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), ViewGUI.getInstance().getPlayerOnColour(message.getToHighlight().toLowerCase()).getUsername(),message.isWeapon()));
                         ImageView ii;
                         for(String s: highlightedFigures.keySet()){
                             ii = highlightedFigures.get(s);

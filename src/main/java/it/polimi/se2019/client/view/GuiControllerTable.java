@@ -742,7 +742,7 @@ public class GuiControllerTable extends GuiController {
                     holder.setImage(new Image
                             (Paths.get("files/assets/player/figure_" + f.toLowerCase() + "_targeted.png").toUri().toURL().toString()));
                     holder.setOnMouseClicked((MouseEvent event) ->{
-                            ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), ViewGUI.getInstance().getPlayerOnColour(f.toLowerCase()).getUsername()));
+                            ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), ViewGUI.getInstance().getPlayerOnColour(f.toLowerCase()).getUsername(), ViewGUI.getInstance().isWeapon()));
                             dispatch(new UiShowPlayers(message.getFiguresToShow(), new ArrayList<>()));
                     });
                 }

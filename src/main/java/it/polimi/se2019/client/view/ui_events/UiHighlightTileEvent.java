@@ -7,11 +7,17 @@ public class UiHighlightTileEvent extends UiEvent {
     private Point tile;
     private boolean targeting;
     private String toMove;
+    private boolean isWeapon;
 
-    public UiHighlightTileEvent(Point tile, boolean targeting,String toMove){
+    public UiHighlightTileEvent(Point tile, boolean targeting,String toMove, boolean isWeapon){
         this.tile = tile;
         this.targeting = targeting;
         this.toMove=toMove;
+        this.isWeapon = isWeapon;
+    }
+
+    public boolean isWeapon() {
+        return isWeapon;
     }
 
     public Point getTile() {

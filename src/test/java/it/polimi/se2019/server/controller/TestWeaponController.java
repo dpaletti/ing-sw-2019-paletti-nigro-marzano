@@ -160,7 +160,7 @@ public class TestWeaponController {
         PartialSelectionEvent partialSelectionEvent= (PartialSelectionEvent)testModelHelper.getCurrent();
         assertEquals(game.playerToUser(yellow),partialSelectionEvent.getTargetPlayers().get(0));
         //Now magenta has to send a VCPartialEffectEvent to specify the target or skip
-        VCPartialEffectEvent partialEffectEvent= new VCPartialEffectEvent(game.playerToUser(magenta),game.playerToUser(yellow));
+        VCPartialEffectEvent partialEffectEvent= new VCPartialEffectEvent(game.playerToUser(magenta),game.playerToUser(yellow), true);
         weaponController.update(partialEffectEvent);
         assertEquals(3,yellow.getHp().size());
         assertEquals(1,yellow.getMarks().size());
@@ -213,7 +213,7 @@ public class TestWeaponController {
         assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(2,0)));
         assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(3,1)));
         //Now magenta has to send a VCPartialEffectEvent to specify the target or skip
-        VCPartialEffectEvent partialEffectEvent= new VCPartialEffectEvent(game.playerToUser(magenta),new Point(2,0));
+        VCPartialEffectEvent partialEffectEvent= new VCPartialEffectEvent(game.playerToUser(magenta),new Point(2,0), true);
         weaponController.update(partialEffectEvent);
         assertEquals(1,green.getHp().size());
         //Now the controller sends back another PartialSelectionEvent
@@ -266,7 +266,7 @@ public class TestWeaponController {
         assertTrue(partialSelectionEvent.getTargetPlayers().contains(game.playerToUser(green)));
         assertTrue(partialSelectionEvent.getTargetPlayers().contains(game.playerToUser(blue)));
         //Now magenta has to send a VCPartialEffectEvent to specify the target or skip
-        VCPartialEffectEvent partialEffectEvent= new VCPartialEffectEvent(game.playerToUser(magenta),game.playerToUser(green));
+        VCPartialEffectEvent partialEffectEvent= new VCPartialEffectEvent(game.playerToUser(magenta),game.playerToUser(green), true);
         weaponController.update(partialEffectEvent);
         assertEquals(1,green.getHp().size());
         //The controller sends back a PartialSelectionEvent

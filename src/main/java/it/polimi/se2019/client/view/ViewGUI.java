@@ -34,6 +34,7 @@ public class ViewGUI extends View {
     private Map<Point, String> pointColorSpawnMap;
     private String currentlyShownFigure;
     private boolean respawning = false;
+    private boolean isWeapon = false;
 
     private Semaphore movementSem = new Semaphore(1, true);
 
@@ -206,7 +207,7 @@ public class ViewGUI extends View {
         //semControllerSync.acquireUninterruptibly();
         pointColorSpawnMap = message.getSpawnPoints();
         for(Point p: message.getSpawnPoints().keySet())
-            notify(new UiHighlightTileEvent(p, false, client.getUsername()));
+            notify(new UiHighlightTileEvent(p, false, client.getUsername(), false));
         notify(new UiPutPowerUp(message.getFirstPowerUpName()));
         notify(new UiPutPowerUp(message.getSecondPowerUpName()));
         notify(new UiSpawn());
@@ -314,7 +315,7 @@ public class ViewGUI extends View {
     public void dispatch(AllowedMovementsEvent message) {
         for (Point p:
                 message.getAllowedPositions()) {
-            notify(new UiHighlightTileEvent(p, false, message.getUserToMove()));
+            notify(new UiHighlightTileEvent(p, false, message.getUserToMove(), false));
         }
     }
 
@@ -477,10 +478,10 @@ public class ViewGUI extends View {
 
         if(message.getTargetTiles() != null) {
             for (Point tile : message.getTargetTiles())
-                notify(new UiHighlightTileEvent(tile, true, client.getUsername()));
+                notify(new UiHighlightTileEvent(tile, true, client.getUsername(), message.isWeapon()));
         }else{
             for(String figure: message.getTargetPlayers())
-                notify(new UiHighlightPlayer(getPlayerOnUsername(figure).getPlayerColor()));
+                notify(new UiHighlightPlayer(getPlayerOnUsername(figure).getPlayerColor(), message.isWeapon()));
         }
 
     }
@@ -643,5 +644,12 @@ public class ViewGUI extends View {
         this.currentlyShownFigure = currentlyShownFigure;
     }
 
+    public void setIsWeapon(boolean isWeapon){
+        this.isWeapon = isWeapon;
+    }
+
+    public boolean isWeapon() {
+        return isWeapon;
+    }
 }
 
