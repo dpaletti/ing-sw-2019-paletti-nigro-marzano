@@ -30,71 +30,6 @@
                             "second": -2
                         },
                         "visible": 1,
-                        "enlarge": 0
-                    },
-                    "actions": [
-                        {
-                            "actionType": "DAMAGE",
-                            "value": 1,
-                            "area": false
-                        }
-                    ],
-                    "endable": false,
-                    "name": "B1",
-                    "invalidEffects": []
-                },
-                {
-                    "priority": 3,
-                    "targetSpecification": {
-                        "tile": true,
-                        "different": {
-                            "first": false,
-                            "second": []
-                        },
-						"previous":{
-							"first": false,
-							"second": []
-						},
-                        "radiusBetween": {
-                            "first": -2,
-                            "second": -2
-                        },
-                        "visible": 1,
-                        "enlarge": 1
-                    },
-                    "actions": [
-                        {
-                            "actionType": "MOVE",
-                            "value": 1,
-                            "area": false
-                        },
-                        {
-                            "actionType": "DAMAGE",
-                            "value": 1,
-                            "area": false
-                        }
-                    ],
-                    "endable": false,
-                    "name": "B2",
-                    "invalidEffects": []
-                },
-                {
-                    "priority": 3,
-                    "targetSpecification": {
-                        "tile": true,
-                        "different": {
-                            "first": false,
-                            "second": []
-                        },
-						"previous":{
-							"first": false,
-							"second": []
-						},
-                        "radiusBetween": {
-                            "first": -2,
-                            "second": -2
-                        },
-                        "visible": 1,
                         "enlarge": 2
                     },
                     "actions": [
@@ -110,7 +45,7 @@
                         }
                     ],
                     "endable": false,
-                    "name": "B3",
+                    "name": "B1",
                     "invalidEffects": []
                 }
             ]
@@ -130,36 +65,6 @@
             "maxHeight":1,
             "effectType":0,
             "effects": [
-                 {
-                    "priority": 3,
-                    "targetSpecification": {
-                        "tile": true,
-                        "different": {
-                            "first": false,
-                            "second": []
-                        },
-						"previous":{
-							"first": false,
-							"second": []
-						},
-                        "radiusBetween": {
-                            "first": -2,
-                            "second": -2
-                        },
-                        "visible": 1,
-                        "enlarge": 0
-                    },
-                    "actions": [
-                        {
-                            "actionType": "DAMAGE",
-                            "value": 3,
-                            "area": false
-                        }
-                    ],
-                     "endable": false,
-                    "name": "B4",
-                     "invalidEffects": []
-                },
                 {
                     "priority": 3,
                     "targetSpecification": {
@@ -168,51 +73,16 @@
                             "first": false,
                             "second": []
                         },
-						"previous":{
-							"first": false,
-							"second": []
-						},
-                        "radiusBetween": {
-                            "first": -2,
-                            "second": -2
-                        },
-                        "visible": 1,
-                        "enlarge": 1
-                    },
-                    "actions": [
-                        {
-                            "actionType": "MOVE",
-                            "value": 1,
-                            "area": false
-                        },
-                        {
-                            "actionType": "DAMAGE",
-                            "value": 3,
-                            "area": false
-                        }
-                    ],
-                    "endable": false,
-                    "name": "B5",
-                    "invalidEffects": []
-                },
-                {
-                    "priority": 3,
-                    "targetSpecification": {
-                        "tile": true,
-                        "different": {
+                        "previous":{
                             "first": false,
                             "second": []
                         },
-						"previous":{
-							"first": false,
-							"second": []
-						},
                         "radiusBetween": {
-                            "first": -2,
-                            "second": -2
+                            "first": 0,
+                            "second": 0
                         },
                         "visible": 1,
-                        "enlarge": 2
+                        "enlarge": 3
                     },
                     "actions": [
                         {
@@ -227,7 +97,7 @@
                         }
                     ],
                     "endable": false,
-                    "name": "B6",
+                    "name": "B2",
                     "invalidEffects": []
                 }
             ]

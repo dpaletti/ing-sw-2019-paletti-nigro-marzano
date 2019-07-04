@@ -12,9 +12,7 @@
         {
             "name": "basicEffect",
             "priority": 3,
-            "invalidEffects": [
-              "withSliceAndDice"
-            ],
+            "invalidEffects": [],
             "price":[],
             "maxHeight":1,
             "effectType":-1,
@@ -47,9 +45,7 @@
                     ],
                     "endable": false,
                     "name": "B1",
-                    "invalidEffects": [
-                      "B2"
-                    ]
+                    "invalidEffects": []
                 },
                 {
                   "priority": 3,
@@ -81,9 +77,7 @@
                   ],
                   "endable": false,
                   "name": "B2",
-                  "invalidEffects": [
-                    "B1"
-                  ]
+                  "invalidEffects": []
                 }
             ]
         },
@@ -117,7 +111,7 @@
                     "actions": [
                       {
                         "actionType": "MOVE",
-                        "value": 1,
+                        "value": 2,
                         "area": false
                       }
                     ],
@@ -170,9 +164,7 @@
                     ],
                     "endable": false,
                     "name": "B4",
-                    "invalidEffects": [
-                      "B5"
-                    ]
+                    "invalidEffects": []
                 },
                 {
                   "priority": 3,

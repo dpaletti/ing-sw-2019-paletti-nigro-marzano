@@ -17,33 +17,9 @@
         "priority": 3,
         "invalidEffects": [],
         "price":[],
-        "maxHeight":2,
+        "maxHeight":1,
         "effectType":-1,
             "effects":[
-                {
-                    "priority": 3,
-                    "targetSpecification":{
-                        "tile":true,
-                        "different": {
-                            "first": false,
-                            "second": []
-                        },
-                        "previous":{
-                            "first": false,
-                            "second": []
-                        },
-                        "radiusBetween": {
-                            "first": 0,
-                            "second": 0
-                        },
-                        "visible": -1,
-                        "enlarge": 0
-                    },
-                    "actions": [],
-                    "endable": false,
-                    "name": "B1",
-                    "invalidEffects": []
-                },
                 {
                     "priority": 3,
                     "targetSpecification": {
@@ -54,9 +30,7 @@
                         },
 						"previous":{
 							"first": true,
-							"second": [
-                                "B1"
-                            ]
+							"second": []
 						},
                         "radiusBetween": {
                             "first": -1,
@@ -83,33 +57,9 @@
             "priority": 3,
             "invalidEffects": [],
             "price":[],
-            "maxHeight":3,
+            "maxHeight":2,
             "effectType":0,
             "effects": [
-                {
-                    "priority": 3,
-                    "targetSpecification":{
-                        "tile":true,
-                        "different": {
-                            "first": false,
-                            "second": []
-                        },
-						"previous":{
-							"first": false,
-							"second": []
-						},
-                        "radiusBetween": {
-                            "first": 0,
-                            "second": 0
-                        },
-                        "visible": -1,
-                        "enlarge": -2
-                    },
-                    "actions": [],
-                    "endable": false,
-                    "name": "B3",
-                    "invalidEffects": []
-                },
                 {
                     "priority": 2,
                     "targetSpecification":{
@@ -120,16 +70,14 @@
                         },
                         "previous":{
                             "first": true,
-                            "second": [
-                                "B3"
-                            ]
+                            "second": []
                         },
                         "radiusBetween": {
                             "first": -1,
                             "second": -1
                         },
                         "visible": -1,
-                        "enlarge": 0
+                        "enlarge": -2
                     },
                     "actions": [
                         {
@@ -139,7 +87,7 @@
                         }
                     ],
                     "endable": true,
-                    "name": "E1",
+                    "name": "B2",
                     "invalidEffects": []
                 },
                 {
@@ -149,21 +97,19 @@
                         "different": {
                             "first": true,
                             "second": [
-                              "E1"
+                              "B2"
                             ]
                         },
                         "previous":{
-                            "first": true,
-                            "second": [
-                                "B2"
-                            ]
+                            "first": false,
+                            "second": []
                         },
                         "radiusBetween": {
                             "first": -1,
                             "second": -1
                         },
                         "visible": -1,
-                        "enlarge": 0
+                        "enlarge": 2
                     },
                     "actions": [
                         {
@@ -173,7 +119,7 @@
                         }
                     ],
                     "endable": false,
-                    "name": "M1",
+                    "name": "E1",
                     "invalidEffects": []
                 }
             ]

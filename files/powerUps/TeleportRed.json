@@ -30,13 +30,13 @@
                             "second": 0
                         },
                         "visible": -1,
-                        "enlarge": 0,
+                        "enlarge": -3,
                         "area": false
                     },
                     "actions": [
                        {
                            "actionType": "MOVE",
-                           "value": 1
+                           "value": -1
                        }
                     ],
                     "name": "B",

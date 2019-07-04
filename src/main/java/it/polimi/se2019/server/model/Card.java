@@ -30,7 +30,7 @@ public abstract class Card {
         }catch (IOException c){
             Log.severe("Card not found in given directory");
         }catch (NullPointerException e){
-            Log.severe("Card not created: ");
+            Log.severe("Card not created: "+path );
         }catch (ClassNotFoundException e){
             Log.severe("Error in json file, type");
         }

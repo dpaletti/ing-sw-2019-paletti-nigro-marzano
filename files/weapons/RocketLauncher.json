@@ -116,42 +116,12 @@
                     "actions": [
                       {
                         "actionType": "MOVE",
-                        "value": 1,
-                        "area": false
-                      }
-                    ],
-                    "endable": false,
-                    "name": "B2",
-                    "invalidEffects":[]
-                },
-                {
-                    "priority": 3,
-                    "targetSpecification": {
-                       "tile": false,
-                        "different": {
-                            "first": false,
-                            "second": []
-                        },
-						"previous":{
-							"first": false,
-							"second": []
-						},
-                        "radiusBetween": {
-                            "first": 0,
-                            "second": 0
-                        },
-                        "visible": -1,
-                        "enlarge": 0
-                    },
-                    "actions": [
-                      {
-                        "actionType": "MOVE",
                         "value": 2,
                         "area": false
                       }
                     ],
                     "endable": false,
-                    "name": "B3",
+                    "name": "B2",
                     "invalidEffects":[]
                 }
             ]
@@ -169,35 +139,9 @@
             "effectType":2,
             "effects": [
                 {
-                    "priority": 3,
-                    "targetSpecification": {
-                       "tile": true,
-                        "different": {
-                            "first": false,
-                            "second": []
-                        },
-						"previous":{
-							"first": true,
-							"second": [
-								"B1"
-							]
-						},
-                        "radiusBetween": {
-                            "first": -1,
-                            "second": -1
-                        },
-                        "visible": -1,
-                        "enlarge": 0
-                    },
-                    "actions": [],
-                    "name": "B4",
-                    "endable": false,
-                    "invalidEffects":[]
-                },
-                {
                   "priority": 2,
                   "targetSpecification": {
-                    "tile": false,
+                    "tile": true,
                     "different": {
                       "first": false,
                       "second": []

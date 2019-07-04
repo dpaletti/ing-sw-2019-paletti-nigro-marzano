@@ -6,7 +6,7 @@ public enum ActionType {
     MOVE{
         @Override   //shooter is player to be moved, target is the Tile
         public void apply(Player target, Player shooter, Action action, Game game) {
-           game.allowedMovements(game.playerToUser(shooter), game.playerToUser(target), 1);
+           game.allowedMovements(game.playerToUser(shooter), game.playerToUser(target), action.getValue());
         }
     }, DAMAGE{
         @Override

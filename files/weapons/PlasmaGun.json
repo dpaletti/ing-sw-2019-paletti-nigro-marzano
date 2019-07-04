@@ -12,9 +12,7 @@
         {
             "name": "basicEffect",
             "priority": 3,
-            "invalidEffects": [
-              "withChargedSlot"
-            ],
+            "invalidEffects": [],
             "price":[],
             "maxHeight":1,
             "effectType":-1,
@@ -81,52 +79,20 @@
                     "actions": [
                       {
                         "actionType": "MOVE",
-                        "value": 1,
+                        "value": 2,
                         "area": false
                       }
                     ],
                    "endable": false,
                     "name": "B2",
                     "invalidEffects": []
-                },
-                {
-                    "priority": 3,
-                    "targetSpecification": {
-                       "tile": false,
-                        "different": {
-                            "first": false,
-                            "second": []
-                        },
-						"previous":{
-							"first": false,
-							"second": []
-						},
-                        "radiusBetween": {
-                            "first": 0,
-                            "second": 0
-                        },
-                        "visible": -1,
-                        "enlarge": 0
-                    },
-                    "actions": [
-                      {
-                        "actionType": "MOVE",
-                        "value": 2,
-                        "area": false
-                      }
-                    ],
-                    "endable": false,
-                    "name": "B3",
-                    "invalidEffects": []
                 }
             ]
         },
         {
             "name": "withChargedSlot",
-            "priority": 3,
-            "invalidEffects": [
-              "basicEffect"
-            ],
+            "priority": 2,
+            "invalidEffects": [],
             "price":[
               {
                 "colour": "BLUE"
@@ -144,8 +110,10 @@
                       "second": []
                     },
                     "previous":{
-                      "first": false,
-                      "second": []
+                      "first": true,
+                      "second": [
+                        "B1"
+                      ]
                     },
                     "radiusBetween": {
                       "first": -2,
@@ -157,45 +125,13 @@
                   "actions": [
                     {
                       "actionType": "DAMAGE",
-                      "value": 2,
+                      "value": 1,
                       "area": false
                     }
                   ],
                   "endable": false,
-                  "name": "B4",
+                  "name": "B3",
                   "invalidEffects": []
-                },
-                {
-                    "priority": 2,
-                    "targetSpecification": {
-                       "tile": false,
-                        "different": {
-                            "first": false,
-                            "second": []
-                        },
-						"previous":{
-							"first": true,
-							"second": [
-								"B4"
-							]
-						},
-                        "radiusBetween": {
-                            "first": -2,
-                            "second": -2
-                        },
-                        "visible": 1,
-                        "enlarge": 0
-                    },
-                    "actions": [
-                      {
-                        "actionType": "DAMAGE",
-                        "value": 1,
-                        "area": false
-                      }
-                    ],
-                    "endable": false,
-                    "name": "E1",
-                    "invalidEffects": []
                 }
             ]
         }

@@ -42,6 +42,7 @@ public class PowerUpController extends CardController {
     public void dispatch(PowerUpUsageEvent message) {
         current = model.nameToPowerUp(message.getUsedPowerUp());
         currentPlayer = model.userToPlayer(message.getSource());
+        currentPlayer.discardPowerUp(current.getName());
         layersVisited = layersVisited + 1;
         List<GraphWeaponEffect> list = new ArrayList<>();
         for (GraphNode<GraphWeaponEffect> g: current.getDefinition().getListLayer(layersVisited)) {

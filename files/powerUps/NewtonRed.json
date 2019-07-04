@@ -36,40 +36,10 @@
                     "actions": [
                        {
                            "actionType": "MOVE",
-                           "value": 1
-                       }
-                    ],
-                    "name": "B1",
-					"endable": false,
-					"invalidEffects": []
-				},
-				{
-					"priority": 3,
-					"targetSpecification":{
-						"tile": false,
-						"different":{
-							"first": false,
-							"second": []
-						},
-						"previous":{
-							"first": false,
-							"second": []
-						},
-						 "radiusBetween": {
-                            "first": -1,
-                            "second": -1
-                        },
-                        "visible": 0,
-                        "enlarge": 0,
-                        "area": false
-                    },
-                    "actions": [
-                       {
-                           "actionType": "MOVE",
                            "value": 2
                        }
                     ],
-                    "name": "B2",
+                    "name": "B1",
 					"endable": false,
 					"invalidEffects": []
 				}

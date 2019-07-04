@@ -72,34 +72,44 @@ public class WeaponController extends CardController {
     public void dispatch(VCPartialEffectEvent message) {
         if (!message.isWeapon())
             return;
+
+        PartialWeaponEffect currentPartial= currentLayer.get(partialGraphLayer).getKey();
+
         for (String s : previousTargets)
             disablePowerUps(s, "onDamage");
         previousTargets.clear();
+
         if (message.isSkip()) {
             partialGraphLayer++;
             if (partialGraphLayer == currentLayer.size())
-                endUsage(true);
+                nextWeaponEffect(message.isWeapon());
             else
                 handlePartial(currentLayer.get(partialGraphLayer).getKey(),true);
-        } else {
-            if (message.getTargetPlayer() != null) {
+        }else { //Is not skip
+            if (message.getTargetPlayer() != null) { //The weapon has a player targetset
+
                 List<Targetable> targetables = new ArrayList<>(Arrays.asList(model.userToPlayer(message.getTargetPlayer())));
                 String username=model.playerToUser(currentPlayer);
                 Player target=model.userToPlayer(message.getTargetPlayer());
-                PartialWeaponEffect partialWeaponEffect= currentLayer.get(partialGraphLayer).getKey();
+
                 model.apply(username,
                         new ArrayList<>(Arrays.asList(target)),
-                        partialWeaponEffect);
+                        currentPartial);
+
                 usablePowerUps(new ArrayList<>(Arrays.asList(message.getTargetPlayer())));
+
                 previousTargets.add(message.getTargetPlayer());
                 model.getTurnMemory().hit(currentLayer.get(partialGraphLayer).getKey().getName(),
                         targetables,
-                        targetables.get(0)); //not sure this is needed
-            } else if (message.getTargetTile() != null) {
-                PartialWeaponEffect currentPartial= currentLayer.get(partialGraphLayer).getKey();
+                        targetables.get(0));
+
+            } else if (message.getTargetTile() != null) { //The weapon is tile based
                 List<Targetable> targetables = new ArrayList<>(Arrays.asList(model.getTile(message.getTargetTile())));
                 List<Player> targets = new ArrayList<>();
+                //Void list used in usablepowerups
                 List<String> users = new ArrayList<>();
+
+
                 //Check if every effect weapon has every action with isArea as true
                 if (currentPartial.getActions().get(0).isArea()) {
                     if (currentPartial.getTargetSpecification().getRadiusBetween().getFirst() == -3 && currentPartial.getTargetSpecification().getRadiusBetween().getSecond() == -3) {
@@ -108,8 +118,14 @@ public class WeaponController extends CardController {
                             targets.addAll(getPlayerOnTile(t));
                     } else
                         targets = getPlayerOnTile(model.getTile(message.getTargetTile()));
+
                 }else
                     targets.add((Player)model.getTile(message.getTargetTile()).getPlayers().get(0));
+
+                for(Player p: targets)
+                    users.add(model.playerToUser(p));
+
+
                 targets.remove(model.userToPlayer(message.getSource()));
                 model.apply(model.playerToUser(currentPlayer), targets, currentLayer.get(partialGraphLayer).getKey());
                 usablePowerUps(users);

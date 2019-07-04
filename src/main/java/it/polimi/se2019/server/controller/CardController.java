@@ -90,7 +90,11 @@ public class CardController extends Controller {
                                         effect.getTargetSpecification().getRadiusBetween().getSecond(), targetable, effect.getTargetSpecification().getTile()))));
         if(effect.getTargetSpecification().getEnlarge()==0)
             targetSet=intersect(handleEnlarge(effect.getTargetSpecification().getEnlarge(), targetSet, effect.getTargetSpecification().getTile()), targetSet);
-        else
+        else if (effect.getTargetSpecification().getEnlarge()==-3){
+            List<Targetable> targets=new ArrayList<>();
+            targets.add(player);
+            targetSet=new HashSet<>(targets);
+        }else
             targetSet=handleEnlarge(effect.getTargetSpecification().getEnlarge(), targetSet, effect.getTargetSpecification().getTile());
         if(!(effect.getActions().size()==1 && effect.getActions().get(0).getActionType().equals(ActionType.MOVE)))
             targetSet=intersect(targetSet,lastFilter);
@@ -241,6 +245,8 @@ public class CardController extends Controller {
         }
         else if (enlarge==0)
             return new HashSet<>(targetable.getAll());
+        else if(enlarge==-3)
+            return centre;
         for (Targetable t: centre)
             targetables.addAll(getTileCircle(enlarge, t.getPosition(), isTile));
         return targetables;
@@ -265,9 +271,9 @@ public class CardController extends Controller {
         List<PowerUp> ownedPowerUps = new ArrayList<>(currentPlayer.getPowerUps());
         List<Ammo> missingAmmos = missingAmmos(effect);
         boolean flag = false;
-
+        List<PowerUp> powerUps=new ArrayList<>(ownedPowerUps);
         for (Ammo a : missingAmmos){
-            for (PowerUp p : ownedPowerUps) {
+            for (PowerUp p : powerUps) {
                 if (a.getColour().name().equalsIgnoreCase(p.getColour())) {
                     ownedPowerUps.remove(p);
                     flag = true;

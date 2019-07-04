@@ -165,6 +165,8 @@ public class TurnController extends Controller {
         if (message.getIsTeleport())
             distance = -1;
         run(message.getToMove(), message.getDestination(), distance);
+        if(currentCombo==null)
+            return;
         if (currentCombo.getPartialCombos().get(comboIndex).equals(PartialCombo.SHOOT))
             return;
         nextPartialCombo();
@@ -267,7 +269,6 @@ public class TurnController extends Controller {
             if (isFirstTurn) {
                 model.userToPlayer(currentPlayer).setFirstPowerUp((PowerUp) model.getPowerUpDeck().draw());
                 model.userToPlayer(currentPlayer).setSecondPowerUp((PowerUp) model.getPowerUpDeck().draw());
-
                 model.send(new MVEndOfTurnEvent("*", previouslyPlaying, currentPlayer));
                 disablePowerUps(previouslyPlaying,"onTurn");
                 model.send(new StartFirstTurnEvent(currentPlayer,
@@ -275,11 +276,13 @@ public class TurnController extends Controller {
                                 model.userToPlayer(currentPlayer).getSecondPowerUp().getName(),
                         false,
                         model.getGameMap().getMappedSpawnPoints()));
+                model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
                 spawning = true;
             }
             else {
                 model.send(new TurnEvent(currentPlayer,
                         fromPartialToStringCombo(getAllowedMoves())));
+                model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
             }
             turnTimer.startTimer(server.getTurnTimer());
         }
