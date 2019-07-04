@@ -1,11 +1,8 @@
 package it.polimi.se2019.client.view;
 
-import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.client.view.ui_events.*;
-import it.polimi.se2019.commons.vc_events.DiscardedPowerUpEvent;
-import it.polimi.se2019.commons.vc_events.PowerUpUsageEvent;
-import it.polimi.se2019.commons.vc_events.SpawnEvent;
-import it.polimi.se2019.commons.vc_events.VCSellPowerUpEvent;
+import it.polimi.se2019.commons.utility.Log;
+import it.polimi.se2019.commons.vc_events.*;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -13,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
@@ -156,7 +154,7 @@ public class GuiControllerPowerUp extends GuiController {
 
 
 
-    public void activatePowerup(String position, String powerUp){
+    public ImageView activatePowerup(String position, String powerUp){
         try {
             ImageView effect = ((ImageView) scene.lookup("#effect" + position));
             effect.setImage(new Image(Paths.get("files/assets/rectangle_black.png").toUri().toURL().toString()));
@@ -167,9 +165,11 @@ public class GuiControllerPowerUp extends GuiController {
                 effect.setImage(null);
                 removeHandlers(effect);
             });
+            return effect;
         }catch (MalformedURLException e){
             Log.severe("Could not retrieve asset for highlighting powerup effect");
         }
+        return null;
     }
 
 
@@ -312,4 +312,29 @@ public class GuiControllerPowerUp extends GuiController {
         removeHandlers(toRemove);
 
     }
+
+    @Override
+    public void dispatch(UiDarken message) {
+        List<ImageView> powerups = new ArrayList<>();
+        powerups.add(powerupLeft);
+        powerups.add(powerupMiddle);
+        powerups.add(powerupRight);
+        for(ImageView i: powerups){
+            for(Node n: ((Pane)i.getParent()).getChildren()){
+                if(n != powerupLeft && n != powerupMiddle && n!= powerupRight)
+                    ((ImageView) n).setImage(null);
+            }
+        }
+    }
+
+    @Override
+    public void dispatch(UiActivatePowerup message) {
+        String position = getPositionOnPowerUp(message.getToActivate());
+        activatePowerup(position, message.getToActivate()).setOnMouseClicked((MouseEvent event) -> {
+            ViewGUI.getInstance().send(new ChosenEffectPowerUpEvent(ViewGUI.getInstance().getUsername(), "effect", message.getToActivate()));
+            ((ImageView) event.getSource()).setImage(null);
+            removeHandlers((ImageView) event.getSource());
+        });
+    }
+
 }

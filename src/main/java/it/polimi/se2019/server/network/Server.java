@@ -2,6 +2,7 @@ package it.polimi.se2019.server.network;
 
 import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.client.view.VCEvent;
+import it.polimi.se2019.commons.mv_events.MatchConfigurationEvent;
 import it.polimi.se2019.commons.mv_events.SyncEvent;
 import it.polimi.se2019.commons.network.CallbackInterface;
 import it.polimi.se2019.commons.network.ServerInterface;
@@ -33,12 +34,14 @@ public class Server implements ServerInterface {
     private int roomNumber = -1;
     private List<String> usernames = new ArrayList<>();
     private List<String> activeUsernames = new ArrayList<>();
+    private List<String> possiblyReconnectingUsernames = new ArrayList<>();
     private List<String> tokens = new ArrayList<>();
     private Properties properties = new Properties();
 
     private Semaphore semRMI = new Semaphore(1, true);
 
     private boolean isMatchMaking = true;
+    private boolean isSetUp = false;
 
     private Connection suspendedConnection = null;
 
@@ -50,6 +53,8 @@ public class Server implements ServerInterface {
         try {
             fillProperties();
             openConnections();
+
+            rooms.add(new VirtualView(0, this));
             newMatch();
         }catch (AlreadyBoundException e){
             Log.severe("Could not bind RMI interface");
@@ -60,6 +65,18 @@ public class Server implements ServerInterface {
 
     public Server(int roomNumber){
         this.roomNumber=roomNumber;
+    }
+
+    private void startSetup(){
+        isSetUp = true;
+    }
+
+    private void endSetup(){
+        isSetUp = false;
+    }
+
+    public boolean isSetUp() {
+        return isSetUp;
     }
 
     public int getTurnTimer(){
@@ -134,12 +151,41 @@ public class Server implements ServerInterface {
 
     public void kickPlayer(String toKick) {
         VirtualView room = getPlayerRoomOnId(toKick);
-        usernames.remove(toKick);
-        activeUsernames.remove(toKick);
+        if(activeUsernames.contains(toKick) || !usernames.contains(toKick)) {
+            //player disconnected in match making
+            usernames.remove(toKick);
+            activeUsernames.remove(toKick);
+        }
+        else {
+            List<VirtualView> roomsModified = rooms;
+            roomsModified.remove(room);
+            boolean found = false;
+            for (VirtualView v : roomsModified) {
+                if (v.getBiTokenUsername().containsFirst(toKick)) {
+                    room = v;
+                    found = true;
+                    break;
+                }
+
+                if (v.getBiTokenUsername().containsSecond(toKick)) {
+                    room = v;
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+                return;
+        }
+
         if(room!=null)
             room.removePlayer(toKick);
         else
             throw new IllegalArgumentException("Kick is impossible, player to kick cannot be found");
+    }
+
+    public synchronized MatchConfigurationEvent setupSync(String usernameReconnecting, int roomNumber) {
+        Game model = models.get(roomNumber);
+        return new MatchConfigurationEvent(usernameReconnecting, model.getMapConfigs(), model.getUsernames(), true);
     }
 
     public synchronized SyncEvent sync(int roomNumber, String usernameReconnecting, String token){
@@ -281,7 +327,6 @@ public class Server implements ServerInterface {
     }
 
     private void newMatch(){
-        rooms.add(new VirtualView(0, this));
         while(!Thread.currentThread().isInterrupted()) {
             semRMI.acquireUninterruptibly();
             roomNumber++;

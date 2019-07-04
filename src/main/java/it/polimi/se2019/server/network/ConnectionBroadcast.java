@@ -2,7 +2,6 @@ package it.polimi.se2019.server.network;
 
 import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.client.view.VCEvent;
-import it.polimi.se2019.commons.mv_events.SyncEvent;
 
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class ConnectionBroadcast implements Connection{
     }
 
     @Override
-    public void reconnect(SyncEvent event, int roomNumber) {
+    public void reconnect(MVEvent reconnectionEvent, int roomNumber) {
         throw new UnsupportedOperationException("Cannot reconnect a broadcast connection");
     }
 

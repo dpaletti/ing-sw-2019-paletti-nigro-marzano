@@ -2,7 +2,6 @@ package it.polimi.se2019.server.network;
 
 import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.client.view.VCEvent;
-import it.polimi.se2019.commons.mv_events.SyncEvent;
 import it.polimi.se2019.commons.network.CallbackInterface;
 import it.polimi.se2019.commons.utility.Log;
 
@@ -64,10 +63,10 @@ public class ConnectionRMI implements Connection{
     }
 
     @Override
-    public void reconnect(SyncEvent sync, int roomNumber) {
+    public void reconnect(MVEvent reconnectionEvent, int roomNumber) {
         this.roomNumber = roomNumber;
         disconnected = false;
-        submit(sync);
+        submit(reconnectionEvent);
     }
 
     @Override
@@ -129,6 +128,7 @@ public class ConnectionRMI implements Connection{
                 }
             }catch (RemoteException e){
                 virtualView.disconnect(this);
+
             }catch (InterruptedException e){
                 Log.severe("Interrupted");
                 Thread.currentThread().interrupt();

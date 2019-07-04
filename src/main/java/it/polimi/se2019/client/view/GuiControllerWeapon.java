@@ -1,7 +1,7 @@
 package it.polimi.se2019.client.view;
 
-import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.client.view.ui_events.*;
+import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.commons.vc_events.ChosenEffectEvent;
 import it.polimi.se2019.commons.vc_events.ChosenWeaponEvent;
 import it.polimi.se2019.commons.vc_events.DiscardedWeaponEvent;
@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
@@ -419,4 +420,17 @@ public class GuiControllerWeapon extends GuiController {
         }
     }
 
+    @Override
+    public void dispatch(UiDarken message) {
+        List<ImageView> i = new ArrayList<>();
+        i.add(weaponLeft);
+        i.add(weaponMiddle);
+        i.add(weaponRight);
+        for(ImageView ii: i) {
+            for (Node n : ((Pane) ii.getParent()).getChildren()) {
+                if (n != weaponLeft && n != weaponMiddle && n != weaponRight)
+                    ((ImageView) n).setImage(null);
+            }
+        }
+    }
 }

@@ -24,7 +24,6 @@ public class MatchMakingController extends Controller {
     private AtomicBoolean timerRunning = new AtomicBoolean(false);
     private List<String> usernames = new CopyOnWriteArrayList<>();
     private TickingTimer matchMakingTimer = new TickingTimer(model, this::onTimerEnd);
-    private boolean reconnection = false;
 
     public MatchMakingController(Game model, Server server, int roomNumber){
         super(model, server, roomNumber);
@@ -40,7 +39,7 @@ public class MatchMakingController extends Controller {
             message.handle(this);
         }catch (UnsupportedOperationException e){
             //this is the only controller registered on matchMaking thus it cannot receive unsupported events
-            Log.fine("Received unsupported event in matchMaking" + message);
+            Log.fine("Received unsupported event in matchMaking (room: " + getRoomNumber() + ")" + message);
             //throw new UnsupportedOperationException("MatchMaking controller: " + e.getMessage(), e);
         }
     }
@@ -48,14 +47,9 @@ public class MatchMakingController extends Controller {
     @Override
     public void dispatch(VcJoinEvent message) {
         usernames.add(message.getUsername());
-        model.send(new MvJoinEvent(message.getSource(), message.getUsername()));
         server.addUsername(message.getUsername());
-        if(reconnection){
-            reconnection = false;
-            return;
-        }
-
         playerCount.set(playerCount.addAndGet(1));
+        model.send(new MvJoinEvent(message.getSource(), message.getUsername(), 3 - playerCount.get()));
         Log.info("Players in match making: " + playerCount);
         if (playerCount.get() == 3) {
             Log.fine("Timer started");
@@ -71,13 +65,7 @@ public class MatchMakingController extends Controller {
     @Override
     public void dispatch(DisconnectionEvent disconnectionEvent) {
         try {
-            if(disconnectionEvent.isReconnection()) {
-                usernames.remove(disconnectionEvent.getSource());
-                reconnection = true;
-                return;
-            }
             server.kickPlayer(disconnectionEvent.getSource());
-            model.send(new UsernameDeletionEvent("*", disconnectionEvent.getSource()));
             if (usernames.remove(disconnectionEvent.getSource())) {
 
                 playerCount.set(playerCount.decrementAndGet());
@@ -89,6 +77,7 @@ public class MatchMakingController extends Controller {
                     Log.info("Timer stopped");
                 }
             }
+            model.send(new UsernameDeletionEvent("*", disconnectionEvent.getSource(), 3 -playerCount.get()));
         }catch (IllegalArgumentException e){
             Log.severe(disconnectionEvent.getSource() + " could not be found for removal");
         }
@@ -119,8 +108,8 @@ public class MatchMakingController extends Controller {
         List<String> actualUsernames = new ArrayList<>(usernames);
         actualUsernames.remove("*");
         closeMatchMaking(actualUsernames);
-        new SetUpController(model, server, getRoomNumber());
         this.disable();
+        new SetUpController(model, server, getRoomNumber());
     }
 
     private void closeMatchMaking(List<String> usernames){

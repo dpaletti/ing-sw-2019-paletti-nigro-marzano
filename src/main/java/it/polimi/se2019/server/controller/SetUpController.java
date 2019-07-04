@@ -1,13 +1,15 @@
 package it.polimi.se2019.server.controller;
 
 import it.polimi.se2019.client.view.VCEvent;
-import it.polimi.se2019.commons.mv_events.SetUpEvent;
-import it.polimi.se2019.commons.mv_events.StartFirstTurnEvent;
+import it.polimi.se2019.commons.mv_events.*;
 import it.polimi.se2019.commons.utility.BiSet;
 import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.commons.utility.Pair;
 import it.polimi.se2019.commons.utility.Point;
+import it.polimi.se2019.commons.vc_events.DisconnectionEvent;
+import it.polimi.se2019.commons.vc_events.VcJoinEvent;
 import it.polimi.se2019.commons.vc_events.VcMatchConfigurationEvent;
+import it.polimi.se2019.commons.vc_events.VcReconnectionEvent;
 import it.polimi.se2019.server.model.*;
 import it.polimi.se2019.server.network.Server;
 
@@ -23,6 +25,7 @@ public class SetUpController extends Controller {
 
     public SetUpController(Game model, Server server, int roomNumber) {
         super(model, server, roomNumber);
+
         setUpTimer.startTimer(server.getMatchSetupTimer());
     }
 
@@ -58,7 +61,23 @@ public class SetUpController extends Controller {
 
     }
 
-     void endTimer() {
+    @Override
+    public void dispatch(DisconnectionEvent message) {
+        if(!message.isReconnection())
+            model.send(new PausedPlayerEvent("*", message.getSource()));
+    }
+
+    @Override
+    public void dispatch(VcReconnectionEvent message) {
+        model.send(new UnpausedPlayerEvent("*", message.getUsername()));
+    }
+
+    @Override
+    public void dispatch(VcJoinEvent message) {
+        model.send(new MvJoinEvent("*", message.getUsername(), 0));
+    }
+
+    void endTimer() {
         int skull = 8;
         String config = "Large";
         boolean finalFrenzy = true;

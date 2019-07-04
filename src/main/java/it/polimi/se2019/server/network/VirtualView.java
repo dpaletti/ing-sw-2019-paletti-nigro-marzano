@@ -44,22 +44,31 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     public VirtualView(int matchNumber, Server server){
         this.roomNumber = matchNumber;
         this.server = server;
-        observers = new ArrayList<>();
+        observers = new CopyOnWriteArrayList<>();
     }
 
+    public int getRoomNumber() {
+        return roomNumber;
+    }
 
     public void reconnect(String oldToken, Connection reconnected){
-        if(!biTokenUsername.containsFirst(oldToken))
-            throw new IllegalArgumentException("Trying to reconnect invalid player in room " + roomNumber);
-        connections.remove(getConnectionOnToken(oldToken));
-        connections.add(reconnected);
+        //argument validity guaranteed by caller
+
+        connections.add(reconnected); //re-established connection added
+
         String username = biTokenUsername.getSecond(oldToken);
         biTokenUsername.removeFirst(oldToken);
-        biTokenUsername.add(new Pair<>(reconnected.getToken(), username));
-        reconnected.reconnect(server.sync(roomNumber, biTokenUsername.getSecond(reconnected.getToken()), reconnected.getToken()), roomNumber);
+        biTokenUsername.add(new Pair<>(reconnected.getToken(), username)); //toke-username correspondence updated
+
+        if(!server.isSetUp())
+            reconnected.reconnect(server.sync(roomNumber, biTokenUsername.getSecond(reconnected.getToken()), reconnected.getToken()), roomNumber);
+        else
+            reconnected.reconnect(server.setupSync(biTokenUsername.getSecond(reconnected.getToken()), roomNumber), roomNumber);
+
         Thread t = new Thread(new EventLoop(this, reconnected));
         t.start();
         eventLoops.put(reconnected.getToken(), t);
+
         notify(new VcReconnectionEvent(reconnected.getToken(), oldToken, username));
     }
 
@@ -68,36 +77,58 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     public void disconnect(Connection connection){
         Log.fine("Disconnecting: " + connection.getToken());
         if (biTokenUsername.containsFirst(connection.getToken())) {
-            server.disconnectUsername(biTokenUsername.getSecond(connection.getToken()));
-            notify(new DisconnectionEvent(biTokenUsername.getSecond(connection.getToken()), false));
+
+            String username = biTokenUsername.getSecond(connection.getToken());
+            server.disconnectUsername(username); //telling orchestrator about disconnection
+
+            connection.disconnect(); //disabling connection
+
+            Thread toShutdown = eventLoops.get(connection.getToken()); //ensuring that eventLoop is down
+            if(toShutdown != null && !toShutdown.isInterrupted())
+                toShutdown.interrupt();
+
+            eventLoops.remove(connection.getToken()); //deleting dead eventloop
+
+            connections.remove(connection); //deleting connection from connections
+
+            //keeping entry in biTokenUsername to find the room for eventual reconnection
+
+            notify(new DisconnectionEvent(username, false));
         }
 
         else {
             notify(new DisconnectionEvent(connection.getToken(), false));
             connection.disconnect();
         }
-        eventLoops.get(connection.getToken()).interrupt();
     }
 
-    public void removePlayer(String token){
+    public void removePlayer(String username){
+        //this method avoid re-connections, essentially this is a kick from this room
         try {
-            connections.remove(getConnectionOnToken(token));
-            Log.fine("Interrupting event loop");
-            eventLoops.get(token).interrupt();
-            eventLoops.remove(token);
+            String token = biTokenUsername.getFirst(username);
+
+            if(token == null){
+                Log.fine("Could not remove player: " + username);
+                sem.release();
+                return;
+            }
+
+            biTokenUsername.removeFirst(token);
             sem.release();
         }catch (NullPointerException e){
-            Log.severe("Could not remove unregistered player: " + token);
+            Log.severe("Could not remove unregistered player: " + username);
         }
     }
 
         @Override
         public void dispatch(MvJoinEvent message) {
             if (server.isReconnection(message.getUsername())) {
-                //reconnection case
+                //reconnection case, toReJoin is always not null (guaranteed by the condition above)
+
                 VirtualView toReJoin = server.getPlayerRoomOnId(message.getUsername());
                 String tokenToReJoin = toReJoin.getBiTokenUsername().getFirst(message.getUsername());
                 toReJoin.reconnect(tokenToReJoin, getConnectionOnToken(message.getDestination()));
+                biTokenUsername.add(new Pair<>(message.getDestination(), message.getUsername()));
                 notify(new DisconnectionEvent(message.getUsername(), true));
                 sem.release();
                 return;
@@ -115,16 +146,18 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
         @Override
         public void dispatch(UsernameDeletionEvent message) {
-            server.deleteUsername(message.getUsername());
             submit(new ConnectionBroadcast(connections), message);
             sem.release();
         }
 
-        @Override
-        public void dispatch(SetUpEvent message) {
+
+    @Override
+    public void dispatch(MatchConfigurationEvent message) {
+        if(!message.isReconnection()) {
             server.endMatchMaking();
             submit(getConnectionOnToken(message.getDestination()), message);
         }
+    }
 
     @Override
     public void update(MVEvent message) {
@@ -147,18 +180,26 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
     public void retrieve(Connection connection){
         //VirtualView changes token in usernames while receiving
         //players are identified by usernames
+        try {
+            VCEvent vcEvent = connection.retrieve();
+            if (biTokenUsername.containsFirst(vcEvent.getSource()))
+                vcEvent.setSource(biTokenUsername.getSecond(vcEvent.getSource()));
 
-        VCEvent vcEvent = connection.retrieve();
-        if(biTokenUsername.containsFirst(vcEvent.getSource()))
-            vcEvent.setSource(biTokenUsername.getSecond(vcEvent.getSource()));
-        notify(vcEvent);
+            notify(vcEvent);
+        }catch (NullPointerException e){
+            Log.fine("NullPointer while retrieving on: " + connection);
+        }
     }
 
     private void submit(Connection connection, MVEvent event){
-        if(!(event instanceof TimerEvent)){
-            Log.fine("Submitting: " + event);
+        try {
+            if (!(event instanceof TimerEvent)) {
+                Log.fine("Submitting: " + event);
+            }
+            connection.submit(event);
+        }catch (NullPointerException e){
+            Log.severe("NullPointerException tryinig to submit on: " + connection);
         }
-        connection.submit(event);
     }
 
 

@@ -74,7 +74,6 @@ public class GuiControllerTable extends GuiController {
     private CheckBox frenzyBox;
     private Label title;
     private SimpleStringProperty titleText = new SimpleStringProperty();
-    private int missingPlayers = 3;
     private Label timer;
     private SimpleStringProperty timerText = new SimpleStringProperty();
     //-------------------------------//
@@ -165,20 +164,16 @@ public class GuiControllerTable extends GuiController {
         TableModel t = new TableModel(message.getPlayer(), "0");
         rowTrack.add(t);
         leaderboard.getItems().add(t);
-        int oldMissing = missingPlayers;
-        missingPlayers--;
-        titleText.set(titleText.get().replace(((Integer) oldMissing).toString(), ((Integer) missingPlayers).toString()));
+        titleText.set("Waiting for " +  message.getMissingPlayers() + " more to join match");
     }
 
     @Override
     public void dispatch(UiRemovePlayer message) {
-        int oldMissing;
         for (TableModel t : rowTrack) {
             if (t.getUsername().equals(message.getPlayer())) {
                 rowTrack.remove(t);
                 leaderboard.getItems().remove(t);
-                oldMissing = missingPlayers;
-                missingPlayers++;
+                titleText.set("Waiting for " +  message.getMissingPlayers() + " more to join match");
                 return;
             }
         }
@@ -243,7 +238,7 @@ public class GuiControllerTable extends GuiController {
         timerText.set("");
         timer.textProperty().bind(timerText);
 
-        titleText = new SimpleStringProperty("Waiting for " + missingPlayers + " more to join match");
+        titleText = new SimpleStringProperty("Waiting for " + 3 + " more to join match");
         title.textProperty().bindBidirectional(titleText);
 
         TableColumn username = new TableColumn<>("Username");
@@ -436,7 +431,14 @@ public class GuiControllerTable extends GuiController {
         endTurn.setText("End turn");
         endTurn.setDisable(false);
         endTurn.setOnAction((ActionEvent event) -> {
+            ImageView available;
             ViewGUI.getInstance().send(new UiDarken());
+            for(String combo: availableMoves){
+                available =((ImageView) scene.lookup("#" + combo));
+                available.setImage(null);
+                removeHandlers(available);
+            }
+            availableMoves = new ArrayList<>();
             ViewGUI.getInstance().endTurn();
         });
     }
@@ -480,9 +482,10 @@ public class GuiControllerTable extends GuiController {
             available.setOnMouseClicked((MouseEvent event) -> {
                 ViewGUI.getInstance().send(new ChosenComboEvent(ViewGUI.getInstance().getUsername(), message.getCombo()));
                 for(String s: availableMoves) {
-                    scene.lookup("#" + s).setOnMouseClicked(null);
+                    removeHandlers((ImageView) scene.lookup("#" + s));
                     ((ImageView) scene.lookup("#" + s)).setImage(null);
                 }
+                availableMoves = new ArrayList<>();
             });
         }catch (MalformedURLException e){
             Log.severe("Cannot retrieve rectangle for overlay");
@@ -930,6 +933,12 @@ public class GuiControllerTable extends GuiController {
     @Override
     public void dispatch(UiActivateWeaponEffects message) {
         directionsText.set("Please choose an effect");
+    }
+
+
+    public void dispatch(UiMatchEnd message){
+        directionsText.set("Match is over");
+        ViewGUI.getInstance().send(new UiDarken());
     }
     //----------------------------------------------------------------------------------------------------------------//
 

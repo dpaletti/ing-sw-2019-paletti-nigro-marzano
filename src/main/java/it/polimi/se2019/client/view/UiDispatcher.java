@@ -192,4 +192,10 @@ public interface UiDispatcher extends EventDispatcher {
     default void dispatch(UiUnpausePlayer message){
         throw new UnsupportedOperationException("UiUnpausePlayer not supported");
     }
+    default void dispatch(UiActivatePowerup message){
+        throw new UnsupportedOperationException("UiActivatePowerup not supported");
+    }
+    default void dispatch(UiMatchEnd message){
+        throw new UnsupportedOperationException("UiMatchEnd not supported");
+    }
 }

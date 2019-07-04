@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
+import static java.lang.Math.max;
+
 
 //TODO red skulls and disabled skulls
 //TODO ask first player about preferred skull number
@@ -132,7 +134,7 @@ public class ViewGUI extends View {
         mapConfigSetup(configs);
         for (String username:
                 usernames) {
-            addPlayer(username);
+            addPlayer(username, max(0, 3 - usernames.size()));
         }
         Log.fine("MatchMaking showing ended");
 
@@ -143,20 +145,24 @@ public class ViewGUI extends View {
     }
 
     @Override
-    public void addPlayer(String username) {
+    public void addPlayer(String username,int missingPlayers ) {
         Log.fine("notifying add player");
-        notify(new UiAddPlayer(username));
+        notify(new UiAddPlayer(username, max(0, missingPlayers)));
     }
 
     @Override
     public synchronized void dispatch(MatchConfigurationEvent message)
     {
+        if(message.isReconnection())
+            matchMaking(message.getConnectedPlayers(), message.getConfigurations());
+
         notify(new UiCloseMatchMaking());
     }
 
     @Override
     public void dispatch(UsernameDeletionEvent message) {
-        notify(new UiRemovePlayer(message.getUsername()));
+        if(!message.getUsername().equals(client.getUsername()))
+            notify(new UiRemovePlayer(message.getUsername(), message.getMissingPlayers()));
     }
 
     //------------------------------------------------//
@@ -183,6 +189,10 @@ public class ViewGUI extends View {
 
     public void gameSetup(int skulls, boolean frenzy, String conf){
         String actualConf = conf.substring(0, 1).toUpperCase() + conf.substring(1);
+        if(actualConf.contains("left"))
+            actualConf = actualConf.replace("left", "Left");
+        else if(actualConf.contains("right"))
+            actualConf = actualConf.replace("right", "Right");
         notify(new VcMatchConfigurationEvent(client.getUsername(), skulls, frenzy, actualConf));
 
     }
@@ -242,6 +252,14 @@ public class ViewGUI extends View {
     }
 
     @Override
+    public void dispatch(EndOfMatchEvent message){
+        for(String username: message.getFinalPoints().keySet())
+            notify(new UiPointsEvent(username, message.getFinalPoints().get(username)));
+        notify(new UiDarken());
+        notify(new UiMatchEnd());
+    }
+
+    @Override
     public synchronized void dispatch(SyncEvent message) {
         pointColorSpawnMap = message.getPointColorSpawnMap();
 
@@ -259,7 +277,7 @@ public class ViewGUI extends View {
         for(String username: message.getUsernames()){
 
             if(!username.equals(client.getUsername()))
-                notify(new UiAddPlayer(username));
+                notify(new UiAddPlayer(username, 0));
 
             for(String hit: message.getHp().get(username))
                 dispatch(new UpdateHpEvent(client.getUsername(), username, hit));
@@ -442,7 +460,11 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(PossibleEffectsEvent message) {
-        notify(new UiActivateWeaponEffects(message.getName(), message.getEffects()));
+        if(message.isWeapon())
+            notify(new UiActivateWeaponEffects(message.getName(), message.getEffects()));
+        else
+            notify(new UiActivatePowerup(message.getName()));
+
     }
 
     @Override

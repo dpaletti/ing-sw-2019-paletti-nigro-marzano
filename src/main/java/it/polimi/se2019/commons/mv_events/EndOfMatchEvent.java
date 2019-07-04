@@ -14,6 +14,10 @@ public class EndOfMatchEvent extends MVEvent {
         this.finalPoints = new HashMap<>(finalPoints);
     }
 
+    public HashMap<String, Integer> getFinalPoints() {
+        return finalPoints;
+    }
+
     @Override
     public void handle(MVEventDispatcher dispatcher) {
         dispatcher.dispatch(this);

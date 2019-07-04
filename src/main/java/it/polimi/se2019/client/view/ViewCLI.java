@@ -18,7 +18,7 @@ public class ViewCLI extends View {
     }
 
     @Override
-    public void addPlayer(String username) {
+    public void addPlayer(String username, int missingPlayers) {
 
     }
 

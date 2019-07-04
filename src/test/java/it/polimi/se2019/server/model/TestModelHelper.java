@@ -19,7 +19,7 @@ public class TestModelHelper extends View {
     }
 
     @Override
-    public void addPlayer(String username) {
+    public void addPlayer(String username, int missingPlayers) {
         throw new UnsupportedOperationException("NotSupported");
     }
 

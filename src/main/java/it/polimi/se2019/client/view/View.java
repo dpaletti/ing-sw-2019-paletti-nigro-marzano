@@ -23,7 +23,7 @@ public abstract class View extends Observable<Event> implements Observer<MVEvent
     }
 
     public abstract void matchMaking(List<String> usernames, List<String> configs);
-    public abstract void addPlayer(String username);
+    public abstract void addPlayer(String username, int missingPlayers);
 
     @Override
     public void dispatch(SetUpEvent message) {
@@ -36,7 +36,7 @@ public abstract class View extends Observable<Event> implements Observer<MVEvent
 
     @Override
     public void dispatch(MvJoinEvent message) {
-        addPlayer(message.getUsername());
+        addPlayer(message.getUsername(), message.getMissingPlayers());
     }
 
     @Override

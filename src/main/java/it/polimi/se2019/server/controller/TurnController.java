@@ -204,16 +204,6 @@ public class TurnController extends Controller {
     }
 
     @Override
-    public void dispatch(DisconnectionEvent message) {
-        model.pausePlayer(message.getSource());
-    }
-
-    @Override
-    public void dispatch(VcReconnectionEvent message) {
-        model.unpausePlayer(message.getUsername());
-    }
-
-    @Override
     public void dispatch(DiscardedPowerUpEvent message) {
         model.userToPlayer(message.getSource()).discardPowerUp(message.getDiscardedPowerUp());
     }

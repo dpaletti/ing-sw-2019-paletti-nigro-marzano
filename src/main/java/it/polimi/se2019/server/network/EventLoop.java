@@ -19,6 +19,7 @@ public class EventLoop implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted())
                 virtualView.retrieve(connection);
+            Log.fine("EventLoop for room: " + virtualView.getRoomNumber() + "and" + connection + "dying");
         } catch (NoSuchElementException e) {
             virtualView.disconnect(connection);
         } catch (IndexOutOfBoundsException e){

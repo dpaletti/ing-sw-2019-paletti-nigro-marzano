@@ -3,7 +3,6 @@ package it.polimi.se2019.server.network;
 
 import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.client.view.VCEvent;
-import it.polimi.se2019.commons.mv_events.SyncEvent;
 import it.polimi.se2019.commons.utility.JsonHandler;
 import it.polimi.se2019.commons.utility.Log;
 
@@ -31,9 +30,9 @@ public class ConnectionSocket implements Connection{
     }
 
     @Override
-    public void reconnect(SyncEvent sync, int roomNumber) {
+    public void reconnect(MVEvent reconnectionEvent, int roomNumber) {
         disconnected = false;
-        submit(sync);
+        submit(reconnectionEvent);
     }
 
     @Override

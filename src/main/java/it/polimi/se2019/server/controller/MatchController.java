@@ -49,7 +49,7 @@ public class MatchController extends Controller {
 
     @Override
     public void dispatch(VcJoinEvent message) {
-        model.send(new MvJoinEvent("*", message.getUsername()));
+        model.send(new MvJoinEvent("*", message.getUsername(), 0));
     }
 }
 
