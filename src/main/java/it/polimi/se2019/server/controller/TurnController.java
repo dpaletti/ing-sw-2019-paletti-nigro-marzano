@@ -63,6 +63,14 @@ public class TurnController extends Controller {
     }
 
     @Override
+    public void dispatch(DisconnectionEvent message) {
+        if(message.getSource().equals(currentPlayer))
+            //Turn controller only manages disconnection logic for middle-turn disconnections
+
+            dispatch(new VCEndOfTurnEvent(message.getSource()));
+    }
+
+    @Override
     public void dispatch(SpawnEvent message) {
         boolean isRespawn = false;
         spawning = false;

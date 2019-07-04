@@ -14,11 +14,9 @@ import java.util.List;
 
 
 public class MatchController extends Controller {
-    private List<String> activeUsernames;
 
     public MatchController(Game model, Server server, List<String> usernames, int roomNumber){
         super(model, server, roomNumber);
-        this.activeUsernames = usernames;
     }
 
 

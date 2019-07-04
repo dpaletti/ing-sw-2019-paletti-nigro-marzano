@@ -518,12 +518,16 @@ public class GuiControllerBoard extends GuiController {
 
     @Override
     public void dispatch(UiDarken message) {
-        for(ImageView i: highlightedTiles)
-            i.setImage(null);
-        highlightedTiles = new ArrayList<>();
-        for(Map.Entry<String, ImageView> i: highlightedFigures.entrySet())
-            i.getValue().setImage(null);
-        highlightedFigures = new HashMap<>();
+        try {
+            for (ImageView i : highlightedTiles)
+                i.setImage(null);
+            highlightedTiles = new ArrayList<>();
+            for (Map.Entry<String, ImageView> i : highlightedFigures.entrySet())
+                i.getValue().setImage(null);
+            highlightedFigures = new HashMap<>();
+        }catch (NullPointerException e){
+            Log.severe("Could not darken null Imageview on board: ");
+        }
     }
 
     //----------------------------------------------------------------------------------------------------------------//

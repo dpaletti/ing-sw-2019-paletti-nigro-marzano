@@ -44,6 +44,8 @@ public class GuiControllerPowerUp extends GuiController {
 
     private List<String> soldPowerups = new ArrayList<>();
 
+    private ImageView current;
+
     @Override
     public void dispatch(UiPutPowerUp message) {
         try {
@@ -332,9 +334,15 @@ public class GuiControllerPowerUp extends GuiController {
         String position = getPositionOnPowerUp(message.getToActivate());
         activatePowerup(position, message.getToActivate()).setOnMouseClicked((MouseEvent event) -> {
             ViewGUI.getInstance().send(new ChosenEffectPowerUpEvent(ViewGUI.getInstance().getUsername(), "effect", message.getToActivate()));
+            current = ((ImageView) event.getSource());
             ((ImageView) event.getSource()).setImage(null);
             removeHandlers((ImageView) event.getSource());
         });
     }
 
+    @Override
+    public void dispatch(UiPowerUpEnd message) {
+        current.setImage(null);
+        removeHandlers(current);
+    }
 }

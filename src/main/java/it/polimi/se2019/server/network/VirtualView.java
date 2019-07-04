@@ -58,7 +58,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
         String username = biTokenUsername.getSecond(oldToken);
         biTokenUsername.removeFirst(oldToken);
-        biTokenUsername.add(new Pair<>(reconnected.getToken(), username)); //toke-username correspondence updated
+        biTokenUsername.add(new Pair<>(reconnected.getToken(), username)); //token-username correspondence updated
 
         if(!server.isSetUp())
             reconnected.reconnect(server.sync(roomNumber, biTokenUsername.getSecond(reconnected.getToken()), reconnected.getToken()), roomNumber);
@@ -76,6 +76,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
     public void disconnect(Connection connection){
         Log.fine("Disconnecting: " + connection.getToken());
+        sem.release();
         if (biTokenUsername.containsFirst(connection.getToken())) {
 
             String username = biTokenUsername.getSecond(connection.getToken());
@@ -125,8 +126,10 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             if (server.isReconnection(message.getUsername())) {
                 //reconnection case, toReJoin is always not null (guaranteed by the condition above)
 
-                VirtualView toReJoin = server.getPlayerRoomOnId(message.getUsername());
-                String tokenToReJoin = toReJoin.getBiTokenUsername().getFirst(message.getUsername());
+                VirtualView toReJoin = server.getPlayerRoomOnId(message.getUsername()); // getting room to join
+
+                String tokenToReJoin = toReJoin.getBiTokenUsername().getFirst(message.getUsername()); //getting oldToken (old spot in biTokenUser)
+
                 toReJoin.reconnect(tokenToReJoin, getConnectionOnToken(message.getDestination()));
                 biTokenUsername.add(new Pair<>(message.getDestination(), message.getUsername()));
                 notify(new DisconnectionEvent(message.getUsername(), true));
@@ -187,7 +190,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
             notify(vcEvent);
         }catch (NullPointerException e){
-            Log.fine("NullPointer while retrieving on: " + connection);
+            Log.fine("NullPointer while retrieving on: " + connection );
         }
     }
 
@@ -198,7 +201,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             }
             connection.submit(event);
         }catch (NullPointerException e){
-            Log.severe("NullPointerException tryinig to submit on: " + connection);
+            Log.severe("NullPointerException tryinig to submit on: " + connection + " in room " + roomNumber);
         }
     }
 

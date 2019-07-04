@@ -23,8 +23,8 @@ public class EventLoop implements Runnable {
         } catch (NoSuchElementException e) {
             virtualView.disconnect(connection);
         } catch (IndexOutOfBoundsException e){
-            Log.severe("Sync problem");
-            run();
+            Log.severe("IndexOutOfBound in room: " + virtualView.getRoomNumber() + " on Connection: " + connection + " " + e.getMessage());
+            //run();
         }
     }
 }

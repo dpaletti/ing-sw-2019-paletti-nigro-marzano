@@ -65,7 +65,7 @@ public class MatchMakingController extends Controller {
     @Override
     public void dispatch(DisconnectionEvent disconnectionEvent) {
         try {
-            server.kickPlayer(disconnectionEvent.getSource());
+            server.kickPlayer(disconnectionEvent.getSource(), disconnectionEvent.isReconnection());
             if (usernames.remove(disconnectionEvent.getSource())) {
 
                 playerCount.set(playerCount.decrementAndGet());

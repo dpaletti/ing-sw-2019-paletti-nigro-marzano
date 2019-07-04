@@ -927,12 +927,17 @@ public class GuiControllerTable extends GuiController {
     @Override
     public void dispatch(UiPowerUpEnd message) {
         buttonSetup();
-        directionsText.set("PowerUp is over");
+        directionsText.set(oldDirections);
     }
 
     @Override
     public void dispatch(UiActivateWeaponEffects message) {
         directionsText.set("Please choose an effect");
+    }
+
+    @Override
+    public void dispatch(UiActivatePowerup message) {
+        oldDirections = directionsText.get();
     }
 
 

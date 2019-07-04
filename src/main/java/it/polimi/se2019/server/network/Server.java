@@ -34,7 +34,6 @@ public class Server implements ServerInterface {
     private int roomNumber = -1;
     private List<String> usernames = new ArrayList<>();
     private List<String> activeUsernames = new ArrayList<>();
-    private List<String> possiblyReconnectingUsernames = new ArrayList<>();
     private List<String> tokens = new ArrayList<>();
     private Properties properties = new Properties();
 
@@ -149,9 +148,9 @@ public class Server implements ServerInterface {
         rooms.get(roomNumber).deregister(controller);
     }
 
-    public void kickPlayer(String toKick) {
+    public void kickPlayer(String toKick, boolean isReconnection) {
         VirtualView room = getPlayerRoomOnId(toKick);
-        if(activeUsernames.contains(toKick) || !usernames.contains(toKick)) {
+        if(!isReconnection) {
             //player disconnected in match making
             usernames.remove(toKick);
             activeUsernames.remove(toKick);
@@ -173,14 +172,14 @@ public class Server implements ServerInterface {
                     break;
                 }
             }
-            if(!found)
+            if(!found) {
+                Log.severe("Could not find: " + toKick + " in a room other than " + room.getRoomNumber() + " (the one in which reconnection is happening)");
                 return;
+            }
         }
 
         if(room!=null)
             room.removePlayer(toKick);
-        else
-            throw new IllegalArgumentException("Kick is impossible, player to kick cannot be found");
     }
 
     public synchronized MatchConfigurationEvent setupSync(String usernameReconnecting, int roomNumber) {
