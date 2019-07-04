@@ -23,6 +23,7 @@ public class CardController extends Controller {
     protected List<String> previousTargets = new ArrayList<>();
 
 
+
     public CardController(Game model, Server server, int roomNumber) {
         super(model, server, roomNumber);
     }
@@ -293,12 +294,12 @@ public class CardController extends Controller {
     }
 
 
-    protected void handlePartial (PartialWeaponEffect partial){
+    protected void handlePartial (PartialWeaponEffect partial,boolean isWeapon){
         List<Targetable> targets = generateTargetSet(partial, currentPlayer);
         if (partial.getTargetSpecification().getTile())
-            model.send(new PartialSelectionEvent(targetableToTile(targets), model.playerToUser(currentPlayer), partial.isEndable()));
+            model.send(new PartialSelectionEvent(targetableToTile(targets), model.playerToUser(currentPlayer), partial.isEndable(),isWeapon));
         else
-            model.send(new PartialSelectionEvent(model.playerToUser(currentPlayer), targetableToPlayer(targets), partial.isEndable()));
+            model.send(new PartialSelectionEvent(model.playerToUser(currentPlayer), targetableToPlayer(targets), partial.isEndable(),isWeapon));
     }
 
 
@@ -317,13 +318,12 @@ public class CardController extends Controller {
         return players;
     }
 
-    protected void handleEffect (){
-        //STOP HERE PORCODIOOOOOOOOOOOOO
+    protected void handleEffect (boolean isWeapon){
         currentPlayer.useAmmos(weaponEffect.getPrice());
         layersVisitedPartial = layersVisitedPartial + 1;
         currentLayer= weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
         partialGraphLayer++;
-        handlePartial(currentLayer.get(partialGraphLayer).getKey());
+        handlePartial(currentLayer.get(partialGraphLayer).getKey(),isWeapon);
     }
 
     protected void nextWeaponEffect (boolean isWeapon){

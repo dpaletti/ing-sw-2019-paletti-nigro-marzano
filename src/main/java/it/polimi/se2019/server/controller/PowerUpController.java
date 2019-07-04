@@ -71,9 +71,7 @@ public class PowerUpController extends CardController {
 
     @Override
     public void dispatch(ChosenEffectPowerUpEvent message) {
-        GraphWeaponEffect weaponEffect = null;
-
-        for (GraphNode<GraphWeaponEffect> w: model.nameToWeapon(message.getPowerUp()).getDefinition()) {
+        for (GraphNode<GraphWeaponEffect> w: model.nameToPowerUp(message.getPowerUp()).getDefinition()) {
             if(w.getKey().getName().equals(message.getEffectName())) {
                 weaponEffect = w.getKey();
                 break;
@@ -82,11 +80,13 @@ public class PowerUpController extends CardController {
         if(weaponEffect == null)
             throw new NullPointerException("Could not find " + message.getEffectName() + " in " + message.getPowerUp());
 
-        handleEffect();
+        handleEffect(false);
     }
 
     @Override
     public void dispatch(VCPartialEffectEvent message) {
+        if (message.isWeapon())
+            return;
         if (current == null)
             return;
         if (message.isSkip()){
@@ -95,7 +95,7 @@ public class PowerUpController extends CardController {
                 model.send(new MVCardEndEvent(message.getSource(), false));
             }
             else
-                handlePartial(currentLayer.get(partialGraphLayer).getKey());
+                handlePartial(currentLayer.get(partialGraphLayer).getKey(),false);
         }
 
         else {
@@ -122,7 +122,7 @@ public class PowerUpController extends CardController {
             }
             else {
                 partialGraphLayer = 0;
-                handlePartial(currentLayer.get(partialGraphLayer).getKey());
+                handlePartial(currentLayer.get(partialGraphLayer).getKey(),false);
             }
         }
     }

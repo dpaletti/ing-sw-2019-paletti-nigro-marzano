@@ -3,11 +3,7 @@
     "cardColour": {
 		"colour": "BLUE"
 	},
-	"price": [
-		{
-			"colour": "BLUE"
-		}
-	],
+	"price": [],
 	"weaponEffects": [
 		{
 			"name": "effect",
@@ -33,7 +29,7 @@
                             "first": -1,
                             "second": -1
                         },
-                        "visible": 0,
+                        "visible": 1,
                         "enlarge": 0,
                         "area": false
                     },
@@ -44,67 +40,6 @@
                        }
                     ],
                     "name": "B1",
-					"endable": false,
-					"invalidEffects": []
-				},
-				{
-					
-					"priority": 3,
-					"targetSpecification":{
-						"tile":false,
-						"different":{
-							"first": false,
-							"second": []
-						},
-						"previous":{
-							"first": false,
-							"second": []
-						},
-						 "radiusBetween": {
-                            "first": -1,
-                            "second": -1
-                        },
-                        "visible": 0,
-                        "enlarge": 0,
-                        "area": false
-                    },
-                    "actions": [
-                       {
-                           "actionType": "DAMAGE",
-                           "value": 1
-                       }
-                    ],
-                    "name": "B2",
-					"endable": false,
-					"invalidEffects": []
-				},
-				{
-					"priority": 3,
-					"targetSpecification":{
-						"tile":false,
-						"different":{
-							"first": false,
-							"second": []
-						},
-						"previous":{
-							"first": false,
-							"second": []
-						},
-						 "radiusBetween": {
-                            "first": -1,
-                            "second": -1
-                        },
-                        "visible": 0,
-                        "enlarge": 0,
-                        "area": false
-                    },
-                    "actions": [
-                       {
-                           "actionType": "DAMAGE",
-                           "value": 1
-                       }
-                    ],
-                    "name": "B3",
 					"endable": false,
 					"invalidEffects": []
 				}

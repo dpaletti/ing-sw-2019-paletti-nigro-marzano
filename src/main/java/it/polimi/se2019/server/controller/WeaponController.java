@@ -65,11 +65,13 @@ public class WeaponController extends CardController {
         if (weaponEffect == null)
             throw new NullPointerException("Could not find " + message.getEffectName() + " in " + message.getWeapon());
 
-        handleEffect();
+        handleEffect(true);
     }
 
     @Override
     public void dispatch(VCPartialEffectEvent message) {
+        if (!message.isWeapon())
+            return;
         for (String s : previousTargets)
             disablePowerUps(s, "onDamage");
         previousTargets.clear();
@@ -78,13 +80,16 @@ public class WeaponController extends CardController {
             if (partialGraphLayer == currentLayer.size())
                 endUsage(true);
             else
-                handlePartial(currentLayer.get(partialGraphLayer).getKey());
+                handlePartial(currentLayer.get(partialGraphLayer).getKey(),true);
         } else {
             if (message.getTargetPlayer() != null) {
                 List<Targetable> targetables = new ArrayList<>(Arrays.asList(model.userToPlayer(message.getTargetPlayer())));
-                model.apply(model.playerToUser(currentPlayer),
-                        new ArrayList<>(Arrays.asList(model.userToPlayer(message.getTargetPlayer()))),
-                        currentLayer.get(partialGraphLayer).getKey());
+                String username=model.playerToUser(currentPlayer);
+                Player target=model.userToPlayer(message.getTargetPlayer());
+                PartialWeaponEffect partialWeaponEffect= currentLayer.get(partialGraphLayer).getKey();
+                model.apply(username,
+                        new ArrayList<>(Arrays.asList(target)),
+                        partialWeaponEffect);
                 usablePowerUps(new ArrayList<>(Arrays.asList(message.getTargetPlayer())));
                 previousTargets.add(message.getTargetPlayer());
                 model.getTurnMemory().hit(currentLayer.get(partialGraphLayer).getKey().getName(),
@@ -122,7 +127,7 @@ public class WeaponController extends CardController {
             }
             else {
                 partialGraphLayer = 0;
-                handlePartial(currentLayer.get(partialGraphLayer).getKey());
+                handlePartial(currentLayer.get(partialGraphLayer).getKey(),true);
             }
         }
     }

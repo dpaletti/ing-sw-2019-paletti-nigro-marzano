@@ -12,7 +12,7 @@ public abstract class JsonHelper {
             if(j.getName().equalsIgnoreCase(name))
                 return j;
         }
-        throw new NullPointerException("Not found");
+        throw new NullPointerException("Not found: " +name);
     }
 
     public Set<Jsonable> getAll(){

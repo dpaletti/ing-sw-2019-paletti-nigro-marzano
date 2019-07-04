@@ -8,6 +8,7 @@ public class VCPartialEffectEvent extends VCEvent {
     private boolean skip;
     private String targetPlayer;
     private Point targetTile;
+    private boolean isWeapon;
 
 
     public VCPartialEffectEvent(String source) {
@@ -29,6 +30,10 @@ public class VCPartialEffectEvent extends VCEvent {
 
     public boolean isSkip() {
         return skip;
+    }
+
+    public boolean isWeapon() {
+        return isWeapon;
     }
 
     @Override

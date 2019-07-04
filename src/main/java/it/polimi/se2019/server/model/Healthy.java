@@ -15,7 +15,7 @@ public class Healthy extends PlayerDamage {
     }
 
     @Override
-    public Integer getMaximumHits() { return 2; }
+    public Integer getMaximumHits() { return 3; }
 
     @Override
     public PlayerDamage findNextHealthState() {

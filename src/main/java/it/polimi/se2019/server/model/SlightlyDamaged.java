@@ -15,7 +15,7 @@ public class SlightlyDamaged extends PlayerDamage {
     }
 
     @Override
-    public Integer getMaximumHits() { return 5; }
+    public Integer getMaximumHits() { return 6; }
 
     @Override
     public PlayerDamage findNextHealthState() {

@@ -3,7 +3,6 @@
   "name":"DamagedMoveShoot",
   "partialCombos":[
     "MOVE",
-    "MOVE",
-    "GRAB"
+    "SHOOT"
   ]
 }

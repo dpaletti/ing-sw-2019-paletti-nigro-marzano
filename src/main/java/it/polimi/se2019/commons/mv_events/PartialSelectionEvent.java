@@ -13,17 +13,20 @@ public class PartialSelectionEvent extends MVEvent {
     private ArrayList<String> targetPlayers;
     private ArrayList<Point> targetTiles;
     private boolean isSkippable;
+    private boolean isWeapon;
 
-    public PartialSelectionEvent(String destination, List<String> targetPlayers, boolean isSkippable) {
+    public PartialSelectionEvent(String destination, List<String> targetPlayers, boolean isSkippable,boolean isWeapon) {
         super(destination);
         this.targetPlayers = new ArrayList<>(targetPlayers);
         this.isSkippable = isSkippable;
+        this.isWeapon= isWeapon;
     }
 
-    public PartialSelectionEvent(List<Point> targetTiles, String destination, boolean isSkippable) {
+    public PartialSelectionEvent(List<Point> targetTiles, String destination, boolean isSkippable,boolean isWeapon) {
         super(destination);
         this.targetTiles = new ArrayList<>(targetTiles);
         this.isSkippable = isSkippable;
+        this.isWeapon=isWeapon;
     }
 
     public List<String> getTargetPlayers() {
@@ -36,6 +39,10 @@ public class PartialSelectionEvent extends MVEvent {
 
     public boolean isSkippable() {
         return isSkippable;
+    }
+
+    public boolean isWeapon() {
+        return isWeapon;
     }
 
     @Override

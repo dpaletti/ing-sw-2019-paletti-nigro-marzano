@@ -29,7 +29,7 @@
                             "first": -1,
                             "second": -1
                         },
-                        "visible": 0,
+                        "visible": -1,
                         "enlarge": 0,
                         "area": false
                     },

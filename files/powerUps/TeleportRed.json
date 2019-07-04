@@ -29,7 +29,7 @@
                             "first": 0,
                             "second": 0
                         },
-                        "visible": 0,
+                        "visible": -1,
                         "enlarge": 0,
                         "area": false
                     },
@@ -40,7 +40,7 @@
                        }
                     ],
                     "name": "B",
-					"endable": false,
+					"endable": true,
 					"invalidEffects": []
 				}
 			]

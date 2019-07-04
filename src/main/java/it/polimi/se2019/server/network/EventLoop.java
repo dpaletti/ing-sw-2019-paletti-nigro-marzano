@@ -24,6 +24,7 @@ public class EventLoop implements Runnable {
             virtualView.disconnect(connection);
         } catch (IndexOutOfBoundsException e){
             Log.severe("Sync problem");
+            run();
         }
     }
 }
