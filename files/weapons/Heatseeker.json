@@ -42,7 +42,7 @@
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 3,
+                            "value": 11,
                             "area": false
                         }
                     ],

@@ -260,7 +260,7 @@ public class Player implements Targetable{
     }
 
     void updatePlayerDamage (){
-        if (hp.size()>=10) {
+        if (hp.size()>10) {
             updatePointsToAssign();
             game.deathHandler(this);
             return;

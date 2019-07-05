@@ -445,7 +445,6 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(MVRespawnEvent message){
-        respawning = true;
         notify(new UiPutPowerUp(message.getDrawnPowerUpName()));
         notify(new UiRespawnEvent());
     }

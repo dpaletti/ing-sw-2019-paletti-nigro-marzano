@@ -50,7 +50,7 @@ public class GuiControllerBoard extends GuiController {
     private Map<Point, String> lootsOnTile;
     private Map<String, String> fromPositionToWeapon = new HashMap<>(); //given the id of the slot one can get the weapon that sits there
     private Map<String, ImageView> highlightedFigures = new HashMap<>(); //given the name of a figure one can get the weapon
-
+    private Map<Integer, ImageView> skullMap = new HashMap<>();
 
     //--------------------------------------------Initialization---------------------------------------------//
     @Override
@@ -558,6 +558,12 @@ public class GuiControllerBoard extends GuiController {
                 else
                     throw new IllegalArgumentException("Could not find colour: " + message.getColour() + " while setting colour for drops on skulls");
             }
+
+
+            skullMap.get(skullToAdd).setImage(null);
+            boardSkull.add(pane, skullToAdd, 0);
+            skullToAdd++;
+
         }catch (MalformedURLException e){
             Log.severe("Could not retrieve fxml to put on skull board");
         }catch (IOException e){

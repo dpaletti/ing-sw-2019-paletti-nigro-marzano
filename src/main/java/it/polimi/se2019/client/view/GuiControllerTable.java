@@ -463,6 +463,11 @@ public class GuiControllerTable extends GuiController {
         dispatch(new UiSpawn());
     }
 
+    @Override
+    public void dispatch(UiHpReset message) {
+        resetHp();
+    }
+
     public void dispatch(UiStartTurn message){
         endTurn.setDisable(false);
     }
