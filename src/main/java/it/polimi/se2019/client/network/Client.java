@@ -10,7 +10,11 @@ import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.*;
 
-
+/**
+ * Orchestrator class for client-side logic manages client startup and minor internal communications
+ * among View and NetworkHandler.
+ *
+ */
 public class Client {
     private NetworkHandler networkHandler;
     private View view;
@@ -20,7 +24,9 @@ public class Client {
     private String username;
     private String token;
 
-
+    /**
+     * Constructor
+     */
     public Client() {
         initializePropertiesAndPreferences();
         viewInitialization();
@@ -64,24 +70,27 @@ public class Client {
         return properties.getProperty("SERVER_NAME");
     }
 
+    /**
+     * This methods opens a new session by setting the connection token received from server and guarantees
+     * that username do not repeat
+     * @param token connection token received through HandshakeEndEvent
+     * @param roomUsernames usernames of other players in the same room
+     * @param allUsernames usernames from all rooms currently active on the server
+     * @param configs Map configs for UI startup
+     */
     public void openSession(String token, List<String> roomUsernames, List<String> allUsernames, List<String> configs) {
         mapConfigs = configs;
         networkHandler.setToken(token);
         view.matchMaking(usernameSelection(allUsernames, roomUsernames), configs);
     }
 
-    public void connectionRefused(String cause) {
-        Log.input("Connection refused: " + cause
-                + ". Do you want to connect to a new session? (yes/no): [default = yes]");
-        if (in.nextLine().equals("no")) {
-            Log.info("Goodbye!");
-            System.exit(0);
-        } else {
-            networkHandler.stopListening();
-            main(new String[]{"a", "b", "c"});
-        }
-    }
 
+    /**
+     * Username selection method that guarantees that username do not repeat
+     * @param allUsernames usernames from all rooms currently active on the server
+     * @param roomUsernames usernames of other players in the same room
+     * @return all usernames, including the one just chosen, in the room
+     */
     private List<String> usernameSelection(List<String> allUsernames, List<String> roomUsernames) {
         String localUsername;
         if (!isTesting()) {
@@ -115,15 +124,26 @@ public class Client {
     }
 
 
-
+    /**
+     * UI initialization
+     */
     public void viewInitialization() {
         view = getUiMode().createView(this);
     }
 
+
+    /**
+     * Network Handler initialization
+     * @param view view that the network handler is going to be talking to
+     */
     public void networkInitialization(View view) {
         //Ip and port are always given for it.polimi.se2019.client.network handling, they are ignored if connection mode is RMI
         networkHandler = getConnectionMode().createNetworkHandler(this, getServerIP(), getServerPort(), view);
     }
+
+    /**
+     * client.properties file loading
+     */
 
     public void initializePropertiesAndPreferences() {
         try {
@@ -133,6 +153,8 @@ public class Client {
         }
     }
 
+
+    
     public void setNetworkHandler(NetworkHandler networkHandler) {
         this.networkHandler = networkHandler;
     }

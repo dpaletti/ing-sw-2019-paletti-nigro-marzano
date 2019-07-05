@@ -69,11 +69,25 @@ public class TurnController extends Controller {
     }
 
     @Override
-    public void dispatch(DisconnectionEvent message) {
-        if(message.getSource().equals(currentPlayer))
-            //Turn controller only manages disconnection logic for middle-turn disconnections
+    public void dispatch(VCFinalFrenzy message) {
+        comboUsed=-1;
+        comboIndex=0;
+        currentCombo=null;
+        nextCombo();
+    }
 
-            dispatch(new VCEndOfTurnEvent(message.getSource()));
+    @Override
+    public void dispatch(DisconnectionEvent message) {
+        model.pausePlayer(message.getSource());
+        if (message.getSource().equals(currentPlayer))
+        //Turn controller only manages disconnection logic for middle-turn disconnections
+            endTurn();
+    }
+
+    @Override
+    public void dispatch(VcReconnectionEvent message) {
+        Log.fine("Handling " + message);
+        model.unpausePlayer(message.getUsername());
     }
 
     @Override
@@ -168,11 +182,6 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(VCEndOfTurnEvent message) {
-        if (finalFrenzyTurn) {
-            frenzyTurnCounter++;
-            if (frenzyTurnCounter == model.getPlayers().size())
-                return;
-        }
         turnTimer.endTimer();
     }
 
@@ -203,6 +212,10 @@ public class TurnController extends Controller {
                 if (comboUsed == 1) {
                     model.unloadedWeapons(currentPlayer);
                     return;
+                }else{
+                    model.send(new TurnEvent(currentPlayer, fromPartialToStringCombo(getAllowedMoves())));
+                    model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
+                    return;
                 }
             }
         }
@@ -225,13 +238,6 @@ public class TurnController extends Controller {
             comboIndex = 0;
             nextCombo();
         }
-    }
-
-    private Set<PartialCombo> getSetCombo(){
-        Set<PartialCombo> partials= new HashSet<>();
-        for(int j = comboIndex; j < currentCombo.getPartialCombos().size(); j++)
-            partials.add(currentCombo.getPartialCombos().get(comboIndex));
-        return partials;
     }
 
     @Override
@@ -380,5 +386,9 @@ public class TurnController extends Controller {
 
     public void setFinalFrenzyTurn(boolean finalFrenzyTurn) {
         this.finalFrenzyTurn = finalFrenzyTurn;
+    }
+
+    public void setSpawning(boolean spawning) {
+        this.spawning = spawning;
     }
 }

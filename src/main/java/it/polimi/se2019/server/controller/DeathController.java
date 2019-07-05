@@ -1,6 +1,7 @@
 package it.polimi.se2019.server.controller;
 
 import it.polimi.se2019.client.view.VCEvent;
+import it.polimi.se2019.commons.mv_events.EndOfMatchEvent;
 import it.polimi.se2019.commons.mv_events.MVMoveEvent;
 import it.polimi.se2019.commons.utility.JsonHandler;
 import it.polimi.se2019.commons.utility.Log;
@@ -75,12 +76,15 @@ public class DeathController extends AbstractDeathController{
 
     @Override
     public void dispatch(VCEndOfTurnEvent message) {
-        counter++;
-        if (lastTurn && counter == model.getPlayers().size()) {
-            if (model.isFinalFrenzy()) {
-                finalFrenzyPointCalculation(message.getSource());
+        if (lastTurn) {
+            counter++;
+            if (counter == model.getPlayers().size()) {
+                if (model.isFinalFrenzy()) {
+                    finalFrenzyPointCalculation(message.getSource());
+                }
+                winnerPointCalculation(model.getKillshotTrack().getKillshot());
+                endOfMatch();
             }
-            winnerPointCalculation(model.getKillshotTrack().getKillshot());
         }
     }
 

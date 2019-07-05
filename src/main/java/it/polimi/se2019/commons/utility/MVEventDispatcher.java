@@ -30,9 +30,6 @@ public interface MVEventDispatcher extends EventDispatcher {
         throw new UnsupportedOperationException("MvJoinEvent not supported");
     }
 
-    default void dispatch(ConnectionRefusedEvent message){
-        throw new UnsupportedOperationException("ConnectionRefusedEvent not supported");
-    }
 
     default void dispatch(SyncEvent message){
         throw new UnsupportedOperationException("SyncEvent not supported");

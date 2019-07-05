@@ -10,7 +10,9 @@ import javafx.stage.Stage;
 
 import java.nio.file.Paths;
 
-
+/**
+ * Main javaFX class for launching GUI
+ */
 public class App extends Application {
 
     @Override

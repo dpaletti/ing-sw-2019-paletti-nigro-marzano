@@ -337,6 +337,7 @@ public class GuiControllerPowerUp extends GuiController {
             current = ((ImageView) event.getSource());
             ((ImageView) event.getSource()).setImage(null);
             removeHandlers((ImageView) event.getSource());
+            ((ImageView)scene.lookup("#powerup" + position)).setImage(null);
         });
     }
 

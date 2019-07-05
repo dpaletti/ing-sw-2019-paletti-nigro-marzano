@@ -8,6 +8,10 @@ import it.polimi.se2019.commons.utility.Log;
 import java.rmi.RemoteException;
 import java.util.concurrent.SynchronousQueue;
 
+/**
+ * Connection implementation for RMI handling, uses
+ * Synchronous queue to mimick submitting and retrieving
+ */
 public class ConnectionRMI implements Connection{
     private SynchronousQueue<VCEvent> in = new SynchronousQueue<>();
     private SynchronousQueue<MVEvent> out = new SynchronousQueue<>();
@@ -94,10 +98,6 @@ public class ConnectionRMI implements Connection{
         disconnected = true;
     }
 
-    @Override
-    public boolean isDisconnected() {
-        return disconnected;
-    }
 
     public MVEvent pull(){
         try {

@@ -4,6 +4,10 @@ import it.polimi.se2019.commons.utility.Log;
 
 import java.util.NoSuchElementException;
 
+/**
+ * Asychronous loop for retrieving messages from a certain connection
+ * to a specific room
+ */
 public class EventLoop implements Runnable {
     private Connection connection;
     private VirtualView virtualView;

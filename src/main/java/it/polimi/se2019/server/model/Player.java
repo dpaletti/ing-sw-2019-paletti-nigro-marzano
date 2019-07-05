@@ -299,9 +299,6 @@ public class Player implements Targetable{
     public void discardPowerUp (String discardedPowerUp){
         if (powerUpIsNotOwned(discardedPowerUp))
             throw new UnsupportedOperationException("Could not discard" + discardedPowerUp + "as player doesn't own it");
-        String drawnPowerUp = "";
-        if (powerUps.size() == 4)
-            drawnPowerUp = powerUps.get(3).name;
         game.getPowerUpDeck().discard(game.nameToPowerUp(discardedPowerUp));
         powerUps.remove(game.nameToPowerUp(discardedPowerUp));
     }
@@ -390,13 +387,6 @@ public class Player implements Targetable{
         return toPay;
  }
 
- public Weapon getWeaponByName(String name){
-        for (Weapon w: weapons){
-            if (w.getName().equalsIgnoreCase(name))
-                return w;
-        }
-        throw new NullPointerException("Weapon not found");
- }
 
  public List<Weapon> getLoadedWeapons(){
      List<Weapon> loadedWeapons=new ArrayList<>();

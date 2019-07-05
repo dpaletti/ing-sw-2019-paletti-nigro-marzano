@@ -4,9 +4,7 @@ import it.polimi.se2019.client.view.VCEvent;
 import it.polimi.se2019.commons.mv_events.MvJoinEvent;
 import it.polimi.se2019.commons.utility.JsonHandler;
 import it.polimi.se2019.commons.utility.Log;
-import it.polimi.se2019.commons.vc_events.DisconnectionEvent;
 import it.polimi.se2019.commons.vc_events.VcJoinEvent;
-import it.polimi.se2019.commons.vc_events.VcReconnectionEvent;
 import it.polimi.se2019.server.model.Game;
 import it.polimi.se2019.server.network.Server;
 
@@ -35,19 +33,6 @@ public class MatchController extends Controller {
             Log.fine("MatchController ignored: " + JsonHandler.serialize(message));
         }
     }
-
-
-        @Override
-        public void dispatch(DisconnectionEvent message) {
-            Log.fine(message.getSource() + "just disconnected");
-            model.pausePlayer(message.getSource());
-        }
-
-        @Override
-        public void dispatch(VcReconnectionEvent message) {
-            Log.fine("Handling " + message);
-            model.unpausePlayer(message.getUsername());
-        }
 
     @Override
     public void dispatch(VcJoinEvent message) {

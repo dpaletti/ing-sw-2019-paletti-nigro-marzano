@@ -92,7 +92,7 @@ public class SetUpController extends Controller {
     void endTimer() {
         int skull = server.getDefaultSkulls();
         String config = "Large";
-        boolean finalFrenzy = true;
+        boolean finalFrenzy = false;
 
         if (counter!=0) {
             skull = mostVoted(skulls);

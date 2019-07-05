@@ -1,9 +1,6 @@
 package it.polimi.se2019.server.controller;
 
-import it.polimi.se2019.commons.mv_events.AllowedWeaponsEvent;
-import it.polimi.se2019.commons.mv_events.MVWeaponEndEvent;
-import it.polimi.se2019.commons.mv_events.PartialSelectionEvent;
-import it.polimi.se2019.commons.mv_events.PossibleEffectsEvent;
+import it.polimi.se2019.commons.mv_events.*;
 import it.polimi.se2019.commons.utility.BiSet;
 import it.polimi.se2019.commons.utility.Pair;
 import it.polimi.se2019.commons.utility.Point;
@@ -87,53 +84,8 @@ public class TestWeaponController {
         cardController=new CardController(game);
     }
 
-    @Ignore
-    @Test
-    public void testGenerateTargetSet(){
-        //------------------------------------whisper----------------------------------------------
-        partial = whisper.getDefinition().getListLayer(1).get(0).getKey().getEffectGraph().getListLayer(1).get(0).getKey();
-        List<Player> targetables = new ArrayList<>(Arrays.asList(green));
-        assertTrue(weaponController.generateTargetSet(partial , magenta).containsAll(targetables));
-
-        //------------------------------------lock rifle-------------------------------------------
-        partial = lockRifle.getDefinition().getListLayer(1).get(0).getKey().getEffectGraph().getListLayer(1).get(0).getKey();
-        targetables = new ArrayList<>(Arrays.asList(grey));
-        assertTrue(weaponController.generateTargetSet(partial, yellow).containsAll(targetables));
-
-        hitPlayers.put("B1", hit);
-        turnMemory.setHitTargets(hitPlayers);
-        turnMemory.setLastEffectUsed("B1");
-        game.setTurnMemory(turnMemory);
-        partial = lockRifle.getDefinition().getListLayer(2).get(0).getKey().getEffectGraph().getListLayer(1).get(0).getKey();
-        targetables = new ArrayList<>(Arrays.asList(grey));
-        assertTrue(weaponController.generateTargetSet(partial, yellow).containsAll(targetables));
-
-        //-----------------------------------machine gun-----------------------------------------
-        partial = machineGun.getDefinition().getListLayer(1).get(0).getKey().getEffectGraph().getListLayer(1).get(0).getKey();
-        targetables = new ArrayList<>(Arrays.asList(green, blue));
-        assertTrue(weaponController.generateTargetSet(partial, magenta).containsAll(targetables));
-
-        hit = new ArrayList<>(Arrays.asList(green, blue));
-        hitPlayers.put("B1", hit);
-        turnMemory.setHitTargets(hitPlayers);
-        turnMemory.setLastEffectUsed("B1");
-        game.setTurnMemory(turnMemory);
-        partial = machineGun.getDefinition().getListLayer(2).get(0).getKey().getEffectGraph().getListLayer(1).get(0).getKey();
-        targetables = new ArrayList<>(Arrays.asList(green, blue));
-        assertTrue(weaponController.generateTargetSet(partial, magenta).containsAll(targetables));
-
-        hit = new ArrayList<>(Arrays.asList(green));
-        hitPlayers.put("B2", hit);
-        turnMemory.setHitTargets(hitPlayers);
-        turnMemory.setLastEffectUsed("B2");
-        game.setTurnMemory(turnMemory);
-        partial = machineGun.getDefinition().getListLayer(3).get(0).getKey().getEffectGraph().getListLayer(1).get(0).getKey();
-        targetables = new ArrayList<>(Arrays.asList(blue));
-        //assertTrue(weaponController.generateTargetSet(partial, magenta).containsAll(targetables));
-    }
 
     //Testing the use of the whisper in the case of choosing to use the basic effect and to skip it
-    @Ignore
     @Test
     public void testUseWeaponWhisper(){
         //Magenta is grabbing the whisper
@@ -158,19 +110,16 @@ public class TestWeaponController {
         weaponController.update(chosenEffectEvent);
         //The controller sends back a PartialSelectionEvent
         PartialSelectionEvent partialSelectionEvent= (PartialSelectionEvent)testModelHelper.getCurrent();
-        assertEquals(game.playerToUser(yellow),partialSelectionEvent.getTargetPlayers().get(0));
+        assertEquals(game.playerToUser(grey),partialSelectionEvent.getTargetPlayers().get(0));
         //Now magenta has to send a VCPartialEffectEvent to specify the target or skip
         VCPartialEffectEvent partialEffectEvent= new VCPartialEffectEvent(game.playerToUser(magenta),game.playerToUser(yellow), true);
         weaponController.update(partialEffectEvent);
         assertEquals(3,yellow.getHp().size());
         assertEquals(1,yellow.getMarks().size());
         //The weapon is ended and so a MVWeaponEndEvent is being sent to magenta
-        MVWeaponEndEvent event= (MVWeaponEndEvent)testModelHelper.getCurrent();
+        MVCardEndEvent event= (MVCardEndEvent)testModelHelper.getCurrent();
         assertEquals(game.playerToUser(magenta),event.getDestination());
         //Now i want to test the skip case
-        VCWeaponEndEvent endEvent=new VCWeaponEndEvent(game.playerToUser(magenta));
-        weaponController.update(endEvent);
-        assertTrue(!magenta.getWeapons().get(0).getLoaded());
         magenta.reload(magenta.getWeapons().get(0));
         turnController.update(shoot);
         weaponController.update(chosenWeaponEvent);

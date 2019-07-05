@@ -61,12 +61,12 @@ public class TestGame {
        List<Player> targets=new ArrayList<>();
        targets.add(wallace);
        game.apply(game.playerToUser(leiva),targets,partial);
-       assertEquals(5,(int)wallace.getHealthState().getMaximumHits());
+       assertEquals(6,(int)wallace.getHealthState().getMaximumHits());
        game.apply(game.playerToUser(leiva),targets,partial);
        game.apply(game.playerToUser(leiva),targets,partial);
        game.apply(game.playerToUser(leiva),targets,partial);
        assertEquals(1,(long)game.getKillshotTrack().getKillshot().size());
-       assertEquals(6,wallace.getPlayerValue().getMaxValue());
+       assertEquals(8,wallace.getPlayerValue().getMaxValue());
        MVDeathEvent message= (MVDeathEvent)testModelHelper.getCurrent();
        assertEquals(game.playerToUser(leiva),message.getKiller());
        assertEquals(game.playerToUser(wallace),message.getDead());
@@ -74,7 +74,6 @@ public class TestGame {
        assertFalse(message.isMatchOver());
    }
 
-   @Ignore
    @Test
     public void testFinalFrenzy(){
        PartialWeaponEffect partial= leiva.getWeapons().get(0).getWeaponEffects().iterator().next().getEffects().iterator().next();
@@ -88,12 +87,15 @@ public class TestGame {
         afterFirst.add(((Combo)comboHelper.findByName("FrenzyMoveMoveReloadShoot")).getPartialCombos());
         afterFirst.add(((Combo)comboHelper.findByName("FrenzyMoveThreeGrab")).getPartialCombos());
         assertEquals(afterFirst,leiva.getHealthState().getMoves());
-        FinalFrenzyStartingEvent message= (FinalFrenzyStartingEvent)testModelHelper.getCurrent();
+        MVDeathEvent message= (MVDeathEvent) testModelHelper.getCurrent();
+        assertEquals(game.playerToUser(wallace),message.getDead());
+        assertEquals(game.playerToUser(leiva),message.getKiller());
+        assertFalse(message.isMatchOver());
+        assertTrue(message.isOverkill());
         assertEquals("*",message.getDestination());
 
    }
 
-   @Ignore
    @Test
     public void testGetMapConfig(){
         List<String> configs=new ArrayList<>();

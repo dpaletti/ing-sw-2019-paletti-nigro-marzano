@@ -9,6 +9,7 @@ import it.polimi.se2019.commons.vc_events.*;
 
 import java.util.*;
 
+
 public class ViewCLI extends View {
     private Scanner in = new Scanner(System.in);
     private List<String> configs = new ArrayList<>();
