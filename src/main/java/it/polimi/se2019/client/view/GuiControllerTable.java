@@ -1,7 +1,7 @@
 package it.polimi.se2019.client.view;
 
-import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.client.view.ui_events.*;
+import it.polimi.se2019.commons.utility.Log;
 import it.polimi.se2019.commons.vc_events.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

@@ -1,6 +1,8 @@
 package it.polimi.se2019.server.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class LootCardHelper extends JsonHelper{
@@ -12,8 +14,12 @@ public class LootCardHelper extends JsonHelper{
 
     @Override
     public void create() {
-        for (AmmoColour topAmmoColour: AmmoColour.values()){
-            for (AmmoColour bottomAmmoColour: AmmoColour.values()){
+        List<AmmoColour> ammoColours = new ArrayList<>();
+        ammoColours.add(AmmoColour.BLUE);
+        ammoColours.add(AmmoColour.RED);
+        ammoColours.add(AmmoColour.YELLOW);
+        for (AmmoColour topAmmoColour: ammoColours){
+            for (AmmoColour bottomAmmoColour: ammoColours){
                 if (!topAmmoColour.equals(bottomAmmoColour)) {
                     for (int i = 0; i < 3; i++) {
                         char[] name = {topAmmoColour.toString().charAt(0),

@@ -279,7 +279,7 @@ public class Game extends Observable<MVEvent> {
     public void usablePowerUps (String powerUpType, boolean costs, Player currentPlayer) {  //if player's turn, player owns a power up of this type
         if (!costs || !currentPlayer.getAmmo().isEmpty()) {
             for (PowerUp p : currentPlayer.getPowerUps()) {
-                if (p.getConstraint().equals(powerUpType))
+                if (p.getConstraint().equalsIgnoreCase(powerUpType))
                     send(new UsablePowerUpEvent(playerToUser(currentPlayer), p.getName(), costs));
             }
         }

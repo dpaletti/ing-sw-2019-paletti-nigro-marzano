@@ -151,6 +151,7 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(ChosenComboEvent message) {
+        disablePowerUps(currentPlayer,"onAttack");
         comboIndex = 0;
         currentCombo = (Combo) model.getComboHelper().findByName(message.getChosenCombo());
         currentCombo.getPartialCombos().get(comboIndex).use(model, message.getSource());
@@ -197,6 +198,8 @@ public class TurnController extends Controller {
     }
 
     private void nextPartialCombo (){
+        if(currentCombo == null)
+            return;
         comboIndex++;
         if (comboIndex < currentCombo.getPartialCombos().size())
             currentCombo.getPartialCombos().get(comboIndex).use(model, currentPlayer);
@@ -220,7 +223,6 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(VCCardEndEvent message) {
-        disablePowerUps(currentPlayer,"onAttack");
         nextPartialCombo();
     }
 

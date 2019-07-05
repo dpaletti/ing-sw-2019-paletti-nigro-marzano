@@ -45,13 +45,16 @@ public class PowerUpController extends CardController {
         currentPlayer.discardPowerUp(current.getName());
         layersVisited = layersVisited + 1;
         List<GraphWeaponEffect> list = new ArrayList<>();
-        Ammo price=current.getWeaponEffects().iterator().next().getPrice().get(0);
-        if(price.getColour().equals(AmmoColour.WHITE)){
-            List<String> ammos=new ArrayList<>();
-            for (Ammo a:currentPlayer.getAmmo()){
-                ammos.add(a.getColour().name());
+        List<Ammo> priceList=current.getWeaponEffects().iterator().next().getPrice();
+        if(priceList != null && !priceList.isEmpty()) {
+            Ammo price = priceList.get(0);
+            if (price.getColour().equals(AmmoColour.WHITE)) {
+                List<String> ammos = new ArrayList<>();
+                for (Ammo a : currentPlayer.getAmmo()) {
+                    ammos.add(a.getColour().name());
+                }
+                model.send(new MVChooseAmmoToPayEvent(message.getSource(), ammos));
             }
-            model.send(new MVChooseAmmoToPayEvent(message.getSource(),ammos));
         }
         PossibleEffectsEvent event = new PossibleEffectsEvent(model.playerToUser(currentPlayer), current.getName(), false);
         for (GraphWeaponEffect w: list)
