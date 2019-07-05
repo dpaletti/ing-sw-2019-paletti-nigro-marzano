@@ -9,7 +9,9 @@
 			"name": "effect",
 			"priority": 3,
 			"invalidEffects": [],
-			"price": [],
+			"price":[{
+				"colour": "WHITE"
+			}],
 			"maxHeight":1,
 			"effectType":-1,
 			"effects": [

@@ -1,6 +1,7 @@
 package it.polimi.se2019.server.controller;
 
 import it.polimi.se2019.client.view.VCEvent;
+import it.polimi.se2019.commons.mv_events.MVChooseAmmoToPayEvent;
 import it.polimi.se2019.commons.mv_events.PossibleEffectsEvent;
 import it.polimi.se2019.commons.utility.JsonHandler;
 import it.polimi.se2019.commons.utility.Log;
@@ -44,18 +45,18 @@ public class PowerUpController extends CardController {
         currentPlayer.discardPowerUp(current.getName());
         layersVisited = layersVisited + 1;
         List<GraphWeaponEffect> list = new ArrayList<>();
-        for (GraphNode<GraphWeaponEffect> g: current.getDefinition().getListLayer(layersVisited)) {
-            if (missingAmmos(g.getKey()).isEmpty() || enoughPowerUps(g.getKey()))
-                list.add(g.getKey());
+        Ammo price=current.getWeaponEffects().iterator().next().getPrice().get(0);
+        if(price.getColour().equals(AmmoColour.WHITE)){
+            List<String> ammos=new ArrayList<>();
+            for (Ammo a:currentPlayer.getAmmo()){
+                ammos.add(a.getColour().name());
+            }
+            model.send(new MVChooseAmmoToPayEvent(message.getSource(),ammos));
         }
-        if (!list.isEmpty()) {
-            PossibleEffectsEvent event = new PossibleEffectsEvent(model.playerToUser(currentPlayer), current.getName(), false);
-            for (GraphWeaponEffect w: list)
-                event.addEffect(w.getName(), w.getEffectType());
-            model.send(event);
-        }
-        else
-            endUsage(false);
+        PossibleEffectsEvent event = new PossibleEffectsEvent(model.playerToUser(currentPlayer), current.getName(), false);
+        for (GraphWeaponEffect w: list)
+            event.addEffect(w.getName(), w.getEffectType());
+        model.send(event);
     }
 
     @Override

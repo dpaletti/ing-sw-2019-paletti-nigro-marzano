@@ -158,13 +158,6 @@ public class WeaponController extends CardController {
     }*/
 
     private void usablePowerUps(List<String> targets) {
-        /*
-        if (targets.size() == 1 && targets.get(0).equals(model.playerToUser(currentPlayer)))
-            model.usablePowerUps("onDamage", true, currentPlayer);
-        else {
-            for (String s : targets)
-                model.usablePowerUps("onAttack", false, model.userToPlayer(s));
-        }*/
         model.usablePowerUps("OnAttack",true,currentPlayer);
         for (String s: targets)
             model.usablePowerUps("onDamage",false,model.userToPlayer(s));
