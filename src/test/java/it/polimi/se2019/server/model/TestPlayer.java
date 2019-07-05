@@ -10,6 +10,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -83,14 +84,6 @@ public class TestPlayer {
         lulic.pause();
     }
 
-    //todo: if necessary test more getters here
-   @Test
-    public void testGetters(){
-        lulic.setPoints(2);
-        assertEquals(2,(int)lulic.getPoints());
-
-   }
-
    @Test
     public void testRunAndGrab(){
         Point redSpawnPoint= new Point(0,1);
@@ -127,36 +120,15 @@ public class TestPlayer {
     List<Ammo> ammos=new ArrayList<>();
     ammos.add(new Ammo(AmmoColour.BLUE));
     lulic.useAmmos(ammos);
-    assertEquals(8,lulic.getAmmo().size());
+    assertEquals(11,lulic.getAmmo().size());
     lulic.grabStuff("PBR");
-    assertEquals(9,lulic.getAmmo().size());
+    assertEquals(12,lulic.getAmmo().size());
     assertEquals(1,lulic.getPowerUps().size());
     ammos.add(new Ammo(AmmoColour.RED));
     ammos.add(new Ammo(AmmoColour.YELLOW));
     lulic.useAmmos(ammos);
     lulic.sellPowerUp(lulic.getPowerUps().get(0).getName());
-    assertEquals(7,lulic.getAmmo().size());
-  }
-
-  @Ignore
-  @Test
-  public void testPowerUpToLeave(){
-      Point randomLoot= new Point(1,1);
-      LootCardHelper lootCardHelper= model.getLootCardHelper();
-      LootCard loot= (LootCard)lootCardHelper.findByName("PBR");
-      model.getGameMap().getTile(randomLoot).add(loot);
-      lulic.getFigure().spawn(randomLoot);
-      lulic.grabStuff("PBR");
-      loot= (LootCard)lootCardHelper.findByName("PYR");
-      model.getGameMap().getTile(randomLoot).add(loot);
-      lulic.grabStuff("PYR");
-      loot= (LootCard)lootCardHelper.findByName("PYB");
-      model.getGameMap().getTile(randomLoot).add(loot);
-      lulic.grabStuff("PYB");
-      loot= (LootCard)lootCardHelper.findByName("PYB");
-      model.getGameMap().getTile(randomLoot).add(loot);
-      lulic.grabStuff("PYB");
-      assertEquals(Card.cardStringify(Card.cardToCard(lulic.getPowerUps())),((PowerUpToLeaveEvent)(testModelHelper.getCurrent())).getDiscardablePowerUps());
+    assertEquals(10,lulic.getAmmo().size());
   }
 
   @Test(expected = UnsupportedOperationException.class)
@@ -167,4 +139,32 @@ public class TestPlayer {
     public void testPowerUpNotOwnedDiscard(){
         lulic.discardPowerUp("TeleportRed");
     }
+
+    @Test
+    public void testDiscardPowerUp(){
+        lulic.drawPowerUp("TargetingScopeRed");
+        lulic.drawPowerUp("NewtonRed");
+        lulic.drawPowerUp("NewtonBlue");
+        assertEquals(3,lulic.getPowerUps().size());
+        lulic.discardPowerUp("NewtonRed");
+        assertEquals(2,lulic.getPowerUps().size());
+    }
+
+    @Test
+    public void testPowerUpsToPayEmptyReturn(){
+        List<Ammo> ammos= new ArrayList<>();
+        ammos.add(new Ammo(AmmoColour.YELLOW));
+        assertEquals(Collections.emptyList(),lulic.powerUpsToPay(ammos));
+    }
+
+    @Test
+    public void testGetLoadedWeapons(){
+        whisper.setLoaded(true);
+        lulic.addWeapon(whisper);
+        List<Weapon> loaded= new ArrayList<>();
+        loaded.add(whisper);
+        assertEquals(loaded,lulic.getLoadedWeapons());
+
+    }
+
 }

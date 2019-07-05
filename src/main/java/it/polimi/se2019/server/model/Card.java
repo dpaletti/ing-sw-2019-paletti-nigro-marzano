@@ -81,12 +81,6 @@ public abstract class Card {
         return constraint;
     }
 
-    public List<Ammo> getReloadPrice(){
-        List<Ammo> reloadPrice = new ArrayList<>();
-        reloadPrice.add(cardColour);
-        reloadPrice.addAll(price);
-        return reloadPrice;
-    }
 
     public static List<String> cardStringify(List<Card> cards){
         List<String> names = new ArrayList<>();

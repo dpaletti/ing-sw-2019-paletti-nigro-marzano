@@ -127,6 +127,6 @@ public abstract class AbstractDeathController extends Controller {
         HashMap<String, Integer> points = new HashMap<>();
         for (Player p : model.getPlayers())
             points.put(model.playerToUser(p), p.getPoints());
-        new EndOfMatchEvent("*", points);
+        model.send(new EndOfMatchEvent("*", points));
     }
 }
