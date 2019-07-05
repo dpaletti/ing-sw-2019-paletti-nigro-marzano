@@ -98,10 +98,6 @@ public class ConnectionRMI implements Connection{
         disconnected = true;
     }
 
-    @Override
-    public boolean isDisconnected() {
-        return disconnected;
-    }
 
     public MVEvent pull(){
         try {

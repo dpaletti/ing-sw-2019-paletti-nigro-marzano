@@ -39,11 +39,6 @@ public class ConnectionSocket implements Connection{
     }
 
     @Override
-    public boolean isDisconnected() {
-        return disconnected;
-    }
-
-    @Override
     public String getToken() {
         return token;
     }

@@ -72,7 +72,7 @@ public class TurnController extends Controller {
 
     @Override
     public void dispatch(DisconnectionEvent message) {
-        model.pauserPlayer(message.getSource());
+        model.pausePlayer(message.getSource());
         if (message.getSource().equals(currentPlayer))
         //Turn controller only manages disconnection logic for middle-turn disconnections
             endTurn();

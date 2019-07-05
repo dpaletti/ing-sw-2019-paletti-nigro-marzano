@@ -41,8 +41,4 @@ public class ConnectionBroadcast implements Connection{
         throw new UnsupportedOperationException("Cannot reconnect a broadcast connection");
     }
 
-    @Override
-    public boolean isDisconnected() {
-        throw new UnsupportedOperationException("Broadcast connection cannot be disconnected");
-    }
 }
