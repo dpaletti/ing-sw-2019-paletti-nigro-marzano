@@ -111,7 +111,7 @@
                     "actions": [
                       {
                         "actionType": "MOVE",
-                        "value": 2,
+                        "value": 1,
                         "area": false
                       }
                     ],

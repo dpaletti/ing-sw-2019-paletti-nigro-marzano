@@ -93,10 +93,10 @@ public class WeaponController extends CardController {
      * @param message
      */
     @Override
-    public void dispatch(VCPartialEffectEvent message) {
-        if ((partialGraphLayer==-1) || (!message.isWeapon() && !message.isSkip()))
+    public void dispatch(VCPartialEffectEvent message) {try {
+        if ((partialGraphLayer == -1) || (!message.isWeapon() && !message.isSkip()))
             return;
-        PartialWeaponEffect currentPartial= currentLayer.get(partialGraphLayer).getKey();
+        PartialWeaponEffect currentPartial = currentLayer.get(partialGraphLayer).getKey();
 
         for (String s : previousTargets)
             disablePowerUps(s, "onDamage");
@@ -107,13 +107,13 @@ public class WeaponController extends CardController {
             if (partialGraphLayer == currentLayer.size())
                 nextWeaponEffect(message.isWeapon());
             else
-                handlePartial(currentLayer.get(partialGraphLayer).getKey(),true);
-        }else { //Is not skip
+                handlePartial(currentLayer.get(partialGraphLayer).getKey(), true);
+        } else { //Is not skip
             if (message.getTargetPlayer() != null) { //The weapon has a player targetset
 
                 List<Targetable> targetables = new ArrayList<>(Arrays.asList(model.userToPlayer(message.getTargetPlayer())));
-                String username=model.playerToUser(currentPlayer);
-                Player target=model.userToPlayer(message.getTargetPlayer());
+                String username = model.playerToUser(currentPlayer);
+                Player target = model.userToPlayer(message.getTargetPlayer());
 
                 model.apply(username,
                         new ArrayList<>(Arrays.asList(target)),
@@ -142,10 +142,10 @@ public class WeaponController extends CardController {
                     } else
                         targets = getPlayerOnTile(model.getTile(message.getTargetTile()));
 
-                }else
-                    targets.add((Player)model.getTile(message.getTargetTile()).getPlayers().get(0));
+                } else
+                    targets.add((Player) model.getTile(message.getTargetTile()).getPlayers().get(0));
 
-                for(Player p: targets)
+                for (Player p : targets)
                     users.add(model.playerToUser(p));
 
 
@@ -163,12 +163,14 @@ public class WeaponController extends CardController {
             if (currentLayer.isEmpty()) {
                 layersVisitedPartial = 0;
                 nextWeaponEffect(true);
-            }
-            else {
+            } else {
                 partialGraphLayer = 0;
-                handlePartial(currentLayer.get(partialGraphLayer).getKey(),true);
+                handlePartial(currentLayer.get(partialGraphLayer).getKey(), true);
             }
         }
+    }catch (IndexOutOfBoundsException e){
+        Log.fine("Empty targetset");
+    }
     }
 
 

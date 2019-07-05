@@ -1,5 +1,6 @@
 package it.polimi.se2019.server.controller;
 
+import it.polimi.se2019.commons.mv_events.PartialSelectionEvent;
 import it.polimi.se2019.commons.mv_events.PossibleEffectsEvent;
 import it.polimi.se2019.commons.utility.BiSet;
 import it.polimi.se2019.commons.utility.Pair;
@@ -88,7 +89,11 @@ public class TestPowerUpController {
         powerUpController.dispatch(power);
         PossibleEffectsEvent possibleEffectsEvent= (PossibleEffectsEvent)testModelHelper.getCurrent();
         assertEquals(name,possibleEffectsEvent.getName());
-
+        ChosenEffectPowerUpEvent chosen= new ChosenEffectPowerUpEvent(game.playerToUser(magenta),"effect",name);
+        powerUpController.dispatch(chosen);
+        PartialSelectionEvent partialSelectionEvent= (PartialSelectionEvent)testModelHelper.getCurrent();
+        assertTrue(partialSelectionEvent.getTargetPlayers().contains("blue"));
+        assertTrue(partialSelectionEvent.getTargetPlayers().contains("green"));
     }
 
 
