@@ -103,17 +103,23 @@ public class CardController extends Controller {
 
 
     private Set<Targetable> getVisible(Targetable t){   //tested
-        Set<Targetable> visibleTarget= new HashSet<>();
-        Set<RoomColour> visibleRooms=visibleRooms(t.getPosition());
-        for (Targetable tCounter: t.getAll()) {
-            if (visibleRooms
-                    .contains(model.getGameMap()
-                            .getTile(tCounter
-                                    .getPosition()).getColour())) {
-                visibleTarget.add(tCounter);
+        try {
+            Set<Targetable> visibleTarget = new HashSet<>();
+            Set<RoomColour> visibleRooms = visibleRooms(t.getPosition());
+            for (Targetable tCounter : t.getAll()) {
+                if (visibleRooms
+                        .contains(model.getGameMap()
+                                .getTile(tCounter
+                                        .getPosition()).getColour())) {
+                    visibleTarget.add(tCounter);
+                }
             }
+            return visibleTarget;
+        }catch (NullPointerException e){
+            Log.severe("NullPointer getVisible: "+t.toString());
+            return Collections.emptySet();
         }
-        return visibleTarget;
+
     }
 
     private Set<Targetable> handleVisible(int visible, Targetable source){  //tested

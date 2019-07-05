@@ -82,7 +82,7 @@ public class ConnectionRMI implements Connection{
                 out.put(mvEvent);
             }
         }catch (InterruptedException e){
-            Log.severe("Submitting interrupted");
+            Log.severe("Submitting interrupted: " + roomNumber + "for: " + mvEvent);
             submit(mvEvent);
         }catch (RemoteException e){
             Log.severe("Cannot start remote event loop");

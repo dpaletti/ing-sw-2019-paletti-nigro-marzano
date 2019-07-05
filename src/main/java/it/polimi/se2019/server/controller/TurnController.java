@@ -247,7 +247,7 @@ public class TurnController extends Controller {
         model.send(new MVMoveEvent("*", username, model.userToPlayer(username).getFigure().getPosition()));
         if (!respawn) {
             model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
-            //model.send(new TurnEvent(username, fromPartialToStringCombo(model.userToPlayer(username).getHealthState().getMoves())));
+            model.send(new TurnEvent(username, fromPartialToStringCombo(model.userToPlayer(username).getHealthState().getMoves())));
         }
     }
 
