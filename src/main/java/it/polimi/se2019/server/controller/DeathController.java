@@ -65,7 +65,6 @@ public class DeathController extends AbstractDeathController{
             endOfMatch();
         else{
             lastTurn = true;
-            turnController.setFinalFrenzyTurn(true);
         }
     }
 

@@ -112,7 +112,7 @@ public class TurnController extends Controller {
             PlayerDamage playerState=model.userToPlayer(currentPlayer).getHealthState();
             Set<Combo> allCombos= model.getComboHelper().getCombos();
             List<Combo> usables= new ArrayList<>();
-            if(playerState.equals(new FinalFrenzyBeforeFirst()) || playerState.equals(new FinalFrenzyStandard())){
+            if(playerState.isFinalFrenzy()){
                 for (Combo combo: allCombos){
                     if(combo.getName().contains("Frenzy"))
                         usables.add(combo);
@@ -146,7 +146,9 @@ public class TurnController extends Controller {
         }
 
         private List<String> fromPartialToStringCombo(List<ArrayList<PartialCombo>> partials){
-            return movesToString(convertMoves(partials));
+            return movesToString
+                    (convertMoves
+                            (partials));
         }
 
     @Override
@@ -188,6 +190,16 @@ public class TurnController extends Controller {
     }
 
     private void nextCombo(){
+        PlayerDamage playerDamage=model.userToPlayer(currentPlayer).getHealthState();
+        if (playerDamage.isFinalFrenzy()) {
+            if (!playerDamage.isBefore()) {
+                comboUsed++;
+                if (comboUsed == 1) {
+                    model.unloadedWeapons(currentPlayer);
+                    return;
+                }
+            }
+        }
         comboUsed++;
         if (comboUsed == 2) {
             model.unloadedWeapons(currentPlayer);
@@ -224,11 +236,6 @@ public class TurnController extends Controller {
     @Override
     public void dispatch(VCCardEndEvent message) {
         nextPartialCombo();
-    }
-
-    @Override
-    public void dispatch(CalculatePointsEvent message) {
-        model.frenzyUpdatePlayerStatus(model.userToPlayer(message.getSource()));
     }
 
     private void run (String username, Point destination, int distance){

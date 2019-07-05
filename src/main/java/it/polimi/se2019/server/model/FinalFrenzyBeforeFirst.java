@@ -6,6 +6,7 @@ import java.util.List;
 
 public class FinalFrenzyBeforeFirst extends PlayerDamage {
     private boolean added = false;
+    private boolean isBefore=true;
 
     @Override
     public List<ArrayList<PartialCombo>> getMoves() {
@@ -39,5 +40,9 @@ public class FinalFrenzyBeforeFirst extends PlayerDamage {
     @Override
     public PlayerDamage findPreviousHealthState() {
         throw new UnsupportedOperationException("The player is in FinalFrenzyBeforeState there is no previous health state");
+    }
+
+    public boolean isBefore() {
+        return isBefore;
     }
 }

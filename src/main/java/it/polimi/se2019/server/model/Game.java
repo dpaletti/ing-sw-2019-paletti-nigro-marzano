@@ -176,6 +176,7 @@ public class Game extends Observable<MVEvent> {
     }
 
     public void deathHandler (Player deadPlayer){
+        updateKillshotTrack(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
         notify(new MVDeathEvent("*",
                 colourToUser(deadPlayer.getFigure().getColour()),
                 colourToUser(deadPlayer.getHp().get(10).getColour()),
@@ -183,13 +184,17 @@ public class Game extends Observable<MVEvent> {
                 killshotTrack.getNumberOfSkulls()==killshotTrack.getKillshot().size()
                 ));
         playersWaitingToRespawn.add(playerToUser(deadPlayer));
-        updateKillshotTrack(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
+
     }
 
-     public void updateKillshotTrack (FigureColour killer, boolean overkill){
-        killshotTrack.addKillshot(killer, overkill);
-         if (killshotTrack.getKillshot().size()==killshotTrack.getNumberOfSkulls())
-             notify(new FinalFrenzyStartingEvent("*"));
+     public void updateKillshotTrack (FigureColour killer, boolean overkill) {
+         killshotTrack.addKillshot(killer, overkill);
+         if (killshotTrack.getKillshot().size() == killshotTrack.getNumberOfSkulls()) {
+             if (finalFrenzy) {
+                 frenzyUpdatePlayerStatus(colourToPlayer(killer));
+                 notify(new FinalFrenzyStartingEvent("*"));
+             }
+         }
      }
 
 
@@ -213,25 +218,28 @@ public class Game extends Observable<MVEvent> {
 
     // all players without any damage change their boards to final frenzy boards
     // final frenzy players get a different set of moves based on their position in the current
-    public void frenzyUpdatePlayerStatus (Player deadPlayer){
+    public void frenzyUpdatePlayerStatus (Player killer){
         List<Player> beforeFirst = new ArrayList<>();
         List<Player> afterFirst = new ArrayList<>();
-        boolean isBeforeFirst = false;
 
         for (Player p: players){
-            if (p.equals(deadPlayer))
-                isBeforeFirst = true;
-            if (!isBeforeFirst && p.getHp().size()==0)
+            if (players.indexOf(p) >= players.indexOf(killer))
                 afterFirst.add(p);
-            else if (isBeforeFirst && p.getHp().size()==0)
+            else if (players.indexOf(p)< players.indexOf(killer))
                 beforeFirst.add(p);
+
         }
 
-        for (Player p: beforeFirst)
+        for (Player p: beforeFirst) {
             p.updatePlayerDamage(new FinalFrenzyBeforeFirst());
+            p.setPlayerValue(new ThirdDeath());
+        }
 
-        for (Player p: afterFirst)
+        for (Player p: afterFirst) {
             p.updatePlayerDamage(new FinalFrenzyStandard());
+            p.setPlayerValue(new ThirdDeath());
+        }
+
     }
 
     public List<String> getMapConfigs(){

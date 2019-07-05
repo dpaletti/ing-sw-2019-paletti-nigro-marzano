@@ -78,7 +78,7 @@ public class SetUpController extends Controller {
     }
 
     void endTimer() {
-        int skull = 8;
+        int skull = server.getDefaultSkulls();
         String config = "Large";
         boolean finalFrenzy = true;
 

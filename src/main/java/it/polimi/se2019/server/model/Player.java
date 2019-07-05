@@ -14,7 +14,7 @@ public class Player implements Targetable{
     private Integer points = 0;
 
     private PlayerDamage healthState = new Healthy();
-    private PlayerValue playerValue = new NoDeaths();
+    private PlayerValue playerValue = new MatchStarted();
 
     private List<Weapon> weapons = new ArrayList<>();
     private List<PowerUp> powerUps = new ArrayList<>();
@@ -120,6 +120,10 @@ public class Player implements Targetable{
         }
         isPaused = true;
         game.send(new PausedPlayerEvent("*", game.colourToUser(figure.getColour())));
+    }
+
+    public void setPlayerValue(PlayerValue playerValue) {
+        this.playerValue = playerValue;
     }
 
     public Integer getPoints() {

@@ -66,6 +66,10 @@ public class Server implements ServerInterface {
         this.roomNumber=roomNumber;
     }
 
+    public int getDefaultSkulls(){
+        return  Integer.parseInt(properties.getProperty("DEFAULT_SKULLS"));
+    }
+
     private void startSetup(){
         isSetUp = true;
     }
