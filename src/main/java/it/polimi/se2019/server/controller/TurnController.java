@@ -247,7 +247,7 @@ public class TurnController extends Controller {
         model.send(new MVMoveEvent("*", username, model.userToPlayer(username).getFigure().getPosition()));
         if (!respawn) {
             model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
-            model.send(new TurnEvent(username, fromPartialToStringCombo(model.userToPlayer(username).getHealthState().getMoves())));
+            //model.send(new TurnEvent(username, fromPartialToStringCombo(model.userToPlayer(username).getHealthState().getMoves())));
         }
     }
 
@@ -328,6 +328,7 @@ public class TurnController extends Controller {
                 model.userToPlayer(s).setFirstPowerUp((PowerUp)model.getPowerUpDeck().draw());
                 model.userToPlayer(s).setSecondPowerUp(null);
                 model.send(new MVRespawnEvent(s, model.userToPlayer(s).getFirstPowerUp().getName()));
+                model.userToPlayer(s).getHp().clear();
             }
             interTurnTimer.startTimer(server.getInterTurnTimer());
         }else{
