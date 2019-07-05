@@ -3,6 +3,11 @@ package it.polimi.se2019.commons.mv_events;
 import it.polimi.se2019.commons.utility.MVEventDispatcher;
 import it.polimi.se2019.client.view.MVEvent;
 
+/**
+ * This event is sent after the death of a player and notifies everyone of who killed them.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class MVDeathEvent extends MVEvent { //notifies users when one dies
     private String dead;
     private String killer;

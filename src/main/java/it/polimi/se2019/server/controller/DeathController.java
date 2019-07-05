@@ -19,6 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class handles the death of a player and the subsequent calculation of points in all of the phases of the game:
+ * during the match, at the end of it and during a final frenzy turn. See {@link it.polimi.se2019.server.controller.Controller}.
+ */
+
 public class DeathController extends AbstractDeathController{
     private boolean lastTurn = false;
     private int counter = 0;

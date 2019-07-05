@@ -6,6 +6,11 @@ import it.polimi.se2019.client.view.MVEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This event communicate to the user the possible effects they can use with the chosen card.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class PossibleEffectsEvent extends MVEvent {
     private String name;
     private HashMap<String, Integer> effects = new HashMap<>();

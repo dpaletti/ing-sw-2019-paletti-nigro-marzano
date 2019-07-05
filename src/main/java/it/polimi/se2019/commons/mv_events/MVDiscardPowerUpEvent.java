@@ -3,6 +3,11 @@ package it.polimi.se2019.commons.mv_events;
 import it.polimi.se2019.client.view.MVEvent;
 import it.polimi.se2019.commons.utility.MVEventDispatcher;
 
+/**
+ * This event is sent when a user discards a power up and everyone is notified.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class MVDiscardPowerUpEvent extends MVEvent {
     private String discardedPowerUp;
     private String username;

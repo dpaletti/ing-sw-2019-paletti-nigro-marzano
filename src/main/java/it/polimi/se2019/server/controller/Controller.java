@@ -10,8 +10,12 @@ import it.polimi.se2019.commons.utility.Observer;
 import it.polimi.se2019.commons.utility.VCEventDispatcher;
 import it.polimi.se2019.client.view.VCEvent;
 
+/**
+ * This class is extended by all the controllers used in the Server. It implements {@link it.polimi.se2019.commons.utility.Observer}
+ * in order to receive and dispatch correctly the events arriving from the view.
+ */
+
 public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher {
-    //TODO evaluate the need for storing a reference to the model, probably needed
     protected Game model;
     protected Server server;
     private int roomNumber;

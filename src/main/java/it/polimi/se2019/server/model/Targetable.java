@@ -6,6 +6,10 @@ import it.polimi.se2019.commons.utility.Point;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This interface gathers methods that tiles and players have in common as both can be considered as targets of weapons or power ups.
+ */
+
 public interface Targetable {
 
     void hit(String partialWeaponEffect, List<Targetable> hit, TurnMemory turnMemory);

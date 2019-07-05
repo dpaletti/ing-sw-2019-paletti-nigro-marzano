@@ -18,6 +18,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * This class creates the match and groups players in a single room. Upon connection of each player, their username
+ * is registered and a room starts playing when at least three users are connected.
+ * See {@link it.polimi.se2019.server.controller.Controller}.
+ */
+
 public class MatchMakingController extends Controller {
     private AtomicInteger playerCount = new AtomicInteger(0);
     private AtomicBoolean matchMade = new AtomicBoolean(false);

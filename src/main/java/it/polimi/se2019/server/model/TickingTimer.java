@@ -5,6 +5,12 @@ import it.polimi.se2019.commons.utility.Log;
 
 import static java.lang.Thread.sleep;
 
+/**
+ * This class implements a timer whose duration can be set.
+ * The timer uses the model to send an event to the view whenever the timer ticks and defines a runnable to execute whenever the timer is interrupted.
+ *
+ */
+
 public class TickingTimer {
     private Thread timer;
     private Game model;

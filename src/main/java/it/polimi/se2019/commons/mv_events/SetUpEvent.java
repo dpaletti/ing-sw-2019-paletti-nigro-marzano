@@ -7,6 +7,11 @@ import it.polimi.se2019.client.view.MVEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This event notifies all users about the final set up of the game.
+ * Therefore it contains the map configuration, the number of skulls, whether final frenzy should be activated, a map between the usernames and their colour and the initial situation of the board.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
 //sends everyone a map between usernames and colours, the weapons on each weaponSpot and the position of each loot card
 
 public class SetUpEvent extends MVEvent {

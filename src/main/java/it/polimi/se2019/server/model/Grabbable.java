@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * This interface describes the behaviour of weapons and loot cards, which are both elements that can be grabbed on the map.
+ */
+
 public interface Grabbable {
 
     String getName();

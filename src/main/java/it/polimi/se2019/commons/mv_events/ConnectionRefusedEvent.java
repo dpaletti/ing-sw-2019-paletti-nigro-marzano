@@ -3,6 +3,11 @@ package it.polimi.se2019.commons.mv_events;
 import it.polimi.se2019.commons.utility.MVEventDispatcher;
 import it.polimi.se2019.client.view.MVEvent;
 
+/**
+ * This event is sent when the connection is refused.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class ConnectionRefusedEvent extends MVEvent {
     private String cause;
 

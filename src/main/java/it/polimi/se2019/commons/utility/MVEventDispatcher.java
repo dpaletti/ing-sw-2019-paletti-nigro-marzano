@@ -3,16 +3,12 @@ package it.polimi.se2019.commons.utility;
 import it.polimi.se2019.commons.mv_events.AllowedWeaponsEvent;
 import it.polimi.se2019.commons.mv_events.*;
 
+/**
+ * This class dispatches the events arriving from the model and directed to the view to the correct methods that will handle them.
+ * See {@link it.polimi.se2019.commons.utility.EventDispatcher}.
+ */
 
 public interface MVEventDispatcher extends EventDispatcher {
-
-    default void dispatch(TeleportEvent message){
-        throw new UnsupportedOperationException("TeleportEvent not supported");
-    }
-
-    default void dispatch(WeaponToGrabEvent message){
-        throw new UnsupportedOperationException("WeaponToGrabEvent not supported");
-    }
 
     default void dispatch(WeaponToLeaveEvent message){
         throw new UnsupportedOperationException("WeaponToLeaveEvent not supported");
@@ -112,10 +108,6 @@ public interface MVEventDispatcher extends EventDispatcher {
 
     default void dispatch(DrawnPowerUpEvent message){
         throw new UnsupportedOperationException("DrawnPowerUpEvent not supported");
-    }
-
-    default void dispatch(NewAmmosEvent message){
-        throw new UnsupportedOperationException("NewAmmosEvent not supported");
     }
 
     default void dispatch(UsablePowerUpEvent message){

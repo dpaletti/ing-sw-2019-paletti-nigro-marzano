@@ -12,6 +12,12 @@ import it.polimi.se2019.client.view.VCEvent;
 
 import java.util.*;
 
+/**
+ * This class handles the generic interaction with a Card that can both be a Weapon or a Power Up.
+ * It implements the methods that calculate all the possible targets of a certain action which are used by its subclasses
+ * {@link it.polimi.se2019.server.controller.PowerUpController} and {@link it.polimi.se2019.server.controller.WeaponController}.
+ */
+
 public class CardController extends Controller {
     protected Card current;
     protected int layersVisited = 0;

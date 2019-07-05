@@ -2,6 +2,10 @@ package it.polimi.se2019.server.model;
 
 import java.util.Set;
 
+/**
+ * This class extends a generic effect and adds a set of partial weapon effects to it.
+ */
+
 public class WeaponEffect extends GenericWeaponEffect {
     private Set<PartialWeaponEffect> effects;
     //Effect type: -1 for basic effect, 0 for alternate mode effect or an only optional effect

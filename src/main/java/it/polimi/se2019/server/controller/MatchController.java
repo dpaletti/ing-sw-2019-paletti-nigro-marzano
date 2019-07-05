@@ -12,6 +12,10 @@ import it.polimi.se2019.server.network.Server;
 
 import java.util.List;
 
+/**
+ * This class handles the disconnection and reconnection of a user from the match pausing and unpausing the players to
+ * allow the game to continue. See {@link it.polimi.se2019.server.controller.Controller}.
+ */
 
 public class MatchController extends Controller {
 

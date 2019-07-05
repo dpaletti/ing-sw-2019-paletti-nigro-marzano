@@ -13,6 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class handles all the interaction with the view concerning weapon usage.
+ * See {@link it.polimi.se2019.server.controller.CardController}.
+ */
+
 public class WeaponController extends CardController {
 
     public WeaponController(Server server, int roomNumber, Game model) {

@@ -16,6 +16,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ *This class handles the events concerning power up usage throughout a turn.
+ * See {@link it.polimi.se2019.server.controller.CardController}.
+ */
+
 public class PowerUpController extends CardController {
 
     public PowerUpController(Game model, Server server, int roomNumber) {

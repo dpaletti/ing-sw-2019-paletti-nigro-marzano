@@ -7,7 +7,10 @@ import it.polimi.se2019.client.view.MVEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-//event containing the targetset of a specific partial, it can be skipped and the next available partial is sent in case it exists
+/**
+ * This event notifies the user of the target set, whether this effect can be skipped and whether the card is a weapon or a power up.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
 
 public class PartialSelectionEvent extends MVEvent {
     private ArrayList<String> targetPlayers;

@@ -13,6 +13,12 @@ import it.polimi.se2019.commons.vc_events.DiscardedPowerUpEvent;
 
 import java.util.*;
 
+/**
+ * This class handles the interaction with a user throughout its turn, showing them the possible combos to use,
+ * allowing them to spawn or respawn and refreshing the game board at the end of the turn before moving on.
+ * See {@link it.polimi.se2019.server.controller.Controller}.
+ */
+
 public class TurnController extends Controller {
     private boolean isFirstTurn = true;
     private String currentPlayer;

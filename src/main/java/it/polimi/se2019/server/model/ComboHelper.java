@@ -6,6 +6,10 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Combo helper generates all the available combos {@link it.polimi.se2019.server.model.Combo} from a JSON file.
+ */
+
 public class ComboHelper extends JsonHelper {
     public ComboHelper() {
         this.create();

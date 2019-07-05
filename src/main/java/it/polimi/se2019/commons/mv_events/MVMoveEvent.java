@@ -4,7 +4,12 @@ import it.polimi.se2019.commons.utility.Point;
 import it.polimi.se2019.commons.utility.MVEventDispatcher;
 import it.polimi.se2019.client.view.MVEvent;
 
-public class MVMoveEvent extends MVEvent { //notifies all users when a user moves
+/**
+ * This event notifies all users when a player is moved.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
+public class MVMoveEvent extends MVEvent {
     private String username;
     private Point finalPosition;
 

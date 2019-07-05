@@ -6,6 +6,11 @@ import it.polimi.se2019.client.view.MVEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This event send the user the weapons they own and that are reloaded.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class AllowedWeaponsEvent extends MVEvent {
     private ArrayList<String> weapons;
 

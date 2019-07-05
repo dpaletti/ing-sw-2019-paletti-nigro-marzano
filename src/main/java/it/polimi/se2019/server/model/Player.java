@@ -5,6 +5,12 @@ import it.polimi.se2019.commons.utility.Point;
 
 import java.util.*;
 
+/**
+ * This class implements the player of the game. Each player is defined by its figure {@link it.polimi.se2019.server.model.Figure}.
+ * A player handles all the basic actions that are needed to play in a turn.
+ * It implements Targetable {@link it.polimi.se2019.server.model.Targetable} as a player can be targeted by a weapon.
+ */
+
 public class Player implements Targetable{
     private Figure figure;
     private boolean isPaused= false;
@@ -78,7 +84,6 @@ public class Player implements Targetable{
         return map;
     }
 
-    //TODO: Put this in controller
     @Override
     public void addToSelectionEvent(MVSelectionEvent event, List<Targetable> targets, List<Action> actions) {
         List<Player> players = new ArrayList<>(toPlayerList(targets));

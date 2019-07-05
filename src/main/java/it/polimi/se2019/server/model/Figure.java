@@ -4,6 +4,12 @@ import it.polimi.se2019.commons.utility.Point;
 
 import java.util.Objects;
 
+/**
+ * This class defines the figures of the game. Each figure has a colour and a belongs to a player,
+ * its tile is updated whenever the player moves the figure.
+ * A figure implements all the basic movements and functionalities used by the player in its methods.
+ */
+
 public class Figure {
     private Tile tile;
     private FigureColour colour;

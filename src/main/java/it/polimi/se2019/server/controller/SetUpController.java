@@ -15,6 +15,13 @@ import it.polimi.se2019.server.network.Server;
 
 import java.util.*;
 
+/**
+ * This class handles events that concern the game preferences of the players before the game begins,
+ * for instance the number of rounds they wish to play, their preferred map or whether they wish to play in
+ * final frenzy mode. A timer is set and, upon expiration or when all the connected players have made their choices,
+ * a final result is calculated. See {@link it.polimi.se2019.server.controller.Controller}.
+ */
+
 public class SetUpController extends Controller {
     private List<Integer> skulls = new ArrayList<>();
     private List<String> configs = new ArrayList<>();
@@ -77,6 +84,11 @@ public class SetUpController extends Controller {
         model.send(new MvJoinEvent("*", message.getUsername(), 0));
     }
 
+    /**
+     * Calculates the final set up of the match. Whether the votes for several elements of the setup are even,
+     * a random one amongst the most voted will be chosen. In case no vote is registered, a standard configuration
+     * with 8 skulls, a Large map and final frenzy activated.
+     */
     void endTimer() {
         int skull = server.getDefaultSkulls();
         String config = "Large";

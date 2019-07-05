@@ -2,6 +2,11 @@ package it.polimi.se2019.server.model;
 
 import java.util.Objects;
 
+/**
+ * This class defines a tear, which represents the damage or mark element given by a player to another.
+ * A tear is defined by the colour of its owner.
+ */
+
 public class Tear {
     private FigureColour colour;
 

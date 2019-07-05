@@ -7,7 +7,10 @@ import it.polimi.se2019.client.view.MVEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-//first player receives drawn pUps, must discard one of the two and spawn on the colour of the discarded pUp
+/**
+ * This event notifies the first user of the match that their turn is starting and sends them two power ups to spawn.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
 
 public class StartFirstTurnEvent extends MVEvent {
     private String firstPowerUpName;

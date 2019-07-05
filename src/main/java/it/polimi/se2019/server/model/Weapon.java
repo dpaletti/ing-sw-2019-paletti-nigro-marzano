@@ -6,6 +6,11 @@ import it.polimi.se2019.commons.mv_events.MVSellPowerUpEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class implements the weapons created dynamically through the WeaponHandler {@link it.polimi.se2019.server.model.WeaponHelper}.
+ * A weapon can either be loaded or not and, being both a card and an object that can be grabbed, it implements both Grabbable and Drawable.
+ */
+
 public class Weapon extends Card implements Grabbable, Drawable, Jsonable{
     private boolean loaded = true;
 

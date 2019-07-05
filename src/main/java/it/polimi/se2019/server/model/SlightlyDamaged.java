@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class defines a player that was hit between 3 and 5 times. This player can use the standard moves plus an extra move.
+ * See {@link it.polimi.se2019.server.model.PlayerDamage}.
+ */
+
 public class SlightlyDamaged extends PlayerDamage {
     private boolean added = false;
 

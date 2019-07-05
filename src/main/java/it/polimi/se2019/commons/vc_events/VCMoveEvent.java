@@ -4,6 +4,11 @@ import it.polimi.se2019.commons.utility.Point;
 import it.polimi.se2019.commons.utility.VCEventDispatcher;
 import it.polimi.se2019.client.view.VCEvent;
 
+/**
+ * This event is sent when a user moves its player.
+ * See {@link it.polimi.se2019.client.view.VCEvent}.
+ */
+
 public class VCMoveEvent extends VCEvent {
     private Point destination;
     private boolean isTeleport;

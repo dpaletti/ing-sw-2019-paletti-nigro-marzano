@@ -2,6 +2,10 @@ package it.polimi.se2019.server.model;
 
 import java.util.List;
 
+/**
+ * This class defines a loot tile, its grabbable is a loot card.
+ */
+
 public class LootTile extends Tile{
 
     public LootTile(Tile tile) {

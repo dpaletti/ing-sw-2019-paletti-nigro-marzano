@@ -3,6 +3,10 @@ package it.polimi.se2019.commons.utility;
 import com.google.gson.*;
 import it.polimi.se2019.commons.utility.Event;
 
+/**
+ * This class allows serialization and deserialization of events.
+ */
+
 public final class JsonHandler {
 
     private JsonHandler(){}

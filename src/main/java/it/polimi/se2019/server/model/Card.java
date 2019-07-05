@@ -8,6 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * This class consists of a generalization of power up and weapon. Cards are generated from a JSON file and they contain a graph with their effects.
+ */
+
 public abstract class Card {
     protected Ammo cardColour;
     protected List<Ammo> price;

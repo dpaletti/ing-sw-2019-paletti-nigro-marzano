@@ -3,6 +3,11 @@ package it.polimi.se2019.server.model;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class is a general helper for all JSON generated helpers:
+ * {@link it.polimi.se2019.server.model.WeaponHelper}, {@link it.polimi.se2019.server.model.PowerUpHelper}, {@link it.polimi.se2019.server.model.ComboHelper}, {@link it.polimi.se2019.server.model.ComboHelper}
+ */
+
 public abstract class JsonHelper {
     protected Set<Jsonable> helped=new HashSet<>();
 

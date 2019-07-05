@@ -10,6 +10,12 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 
+/**
+ * This class communicates with the virtual view. It holds all of the main data of the current game as the chosen map configuration,
+ * the number of skulls of the match, whether final frenzy is activated, the killshot track on which all the deaths are stored,
+ * The current players, their colours and usernames and the turn memory.
+ */
+
 public class Game extends Observable<MVEvent> {
     private GameMap gameMap;
     private boolean finalFrenzy= true;

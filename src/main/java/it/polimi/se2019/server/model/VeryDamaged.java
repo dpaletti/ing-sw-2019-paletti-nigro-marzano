@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class defines a player that was hit 6 times or over. This player can use the standard moves plus an extra move.
+ * See {@link it.polimi.se2019.server.model.PlayerDamage}.
+ */
+
 public class VeryDamaged extends PlayerDamage {
     private boolean added = false;
 

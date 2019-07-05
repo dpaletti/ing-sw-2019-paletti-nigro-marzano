@@ -5,6 +5,11 @@ import it.polimi.se2019.client.view.MVEvent;
 
 import java.util.List;
 
+/**
+ * This event communicates the users which weapons they own in order for them to choose one to discard.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class WeaponToLeaveEvent extends MVEvent {
     private List<String> weaponsOwned;
 

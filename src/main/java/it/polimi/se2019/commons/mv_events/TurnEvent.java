@@ -6,7 +6,10 @@ import it.polimi.se2019.client.view.MVEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-// actions player can do (eg movearound, shootpeople,...) or use power up
+/**
+ * This event communicates the user which combination of actions can be chosen by the player.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
 
 public class TurnEvent extends MVEvent {
     private ArrayList<String> combos;

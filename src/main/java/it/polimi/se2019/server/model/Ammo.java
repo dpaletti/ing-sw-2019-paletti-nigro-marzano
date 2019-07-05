@@ -3,6 +3,10 @@ package it.polimi.se2019.server.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * This class defines an ammo which consists of its colour.
+ */
+
 public class Ammo implements Serializable {
     private AmmoColour colour;
 

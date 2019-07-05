@@ -3,6 +3,11 @@ package it.polimi.se2019.commons.vc_events;
 import it.polimi.se2019.commons.utility.VCEventDispatcher;
 import it.polimi.se2019.client.view.VCEvent;
 
+/**
+ * This event communicates the power up the user wishes to discard.
+ * See {@link it.polimi.se2019.client.view.VCEvent}.
+ */
+
 public class DiscardedPowerUpEvent extends VCEvent {
     private String discardedPowerUp;
 

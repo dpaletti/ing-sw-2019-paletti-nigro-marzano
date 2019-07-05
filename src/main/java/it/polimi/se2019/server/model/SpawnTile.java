@@ -2,6 +2,10 @@ package it.polimi.se2019.server.model;
 
 import java.util.List;
 
+/**
+ * This class extends the Tile class {@link it.polimi.se2019.server.model.Tile} and is grabbables are weapon that make up a weapon spot.
+ */
+
 public class SpawnTile extends Tile {
 
     public SpawnTile(Tile tile) {

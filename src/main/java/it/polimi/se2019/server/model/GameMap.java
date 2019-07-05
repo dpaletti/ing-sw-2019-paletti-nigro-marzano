@@ -10,6 +10,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+/**
+ * This class defines the map used throughout the game. The map is created during the set up phase after obtaining the most voted map.
+ * All the loot and spawn tiles are stored and each map has a graph that allows an efficient calculation of the distance between each tile.
+ */
+
 public class GameMap{
     private MapConfig config;
     private List<Tile> spawnTiles=new ArrayList<>();

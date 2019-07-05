@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class defines a healthy player that was hit 0, 1 or 2 times. This player will only be able to use standard moves.
+ * See {@link it.polimi.se2019.server.model.PlayerDamage}.
+ */
+
 public class Healthy extends PlayerDamage {
     private boolean added = false;
 

@@ -5,6 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * This class generates Loot Cards and retrieves cards parsing their name.
+ */
+
 public class LootCardHelper extends JsonHelper{
 
     public LootCardHelper() { this.create();}
