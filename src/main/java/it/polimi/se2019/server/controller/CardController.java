@@ -188,6 +188,12 @@ public class CardController extends Controller {
             }
             return handleTargetableTiles(isTile,targetables);
         }
+        if(outerRadius == -1){
+            Set<Targetable> allTile = new HashSet<>(source.getAll());
+            Set<Targetable> circle = getTileCircle(innerRadius, currentPlayer.getPosition(), true);
+            allTile.removeAll(circle);
+            return allTile;
+        }
         targetables = getTileCircle(outerRadius, source.getPosition(), isTile);
         targetables.removeAll(getTileCircle(innerRadius, source.getPosition(), isTile));
         return targetables;

@@ -11,9 +11,10 @@ public class VCPartialEffectEvent extends VCEvent {
     private boolean isWeapon;
 
 
-    public VCPartialEffectEvent(String source) {
+    public VCPartialEffectEvent(String source, boolean isWeapon) {
         super(source);
         this.skip = true;
+        this.isWeapon = isWeapon;
     }
 
     public VCPartialEffectEvent(String source, String targetPlayer, boolean isWeapon) {

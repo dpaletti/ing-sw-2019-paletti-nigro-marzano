@@ -175,7 +175,7 @@ public class TestWeaponController {
         turnController.update(shoot);
         weaponController.update(chosenWeaponEvent);
         weaponController.update(chosenEffectEvent);
-        VCPartialEffectEvent skip= new VCPartialEffectEvent(game.playerToUser(magenta));
+        VCPartialEffectEvent skip= new VCPartialEffectEvent(game.playerToUser(magenta), true);
         weaponController.update(skip);
         MVWeaponEndEvent end= (MVWeaponEndEvent)testModelHelper.getCurrent();
         assertEquals(game.playerToUser(magenta),end.getDestination());
@@ -220,7 +220,7 @@ public class TestWeaponController {
         PartialSelectionEvent secondTargetset= (PartialSelectionEvent)testModelHelper.getCurrent();
         assertTrue(secondTargetset.getTargetTiles().contains(new Point(3,1)));
         //Now magenta has to send a VCPartialEffectEvent to specify the target or skip
-        VCPartialEffectEvent skip= new VCPartialEffectEvent(game.playerToUser(magenta));
+        VCPartialEffectEvent skip= new VCPartialEffectEvent(game.playerToUser(magenta), true);
         weaponController.update(skip);
         //The weapon is ended and so a MVWeaponEndEvent is being sent to magenta
         MVWeaponEndEvent event= (MVWeaponEndEvent)testModelHelper.getCurrent();

@@ -681,7 +681,7 @@ public class GuiControllerTable extends GuiController {
         endTurn.setText("Skip");
         endTurn.setOnAction((ActionEvent event) -> {
             ViewGUI.getInstance().send(new UiPartialSkippedEvent());
-            ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername()));
+            ViewGUI.getInstance().send(new VCPartialEffectEvent(ViewGUI.getInstance().getUsername(), ViewGUI.getInstance().isWeapon()));
         });
 
     }

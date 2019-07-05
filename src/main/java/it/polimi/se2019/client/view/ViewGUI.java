@@ -461,8 +461,10 @@ public class ViewGUI extends View {
 
     @Override
     public void dispatch(PossibleEffectsEvent message) {
-        if(message.isWeapon())
+        if(message.isWeapon()) {
+            isWeapon = true;
             notify(new UiActivateWeaponEffects(message.getName(), message.getEffects()));
+        }
         else
             notify(new UiActivatePowerup(message.getName()));
 
