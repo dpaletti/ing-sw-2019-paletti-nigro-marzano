@@ -23,9 +23,8 @@ public class TestSetUpController {
         setUpController.setSkulls(new ArrayList<>(Arrays.asList(7, 7, 7, 7, 7)));
     }
 
-    @Ignore
-    @Test
+   @Test
     public void testEndTimer(){
-        setUpController.endTimer();
-    }
+
+   }
 }

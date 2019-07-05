@@ -77,7 +77,8 @@ public class SetUpController extends Controller {
         model.send(new MvJoinEvent("*", message.getUsername(), 0));
     }
 
-    void endTimer() {
+
+    private void endTimer() {
         int skull = server.getDefaultSkulls();
         String config = "Large";
         boolean finalFrenzy = false;

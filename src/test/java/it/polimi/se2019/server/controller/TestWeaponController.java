@@ -23,36 +23,33 @@ public class TestWeaponController {
     private WeaponController weaponController;
     private TurnController turnController;
     private CardController cardController;
-    private Player magenta= new Player(new Figure(FigureColour.MAGENTA), game);
-    private Player blue= new Player(new Figure(FigureColour.BLUE), game);
-    private Player yellow= new Player(new Figure(FigureColour.YELLOW), game);
-    private Player grey= new Player(new Figure(FigureColour.GREY), game);
-    private Player green= new Player(new Figure(FigureColour.GREEN), game);
-    private TurnMemory turnMemory= new TurnMemory();
+    private Player magenta = new Player(new Figure(FigureColour.MAGENTA), game);
+    private Player blue = new Player(new Figure(FigureColour.BLUE), game);
+    private Player yellow = new Player(new Figure(FigureColour.YELLOW), game);
+    private Player grey = new Player(new Figure(FigureColour.GREY), game);
+    private Player green = new Player(new Figure(FigureColour.GREEN), game);
+    private TurnMemory turnMemory = new TurnMemory();
     private List<Player> hit = new ArrayList<>(Arrays.asList(magenta));
     private Map<String, List<Player>> hitPlayers = new HashMap<>();
-    private BiSet<FigureColour, String> lookup= new BiSet<>();
-    private Weapon whisper = new Weapon(Paths.get("files/weapons/Whisper.json").toString());
-    private Weapon lockRifle = new Weapon(Paths.get("files/weapons/LockRifle.json").toString());
-    private Weapon machineGun = new Weapon(Paths.get("files/weapons/MachineGun.json").toString());
-    private Weapon shockwave = new Weapon(Paths.get("files/weapons/Shockwave.json").toString());
-    private Weapon grenadeLauncher = new Weapon(Paths.get("files/weapons/GrenadeLauncher.json").toString());
-
+    private BiSet<FigureColour, String> lookup = new BiSet<>();
+    private Weapon furnace= new Weapon(Paths.get("files/weapons/Furnace.json").toString());
+    private Weapon shotgun= new Weapon(Paths.get("files/weapons/Shotgun.json").toString());
+    private Weapon railgun= new Weapon(Paths.get("files/weapons/Railgun.json").toString());
 
     private PartialWeaponEffect partial;
 
     private ChosenWeaponEvent chosenWeaponEvent = new ChosenWeaponEvent("magenta", "Whisper");
     private ChosenEffectEvent chosenEffectEvent = new ChosenEffectEvent("magenta", "effect", "Whisper");
     private TestModelHelper testModelHelper = new TestModelHelper();
-    private Server server=new Server(1);
+    private Server server = new Server(1);
 
     @Before
-    public void setup (){
+    public void setup() {
         game.setGameMap(new GameMap("Large"));
         magenta.getFigure().spawn(new Point(2, 0));
         green.getFigure().spawn(new Point(0, 0));
         blue.getFigure().spawn(new Point(1, 0));
-        yellow.getFigure().spawn(new Point(1,2));
+        yellow.getFigure().spawn(new Point(1, 2));
         grey.getFigure().spawn(new Point(1, 1));
 
         players.add(magenta);
@@ -70,8 +67,8 @@ public class TestWeaponController {
         game.setUserLookup(lookup);
         game.register(testModelHelper);
 
-        List<String> usernames= new ArrayList<>();
-        for (Player player:players)
+        List<String> usernames = new ArrayList<>();
+        for (Player player : players)
             usernames.add(game.playerToUser(player));
         game.setUsernames(usernames);
 
@@ -79,149 +76,120 @@ public class TestWeaponController {
         turnMemory.setHitTargets(hitPlayers);
         turnMemory.setLastEffectUsed("basicMode");
         game.setTurnMemory(turnMemory);
-        turnController=new TurnController(game,server);
-        weaponController=new WeaponController(game);
-        cardController=new CardController(game);
+        turnController = new TurnController(game, server);
+        weaponController = new WeaponController(game);
+        cardController = new CardController(game);
     }
 
-
-    //Testing the use of the whisper in the case of choosing to use the basic effect and to skip it
     @Test
-    public void testUseWeaponWhisper(){
-        //Magenta is grabbing the whisper
-        magenta.getFigure().spawn(new Point(3,0));
-        game.getGameMap().getTile(new Point(3,0)).add(whisper);
-        magenta.grabStuff(whisper.getName());
+    public void testUseFurnace(){
+        //Magenta is grabbing the furnace
+        magenta.getFigure().spawn(new Point(3, 0));
+        game.getGameMap().getTile(new Point(3, 0)).add(furnace);
+        magenta.grabStuff(furnace.getName());
         //Putting magenta in strategic place
-        magenta.getFigure().spawn(new Point(1,0));
-        yellow.getFigure().spawn(new Point(3,1));
+        magenta.getFigure().spawn(new Point(2, 1));
+        yellow.getFigure().spawn(new Point(2, 2));
+        green.getFigure().spawn(new Point(1,2));
         //Magenta decided to shoot and sends a ChosenComboEvent
-        ChosenComboEvent shoot= new ChosenComboEvent(game.playerToUser(magenta),"ShootPeople");
+        ChosenComboEvent shoot = new ChosenComboEvent(game.playerToUser(magenta), "ShootPeople");
         turnController.update(shoot);
         //The turnController is sending back a AllowedWeaponsEvent
-        AllowedWeaponsEvent availableWeapons= (AllowedWeaponsEvent)testModelHelper.getCurrent();
-        assertEquals("Whisper",availableWeapons.getWeapons().get(0));
+        AllowedWeaponsEvent availableWeapons = (AllowedWeaponsEvent) testModelHelper.getCurrent();
+        assertEquals("Furnace", availableWeapons.getWeapons().get(0));
         //Now magenta will choose is only weapon sending a ChosenWeaponEvent
-        weaponController.update(chosenWeaponEvent);
-        //The weaponController is sending back a PossibleEffectsEvent,sending a possible WeaponEffect
-        PossibleEffectsEvent possibles=(PossibleEffectsEvent)testModelHelper.getCurrent();
-        assertEquals("effect",possibles.getEffects().keySet().iterator().next());
-        //Now i have to send a ChosenEffectEvent
-        weaponController.update(chosenEffectEvent);
-        //The controller sends back a PartialSelectionEvent
-        PartialSelectionEvent partialSelectionEvent= (PartialSelectionEvent)testModelHelper.getCurrent();
-        assertEquals(game.playerToUser(grey),partialSelectionEvent.getTargetPlayers().get(0));
-        //Now magenta has to send a VCPartialEffectEvent to specify the target or skip
-        VCPartialEffectEvent partialEffectEvent= new VCPartialEffectEvent(game.playerToUser(magenta),game.playerToUser(yellow), true);
-        weaponController.update(partialEffectEvent);
-        assertEquals(3,yellow.getHp().size());
-        assertEquals(1,yellow.getMarks().size());
-        //The weapon is ended and so a MVWeaponEndEvent is being sent to magenta
-        MVCardEndEvent event= (MVCardEndEvent)testModelHelper.getCurrent();
-        assertEquals(game.playerToUser(magenta),event.getDestination());
-        //Now i want to test the skip case
-        magenta.reload(magenta.getWeapons().get(0));
-        turnController.update(shoot);
-        weaponController.update(chosenWeaponEvent);
-        weaponController.update(chosenEffectEvent);
-        VCPartialEffectEvent skip= new VCPartialEffectEvent(game.playerToUser(magenta), true);
-        weaponController.update(skip);
-        MVWeaponEndEvent end= (MVWeaponEndEvent)testModelHelper.getCurrent();
-        assertEquals(game.playerToUser(magenta),end.getDestination());
-    }
-
-    @Ignore
-    @Test
-    public void testUseShockwave(){
-        //Magenta is grabbing the shockwave
-        magenta.getFigure().spawn(new Point(3,0));
-        game.getGameMap().getTile(new Point(3,0)).add(shockwave);
-        magenta.grabStuff(shockwave.getName());
-        //Setting the targets in the right places
-        green.getFigure().spawn(new Point(2,0));
-        blue.getFigure().spawn(new Point(3,1));
-        //Magenta decided to shoot and sends a ChosenComboEvent
-        ChosenComboEvent shoot= new ChosenComboEvent(game.playerToUser(magenta),"ShootPeople");
-        turnController.update(shoot);
-        //The turnController is sending back a AllowedWeaponsEvent
-        AllowedWeaponsEvent availableWeapons= (AllowedWeaponsEvent)testModelHelper.getCurrent();
-        assertEquals("Shockwave",availableWeapons.getWeapons().get(0));
-        ChosenWeaponEvent chosenShockwave = new ChosenWeaponEvent("magenta", "Shockwave");
-        weaponController.update(chosenShockwave);
-        //The weaponController is sending back a PossibleEffectsEvent,sending a possible WeaponEffect
-        PossibleEffectsEvent possibles=(PossibleEffectsEvent)testModelHelper.getCurrent();
-        HashMap<String,Integer> effectMap= new HashMap<>();
-        effectMap.put("basicMode",-1);
-        effectMap.put("inTsunamiMode",0);
-        assertEquals(effectMap,possibles.getEffects());
-        //Now i have to send a ChosenEffectEvent
-        ChosenEffectEvent chosenBasic=new ChosenEffectEvent(game.playerToUser(magenta),"basicMode","Shockwave");
-        weaponController.update(chosenBasic);
-        //The controller sends back a PartialSelectionEvent
-        PartialSelectionEvent partialSelectionEvent= (PartialSelectionEvent)testModelHelper.getCurrent();
-        assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(2,0)));
-        assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(3,1)));
-        //Now magenta has to send a VCPartialEffectEvent to specify the target or skip
-        VCPartialEffectEvent partialEffectEvent= new VCPartialEffectEvent(game.playerToUser(magenta),new Point(2,0), true);
-        weaponController.update(partialEffectEvent);
-        assertEquals(1,green.getHp().size());
-        //Now the controller sends back another PartialSelectionEvent
-        PartialSelectionEvent secondTargetset= (PartialSelectionEvent)testModelHelper.getCurrent();
-        assertTrue(secondTargetset.getTargetTiles().contains(new Point(3,1)));
-        //Now magenta has to send a VCPartialEffectEvent to specify the target or skip
-        VCPartialEffectEvent skip= new VCPartialEffectEvent(game.playerToUser(magenta), true);
-        weaponController.update(skip);
-        //The weapon is ended and so a MVWeaponEndEvent is being sent to magenta
-        MVWeaponEndEvent event= (MVWeaponEndEvent)testModelHelper.getCurrent();
-        assertEquals(game.playerToUser(magenta),event.getDestination());
-        //Now i want to try the second mode of the shockwave
-        ChosenComboEvent shootSecondMode= new ChosenComboEvent(game.playerToUser(magenta),"ShootPeople");
-        VCWeaponEndEvent endEvent=new VCWeaponEndEvent(game.playerToUser(magenta));
-        weaponController.update(endEvent);
-        turnController.update(shoot);
-        //The turnController is sending back a AllowedWeaponsEvent
-        AllowedWeaponsEvent weapons= (AllowedWeaponsEvent)testModelHelper.getCurrent();
-        assertTrue(weapons.getWeapons().isEmpty());
-    }
-
-    @Test
-    public void testGrenadeLauncher(){
-        //Magenta is grabbing the grenadeLauncher
-        magenta.getFigure().spawn(new Point(3,0));
-        game.getGameMap().getTile(new Point(3,0)).add(grenadeLauncher);
-        magenta.grabStuff(grenadeLauncher.getName());
-        //Setting the targets in the right places
-        green.getFigure().spawn(new Point(2,0));
-        blue.getFigure().spawn(new Point(3,1));
-        //Magenta decided to shoot and sends a ChosenComboEvent
-        ChosenComboEvent shoot= new ChosenComboEvent(game.playerToUser(magenta),"ShootPeople");
-        turnController.update(shoot);
-        //The turnController is sending back a AllowedWeaponsEvent
-        AllowedWeaponsEvent availableWeapons= (AllowedWeaponsEvent)testModelHelper.getCurrent();
-        assertEquals("GrenadeLauncher",availableWeapons.getWeapons().get(0));
-        ChosenWeaponEvent chosen = new ChosenWeaponEvent("magenta", "GrenadeLauncher");
+        ChosenWeaponEvent chosen= new ChosenWeaponEvent(game.playerToUser(magenta),"Furnace");
         weaponController.update(chosen);
         //The weaponController is sending back a PossibleEffectsEvent,sending a possible WeaponEffect
-        PossibleEffectsEvent possibles=(PossibleEffectsEvent)testModelHelper.getCurrent();
-        HashMap<String,Integer> effectMap= new HashMap<>();
-        effectMap.put("basicEffect",-1);
-        effectMap.put("withExtraGrenade",0);
-        assertEquals(effectMap,possibles.getEffects());
+        PossibleEffectsEvent possibles = (PossibleEffectsEvent) testModelHelper.getCurrent();
+        assertEquals("Furnace",chosen.getWeapon());
         //Now i have to send a ChosenEffectEvent
-        ChosenEffectEvent chosenBasic=new ChosenEffectEvent(game.playerToUser(magenta),"basicEffect","GrenadeLauncher");
-        weaponController.update(chosenBasic);
+        ChosenEffectEvent effectEvent= new ChosenEffectEvent(game.playerToUser(magenta),"basicMode","Furnace");
+        weaponController.update(effectEvent);
         //The controller sends back a PartialSelectionEvent
-        PartialSelectionEvent partialSelectionEvent= (PartialSelectionEvent)testModelHelper.getCurrent();
-        assertTrue(partialSelectionEvent.getTargetPlayers().contains(game.playerToUser(green)));
-        assertTrue(partialSelectionEvent.getTargetPlayers().contains(game.playerToUser(blue)));
-        //Now magenta has to send a VCPartialEffectEvent to specify the target or skip
-        VCPartialEffectEvent partialEffectEvent= new VCPartialEffectEvent(game.playerToUser(magenta),game.playerToUser(green), true);
+        PartialSelectionEvent partialSelectionEvent = (PartialSelectionEvent) testModelHelper.getCurrent();
+        assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(2,2)));
+        assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(1,2)));
+        VCPartialEffectEvent partialEffectEvent = new VCPartialEffectEvent(game.playerToUser(magenta),new Point(1,2), true);
         weaponController.update(partialEffectEvent);
-        assertEquals(1,green.getHp().size());
+        assertEquals(2, yellow.getHp().size());
+        assertEquals(1, green.getHp().size());
+
+    }
+
+    @Test
+    public void testUseShotgun(){
+        //Magenta is grabbing the furnace
+        magenta.getFigure().spawn(new Point(3, 0));
+        game.getGameMap().getTile(new Point(3, 0)).add(shotgun);
+        magenta.grabStuff(shotgun.getName());
+        //Putting yellow in strategic place
+        yellow.getFigure().spawn(new Point(3, 0));
+        //Magenta decided to shoot and sends a ChosenComboEvent
+        ChosenComboEvent shoot = new ChosenComboEvent(game.playerToUser(magenta), "ShootPeople");
+        turnController.update(shoot);
+        //The turnController is sending back a AllowedWeaponsEvent
+        AllowedWeaponsEvent availableWeapons = (AllowedWeaponsEvent) testModelHelper.getCurrent();
+        assertEquals("Shotgun", availableWeapons.getWeapons().get(0));
+        //Now magenta will choose is only weapon sending a ChosenWeaponEvent
+        ChosenWeaponEvent chosen= new ChosenWeaponEvent(game.playerToUser(magenta),"Shotgun");
+        weaponController.update(chosen);
+        //The weaponController is sending back a PossibleEffectsEvent,sending a possible WeaponEffect
+        PossibleEffectsEvent possibles = (PossibleEffectsEvent) testModelHelper.getCurrent();
+        assertEquals("Shotgun",chosen.getWeapon());
+        //Now i have to send a ChosenEffectEvent
+        ChosenEffectEvent effectEvent= new ChosenEffectEvent(game.playerToUser(magenta),"basicMode","Shotgun");
+        weaponController.update(effectEvent);
         //The controller sends back a PartialSelectionEvent
-        PartialSelectionEvent selectionEvent= (PartialSelectionEvent)testModelHelper.getCurrent();
-        System.out.print(selectionEvent.getTargetPlayers());
+        //The controller sends back a PartialSelectionEvent
+        PartialSelectionEvent partialSelectionEvent = (PartialSelectionEvent) testModelHelper.getCurrent();
+        assertTrue(partialSelectionEvent.getTargetPlayers().contains(game.playerToUser(yellow)));
+        VCPartialEffectEvent partialEffectEvent = new VCPartialEffectEvent(game.playerToUser(magenta),game.playerToUser(yellow), true);
+        weaponController.update(partialEffectEvent);
+        assertEquals(3, yellow.getHp().size());
+        VCPartialEffectEvent skip = new VCPartialEffectEvent(game.playerToUser(magenta), true);
+        weaponController.update(skip);
+        MVCardEndEvent cardEndEvent= (MVCardEndEvent)testModelHelper.getCurrent();
+        assertTrue(cardEndEvent.isWeapon());
+
+    }
+
+    @Test
+    public void testRailgun(){
+        //Magenta is grabbing the railgun
+        magenta.getFigure().spawn(new Point(3, 0));
+        game.getGameMap().getTile(new Point(3, 0)).add(railgun);
+        magenta.grabStuff(railgun.getName());
+        //Putting yellow in strategic place
+        yellow.getFigure().spawn(new Point(1, 0));
+        //Magenta decided to shoot and sends a ChosenComboEvent
+        ChosenComboEvent shoot = new ChosenComboEvent(game.playerToUser(magenta), "ShootPeople");
+        turnController.update(shoot);
+        //The turnController is sending back a AllowedWeaponsEvent
+        AllowedWeaponsEvent availableWeapons = (AllowedWeaponsEvent) testModelHelper.getCurrent();
+        assertEquals("Railgun", availableWeapons.getWeapons().get(0));
+        //Now magenta will choose is only weapon sending a ChosenWeaponEvent
+        ChosenWeaponEvent chosen= new ChosenWeaponEvent(game.playerToUser(magenta),"Railgun");
+        weaponController.update(chosen);
+        //Now i have to send a ChosenEffectEvent
+        ChosenEffectEvent effectEvent= new ChosenEffectEvent(game.playerToUser(magenta),"basicMode","Railgun");
+        weaponController.update(effectEvent);
+        //The controller sends back a PartialSelectionEvent
+        PartialSelectionEvent partialSelectionEvent = (PartialSelectionEvent) testModelHelper.getCurrent();
+        assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(3,0)));
+        assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(2,0)));
+        assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(1,0)));
+        assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(0,0)));
+        assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(3,1)));
+        assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(3,2)));
+        VCPartialEffectEvent partialEffectEvent = new VCPartialEffectEvent(game.playerToUser(magenta),new Point(1,0), true);
+        weaponController.update(partialEffectEvent);
+        assertEquals(3, yellow.getHp().size());
+        MVCardEndEvent cardEndEvent= (MVCardEndEvent)testModelHelper.getCurrent();
+        assertTrue(cardEndEvent.isWeapon());
     }
 
 
 }
+
+

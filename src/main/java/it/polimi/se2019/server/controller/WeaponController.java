@@ -147,15 +147,6 @@ public class WeaponController extends CardController {
         }
     }
 
-    /*@Override
-    public void dispatch(VCCardEndEvent message) {
-        if (message.isWeapon()) {
-            currentPlayer.getWeaponByName(current.getName()).setLoaded(false);
-            endUsage(true);
-            layersVisitedPartial = 0;
-            currentLayer = null;
-        }
-    }*/
 
     private void usablePowerUps(List<String> targets) {
         model.usablePowerUps("OnAttack",true,currentPlayer);

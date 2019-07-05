@@ -1,9 +1,13 @@
 package it.polimi.se2019.server.controller;
 
+import it.polimi.se2019.commons.mv_events.PossibleEffectsEvent;
 import it.polimi.se2019.commons.utility.BiSet;
 import it.polimi.se2019.commons.utility.Pair;
 import it.polimi.se2019.commons.utility.Point;
+import it.polimi.se2019.commons.vc_events.ChosenEffectPowerUpEvent;
 import it.polimi.se2019.commons.vc_events.PowerUpUsageEvent;
+import it.polimi.se2019.commons.vc_events.VCChooseAmmoToPayEvent;
+import it.polimi.se2019.commons.vc_events.VCPartialEffectEvent;
 import it.polimi.se2019.server.model.*;
 import it.polimi.se2019.server.network.Server;
 import org.junit.Before;
@@ -29,13 +33,11 @@ public class TestPowerUpController {
     private List<Player> hit = new ArrayList<>(Arrays.asList(magenta));
     private Map<String, List<Player>> hitPlayers = new HashMap<>();
     private BiSet<FigureColour, String> lookup= new BiSet<>();
-    private Weapon whisper = new Weapon(Paths.get("files/weapons/Whisper.json").toString());
-    private Weapon lockRifle = new Weapon(Paths.get("files/weapons/LockRifle.json").toString());
-    private Weapon machineGun = new Weapon(Paths.get("files/weapons/MachineGun.json").toString());
+    private PowerUp teleportBlue = new PowerUp(Paths.get("files/powerUps/TeleportBlue.json").toString());
 
     private PartialWeaponEffect partial;
 
-    private PowerUpUsageEvent powerUpUsageEvent = new PowerUpUsageEvent("magenta", "NewtonRed");
+    private PowerUpUsageEvent powerUpUsageEvent = new PowerUpUsageEvent("magenta", "TeleportBlue");
     private TestModelHelper testModelHelper = new TestModelHelper();
     private Server server=new Server(1);
 
@@ -73,11 +75,21 @@ public class TestPowerUpController {
         turnMemory.setLastEffectUsed("basicMode");
         game.setTurnMemory(turnMemory);
         cardController = new CardController(game);
+
     }
 
     @Test
-    public void testPowerUpUsageDispatch (){
-        powerUpController.update(powerUpUsageEvent);
-//        assertEquals(cardController.currentPlayer, magenta);
+    public void testPowerUpUsage(){
+        magenta.getFigure().spawn(new Point(2, 0));
+        game.getGameMap().getTile(new Point(2, 0)).add((LootCard)game.getLootCardHelper().findByName("PBY"));
+        magenta.grabStuff("PBY");
+        String name=magenta.getPowerUps().get(0).getName();
+        PowerUpUsageEvent power= new PowerUpUsageEvent(game.playerToUser(magenta),name);
+        powerUpController.dispatch(power);
+        PossibleEffectsEvent possibleEffectsEvent= (PossibleEffectsEvent)testModelHelper.getCurrent();
+        assertEquals(name,possibleEffectsEvent.getName());
+
     }
+
+
 }
