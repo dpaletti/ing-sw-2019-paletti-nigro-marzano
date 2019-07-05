@@ -52,14 +52,14 @@
                     "targetSpecification": {
                         "tile": true,
                         "different": {
-                            "first": false,
-                            "second": []
-                        },
-						"previous":{
-							"first": true,
-							"second": [
+                            "first": true,
+                            "second":[
                               "B1"
                             ]
+                        },
+						"previous":{
+							"first": false,
+							"second": []
 						},
                         "radiusBetween": {
                             "first": 2,

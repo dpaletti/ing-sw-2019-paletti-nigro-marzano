@@ -39,12 +39,12 @@
                     "actions": [
                         {
                             "actionType": "DAMAGE",
-                            "value": 2,
+                            "value": 1,
                             "area": true
                         },
                         {
                             "actionType": "MARK",
-                            "value": 1,
+                            "value": 2,
                             "area": true
                         }
                     ],
