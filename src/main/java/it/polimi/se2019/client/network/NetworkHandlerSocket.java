@@ -15,6 +15,9 @@ import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * NetworkHandler implementation for Socket connections
+ */
 public class NetworkHandlerSocket extends NetworkHandler {
     private transient Socket socket;
     private transient Scanner in;

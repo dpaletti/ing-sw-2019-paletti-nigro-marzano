@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
 
+/**
+ * Network management for server through connection interface
+ */
 public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent>, MVEventDispatcher {
     private List<Connection> connections = new CopyOnWriteArrayList<>();
 
@@ -51,6 +54,11 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         return roomNumber;
     }
 
+    /**
+     * reconnects a connectino to a running match
+     * @param oldToken token used to find the old room for reconnection
+     * @param reconnected connection to reconnect
+     */
     public void reconnect(String oldToken, Connection reconnected){
         //argument validity guaranteed by caller
 
@@ -71,7 +79,6 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
 
         notify(new VcReconnectionEvent(reconnected.getToken(), oldToken, username));
     }
-
 
 
     public void disconnect(Connection connection){
@@ -121,6 +128,10 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         }
     }
 
+    /**
+     * Join management, manages also joins for reconnections
+     * @param message contains username and token of the player joining
+     */
         @Override
         public void dispatch(MvJoinEvent message) {
             if (server.isReconnection(message.getUsername())) {
@@ -207,7 +218,10 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
         }
     }
 
-
+    /**
+     * First method invoked when a new connection is created
+     * @param connection
+     */
     public void startListening (Connection connection){
         sem.acquireUninterruptibly();
         connections.add(connection);

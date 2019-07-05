@@ -152,6 +152,11 @@ public class Server implements ServerInterface {
         rooms.get(roomNumber).deregister(controller);
     }
 
+    /**
+     * player kicking (e.g. for a matchmaking disconnection)
+     * @param toKick player to be kicked
+     * @param isReconnection boolean to signal reconnection
+     */
     public void kickPlayer(String toKick, boolean isReconnection) {
         VirtualView room = getPlayerRoomOnId(toKick);
         if(!isReconnection) {
@@ -191,6 +196,14 @@ public class Server implements ServerInterface {
         return new MatchConfigurationEvent(usernameReconnecting, model.getMapConfigs(), model.getUsernames(), true);
     }
 
+    /**
+     * SyncEvent creation given all the model's information
+     *
+     * @param roomNumber number of the room
+     * @param usernameReconnecting username upon reconnections
+     * @param token token for reconnection
+     * @return SyncEvent
+     */
     public synchronized SyncEvent sync(int roomNumber, String usernameReconnecting, String token){
         Game model = models.get(roomNumber);
         boolean isFrenzy = model.isFinalFrenzy();
@@ -285,6 +298,11 @@ public class Server implements ServerInterface {
         return null;
     }
 
+    /**
+     * Opens connections for socket and RMI protocols
+     * @throws IOException
+     * @throws AlreadyBoundException
+     */
     private void openConnections()throws IOException, AlreadyBoundException{
         System.setProperty("java.rmi.server.hostname", getAddress());
 
@@ -293,6 +311,12 @@ public class Server implements ServerInterface {
         Registry registry = LocateRegistry.createRegistry(1099);
         registry.bind(properties.getProperty("SERVER_NAME"), UnicastRemoteObject.exportObject(this, 0));
     }
+
+
+    /**
+     * Creates new MVC for multiple paralle lobbys
+     *
+     */
 
     protected void newMVC() {
 
@@ -315,6 +339,10 @@ public class Server implements ServerInterface {
         }
     }
 
+    /**
+     * Socket connnection accepting
+     * @throws IOException Socket listen exception
+     */
     private void acceptClients() throws IOException{
         semRMI.release();
         while(true){
@@ -325,10 +353,15 @@ public class Server implements ServerInterface {
                 suspendedConnection = new ConnectionSocket(generateToken(), socket);
                 return;
             }
+            if(rooms.size() == roomNumber)
+                rooms.add(new VirtualView(roomNumber, this));
             rooms.get(roomNumber).startListening(new ConnectionSocket(generateToken(), socket));
           }
     }
 
+    /**
+     * Creates a new Match by creating a new room and a new MVC
+     */
     private void newMatch(){
         while(!Thread.currentThread().isInterrupted()) {
             semRMI.acquireUninterruptibly();
@@ -364,6 +397,10 @@ public class Server implements ServerInterface {
 
     //------------------------RMI REMOTE SERVER INTERFACE IMPLEMENTATION------------------------//
 
+    /**
+     * Listening for RMI connections
+     * @param client callback parameter
+     */
     @Override
     public void startListening(CallbackInterface client) {
         semRMI.acquireUninterruptibly();
@@ -380,12 +417,15 @@ public class Server implements ServerInterface {
         semRMI.release();
     }
 
+
     @Override
     public MVEvent pullEvent(String token, int playerRoomNumber) throws RemoteException {
         try {
             return ((ConnectionRMI) rooms.get(playerRoomNumber).getConnectionOnToken(token)).pull();
         } catch (NullPointerException e) {
-            throw new NullPointerException("You detain an invalid token: " + token + "on room number: " + playerRoomNumber);
+            Log.severe("You detain an invalid token: " + token + "on room number: " + playerRoomNumber);
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -394,7 +434,8 @@ public class Server implements ServerInterface {
         try{
             ((ConnectionRMI) rooms.get(playerRoomNumber).getConnectionOnToken(token)).push(vcEvent);
         }catch (NullPointerException e){
-            throw new NullPointerException("You detain an invalid token: " + token + "on room number: " + playerRoomNumber);
+            Log.severe("You detain an invalid token: " + token + "on room number: " + playerRoomNumber);
+            e.printStackTrace();
         }
     }
 

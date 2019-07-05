@@ -6,6 +6,7 @@ import it.polimi.se2019.commons.mv_events.SetUpEvent;
 
 import java.util.List;
 
+
 public class ViewCLI extends View {
 
     public ViewCLI(Client client){

@@ -17,23 +17,29 @@ import java.util.concurrent.Semaphore;
 import static java.lang.Math.max;
 
 
-//TODO red skulls and disabled skulls
-//TODO ask first player about preferred skull number
-//TODO when sending "actions" use combotype names (in UML)
-//TODO when using moveAndGrab click on your tile not to move
-//TODO chosenEffectEvent: click on card section
-
+/**
+ * View implementation for GUI using javaFX
+ */
 public class ViewGUI extends View {
 
     private ArrayBlockingQueue<MVEvent> eventBuffer = new ArrayBlockingQueue<>(100);
+
     private static Semaphore semControllerSync = new Semaphore(1, true);
+
     private Semaphore semMove = new Semaphore(1, true);
+
     private List<MockPlayer> players = new ArrayList<>();
+
     private boolean timerGoing=false;
+
     private static ViewGUI instance = null;
+
     private Map<Point, String> pointColorSpawnMap;
+
     private String currentlyShownFigure;
+
     private boolean respawning = false;
+
     private boolean isWeapon = false;
 
     private Semaphore movementSem = new Semaphore(1, true);
@@ -79,23 +85,26 @@ public class ViewGUI extends View {
         notify(message);
     }
 
-
+    /**
+     * Controller sychronized registration to avoid concurrent modifications
+     * and loss of event dispatching
+     * @param controller Controller to register
+     */
     public  void registerController(GuiController controller){
         register(controller);
         semControllerSync.release();
-    }
-
-    public void deregisterController(GuiController controller){
-        deregister(controller);
     }
 
     public String getUsername(){
         return client.getUsername();
     }
 
+    /**
+     * Timer render
+     * @param message contains missing time until timer end
+     */
     @Override
     public void dispatch(TimerEvent message) {
-        //Log.fine("Time to go: " + message.getTimeToGo());
         if (!timerGoing) {
             notify(new UiTimerStart(message.getTimeToGo()));
             timerGoing = true;
@@ -107,6 +116,7 @@ public class ViewGUI extends View {
         notify(new UiTimerTick(message.getTimeToGo()));
     }
 
+
     @Override
     public void update(MVEvent message) {
         try {
@@ -116,7 +126,6 @@ public class ViewGUI extends View {
             eventBuffer.put(message);
         }catch (UnsupportedOperationException e){
             Log.severe("Unsupported event in view");
-            //throw new UnsupportedOperationException("Error: " + e.getMessage(), e);
         }catch (InterruptedException e){
             Log.severe("Interrupted while adding to buffer in ViewGUI");
         }
@@ -171,6 +180,10 @@ public class ViewGUI extends View {
 
     //------------------Setup-------------------//
 
+    /** SetUp phase initialization, users choosing frenzy, maps, and skulls.
+     * Synchronization needed to wait for javaFX controllers registration
+     * @param message serves to signal matchMaking wrap up
+     */
     @Override
     public synchronized void dispatch(SetUpEvent message) {
         semControllerSync.release();
@@ -202,9 +215,12 @@ public class ViewGUI extends View {
 
     //------------------Turn Management-------------------//
 
+    /**
+     * First turn start event
+     * @param message contains information for powerups among which to discard and Spawn tiles
+     */
     @Override
     public synchronized void dispatch(StartFirstTurnEvent message) {
-        //semControllerSync.acquireUninterruptibly();
         pointColorSpawnMap = message.getSpawnPoints();
         for(Point p: message.getSpawnPoints().keySet())
             notify(new UiHighlightTileEvent(p, false, client.getUsername(), false));
@@ -213,12 +229,18 @@ public class ViewGUI extends View {
         notify(new UiSpawn());
     }
 
+    /**
+     * Turn general management, starts turn and highlights available actions
+     *
+     * @param message contains combos to highlight
+     */
     @Override
     public void dispatch(TurnEvent message) {
         notify(new UiStartTurn());
         for(String c: message.getCombos())
             notify(new UiAvailableMove(c));
     }
+
 
     @Override
     public void dispatch(FinalFrenzyStartingEvent message) {
@@ -261,6 +283,10 @@ public class ViewGUI extends View {
         notify(new UiMatchEnd());
     }
 
+    /**
+     * Event needed for synchronization after reconnection
+     * @param message contains the current known state of all players and of the board
+     */
     @Override
     public synchronized void dispatch(SyncEvent message) {
         pointColorSpawnMap = message.getPointColorSpawnMap();
@@ -274,7 +300,10 @@ public class ViewGUI extends View {
                 dispatch(new PausedPlayerEvent(client.getUsername(), paused));
         }
 
-        //notify(new UiAddPlayer(client.getUsername()));
+        for(String powerup: message.getPowerup())
+            notify(new UiPutPowerUp(powerup));
+
+       // notify(new UiAddPlayer(client.getUsername(), 0));
 
         for(String username: message.getUsernames()){
 
@@ -292,8 +321,6 @@ public class ViewGUI extends View {
                     dispatch(new MVMoveEvent(client.getUsername(), getPlayerOnColour(figure).getUsername(), p));
             }
 
-            for(String powerup: message.getPowerup())
-                dispatch(new DrawnPowerUpEvent(client.getUsername(), powerup));
 
 
             for(String weapon: message.getWeapons().get(username)){
@@ -312,6 +339,11 @@ public class ViewGUI extends View {
     }
 
     //-----------------------------------Figure movements-----------------------------------//
+
+    /**
+     * Event highlighting tiles on the map for players to choose
+     * @param message contains tiles to highlight
+     */
     @Override
     public void dispatch(AllowedMovementsEvent message) {
         for (Point p:
@@ -320,6 +352,11 @@ public class ViewGUI extends View {
         }
     }
 
+    /**
+     *  Event dispatched to all clients to update about a move on the board
+     *
+     * @param message contains the player that moved and the place it moved to
+     */
     @Override
     public  void dispatch(MVMoveEvent message) {
         movementSem.acquireUninterruptibly();
@@ -342,6 +379,10 @@ public class ViewGUI extends View {
     //--------------------------------------------------------------------------------------//
     //-----------------------------------Grabbing-------------------------------------------//
 
+    /**
+     * Event that tells the player which object on the map it can grab given its current configuration
+     * @param message contains either weapons or loot
+     */
     @Override
     public void dispatch(GrabbablesEvent message) {
         movementSem.acquireUninterruptibly();
@@ -371,6 +412,11 @@ public class ViewGUI extends View {
         notify(new UiGrabbedLoot(message.getGrabbedLootCard()));
     }
 
+    /**
+     * Events for refreshing the board at the end of a turn after eventual grabs
+     * @param message contains sufficient information for for placing loots and weapons on their spots
+     */
+
     @Override
     public void dispatch(BoardRefreshEvent message) {
         notify(new UiBoardRefresh(message.getWeaponSpots(), message.getLootCards()));
@@ -378,6 +424,10 @@ public class ViewGUI extends View {
 
     //------------------------------------MockPlayer Manipulation--------------------------------------------//
 
+    /**
+     * Event for adding a hit point
+     * @param message contains attacked and attacker
+     */
     @Override
     public void dispatch(UpdateHpEvent message) {
         MockPlayer attacked = getPlayerOnUsername(message.getAttacked());
@@ -391,6 +441,10 @@ public class ViewGUI extends View {
         attacked.setHp(newHp);
     }
 
+    /**
+     * event for either adding or removing marks
+     * @param message contains a color that could mean addition of a mark o deletion of all the marks of the same color
+     */
     @Override
     public void dispatch(UpdateMarkEvent message) {
         MockPlayer marked = getPlayerOnUsername(message.getMarked());
@@ -409,7 +463,7 @@ public class ViewGUI extends View {
             if(marked.getPlayerColor().equals(currentlyShownFigure))
                 notify(new UiRemoveMarks(marksToTake));
         }else{
-            newMarks.add(marked.getPlayerColor().toLowerCase());
+            newMarks.add(marker.getPlayerColor().toLowerCase());
 
             if(marked.getPlayerColor().equals(currentlyShownFigure))
                 notify(new UiAddDamage(marker.getPlayerColor(), marked.getMark().size(), true));
@@ -418,10 +472,14 @@ public class ViewGUI extends View {
     }
 
     public List<String> getMarks (){
-        //return marks of showed player
+        //returns marks of showed player
         return getPlayerOnColour(currentlyShownFigure).getMark();
     }
 
+    /**
+     * ammo situation update for a specific player
+     * @param message contains new ammo values and the player that owns those ammo
+     */
     @Override
     public void dispatch(FinanceUpdateEvent message) {
         if(getPlayerOnUsername(message.getUsername()).getPlayerColor().equals(currentlyShownFigure))
@@ -429,6 +487,10 @@ public class ViewGUI extends View {
         getPlayerOnUsername(message.getUsername()).setAmmos(message.getUpdatedAmmos());
     }
 
+    /**
+     * Death handling for all players
+     * @param message contains killed and killer so that skull board can also be updated
+     */
     @Override
     public void dispatch(MVDeathEvent message) {
         if(message.isMatchOver()){
@@ -471,6 +533,10 @@ public class ViewGUI extends View {
 
     }
 
+    /**
+     * Choice of the actual target on which to apply the weapon effect previously chosen
+     * @param message contains skip information together with a target Set of eiter tiles or players (Targetables)
+     */
     @Override
     public void dispatch(PartialSelectionEvent message) {
         if((message.getTargetPlayers() == null && message.getTargetTiles() == null) ||

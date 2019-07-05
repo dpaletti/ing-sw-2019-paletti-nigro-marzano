@@ -11,6 +11,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * Connection implementation for Socket handling, Scanner and PrintWriter used for retrieving and submitting
+ */
 public class ConnectionSocket implements Connection{
     private Scanner in;
     private PrintWriter out;

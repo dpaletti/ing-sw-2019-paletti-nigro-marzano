@@ -5,6 +5,9 @@ import it.polimi.se2019.client.view.VCEvent;
 
 import java.util.List;
 
+/**
+ * Connection implementation that broadcasts a message to all the connections given to its constructor
+ */
 public class ConnectionBroadcast implements Connection{
     private List<Connection> connectionList;
 

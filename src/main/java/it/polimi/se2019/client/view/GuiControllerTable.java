@@ -788,13 +788,13 @@ public class GuiControllerTable extends GuiController {
                 row = 1;
                 column = i - 10;
             }
-            mark.getChildren().remove(scene.lookup("#mark" + column + row));
+            root.getChildren().remove(scene.lookup("#mark" + column + row));
             column++;
             if(column == 10){
                 row = 1;
                 column = 0;
             }
-            while(scene.lookup("mark" + column + row) != null){
+            while(scene.lookup("#mark" + column + row) != null){
                 dispatch(new UiAddDamage(ViewGUI.getInstance().getMarks().get(column + (9 * row)), (column - 1) + (9*row), true));
                 column++;
                 if(column == 10){
