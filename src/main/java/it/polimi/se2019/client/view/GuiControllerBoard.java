@@ -50,7 +50,7 @@ public class GuiControllerBoard extends GuiController {
     private Map<Point, String> lootsOnTile;
     private Map<String, String> fromPositionToWeapon = new HashMap<>(); //given the id of the slot one can get the weapon that sits there
     private Map<String, ImageView> highlightedFigures = new HashMap<>(); //given the name of a figure one can get the weapon
-    private Map<Integer, ImageView> skullMap = new HashMap<>();
+    private Map<Integer, Pane> skullMap = new HashMap<>();
 
     //--------------------------------------------Initialization---------------------------------------------//
     @Override
@@ -147,6 +147,8 @@ public class GuiControllerBoard extends GuiController {
                 loader = new FXMLLoader(Paths.get("files/fxml/board_skull.fxml").toUri().toURL());
                 pane = loader.load();
                 boardSkull.add(pane, 7 - i, 0);
+                skullMap.put(7 - i, pane);
+
             }
         }catch (MalformedURLException e){
             Log.severe("Could not get Skull fxml");
@@ -551,7 +553,7 @@ public class GuiControllerBoard extends GuiController {
                     ((Circle) n).setFill(Color.GREEN);
                 else if(message.getColour().equalsIgnoreCase("yellow"))
                     ((Circle) n).setFill(Color.YELLOW);
-                else if(message.getColour().equalsIgnoreCase("red"))
+                else if(message.getColour().equalsIgnoreCase("magenta"))
                     ((Circle) n).setFill(Color.RED);
                 else if(message.getColour().equalsIgnoreCase("grey"))
                     ((Circle) n).setFill(Color.GREY);
@@ -560,7 +562,7 @@ public class GuiControllerBoard extends GuiController {
             }
 
 
-            skullMap.get(skullToAdd).setImage(null);
+            boardSkull.getChildren().remove(skullMap.get(skullToAdd));
             boardSkull.add(pane, skullToAdd, 0);
             skullToAdd++;
 
