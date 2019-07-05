@@ -39,6 +39,10 @@ public class Figure {
         this.player = player;
     }       //needed as figure has reference to player and vice versa
 
+    /**
+     * This method causes damage to the target figure and adds the marks in case there are any.
+     * @param target targeted figure to damage.
+     */
     public void damage (Figure target){
         if (target.getPlayer().getHp().size()==12)
             return;
@@ -51,6 +55,10 @@ public class Figure {
         }
     }
 
+    /**
+     * This method marks another figure.
+     * @param target targeted figure to mark.
+     */
     public void mark (Figure target){
         int marksOfColour = 0;
         for(Tear m: target.player.getMarks()){ //
@@ -61,6 +69,11 @@ public class Figure {
             target.player.addMark(colour);
     }
 
+    /**
+     * Moves a player to their desired direction.
+     * @param destination the desired destination.
+     * @param distance the maximum distance the user can move.
+     */
     public void run (Point destination, int distance){
             if(tile != null)
                 tile.removeFigure(this);
@@ -68,6 +81,10 @@ public class Figure {
             tile.addFigure(this);
     }
 
+    /**
+     * Grabs a grabbable.
+     * @param grabbed the grabbable the user wishes to grab.
+     */
     public void grab(String grabbed){
         tile.getGrabbables().get(0).grab(player, grabbed, player.getGame());
     }
@@ -79,6 +96,13 @@ public class Figure {
     public void unload (Weapon weapon){
         weapon.setLoaded(false);
     }
+
+    /**
+     * Causes the defined damage to the chosen target.
+     * @param partialWeaponEffect the effect of the weapon that the user wishes to cause.
+     * @param figure the figure the user wishes to shoot.
+     * @param game the class that communicates with the view.
+     */
 
     public void shoot (PartialWeaponEffect partialWeaponEffect, Figure figure, Game game){
        for(Action a : partialWeaponEffect.getActions())

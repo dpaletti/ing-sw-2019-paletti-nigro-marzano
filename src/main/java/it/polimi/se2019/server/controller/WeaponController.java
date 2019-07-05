@@ -29,6 +29,10 @@ public class WeaponController extends CardController {
         super(model);
     }
 
+    /**
+     * This method ignores the events that are not dispatched in this controller.
+     * @param message Any message arriving from the view.
+     */
     @Override
     public void update(VCEvent message) {
         if(disabled)
@@ -41,7 +45,10 @@ public class WeaponController extends CardController {
         }
     }
 
-
+    /**
+     * This method handles the start of the usage of a weapon and sends the player a list of effects they can use.
+     * @param message
+     */
     @Override
     public void dispatch(ChosenWeaponEvent message) {
         current = model.nameToWeapon(message.getWeapon());
@@ -49,6 +56,10 @@ public class WeaponController extends CardController {
         nextWeaponEffect(true);
     }
 
+    /**
+     * Sets all the indexes back when weapon usage is over.
+     * @param isWeapon a boolean that defines whether a card is a weapon or a power up.
+     */
     @Override
     protected void endUsage(boolean isWeapon) {
         super.endUsage(true);
@@ -59,6 +70,10 @@ public class WeaponController extends CardController {
         model.getTurnMemory().end();
     }
 
+    /**
+     * Sends the user the possible targets of their chosen effect.
+     * @param message
+     */
     @Override
     public void dispatch(ChosenEffectEvent message) {
         for (GraphNode<GraphWeaponEffect> w : model.nameToWeapon(message.getWeapon()).getDefinition()) {
@@ -73,6 +88,10 @@ public class WeaponController extends CardController {
         handleEffect(true);
     }
 
+    /**
+     * Causes damage to the chosen targets.
+     * @param message
+     */
     @Override
     public void dispatch(VCPartialEffectEvent message) {
         if ((partialGraphLayer==-1) || (!message.isWeapon() && !message.isSkip()))
@@ -162,6 +181,10 @@ public class WeaponController extends CardController {
         }
     }*/
 
+    /**
+     * activates power ups that can be used while attacking for the attacker and those that can be used when being damaged for the targets.
+     * @param targets
+     */
     private void usablePowerUps(List<String> targets) {
         model.usablePowerUps("OnAttack",true,currentPlayer);
         for (String s: targets)

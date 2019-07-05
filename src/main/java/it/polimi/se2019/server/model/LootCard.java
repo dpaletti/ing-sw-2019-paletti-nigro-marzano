@@ -44,6 +44,12 @@ public class LootCard implements Grabbable, Drawable,Jsonable{
         return name;
     }
 
+    /**
+     * Performs the grab action.
+     * @param player player grabbing the loot card.
+     * @param grabbed the grabbed loot card.
+     * @param game
+     */
     @Override
     public void grab(Player player, String grabbed, Game game) {
         if (name.equalsIgnoreCase(grabbed)) {

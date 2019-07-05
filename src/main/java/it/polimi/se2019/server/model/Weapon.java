@@ -31,10 +31,13 @@ public class Weapon extends Card implements Grabbable, Drawable, Jsonable{
         this.loaded = loaded;
     }
 
-    //check number of weapons in hand
-    //if < 3, pay cost and add weapon to list
-    //else send choice event to game
-
+    /**
+     * Checks whether the number of weapons in hand is less than 3.
+     * If that is true, the cost of the grab is payed and the weapon is added to the weapons owned.
+     * @param player the player grabbing.
+     * @param grabbed the weapon they wish to grab.
+     * @param game
+     */
     @Override
     public void grab(Player player, String grabbed, Game game) {
         int index =-1;

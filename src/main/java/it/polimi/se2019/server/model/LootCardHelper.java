@@ -16,6 +16,9 @@ public class LootCardHelper extends JsonHelper{
         this.helped=loot.helped;
     }
 
+    /**
+     * This method generates the deck of loot cards.
+     */
     @Override
     public void create() {
         List<AmmoColour> ammoColours = new ArrayList<>();

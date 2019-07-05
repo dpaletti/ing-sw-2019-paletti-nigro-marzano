@@ -24,6 +24,10 @@ public class ViewCLI extends View {
     }
 
 
+    /**
+     * This method ignores the events that are not dispatched in this controller.
+     * @param message Any message arriving from the view.
+     */
     @Override
     public void update(MVEvent message) {
         try {
@@ -67,6 +71,10 @@ public class ViewCLI extends View {
 
     //-----------------------------Set Up------------------------------------------
 
+    /**
+     * When starting the match, all users are notified of the set up of the match.
+     * @param message
+     */
     @Override
     public void dispatch(MatchConfigurationEvent message) {
         String config;
@@ -85,6 +93,10 @@ public class ViewCLI extends View {
         notify(new VcMatchConfigurationEvent(client.getUsername(), skulls, isFinalFrenzy, config));
     }
 
+    /**
+     * This method allows the user to decide where they want to spawn by discarding the correct power up.
+     * @param message
+     */
     @Override
     public void dispatch(SetUpEvent message){
         for (String user : message.getUserToColour().keySet())
@@ -104,6 +116,10 @@ public class ViewCLI extends View {
 
     //----------------------------- turn ------------------------------------------
 
+    /**
+     * Notifies the user when their turn (which is the first one of the match) is starting.
+     * @param message
+     */
     @Override
     public void dispatch(StartFirstTurnEvent message) {
         String discardedPowerUp;
@@ -119,6 +135,10 @@ public class ViewCLI extends View {
         notify(new SpawnEvent(client.getUsername(), getColour(discardedPowerUp), powerUpToKeep));
     }
 
+    /**
+     * When a turn starts, it communicates the actions they can perform and asks them which one they would like to use.
+     * @param message
+     */
     @Override
     public void dispatch(TurnEvent message) {
         String combo;
@@ -131,6 +151,11 @@ public class ViewCLI extends View {
         notify(new ChosenComboEvent(client.getUsername(), combo));
     }
 
+    /**
+     * When the user wants to move, a set of possible tiles is shown and they can select where they would like to move to.
+     * All other users are notified of this movement.
+     * @param message
+     */
     @Override
     public void dispatch(AllowedMovementsEvent message) {
         int x;
@@ -143,6 +168,10 @@ public class ViewCLI extends View {
         notify(new VCMoveEvent(client.getUsername(), new Point(x, y), false, client.getUsername()));
     }
 
+    /**
+     * All the usable weapons are shown to the user.
+     * @param message
+     */
     @Override
     public void dispatch(AllowedWeaponsEvent message) {
         String chosenWeapon;
@@ -152,6 +181,10 @@ public class ViewCLI extends View {
         notify(new ChosenWeaponEvent(client.getUsername(), chosenWeapon));
     }
 
+    /**
+     * All the reloadable weapons are shown to the user.
+     * @param message
+     */
     @Override
     public void dispatch(ReloadableWeaponsEvent message) {
         List<String> chosenWeapons = new ArrayList<>();
@@ -168,6 +201,10 @@ public class ViewCLI extends View {
         notify(new ReloadEvent(client.getUsername(), chosenWeapons));
     }
 
+    /**
+     * When a player wants to grab, this method allows them to grab the grabbable on the tile.
+     * @param message
+     */
     @Override
     public void dispatch(GrabbablesEvent message) {
         String grabbed;
@@ -176,6 +213,10 @@ public class ViewCLI extends View {
         notify(new GrabEvent(client.getUsername(), grabbed));
     }
 
+    /**
+     * Notifies all users when someone moves.
+     * @param message
+     */
     @Override
     public void dispatch(MVMoveEvent message) {
         if (!message.getUsername().equals(client.getUsername()))
@@ -206,6 +247,10 @@ public class ViewCLI extends View {
         notify(new SpawnEvent(client.getUsername(), getColour(discarded)));
     }
 
+    /**
+     * Notifies all users when a player dies.
+     * @param message
+     */
     @Override
     public void dispatch(MVDeathEvent message) {
         String overkill = "shot";
@@ -228,6 +273,10 @@ public class ViewCLI extends View {
         Log.info("Final Frenzy turn is starting.");
     }
 
+    /**
+     * Allows the user to use a power up.
+     * @param message
+     */
     @Override
     public void dispatch(UsablePowerUpEvent message) {
         String powerUp;
@@ -252,6 +301,11 @@ public class ViewCLI extends View {
     public void dispatch(DrawnPowerUpEvent message) {
         Log.info("You drew a " + message.getDrawn() + " power up.");
     }
+
+    /**
+     * Allows to choose the effect of the card that will be used.
+     * @param message
+     */
 
     @Override
     public void dispatch(PossibleEffectsEvent message) {
@@ -321,6 +375,10 @@ public class ViewCLI extends View {
         notify(new DiscardedPowerUpEvent(client.getUsername(), powerUpToLeave));
     }
 
+    /**
+     * Allows the user to sell the needed power ups to pay for actions.
+     * @param message
+     */
     @Override
     public void dispatch(MVSellPowerUpEvent message) {
         List<String> soldPowerUps = new ArrayList<>();
@@ -348,7 +406,7 @@ public class ViewCLI extends View {
         Log.info("Player " + message.getUsername() + " has gained " + message.getPoints() + " points!");
     }
 
-    //------------------useful methods copied from GUI------------------------------
+    //------------------useful methods ------------------------------
 
     private MockPlayer getPlayerOnUsername(String username){
         for(MockPlayer m: players){

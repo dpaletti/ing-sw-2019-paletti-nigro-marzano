@@ -36,6 +36,10 @@ public class MatchMakingController extends Controller {
         usernames.add("*"); //adding wildcard so that no player can choose that username
     }
 
+    /**
+     * This method ignores the events that are not dispatched in this controller.
+     * @param message Any message arriving from the view.
+     */
     @Override
     public void update(VCEvent message)
     {
@@ -50,6 +54,10 @@ public class MatchMakingController extends Controller {
         }
     }
 
+    /**
+     * Whenever a user joins the match, this method adds them to the currently forming room and starts the match if at least 3 players are connected.
+     * @param message
+     */
     @Override
     public void dispatch(VcJoinEvent message) {
         usernames.add(message.getUsername());
@@ -67,6 +75,11 @@ public class MatchMakingController extends Controller {
             matchMakingTimer.endTimer();
         }
     }
+
+    /**
+     * Handles disconnection of users. If less than 2 players are connected and active, they match is over.
+     * @param disconnectionEvent
+     */
 
     @Override
     public void dispatch(DisconnectionEvent disconnectionEvent) {
@@ -108,6 +121,10 @@ public class MatchMakingController extends Controller {
         return new ArrayList<>(usernames);
     }
 
+    /**
+     * This method is called when the timer is interrupted and it closes match making initializing the set up phase.
+     */
+
     protected void onTimerEnd() {
         Log.fine("closing match making");
         matchMade.set(true);
@@ -117,6 +134,11 @@ public class MatchMakingController extends Controller {
         this.disable();
         new SetUpController(model, server, getRoomNumber());
     }
+
+    /**
+     * closes match making.
+     * @param usernames all the users connected to the current room and playing.
+     */
 
     private void closeMatchMaking(List<String> usernames){
         model.setUsernames(new ArrayList<>(usernames));

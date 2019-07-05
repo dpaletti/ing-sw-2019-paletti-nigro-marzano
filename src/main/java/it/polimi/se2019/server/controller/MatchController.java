@@ -4,7 +4,9 @@ import it.polimi.se2019.client.view.VCEvent;
 import it.polimi.se2019.commons.mv_events.MvJoinEvent;
 import it.polimi.se2019.commons.utility.JsonHandler;
 import it.polimi.se2019.commons.utility.Log;
+import it.polimi.se2019.commons.vc_events.DisconnectionEvent;
 import it.polimi.se2019.commons.vc_events.VcJoinEvent;
+import it.polimi.se2019.commons.vc_events.VcReconnectionEvent;
 import it.polimi.se2019.server.model.Game;
 import it.polimi.se2019.server.network.Server;
 
@@ -21,7 +23,10 @@ public class MatchController extends Controller {
         super(model, server, roomNumber);
     }
 
-
+    /**
+     * This method ignores the events that are not dispatched in this controller.
+     * @param message Any message arriving from the view.
+     */
     @Override
     public void update(VCEvent message) {
         if(disabled)
@@ -34,6 +39,23 @@ public class MatchController extends Controller {
         }
     }
 
+
+        @Override
+        public void dispatch(DisconnectionEvent message) {
+            Log.fine(message.getSource() + "just disconnected");
+            model.pausePlayer(message.getSource());
+        }
+
+        @Override
+        public void dispatch(VcReconnectionEvent message) {
+            Log.fine("Handling " + message);
+            model.unpausePlayer(message.getUsername());
+        }
+
+    /**
+     * This method dispatches a join event from the view and sends a new join event back.
+     * @param message
+     */
     @Override
     public void dispatch(VcJoinEvent message) {
         model.send(new MvJoinEvent("*", message.getUsername(), 0));

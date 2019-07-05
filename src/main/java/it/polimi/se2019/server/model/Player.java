@@ -199,17 +199,32 @@ public class Player implements Targetable{
         this.hp.clear();
    }
 
+    /**
+     * moves a user to their preferred direction.
+     * @param destination the preferred destination of the user.
+     * @param distance the maximum distance they can run.
+     */
     public void run (Point destination, int distance) {
         figure.run(destination, distance);
         game.send(new MVMoveEvent("*", game.colourToUser(figure.getColour()), destination));
     }
 
+    /**
+     * causes damage to a chosen targets.
+     * @param target chosen player to target.
+     * @param hits the number of hits to cause.
+     */
     public void shootPeople (Player target, int hits){
         for (int i = 0; i < hits; i++)
             figure.damage(target.figure);
         target.updatePlayerDamage();
     }
 
+    /**
+     * causes marks to a chosen target.
+     * @param target the chosen player to target.
+     * @param marks the number of marks to cause.
+     */
     public void markPeople (Player target, int marks){
         for (int i = 0; i< marks; i++)
             figure.mark(target.figure);
@@ -218,6 +233,11 @@ public class Player implements Targetable{
     public void grabStuff(String grabbed){
         figure.grab(grabbed);
     }
+
+    /**
+     * reloads the weapon checking whether the user can afford the reload.
+     * @param weapon the weapon the user wishes to reload.
+     */
 
     public void reload(Weapon weapon){
         ArrayList<Ammo> reloadPrice= new ArrayList<>(weapon.price);
@@ -238,6 +258,10 @@ public class Player implements Targetable{
         }
     }
 
+    /**
+     * Sells a power up in order to use its ammo to pay for the price on an action.
+     * @param powerUp chosen power up to sell.
+     */
     public void sellPowerUp (String powerUp){
         if (powerUpIsNotOwned(powerUp))
             throw new UnsupportedOperationException("Could not sell " + powerUp + "as player doesn't own it");
@@ -245,6 +269,11 @@ public class Player implements Targetable{
         discardPowerUp(powerUp);
     }
 
+    /**
+     * Checks whether the power up the user wants to use in actually owned.
+     * @param powerUp name of the power up to use.
+     * @return if the power up is owned, it returns false.
+     */
     private boolean powerUpIsNotOwned(String powerUp){
         for (PowerUp p: powerUps){
             if (p.name.equalsIgnoreCase(powerUp))
@@ -268,6 +297,9 @@ public class Player implements Targetable{
         game.send(new UpdateMarkEvent("*", game.colourToUser(figure.getColour()), game.colourToUser(figureColour), false));
     }
 
+    /**
+     * Updates the moves a user is allowed to perform.
+     */
     void updatePlayerDamage (){
         if (hp.size()>10) {
             updatePointsToAssign();
@@ -278,9 +310,14 @@ public class Player implements Targetable{
             healthState= healthState.findNextHealthState();
     }
 
+    /**
+     * Updates the moves a user is allowed to perform during final frenzy mode.
+     * @param playerDamage
+     */
     void updatePlayerDamage (PlayerDamage playerDamage){
         healthState= playerDamage;
     }   //used for Final Frenzy state
+
 
     private void updatePointsToAssign (){
         playerValue= playerValue.getNextPlayerValue();
@@ -322,6 +359,11 @@ public class Player implements Targetable{
         drawPowerUp(game.getPowerUpDeck().draw().getName());
     }
 
+    /**
+     * Calculates the ammos missing to pay the price of a certain action.
+     * @param ammoToPay price of the action.
+     * @return
+     */
     public List<Ammo> missingAmmos (List<Ammo> ammoToPay){
         List<Ammo> ammosMissing = new ArrayList<>();
         List<Ammo> ammosOwned = new ArrayList<>(ammo);
@@ -336,6 +378,10 @@ public class Player implements Targetable{
         return ammosMissing;
     }
 
+    /**
+     * adds a grabbed dweapon.
+     * @param weapon
+     */
     public void addWeapon (Weapon weapon){
         if (weapons.size() == 4)
             throw new UnsupportedOperationException("Discard a weapon before drawing one");
@@ -388,6 +434,10 @@ public class Player implements Targetable{
  }
 
 
+    /**
+     * returns weapons that are already loaded and ready to be used.
+     * @return
+     */
  public List<Weapon> getLoadedWeapons(){
      List<Weapon> loadedWeapons=new ArrayList<>();
      for (Weapon w: weapons){

@@ -43,7 +43,12 @@ public class GameMap{
             Log.severe("Error in json file, type");
         }
     }
-    //This method initializes the gamemap field in the tile objects
+
+    /**
+     * This method initializes the GameMap field in the tile objects.
+     * @param tiles tiles whose gameMap needs to be initialized.
+     */
+
     private void connectTiles(List<Tile> tiles){
         for (Tile t: tiles)
             t.setGameMap(this);
@@ -101,6 +106,12 @@ public class GameMap{
         return allPoints;
     }
 
+    /**
+     * Returns the movements that can be made on the map given the maximum distance.
+     * @param currentTile the tile from which the distance is being calculated.
+     * @param maximumDistance the maximum distance.
+     * @return
+     */
     public List<Point> getAllowedMovements (Tile currentTile, int maximumDistance){
         List<Point> allowedMovements= new ArrayList<>();
         if (maximumDistance == -1){
@@ -122,6 +133,11 @@ public class GameMap{
         return generateGraph(startingPosition).getGraphNode(getTile(endingPosition)).getLayer();
     }
 
+    /**
+     * generates a graph of tiles at distance 1 from each other.
+     * @param root
+     * @return
+     */
     private GraphNode<Tile> generateGraph (Point root){
         GraphNode<Tile> mapRoot = new GraphNode<>(getTile(root), 0);
         getAdjacentTiles(mapRoot, mapRoot, 1);
@@ -136,6 +152,12 @@ public class GameMap{
        return mapRoot;
     }
 
+    /**
+     * calculates the tiles at distance 1 from the root tile.
+     * @param root
+     * @param localRoot
+     * @param layer
+     */
      private void getAdjacentTiles (GraphNode<Tile> root, GraphNode<Tile> localRoot, int layer){        //layer is layer of its children
         GraphNode<Tile> child;
         for (Tile t: getTiles()){

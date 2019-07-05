@@ -56,6 +56,10 @@ public class TurnController extends Controller {
         interTurnTimer= new TickingTimer(model, this::endTurn);
     }
 
+    /**
+     * This method ignores the events that are not dispatched in this controller.
+     * @param message Any message arriving from the view.
+     */
     @Override
     public void update(VCEvent message) {
         if(disabled)
@@ -68,6 +72,10 @@ public class TurnController extends Controller {
         }
     }
 
+    /**
+     * Handles disconnection of a user while their turn is taking place.
+     * @param message
+     */
     @Override
     public void dispatch(VCFinalFrenzy message) {
         comboUsed=-1;
@@ -90,6 +98,11 @@ public class TurnController extends Controller {
         model.unpausePlayer(message.getUsername());
     }
 
+    /**
+     * Handles a player spawning or respawning.
+     * @param message
+     */
+
     @Override
     public void dispatch(SpawnEvent message) {
         boolean isRespawn = false;
@@ -105,6 +118,11 @@ public class TurnController extends Controller {
         }
     }
 
+    /**
+     * Reloads a weapon the user selects.
+     * @param message
+     */
+
     @Override
     public void dispatch(ReloadEvent message) {
         for (String s : message.getReloadedWeapons())
@@ -117,6 +135,12 @@ public class TurnController extends Controller {
             turnTimer.endTimer();
         }
 
+    /**
+     *Verifies whether the combo is valid or not
+     * @param combos a list of partial combos that make up a combo.
+     * @param combo a combo.
+     * @return true whether the combo is valid.
+     */
         private boolean isCombo(List<PartialCombo> combos,Combo combo){
             List<PartialCombo> expected= combo.getPartialCombos();
             if(combos.size()!=expected.size())
@@ -128,7 +152,13 @@ public class TurnController extends Controller {
             return true;
         }
 
-        private Combo fromPartialToCombo(List<PartialCombo> partialCombos){
+    /**
+     * Parses a list of partial combos and transforms them into a combo.
+     * @param partialCombos the list of partial combos to transform.
+     * @return the combo generated.
+     */
+
+    private Combo fromPartialToCombo(List<PartialCombo> partialCombos){
             PlayerDamage playerState=model.userToPlayer(currentPlayer).getHealthState();
             Set<Combo> allCombos= model.getComboHelper().getCombos();
             List<Combo> usables= new ArrayList<>();
@@ -150,7 +180,12 @@ public class TurnController extends Controller {
             throw new IllegalArgumentException("No combo exist with such partialCombos: "+partialCombos);
         }
 
-        private List<Combo> convertMoves(List<ArrayList<PartialCombo>> partials){
+    /**
+     * converts partials to list of combos.
+     * @param partials a list of partials to convert.
+     * @return a list of combos converted.
+     */
+    private List<Combo> convertMoves(List<ArrayList<PartialCombo>> partials){
             List<Combo> combos = new ArrayList<>();
             for(ArrayList<PartialCombo> p: partials){
                 combos.add(fromPartialToCombo(p));
@@ -158,19 +193,34 @@ public class TurnController extends Controller {
             return combos;
         }
 
-        private List<String> movesToString(List<Combo> combos){
+    /**
+     * transforms combos to their strings.
+     * @param combos the combos to be transformed.
+     * @return the strings of those combos.
+     */
+
+    private List<String> movesToString(List<Combo> combos){
             List<String> strings = new ArrayList<>();
             for (Combo c: combos)
                 strings.add(c.getName());
             return strings;
         }
 
-        private List<String> fromPartialToStringCombo(List<ArrayList<PartialCombo>> partials){
+    /**
+     * transforms a list of partials to a list of combos.
+     * @param partials a list of partials to be transformed.
+     * @return the transformed strings.
+     */
+    private List<String> fromPartialToStringCombo(List<ArrayList<PartialCombo>> partials){
             return movesToString
                     (convertMoves
                             (partials));
         }
 
+    /**
+     * The chosen combo is dispatched and the allowed actions of that combo are notified to the user.
+     * @param message
+     */
     @Override
     public void dispatch(ChosenComboEvent message) {
         disablePowerUps(currentPlayer,"onAttack");
@@ -180,10 +230,19 @@ public class TurnController extends Controller {
 
     }
 
+    /**
+     * Whenever a user decides to end their turn before the turn is technically over, this method ends their turn.
+     * @param message
+     */
     @Override
     public void dispatch(VCEndOfTurnEvent message) {
         turnTimer.endTimer();
     }
+
+    /**
+     * Moves the user to the specified tile.
+     * @param message
+     */
 
     @Override
     public void dispatch(VCMoveEvent message) {
@@ -198,11 +257,20 @@ public class TurnController extends Controller {
         nextPartialCombo();
     }
 
+    /**
+     * Grabs the chosen grabbable.
+     * @param message
+     */
+
     @Override
     public void dispatch(GrabEvent message) {
         model.userToPlayer(message.getSource()).grabStuff(message.getGrabbed());
         nextPartialCombo();
     }
+
+    /**
+     * moves to the following combo the user can perform.
+     */
 
     private void nextCombo(){
         PlayerDamage playerDamage=model.userToPlayer(currentPlayer).getHealthState();
@@ -227,6 +295,10 @@ public class TurnController extends Controller {
         model.send(new TurnEvent(currentPlayer, fromPartialToStringCombo(getAllowedMoves())));
         model.usablePowerUps("onTurn", false, model.userToPlayer(currentPlayer));
     }
+
+    /**
+     * moves to the following partial in the combo the user selected.
+     */
 
     private void nextPartialCombo (){
         if(currentCombo == null)
@@ -258,6 +330,13 @@ public class TurnController extends Controller {
         model.userToPlayer(username).reload(model.nameToWeapon(weaponName));
     }
 
+    /**
+     * this method spawns a player to their preferred spawn tile and assigns them the power up that was not discarded.
+     * @param username the user that is currently spawning.
+     * @param spawnColour the colour of the tile the player wishes to spawn on.
+     * @param powerUpName the name of the power up the user wants to keep.
+     * @param respawn whether the player is respawning or not.
+     */
     private void spawn (String username, AmmoColour spawnColour, String powerUpName, boolean respawn) {
         for (Tile tile : model.getGameMap().getSpawnTiles()) {
             if (tile.getColour().toString().equals(spawnColour.toString()))
@@ -272,7 +351,9 @@ public class TurnController extends Controller {
         }
     }
 
-    //Create an event to assure that whenever a player leaves he forces spawn in a point
+    /**
+     * This method ends the turn of a player and starts that of the following player in the match.
+     */
     private void endTurn(){
         if(spawning) {
             spawn(currentPlayer,
@@ -321,14 +402,14 @@ public class TurnController extends Controller {
         return comboIndex;
     }
 
-    public int getComboUsed() {
-        return comboUsed;
-    }
-
     public String getCurrentPlayer() {
         return currentPlayer;
     }
 
+    /**
+     * Calculates the combos that the user can actually perform.
+     * @return a list of combos.
+     */
     private List<ArrayList<PartialCombo>> getAllowedMoves(){
         List<ArrayList<PartialCombo>> allowed=new ArrayList<>();
         if(model.userToPlayer(currentPlayer).getLoadedWeapons().isEmpty()){
@@ -343,6 +424,9 @@ public class TurnController extends Controller {
         return allowed;
     }
 
+    /**
+     * This method respawns users that died during the turn of the current player.
+     */
     private void interTurn(){
         if (!model.getPlayersWaitingToRespawn().isEmpty()){
             for (String s : model.getPlayersWaitingToRespawn()) {
@@ -357,6 +441,9 @@ public class TurnController extends Controller {
         }
     }
 
+    /**
+     * Draws new cards and places them on the board, then sends the players a notification with the new cards placed on the board.
+     */
     private void refreshBoard() {
         HashMap<Point, String> loot = new HashMap<>();
         HashMap<String, String> spawn = new HashMap<>();

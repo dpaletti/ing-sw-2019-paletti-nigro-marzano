@@ -24,6 +24,13 @@ public enum ActionType {
         }
     };
 
+    /**
+     * Applies the effect of a weapon to a target.
+     * @param target target to hit.
+     * @param shooter player shooting and causing the damage.
+     * @param action action that a weapon performs.
+     * @param game
+     */
     public abstract void apply(Player target, Player shooter, Action action, Game game);
 
 

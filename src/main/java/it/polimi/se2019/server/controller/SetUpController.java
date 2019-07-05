@@ -40,6 +40,10 @@ public class SetUpController extends Controller {
         this.model = model;
     }
 
+    /**
+     * This method ignores the events that are not dispatched in this controller.
+     * @param message Any message arriving from the view.
+     */
     @Override
     public void update(VCEvent message)
     {
@@ -54,6 +58,10 @@ public class SetUpController extends Controller {
         }
     }
 
+    /**
+     * This method registers votes coming from the users.
+     * @param message the voted configuration.
+     */
     @Override
     public void dispatch(VcMatchConfigurationEvent message) {
         skulls.add(message.getSkulls());
@@ -68,17 +76,30 @@ public class SetUpController extends Controller {
 
     }
 
+    /**
+     * This method handles disconnection during set up phase.
+     * @param message the disconnection message.
+     */
     @Override
     public void dispatch(DisconnectionEvent message) {
         if(!message.isReconnection())
             model.send(new PausedPlayerEvent("*", message.getSource()));
     }
 
+    /**
+     * This method handles reconnection during set up phase.
+     * @param message the reconnection message
+     */
+
     @Override
     public void dispatch(VcReconnectionEvent message) {
         model.send(new UnpausedPlayerEvent("*", message.getUsername()));
     }
 
+    /**
+     * This method handles players joining during set up phase.
+     * @param message
+     */
     @Override
     public void dispatch(VcJoinEvent message) {
         model.send(new MvJoinEvent("*", message.getUsername(), 0));
@@ -123,6 +144,10 @@ public class SetUpController extends Controller {
         this.disable();
      }
 
+    /**
+     * This method fills each weapon spot of the map with three drawn weapons.
+     * @return The returned element is a map between names of weapons and the colour of the weapon spot they are located in.
+     */
     private Map<String, String> weaponSpotsSetUp (){
         Map<String, String> weaponSpots= new HashMap<>();
         Grabbable drawnGrabbable;
@@ -137,6 +162,10 @@ public class SetUpController extends Controller {
         return weaponSpots;
     }
 
+    /**
+     * This method fills each loot tile of the map with a loot card.
+     * @return The returned element is a map between the tile on which the card is positioned and the name of the loot card.
+     */
     private Map<Point, String> lootTilesSetUp(){
         Map<Point, String> lootCards= new HashMap<>();
         Grabbable drawnGrabbable;
@@ -149,6 +178,10 @@ public class SetUpController extends Controller {
         return lootCards;
     }
 
+    /**
+     * This method creates a player and assigns a random figure to it.
+     * @return A map between the user and its colour.
+     */
     private Map<String, String> assignFigureToUser (){
         HashMap<String, String> userToColour= new HashMap<>();
         int colourCounter=0;
@@ -164,6 +197,13 @@ public class SetUpController extends Controller {
         model.setPlayers(new ArrayList<>(players));
         return userToColour;
     }
+
+    /**
+     * This method calculates the most voted out of the elements in the objects list and, when several elements tie, one of them is chosen randomly.
+     * @param objects A list of voted objects of the same category to be evaluated.
+     * @param <T> The type of the objects contained in the list.
+     * @return The most voted object in the list.
+     */
 
      private <T> T mostVoted (List<T> objects){
         Map<T, Integer> votes= new HashMap<>();
@@ -183,6 +223,9 @@ public class SetUpController extends Controller {
         return mostVoted.get(random.nextInt(mostVoted.size()));
     }
 
+    /**
+     * This method starts the match by sending the first player a StartFirstTurn event.
+     */
     private void startMatch(){
         model.getPlayers().get(0).setFirstPowerUp((PowerUp)model.getPowerUpDeck().draw());
         model.getPlayers().get(0).setSecondPowerUp((PowerUp)model.getPowerUpDeck().draw());

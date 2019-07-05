@@ -21,6 +21,10 @@ public class TickingTimer {
         this.endOperation = endOperation;
     }
 
+    /**
+     * this method starts the timer and sends a notification to the view every millisecond.
+     * @param duration
+     */
     public void startTimer (int duration){
         timer = new Thread(() ->{
             int time = 0;
@@ -39,6 +43,9 @@ public class TickingTimer {
     }
 
 
+    /**
+     * this method is used when the timer ends and a endOperation runnable starts running. The runnable can be defined in the constructor.
+     */
     public void endTimer(){
         if(timer == null) {
             endOperation.run();

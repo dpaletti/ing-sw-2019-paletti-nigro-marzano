@@ -31,6 +31,10 @@ public class PowerUpController extends CardController {
         super(model);
     }
 
+    /**
+     * This method ignores the events that are not dispatched in this controller.
+     * @param message Any message arriving from the view.
+     */
     @Override
     public void update(VCEvent message) {
         if(disabled)
@@ -43,6 +47,10 @@ public class PowerUpController extends CardController {
         }
     }
 
+    /**
+     * This method handles the start of the usage of a power up and sends the player a list of effects they can use.
+     * @param message
+     */
     @Override
     public void dispatch(PowerUpUsageEvent message) {
         current = model.nameToPowerUp(message.getUsedPowerUp());
@@ -67,6 +75,10 @@ public class PowerUpController extends CardController {
         model.send(event);
     }
 
+    /**
+     * This method receives the power up the user wishes to pay with and uses it.
+     * @param message contains the colour of the chosen power up.
+     */
     @Override
     public void dispatch(VCChooseAmmoToPayEvent message) {
         Ammo ammoToPay = null;
@@ -78,6 +90,10 @@ public class PowerUpController extends CardController {
             model.userToPlayer(message.getSource()).useAmmos(new ArrayList<>(Arrays.asList(ammoToPay)));
     }
 
+    /**
+     * This method generates the target set for the chosen effect
+     * @param message
+     */
     @Override
     public void dispatch(ChosenEffectPowerUpEvent message) {
         for (GraphNode<GraphWeaponEffect> w: model.nameToPowerUp(message.getPowerUp()).getDefinition()) {
@@ -92,6 +108,10 @@ public class PowerUpController extends CardController {
         handleEffect(false);
     }
 
+    /**
+     * This method handles a partial power up effect
+     * @param message
+     */
     @Override
     public void dispatch(VCPartialEffectEvent message) {
         if (partialGraphLayer == -1 || message.isWeapon() || message.isSkip())

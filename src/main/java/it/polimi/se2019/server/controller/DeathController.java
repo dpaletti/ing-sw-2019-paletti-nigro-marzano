@@ -40,6 +40,10 @@ public class DeathController extends AbstractDeathController{
         this.model=game;
     }
 
+    /**
+     * This method ignores the events that are not dispatched in this controller.
+     * @param message Any message arriving from the view.
+     */
     @Override
     public void update(VCEvent message) {
         if (disabled)
@@ -52,6 +56,10 @@ public class DeathController extends AbstractDeathController{
         }
     }
 
+    /**
+     * This method handles a player respawning.
+     * @param message
+     */
     @Override
     public void dispatch(SpawnEvent message) {
         List<Tear> hp= model.getHp(message.getSource());
@@ -62,6 +70,10 @@ public class DeathController extends AbstractDeathController{
         respawn(message.getSource(),message.getDiscardedPowerUpColour());
     }
 
+    /**
+     * This method handles a request to calculate points from the view. When called, it calculates points and ends the match if final frenzy mode is not activated otherwise it starts the final frenzy turn.
+     * @param message
+     */
     @Override
     public void dispatch(CalculatePointsEvent message) {
         for (Player p: model.getPlayers())
@@ -74,6 +86,10 @@ public class DeathController extends AbstractDeathController{
         }
     }
 
+    /**
+     * Dispatches the end of the turn of a player.
+     * @param message
+     */
     @Override
     public void dispatch(VCEndOfTurnEvent message) {
         if (lastTurn) {
@@ -88,10 +104,20 @@ public class DeathController extends AbstractDeathController{
         }
     }
 
+    /**
+     * Calculates whether the player was overkilled.
+     * @param hp the hps of the dead player.
+     * @return whether the player was overkilled.
+     */
     private boolean overkill (List<Tear> hp){
         return hp.size()==12;
     }
 
+    /**
+     * calculates points when a user dies.
+     * @param user the user that died.
+     * @param hp the hps of the dead player.
+     */
     private void deathPointCalculation (String user, List<Tear> hp){
         if (!hp.isEmpty()) {
             Map<FigureColour, Integer> figuresToHits = calculateHits(hp);   //map of shooters to number of hits
@@ -99,6 +125,12 @@ public class DeathController extends AbstractDeathController{
             assignPoints(figuresToHits, user, hp);
         }
     }
+
+    /**
+     * handles a player respawning after their death.
+     * @param user the user that is respawning.
+     * @param discardedPowerUpColor the colour of the power up they discarded as that is the spawn tile they will respawn on.
+     */
 
     private void respawn(String user,String discardedPowerUpColor){
         String spawnColour=discardedPowerUpColor;
@@ -117,6 +149,11 @@ public class DeathController extends AbstractDeathController{
         if (!enoughActivePlayers())
             endOfMatch();
     }
+
+    /**
+     * Calculates points when a player dies during final frenzy match or at the end of the turn.
+     * @param user the user that died during the turn.
+     */
 
     private void finalFrenzyPointCalculation (String user){
         Map<FigureColour, Integer> figuresToHits;   //map of shooters to number of hits
