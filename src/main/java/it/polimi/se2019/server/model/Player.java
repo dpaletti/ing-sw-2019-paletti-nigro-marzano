@@ -371,7 +371,7 @@ public class Player implements Targetable{
             for (PowerUp p : availablePowerUps){
                 if (a.getColour().name().equalsIgnoreCase(p.getColour())) {
                     toPay.add(p.name);
-                    availablePowerUps.remove(p);
+                    powerUps.remove(p);
                     flag = true;
                 }
                 if (!flag)

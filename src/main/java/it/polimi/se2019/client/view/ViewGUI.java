@@ -443,10 +443,11 @@ public class ViewGUI extends View {
         getPlayerOnUsername(message.getDead()).setHp(new ArrayList<>());
     }
 
+    @Override
     public void dispatch(MVRespawnEvent message){
         respawning = true;
-        dispatch(new UiPutPowerUp(message.getDrawnPowerUpName()));
-        dispatch(new UiRespawnEvent());
+        notify(new UiPutPowerUp(message.getDrawnPowerUpName()));
+        notify(new UiRespawnEvent());
     }
 
     //---------------------------------------------------------------------------------------//

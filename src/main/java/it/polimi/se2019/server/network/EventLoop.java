@@ -24,6 +24,7 @@ public class EventLoop implements Runnable {
             virtualView.disconnect(connection);
         } catch (IndexOutOfBoundsException e){
             Log.severe("IndexOutOfBound in room: " + virtualView.getRoomNumber() + " on Connection: " + connection + " " + e.getMessage());
+            e.printStackTrace();
             //run();
         }
     }

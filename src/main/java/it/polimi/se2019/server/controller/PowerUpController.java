@@ -1,7 +1,6 @@
 package it.polimi.se2019.server.controller;
 
 import it.polimi.se2019.client.view.VCEvent;
-import it.polimi.se2019.commons.mv_events.MVCardEndEvent;
 import it.polimi.se2019.commons.mv_events.PossibleEffectsEvent;
 import it.polimi.se2019.commons.utility.JsonHandler;
 import it.polimi.se2019.commons.utility.Log;
@@ -86,45 +85,34 @@ public class PowerUpController extends CardController {
 
     @Override
     public void dispatch(VCPartialEffectEvent message) {
-        if (message.isWeapon())
+        if (partialGraphLayer == -1 || message.isWeapon() || message.isSkip())
             return;
         if (current == null)
             return;
-        if (message.isSkip()){
-            partialGraphLayer++;
-            if (partialGraphLayer == currentLayer.size()) {
-                model.send(new MVCardEndEvent(message.getSource(), false));
+        if (message.getTargetPlayer() != null) {
+            model.apply(model.playerToUser(currentPlayer),
+                    new ArrayList<>(Arrays.asList(model.userToPlayer(message.getTargetPlayer()))),
+                    currentLayer.get(partialGraphLayer).getKey());
+        }
+        else if (message.getTargetTile() != null) {
+            List<Player> targets = new ArrayList<>();
+            List<String> users = new ArrayList<>();
+            for (Targetable t : model.getTile(message.getTargetTile()).getPlayers()) {
+                targets.add((Player) t);
+                users.add(model.playerToUser((Player)t));
             }
-            else
-                handlePartial(currentLayer.get(partialGraphLayer).getKey(),false);
+            model.apply(model.playerToUser(currentPlayer), targets, currentLayer.get(partialGraphLayer).getKey());
         }
 
+        layersVisitedPartial++;
+        currentLayer = weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
+        if (currentLayer.isEmpty()) {
+            layersVisitedPartial = 0;
+            nextWeaponEffect(false);
+        }
         else {
-            if (message.getTargetPlayer() != null) {
-                model.apply(model.playerToUser(currentPlayer),
-                        new ArrayList<>(Arrays.asList(model.userToPlayer(message.getTargetPlayer()))),
-                        currentLayer.get(partialGraphLayer).getKey());
-            }
-            else if (message.getTargetTile() != null) {
-                List<Player> targets = new ArrayList<>();
-                List<String> users = new ArrayList<>();
-                for (Targetable t : model.getTile(message.getTargetTile()).getPlayers()) {
-                    targets.add((Player) t);
-                    users.add(model.playerToUser((Player)t));
-                }
-                model.apply(model.playerToUser(currentPlayer), targets, currentLayer.get(partialGraphLayer).getKey());
-            }
-
-            layersVisitedPartial++;
-            currentLayer = weaponEffect.getEffectGraph().getListLayer(layersVisitedPartial);
-            if (currentLayer.isEmpty()) {
-                layersVisitedPartial = 0;
-                nextWeaponEffect(false);
-            }
-            else {
-                partialGraphLayer = 0;
-                handlePartial(currentLayer.get(partialGraphLayer).getKey(),false);
-            }
+            partialGraphLayer = 0;
+            handlePartial(currentLayer.get(partialGraphLayer).getKey(),false);
         }
     }
 }

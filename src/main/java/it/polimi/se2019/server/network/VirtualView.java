@@ -202,6 +202,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             connection.submit(event);
         }catch (NullPointerException e){
             Log.severe("NullPointerException tryinig to submit on: " + connection + " in room " + roomNumber);
+            e.printStackTrace();
         }
     }
 

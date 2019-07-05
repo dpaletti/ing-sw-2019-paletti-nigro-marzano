@@ -70,9 +70,8 @@ public class WeaponController extends CardController {
 
     @Override
     public void dispatch(VCPartialEffectEvent message) {
-        if (!message.isWeapon())
+        if ((partialGraphLayer==-1) || (!message.isWeapon() && !message.isSkip()))
             return;
-
         PartialWeaponEffect currentPartial= currentLayer.get(partialGraphLayer).getKey();
 
         for (String s : previousTargets)
