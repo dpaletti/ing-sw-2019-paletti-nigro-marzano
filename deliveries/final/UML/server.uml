@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>it.polimi.se2019.server</OriginalElement>
+  <nodes>
+    <node x="28.0" y="162.0">it.polimi.se2019.server.controller.DeathController</node>
+    <node x="560.0" y="982.0">it.polimi.se2019.server.model.TickingTimer</node>
+    <node x="259.0" y="1195.0">it.polimi.se2019.server.model.Tear</node>
+    <node x="626.2604166666665" y="309.0">it.polimi.se2019.server.model.GenericWeaponEffect</node>
+    <node x="196.0" y="982.0">it.polimi.se2019.server.model.KillshotTrack</node>
+    <node x="0.0" y="693.0">it.polimi.se2019.server.model.VeryDamaged</node>
+    <node x="775.0" y="86.0">it.polimi.se2019.server.controller.CardController</node>
+    <node x="677.0" y="693.0">it.polimi.se2019.server.model.SlightlyDamaged</node>
+    <node x="848.5" y="764.0">it.polimi.se2019.server.network.Connection</node>
+    <node x="541.25" y="0.0">it.polimi.se2019.server.controller.Controller</node>
+    <node x="0.0" y="1124.0">it.polimi.se2019.server.model.MapConfig</node>
+    <node x="549.5104166666665" y="385.0">it.polimi.se2019.server.model.GraphWeaponEffect</node>
+    <node x="1085.0" y="982.0">it.polimi.se2019.server.model.TestGameMap</node>
+    <node x="0.0" y="1053.0">it.polimi.se2019.server.network.VirtualView</node>
+    <node x="1201.5" y="764.0">it.polimi.se2019.server.model.GraphNode</node>
+    <node x="1223.5104166666665" y="309.0">it.polimi.se2019.server.model.Player</node>
+    <node x="1049.2604166666665" y="385.0">it.polimi.se2019.server.model.SpawnTile</node>
+    <node x="33.33854166666663" y="389.0">it.polimi.se2019.server.model.LootCard</node>
+    <node x="154.0" y="1124.0">it.polimi.se2019.server.network.EventLoop</node>
+    <node x="0.0" y="86.0">it.polimi.se2019.server.controller.AbstractDeathController</node>
+    <node x="168.0" y="1053.0">it.polimi.se2019.server.model.TestAction</node>
+    <node x="238.0" y="911.0">it.polimi.se2019.server.controller.TestWeaponController</node>
+    <node x="378.0" y="1195.0">it.polimi.se2019.server.model.Game</node>
+    <node x="462.0" y="1124.0">it.polimi.se2019.server.model.TestGame</node>
+    <node x="0.0" y="233.0">it.polimi.se2019.server.model.Grabbable</node>
+    <node x="329.0" y="1053.0">it.polimi.se2019.server.model.TestFigure</node>
+    <node x="469.0" y="911.0">it.polimi.se2019.server.controller.TestDeathController</node>
+    <node x="490.0" y="1053.0">it.polimi.se2019.server.model.ActionType</node>
+    <node x="734.5104166666665" y="385.0">it.polimi.se2019.server.model.WeaponEffect</node>
+    <node x="651.0" y="1053.0">it.polimi.se2019.server.model.TurnMemory</node>
+    <node x="377.0" y="617.0">it.polimi.se2019.server.model.PlayerDamage</node>
+    <node x="0.0" y="546.0">it.polimi.se2019.server.model.SecondDeath</node>
+    <node x="677.25" y="162.0">it.polimi.se2019.server.controller.WeaponController</node>
+    <node x="1141.0" y="911.0">it.polimi.se2019.server.controller.TestTurnController</node>
+    <node x="735.0" y="982.0">it.polimi.se2019.server.model.FigureColour</node>
+    <node x="910.0" y="982.0">it.polimi.se2019.server.model.PartialCombo</node>
+    <node x="415.0" y="546.0">it.polimi.se2019.server.model.ThirdDeath</node>
+    <node x="855.25" y="162.0">it.polimi.se2019.server.controller.PowerUpController</node>
+    <node x="378.0" y="982.0">it.polimi.se2019.server.model.TestGraphNode</node>
+    <node x="771.2604166666665" y="233.0">it.polimi.se2019.server.model.Effect</node>
+    <node x="1178.2604166666665" y="385.0">it.polimi.se2019.server.model.LootTile</node>
+    <node x="308.51041666666663" y="389.0">it.polimi.se2019.server.model.PowerUp</node>
+    <node x="381.171875" y="233.0">it.polimi.se2019.server.model.Card</node>
+    <node x="0.0" y="911.0">it.polimi.se2019.server.controller.TestPowerUpController</node>
+    <node x="423.51041666666663" y="389.0">it.polimi.se2019.server.model.Combo</node>
+    <node x="611.0" y="86.0">it.polimi.se2019.server.controller.TurnController</node>
+    <node x="347.0" y="460.0">it.polimi.se2019.server.model.PlayerValue</node>
+    <node x="903.0" y="1124.0">it.polimi.se2019.server.model.GameMap</node>
+    <node x="562.0" y="693.0">it.polimi.se2019.server.model.Healthy</node>
+    <node x="609.0" y="1124.0">it.polimi.se2019.server.model.TestAmmo</node>
+    <node x="128.99999999999997" y="233.0">it.polimi.se2019.server.model.Drawable</node>
+    <node x="693.0" y="911.0">it.polimi.se2019.server.model.TargetSpecification</node>
+    <node x="639.0" y="840.0">it.polimi.se2019.server.network.ConnectionSocket</node>
+    <node x="0.0" y="840.0">it.polimi.se2019.server.model.PowerUpHelper</node>
+    <node x="133.0" y="1195.0">it.polimi.se2019.server.model.Skull</node>
+    <node x="450.0" y="840.0">it.polimi.se2019.server.model.LootCardHelper</node>
+    <node x="342.0" y="693.0">it.polimi.se2019.server.model.FinalFrenzyBeforeFirst</node>
+    <node x="259.171875" y="233.0">it.polimi.se2019.server.model.Jsonable</node>
+    <node x="1129.5104166666665" y="309.0">it.polimi.se2019.server.model.Tile</node>
+    <node x="939.0" y="86.0">it.polimi.se2019.server.controller.SetUpController</node>
+    <node x="497.0" y="1195.0">it.polimi.se2019.server.model.Deck</node>
+    <node x="143.0" y="693.0">it.polimi.se2019.server.model.FinalFrenzyStandard</node>
+    <node x="917.0" y="911.0">it.polimi.se2019.server.controller.TestSetUpController</node>
+    <node x="1043.0" y="1124.0">it.polimi.se2019.server.network.Server</node>
+    <node x="1159.0104166666665" y="233.0">it.polimi.se2019.server.model.Targetable</node>
+    <node x="227.0" y="86.0">it.polimi.se2019.server.controller.MatchMakingController</node>
+    <node x="1016.0" y="840.0">it.polimi.se2019.server.network.ConnectionRMI</node>
+    <node x="812.0" y="1053.0">it.polimi.se2019.server.model.RoomColour</node>
+    <node x="973.0" y="1053.0">it.polimi.se2019.server.model.TestPlayer</node>
+    <node x="293.0" y="546.0">it.polimi.se2019.server.model.NoDeaths</node>
+    <node x="817.0" y="840.0">it.polimi.se2019.server.network.ConnectionBroadcast</node>
+    <node x="194.38541666666663" y="389.0">it.polimi.se2019.server.model.Weapon</node>
+    <node x="143.0" y="546.0">it.polimi.se2019.server.model.MatchStarted</node>
+    <node x="440.0" y="86.0">it.polimi.se2019.server.controller.MatchController</node>
+    <node x="0.0" y="982.0">it.polimi.se2019.server.model.TestModelHelper</node>
+    <node x="307.0" y="840.0">it.polimi.se2019.server.model.ComboHelper</node>
+    <node x="687.0" y="546.0">it.polimi.se2019.server.model.MoreDeaths</node>
+    <node x="1176.0" y="1124.0">it.polimi.se2019.server.model.Action</node>
+    <node x="1134.0" y="1053.0">it.polimi.se2019.server.model.AmmoColour</node>
+    <node x="825.2604166666665" y="309.0">it.polimi.se2019.server.model.PartialWeaponEffect</node>
+    <node x="551.0" y="546.0">it.polimi.se2019.server.model.FirstDeath</node>
+    <node x="157.0" y="840.0">it.polimi.se2019.server.model.WeaponHelper</node>
+    <node x="237.25" y="764.0">it.polimi.se2019.server.model.JsonHelper</node>
+    <node x="0.0" y="1195.0">it.polimi.se2019.server.model.Figure</node>
+    <node x="308.0" y="1124.0">it.polimi.se2019.server.model.Direction</node>
+    <node x="1198.0" y="840.0">it.polimi.se2019.server.model.GraphNode.MyIterator</node>
+    <node x="616.0" y="1195.0">it.polimi.se2019.server.model.Ammo</node>
+    <node x="756.0" y="1124.0">it.polimi.se2019.server.model.TestTile</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="it.polimi.se2019.server.model.Weapon" target="it.polimi.se2019.server.model.Card">
+      <point x="33.0" y="-13.0" />
+      <point x="271.38541666666663" y="359.0" />
+      <point x="399.671875" y="359.0" />
+      <point x="-18.5" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.Weapon" target="it.polimi.se2019.server.model.Drawable">
+      <point x="-11.0" y="-13.0" />
+      <point x="227.38541666666663" y="309.0" />
+      <point x="179.99999999999997" y="309.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.CardController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="0.0" y="-13.0" />
+      <point x="847.0" y="56.0" />
+      <point x="628.25" y="56.0" />
+      <point x="29.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.PowerUpHelper" target="it.polimi.se2019.server.model.JsonHelper">
+      <point x="0.0" y="-13.0" />
+      <point x="68.5" y="810.0" />
+      <point x="251.75" y="810.0" />
+      <point x="-43.5" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.PowerUp" target="it.polimi.se2019.server.model.Jsonable">
+      <point x="0.0" y="-13.0" />
+      <point x="356.01041666666663" y="289.0" />
+      <point x="322.921875" y="289.0" />
+      <point x="12.75" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.WeaponController" target="it.polimi.se2019.server.controller.CardController">
+      <point x="0.0" y="-13.0" />
+      <point x="756.25" y="137.0" />
+      <point x="811.0" y="137.0" />
+      <point x="-36.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.Healthy" target="it.polimi.se2019.server.model.PlayerDamage">
+      <point x="0.0" y="-13.0" />
+      <point x="609.5" y="673.0" />
+      <point x="468.0" y="673.0" />
+      <point x="26.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.SpawnTile" target="it.polimi.se2019.server.model.Tile">
+      <point x="0.0" y="-13.0" />
+      <point x="1103.7604166666665" y="360.0" />
+      <point x="1148.0104166666665" y="360.0" />
+      <point x="-18.5" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.ThirdDeath" target="it.polimi.se2019.server.model.PlayerValue">
+      <point x="0.0" y="-13.0" />
+      <point x="473.0" y="526.0" />
+      <point x="418.75" y="526.0" />
+      <point x="10.25" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.network.ConnectionBroadcast" target="it.polimi.se2019.server.network.Connection">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.MatchMakingController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="0.0" y="-13.0" />
+      <point x="323.5" y="56.0" />
+      <point x="570.25" y="56.0" />
+      <point x="-29.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.NoDeaths" target="it.polimi.se2019.server.model.PlayerValue">
+      <point x="0.0" y="-13.0" />
+      <point x="344.0" y="526.0" />
+      <point x="398.25" y="526.0" />
+      <point x="-10.25" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.LootTile" target="it.polimi.se2019.server.model.Tile">
+      <point x="0.0" y="-13.0" />
+      <point x="1229.2604166666665" y="360.0" />
+      <point x="1185.0104166666665" y="360.0" />
+      <point x="18.5" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.GraphNode.MyIterator" target="it.polimi.se2019.server.model.GraphNode">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.FinalFrenzyBeforeFirst" target="it.polimi.se2019.server.model.PlayerDamage">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.WeaponEffect" target="it.polimi.se2019.server.model.GenericWeaponEffect">
+      <point x="0.0" y="-13.0" />
+      <point x="799.5104166666665" y="360.0" />
+      <point x="760.5104166666665" y="360.0" />
+      <point x="44.75" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.network.ConnectionSocket" target="it.polimi.se2019.server.network.Connection">
+      <point x="0.0" y="-13.0" />
+      <point x="718.0" y="815.0" />
+      <point x="867.8333333333334" y="815.0" />
+      <point x="-38.66666666666663" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.SetUpController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="0.0" y="-13.0" />
+      <point x="1014.5" y="46.0" />
+      <point x="647.5833333333334" y="46.0" />
+      <point x="48.33333333333337" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.SlightlyDamaged" target="it.polimi.se2019.server.model.PlayerDamage">
+      <point x="0.0" y="-13.0" />
+      <point x="752.5" y="663.0" />
+      <point x="494.0" y="663.0" />
+      <point x="52.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.ComboHelper" target="it.polimi.se2019.server.model.JsonHelper">
+      <point x="0.0" y="-13.0" />
+      <point x="368.5" y="820.0" />
+      <point x="309.75" y="820.0" />
+      <point x="14.5" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.FirstDeath" target="it.polimi.se2019.server.model.PlayerValue">
+      <point x="0.0" y="-13.0" />
+      <point x="609.0" y="516.0" />
+      <point x="439.25" y="516.0" />
+      <point x="30.75" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.GenericWeaponEffect" target="it.polimi.se2019.server.model.Effect">
+      <point x="0.0" y="-13.0" />
+      <point x="715.7604166666665" y="284.0" />
+      <point x="793.2604166666665" y="284.0" />
+      <point x="-22.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.MatchStarted" target="it.polimi.se2019.server.model.PlayerValue">
+      <point x="0.0" y="-13.0" />
+      <point x="208.0" y="516.0" />
+      <point x="377.75" y="516.0" />
+      <point x="-30.75" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.SecondDeath" target="it.polimi.se2019.server.model.PlayerValue">
+      <point x="0.0" y="-13.0" />
+      <point x="61.5" y="506.0" />
+      <point x="357.25" y="506.0" />
+      <point x="-51.25" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.PowerUpController" target="it.polimi.se2019.server.controller.CardController">
+      <point x="0.0" y="-13.0" />
+      <point x="937.75" y="137.0" />
+      <point x="883.0" y="137.0" />
+      <point x="36.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.MoreDeaths" target="it.polimi.se2019.server.model.PlayerValue">
+      <point x="0.0" y="-13.0" />
+      <point x="745.0" y="506.0" />
+      <point x="459.75" y="506.0" />
+      <point x="51.25" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.PartialWeaponEffect" target="it.polimi.se2019.server.model.Effect">
+      <point x="0.0" y="-13.0" />
+      <point x="914.7604166666665" y="284.0" />
+      <point x="837.2604166666665" y="284.0" />
+      <point x="22.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.LootCard" target="it.polimi.se2019.server.model.Grabbable">
+      <point x="-34.0" y="-13.0" />
+      <point x="50.33854166666663" y="369.0" />
+      <point x="27.25" y="369.0" />
+      <point x="-27.25" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.PowerUp" target="it.polimi.se2019.server.model.Card">
+      <point x="31.66666666666663" y="-13.0" />
+      <point x="387.67708333333326" y="369.0" />
+      <point x="436.671875" y="369.0" />
+      <point x="18.5" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.TurnController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="0.0" y="-13.0" />
+      <point x="683.0" y="66.0" />
+      <point x="608.9166666666666" y="66.0" />
+      <point x="9.666666666666629" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.Weapon" target="it.polimi.se2019.server.model.Grabbable">
+      <point x="-33.0" y="-13.0" />
+      <point x="205.38541666666663" y="319.0" />
+      <point x="81.75" y="319.0" />
+      <point x="27.25" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.LootCardHelper" target="it.polimi.se2019.server.model.JsonHelper">
+      <point x="0.0" y="-13.0" />
+      <point x="522.0" y="810.0" />
+      <point x="338.75" y="810.0" />
+      <point x="43.5" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.DeathController" target="it.polimi.se2019.server.controller.AbstractDeathController">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.Combo" target="it.polimi.se2019.server.model.Jsonable">
+      <point x="0.0" y="-13.0" />
+      <point x="464.01041666666663" y="279.0" />
+      <point x="348.421875" y="279.0" />
+      <point x="38.25" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.PowerUp" target="it.polimi.se2019.server.model.Drawable">
+      <point x="-31.66666666666663" y="-13.0" />
+      <point x="324.34375" y="299.0" />
+      <point x="213.99999999999997" y="299.0" />
+      <point x="34.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.Weapon" target="it.polimi.se2019.server.model.Jsonable">
+      <point x="11.0" y="-13.0" />
+      <point x="249.38541666666663" y="349.0" />
+      <point x="297.421875" y="349.0" />
+      <point x="-12.75" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.WeaponHelper" target="it.polimi.se2019.server.model.JsonHelper">
+      <point x="0.0" y="-13.0" />
+      <point x="222.0" y="820.0" />
+      <point x="280.75" y="820.0" />
+      <point x="-14.5" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.GraphWeaponEffect" target="it.polimi.se2019.server.model.GenericWeaponEffect">
+      <point x="0.0" y="-13.0" />
+      <point x="632.0104166666665" y="360.0" />
+      <point x="671.0104166666665" y="360.0" />
+      <point x="-44.75" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.Tile" target="it.polimi.se2019.server.model.Targetable">
+      <point x="0.0" y="-13.0" />
+      <point x="1166.5104166666665" y="284.0" />
+      <point x="1188.0104166666665" y="284.0" />
+      <point x="-29.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.Player" target="it.polimi.se2019.server.model.Targetable">
+      <point x="0.0" y="-13.0" />
+      <point x="1267.5104166666665" y="284.0" />
+      <point x="1246.0104166666665" y="284.0" />
+      <point x="29.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.network.ConnectionRMI" target="it.polimi.se2019.server.network.Connection">
+      <point x="0.0" y="-13.0" />
+      <point x="1084.5" y="815.0" />
+      <point x="945.1666666666666" y="815.0" />
+      <point x="38.66666666666663" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.LootCard" target="it.polimi.se2019.server.model.Drawable">
+      <point x="0.0" y="-13.0" />
+      <point x="84.33854166666663" y="329.0" />
+      <point x="145.99999999999997" y="329.0" />
+      <point x="-34.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.LootCard" target="it.polimi.se2019.server.model.Jsonable">
+      <point x="34.0" y="-13.0" />
+      <point x="118.33854166666663" y="339.0" />
+      <point x="271.921875" y="339.0" />
+      <point x="-38.25" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.FinalFrenzyStandard" target="it.polimi.se2019.server.model.PlayerDamage">
+      <point x="0.0" y="-13.0" />
+      <point x="232.5" y="673.0" />
+      <point x="416.0" y="673.0" />
+      <point x="-26.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.AbstractDeathController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="0.0" y="-13.0" />
+      <point x="103.5" y="46.0" />
+      <point x="550.9166666666666" y="46.0" />
+      <point x="-48.33333333333337" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.model.VeryDamaged" target="it.polimi.se2019.server.model.PlayerDamage">
+      <point x="0.0" y="-13.0" />
+      <point x="61.5" y="663.0" />
+      <point x="390.0" y="663.0" />
+      <point x="-52.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.MatchController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="0.0" y="-13.0" />
+      <point x="515.5" y="66.0" />
+      <point x="589.5833333333334" y="66.0" />
+      <point x="-9.666666666666629" y="13.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="671.0" y="449.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

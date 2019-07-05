@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>it.polimi.se2019.client</OriginalElement>
+  <nodes>
+    <node x="310.75" y="0.0">it.polimi.se2019.client.view.UiDispatcher</node>
+    <node x="0.0" y="152.0">it.polimi.se2019.client.view.GuiControllerTable</node>
+    <node x="194.0" y="522.0">it.polimi.se2019.client.network.ConnectionMode</node>
+    <node x="307.25" y="76.0">it.polimi.se2019.client.view.GuiController</node>
+    <node x="406.0" y="593.0">it.polimi.se2019.client.view.App</node>
+    <node x="276.0" y="375.0">it.polimi.se2019.client.network.NetworkHandlerSocket</node>
+    <node x="384.0" y="152.0">it.polimi.se2019.client.view.GuiControllerWeapon</node>
+    <node x="136.0" y="375.0">it.polimi.se2019.client.view.ViewCLI</node>
+    <node x="482.0" y="375.0">it.polimi.se2019.client.network.NetworkHandlerRMI</node>
+    <node x="383.0" y="522.0">it.polimi.se2019.client.view.MockPlayer</node>
+    <node x="192.0" y="152.0">it.polimi.se2019.client.view.GuiControllerBoard</node>
+    <node x="0.0" y="522.0">it.polimi.se2019.client.view.ui_events</node>
+    <node x="394.75" y="299.0">it.polimi.se2019.client.network.NetworkHandler</node>
+    <node x="21.0" y="375.0">it.polimi.se2019.client.view.ViewGUI</node>
+    <node x="583.0" y="152.0">it.polimi.se2019.client.view.GuiControllerPowerUp</node>
+    <node x="28.0" y="228.0">it.polimi.se2019.client.view.GuiControllerTable.TableModel</node>
+    <node x="89.0" y="299.0">it.polimi.se2019.client.view.View</node>
+    <node x="544.0" y="522.0">it.polimi.se2019.client.view.MVEvent</node>
+    <node x="0.0" y="593.0">it.polimi.se2019.client.view.VCEvent</node>
+    <node x="0.0" y="451.0">it.polimi.se2019.client.view.ViewGUI.EventListener</node>
+    <node x="140.0" y="593.0">it.polimi.se2019.client.network.Client</node>
+    <node x="273.0" y="593.0">it.polimi.se2019.client.view.UIMode</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="it.polimi.se2019.client.view.GuiControllerTable.TableModel" target="it.polimi.se2019.client.view.GuiControllerTable">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.client.view.ViewGUI" target="it.polimi.se2019.client.view.View">
+      <point x="0.0" y="-13.0" />
+      <point x="68.5" y="350.0" />
+      <point x="107.5" y="350.0" />
+      <point x="-18.5" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.client.network.NetworkHandlerSocket" target="it.polimi.se2019.client.network.NetworkHandler">
+      <point x="0.0" y="-13.0" />
+      <point x="369.0" y="350.0" />
+      <point x="430.75" y="350.0" />
+      <point x="-36.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.client.view.ViewCLI" target="it.polimi.se2019.client.view.View">
+      <point x="0.0" y="-13.0" />
+      <point x="183.5" y="350.0" />
+      <point x="144.5" y="350.0" />
+      <point x="18.5" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.client.network.NetworkHandlerRMI" target="it.polimi.se2019.client.network.NetworkHandler">
+      <point x="0.0" y="-13.0" />
+      <point x="564.5" y="350.0" />
+      <point x="502.75" y="350.0" />
+      <point x="36.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.client.view.GuiControllerBoard" target="it.polimi.se2019.client.view.GuiController">
+      <point x="0.0" y="-13.0" />
+      <point x="278.0" y="132.0" />
+      <point x="358.625" y="132.0" />
+      <point x="-17.125" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.client.view.GuiControllerTable" target="it.polimi.se2019.client.view.GuiController">
+      <point x="0.0" y="-13.0" />
+      <point x="86.0" y="122.0" />
+      <point x="324.375" y="122.0" />
+      <point x="-51.375" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.client.view.GuiControllerPowerUp" target="it.polimi.se2019.client.view.GuiController">
+      <point x="0.0" y="-13.0" />
+      <point x="676.0" y="122.0" />
+      <point x="427.125" y="122.0" />
+      <point x="51.375" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.client.view.GuiController" target="it.polimi.se2019.client.view.UiDispatcher">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.client.view.ViewGUI.EventListener" target="it.polimi.se2019.client.view.ViewGUI">
+      <point x="0.0" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.client.view.GuiControllerWeapon" target="it.polimi.se2019.client.view.GuiController">
+      <point x="0.0" y="-13.0" />
+      <point x="473.5" y="132.0" />
+      <point x="392.875" y="132.0" />
+      <point x="17.125" y="13.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.8" x="671.0" y="449.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

@@ -1,0 +1,10 @@
+it.polimi.se2019.client.network
+it.polimi.se2019.client.view
+it.polimi.se2019.client.view.ui_events
+it.polimi.se2019.commons.mv_events
+it.polimi.se2019.commons.network
+it.polimi.se2019.commons.utility
+it.polimi.se2019.commons.vc_events
+it.polimi.se2019.server.controller
+it.polimi.se2019.server.model
+it.polimi.se2019.server.network

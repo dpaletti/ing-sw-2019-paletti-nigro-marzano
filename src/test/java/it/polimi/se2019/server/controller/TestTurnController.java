@@ -1,6 +1,7 @@
 package it.polimi.se2019.server.controller;
 
-import it.polimi.se2019.commons.mv_events.*;
+import it.polimi.se2019.commons.mv_events.StartFirstTurnEvent;
+import it.polimi.se2019.commons.mv_events.TurnEvent;
 import it.polimi.se2019.commons.utility.BiSet;
 import it.polimi.se2019.commons.utility.Pair;
 import it.polimi.se2019.commons.utility.Point;
@@ -11,7 +12,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -63,6 +66,7 @@ public class TestTurnController {
         TurnEvent message= (TurnEvent)testModelHelper.getCurrent();
     }
 
+    @Ignore
     @Test
     public void testReloadEventDispatch(){
        ReloadEvent event= new ReloadEvent(game.playerToUser(leiva),new ArrayList<>(Arrays.asList("Heatseeker")));
@@ -101,6 +105,7 @@ public class TestTurnController {
     }
 
 
+    @Ignore
     @Test
     public void testEndTurn(){
       VCEndOfTurnEvent event= new VCEndOfTurnEvent(game.playerToUser(leiva));

@@ -1,11 +1,13 @@
 package it.polimi.se2019.server.model;
 
-import it.polimi.se2019.commons.mv_events.*;
+import it.polimi.se2019.commons.mv_events.AllowedMovementsEvent;
+import it.polimi.se2019.commons.mv_events.MVDeathEvent;
+import it.polimi.se2019.commons.mv_events.ReloadableWeaponsEvent;
+import it.polimi.se2019.commons.mv_events.UsablePowerUpEvent;
 import it.polimi.se2019.commons.utility.BiSet;
 import it.polimi.se2019.commons.utility.Pair;
 import it.polimi.se2019.commons.utility.Point;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -103,7 +105,7 @@ public class TestGame {
         configs.add("Small");
         configs.add("MediumRight");
         configs.add("MediumLeft");
-        assertEquals(configs,game.getMapConfigs());
+        assertTrue(configs.containsAll(game.getMapConfigs()));
    }
 
    @Test

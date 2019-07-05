@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>it.polimi.se2019.server.controller</OriginalElement>
+  <nodes>
+    <node x="227.0" y="86.0">it.polimi.se2019.server.controller.TurnController</node>
+    <node x="28.0" y="162.0">it.polimi.se2019.server.controller.DeathController</node>
+    <node x="775.0" y="86.0">it.polimi.se2019.server.controller.MatchController</node>
+    <node x="469.0" y="233.0">it.polimi.se2019.server.controller.TestDeathController</node>
+    <node x="946.0" y="86.0">it.polimi.se2019.server.controller.CardController</node>
+    <node x="504.5" y="0.0">it.polimi.se2019.server.controller.Controller</node>
+    <node x="848.25" y="162.0">it.polimi.se2019.server.controller.WeaponController</node>
+    <node x="391.0" y="86.0">it.polimi.se2019.server.controller.SetUpController</node>
+    <node x="917.0" y="233.0">it.polimi.se2019.server.controller.TestTurnController</node>
+    <node x="693.0" y="233.0">it.polimi.se2019.server.controller.TestSetUpController</node>
+    <node x="1026.25" y="162.0">it.polimi.se2019.server.controller.PowerUpController</node>
+    <node x="0.0" y="86.0">it.polimi.se2019.server.controller.AbstractDeathController</node>
+    <node x="562.0" y="86.0">it.polimi.se2019.server.controller.MatchMakingController</node>
+    <node x="238.0" y="233.0">it.polimi.se2019.server.controller.TestWeaponController</node>
+    <node x="0.0" y="233.0">it.polimi.se2019.server.controller.TestPowerUpController</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="it.polimi.se2019.server.controller.MatchMakingController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="0.0" y="-13.0" />
+      <point x="658.5" y="66.0" />
+      <point x="572.1666666666666" y="66.0" />
+      <point x="9.666666666666629" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.CardController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="0.0" y="-13.0" />
+      <point x="1018.0" y="46.0" />
+      <point x="610.8333333333334" y="46.0" />
+      <point x="48.33333333333337" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.WeaponController" target="it.polimi.se2019.server.controller.CardController">
+      <point x="0.0" y="-13.0" />
+      <point x="927.25" y="137.0" />
+      <point x="982.0" y="137.0" />
+      <point x="-36.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.PowerUpController" target="it.polimi.se2019.server.controller.CardController">
+      <point x="0.0" y="-13.0" />
+      <point x="1108.75" y="137.0" />
+      <point x="1054.0" y="137.0" />
+      <point x="36.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.TurnController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="0.0" y="-13.0" />
+      <point x="299.0" y="56.0" />
+      <point x="533.5" y="56.0" />
+      <point x="-29.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.SetUpController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="0.0" y="-13.0" />
+      <point x="466.5" y="66.0" />
+      <point x="552.8333333333334" y="66.0" />
+      <point x="-9.666666666666629" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.AbstractDeathController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="5.6843418860808015E-14" y="-13.0" />
+      <point x="103.50000000000006" y="46.0" />
+      <point x="514.1666666666666" y="46.0" />
+      <point x="-48.33333333333337" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.MatchController" target="it.polimi.se2019.server.controller.Controller">
+      <point x="0.0" y="-13.0" />
+      <point x="850.5" y="56.0" />
+      <point x="591.5" y="56.0" />
+      <point x="29.0" y="13.0" />
+    </edge>
+    <edge source="it.polimi.se2019.server.controller.DeathController" target="it.polimi.se2019.server.controller.AbstractDeathController">
+      <point x="5.6843418860808015E-14" y="-13.0" />
+      <point x="0.0" y="13.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="671.0" y="449.5" />
+  <SelectedNodes>
+    <node>it.polimi.se2019.server.controller.MatchMakingController</node>
+  </SelectedNodes>
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

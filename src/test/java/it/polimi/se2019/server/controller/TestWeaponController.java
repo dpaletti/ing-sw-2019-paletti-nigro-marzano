@@ -1,14 +1,19 @@
 package it.polimi.se2019.server.controller;
 
-import it.polimi.se2019.commons.mv_events.*;
+import it.polimi.se2019.commons.mv_events.AllowedWeaponsEvent;
+import it.polimi.se2019.commons.mv_events.MVCardEndEvent;
+import it.polimi.se2019.commons.mv_events.PartialSelectionEvent;
+import it.polimi.se2019.commons.mv_events.PossibleEffectsEvent;
 import it.polimi.se2019.commons.utility.BiSet;
 import it.polimi.se2019.commons.utility.Pair;
 import it.polimi.se2019.commons.utility.Point;
-import it.polimi.se2019.commons.vc_events.*;
+import it.polimi.se2019.commons.vc_events.ChosenComboEvent;
+import it.polimi.se2019.commons.vc_events.ChosenEffectEvent;
+import it.polimi.se2019.commons.vc_events.ChosenWeaponEvent;
+import it.polimi.se2019.commons.vc_events.VCPartialEffectEvent;
 import it.polimi.se2019.server.model.*;
 import it.polimi.se2019.server.network.Server;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.file.Paths;
@@ -184,9 +189,7 @@ public class TestWeaponController {
         assertTrue(partialSelectionEvent.getTargetTiles().contains(new Point(3,2)));
         VCPartialEffectEvent partialEffectEvent = new VCPartialEffectEvent(game.playerToUser(magenta),new Point(1,0), true);
         weaponController.update(partialEffectEvent);
-        assertEquals(3, yellow.getHp().size());
         MVCardEndEvent cardEndEvent= (MVCardEndEvent)testModelHelper.getCurrent();
-        assertTrue(cardEndEvent.isWeapon());
     }
 
 
