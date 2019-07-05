@@ -92,4 +92,7 @@ public interface VCEventDispatcher extends EventDispatcher {
     default void dispatch (VCCardEndEvent message){
         throw new UnsupportedOperationException("VCChooseAmmoToPayEvent not supported");
     }
+    default void dispatch(VCFinalFrenzy message){
+        throw new UnsupportedOperationException("FinalFrenzy not supported");
+    }
 }

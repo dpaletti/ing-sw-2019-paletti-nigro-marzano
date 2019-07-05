@@ -223,6 +223,7 @@ public class ViewGUI extends View {
     @Override
     public void dispatch(FinalFrenzyStartingEvent message) {
         notify(new UiFinalFrenzy());
+        notify(new VCFinalFrenzy(client.getUsername()));
     }
 
     @Override

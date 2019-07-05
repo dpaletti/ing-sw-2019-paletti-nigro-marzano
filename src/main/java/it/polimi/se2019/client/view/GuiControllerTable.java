@@ -454,6 +454,7 @@ public class GuiControllerTable extends GuiController {
 
     @Override
     public void dispatch(UiSpawn message) {
+        resetHp();
         turnTimer.textProperty().bind(timerText);
         directionsText.set("Please choose a powerup to discard");
     }
@@ -833,9 +834,10 @@ public class GuiControllerTable extends GuiController {
     public void dispatch(UiFinalFrenzy message) {
         try {
             frenzy = true;
-            currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + headPlayer + ".png").toUri().toURL().toString()));
+            currentPlayer.setImage(new Image(Paths.get("files/assets/player/player_" + headPlayer + "_back.png").toUri().toURL().toString()));
             FXMLLoader loader = new FXMLLoader(Paths.get("files/fxml/frenzy.fxml").toUri().toURL());
             ((Pane)scene.lookup("#playerCombo")).getChildren().add(loader.load());
+            directionsText.set("Final frenzy");
         }catch (MalformedURLException e){
             Log.severe("Could not retrieve final frenzy board for: " + headPlayer);
         }catch (IOException e){
@@ -950,6 +952,7 @@ public class GuiControllerTable extends GuiController {
         directionsText.set("Match is over");
         ViewGUI.getInstance().send(new UiDarken());
     }
+
     //----------------------------------------------------------------------------------------------------------------//
 
 

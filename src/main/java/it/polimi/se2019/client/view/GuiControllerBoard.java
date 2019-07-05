@@ -150,6 +150,7 @@ public class GuiControllerBoard extends GuiController {
                 skullMap.put(7 - i, pane);
 
             }
+            this.skullToAdd = 8 - skulls;
         }catch (MalformedURLException e){
             Log.severe("Could not get Skull fxml");
         }catch (IOException e){
