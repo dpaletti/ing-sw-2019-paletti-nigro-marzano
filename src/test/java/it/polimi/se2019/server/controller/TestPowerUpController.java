@@ -11,6 +11,7 @@ import it.polimi.se2019.commons.vc_events.VCChooseAmmoToPayEvent;
 import it.polimi.se2019.commons.vc_events.VCPartialEffectEvent;
 import it.polimi.se2019.server.model.*;
 import it.polimi.se2019.server.network.Server;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -97,4 +98,17 @@ public class TestPowerUpController {
     }
 
 
+    @Test
+    public void testChooseAmmoToPay(){
+        String ammo = AmmoColour.RED.name();
+        VCChooseAmmoToPayEvent event = new VCChooseAmmoToPayEvent(game.playerToUser(magenta), ammo);
+        powerUpController.dispatch(event);
+        int j = 0;
+        for (Ammo a : magenta.getAmmo())
+        {
+            if (a.getColour().equals(AmmoColour.RED))
+                j++;
+        }
+        assertEquals(j, 3);
+    }
 }
