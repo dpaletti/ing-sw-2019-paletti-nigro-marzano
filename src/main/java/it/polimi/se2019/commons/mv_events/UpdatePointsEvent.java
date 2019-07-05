@@ -3,6 +3,11 @@ package it.polimi.se2019.commons.mv_events;
 import it.polimi.se2019.commons.utility.MVEventDispatcher;
 import it.polimi.se2019.client.view.MVEvent;
 
+/**
+ * This event notifies all users whenever a player's points are updated.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class UpdatePointsEvent extends MVEvent {
     private int points;
     private String username;

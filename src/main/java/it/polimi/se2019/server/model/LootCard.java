@@ -6,6 +6,11 @@ import it.polimi.se2019.commons.mv_events.GrabbedLootCardEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class defines loot cards, which can be grabbed on loot tiles. Loot cards are named following this pattern:
+ * first letter of the top ammo colour / P when it is a power up + first letter of the bottom left ammo colour + first letter of the bottom right ammo colour.
+ */
+
 public class LootCard implements Grabbable, Drawable,Jsonable{
     private String name;
     private List<Ammo> ammo= new ArrayList<>();
@@ -39,6 +44,12 @@ public class LootCard implements Grabbable, Drawable,Jsonable{
         return name;
     }
 
+    /**
+     * Performs the grab action.
+     * @param player player grabbing the loot card.
+     * @param grabbed the grabbed loot card.
+     * @param game
+     */
     @Override
     public void grab(Player player, String grabbed, Game game) {
         if (name.equalsIgnoreCase(grabbed)) {

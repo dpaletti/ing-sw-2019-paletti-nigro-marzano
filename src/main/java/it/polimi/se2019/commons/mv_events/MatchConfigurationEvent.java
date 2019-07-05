@@ -6,7 +6,10 @@ import it.polimi.se2019.client.view.MVEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-//ask all players their preferred configuration, whether final frenzy= true and the number of skulls (5 to 8)
+/**
+ * This event notifies all users of the available configurations and of the players connected.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
 
 public class MatchConfigurationEvent extends MVEvent {
     private ArrayList<String> configurations; //small, medium_left, medium_right, large

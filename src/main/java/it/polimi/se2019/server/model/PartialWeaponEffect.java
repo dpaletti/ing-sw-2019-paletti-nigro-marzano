@@ -3,6 +3,11 @@ package it.polimi.se2019.server.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class extends Effect and describes a partial effect, which is part of a Weapon Effect.
+ * Each effect has its own target specification{@link it.polimi.se2019.server.model.TargetSpecification}.
+ */
+
 public class PartialWeaponEffect extends Effect {
 
     private TargetSpecification targetSpecification;

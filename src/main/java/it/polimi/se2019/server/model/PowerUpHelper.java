@@ -6,6 +6,10 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class generates the Power Up from the JSON files present in the given directory.
+ */
+
 public class PowerUpHelper extends JsonHelper{
     public PowerUpHelper() {
         this.create();

@@ -3,6 +3,11 @@ package it.polimi.se2019.commons.mv_events;
 import it.polimi.se2019.commons.utility.MVEventDispatcher;
 import it.polimi.se2019.client.view.MVEvent;
 
+/**
+ * This event notifies all users that playerEnding has just finished playing and playerStarting is about to start.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class MVEndOfTurnEvent extends MVEvent {
     private String playerEnding;
     private String playerStarting;

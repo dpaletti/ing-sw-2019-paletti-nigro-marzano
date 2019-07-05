@@ -10,8 +10,12 @@ import it.polimi.se2019.commons.utility.Observer;
 import it.polimi.se2019.commons.utility.VCEventDispatcher;
 import it.polimi.se2019.client.view.VCEvent;
 
+/**
+ * This class is extended by all the controllers used in the Server. It implements {@link it.polimi.se2019.commons.utility.Observer}
+ * in order to receive and dispatch correctly the events arriving from the view.
+ */
+
 public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher {
-    //TODO evaluate the need for storing a reference to the model, probably needed
     protected Game model;
     protected Server server;
     private int roomNumber;
@@ -28,6 +32,9 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
         //empty constructor
     }
 
+    /**
+     * disables a controller without deleting it in order to avoid concurrent modification exceptions.
+     */
     public void disable(){
         disabled = true;
     }
@@ -36,6 +43,10 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
         return roomNumber;
     }
 
+    /**
+     * calculates whether a match has enough active players.
+     * @return if the match has enough active players to keep running, it returns true.
+     */
     public boolean enoughActivePlayers (){
         int active = 0;
         for (Player p : model.getPlayers()) {
@@ -45,6 +56,11 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
         return !(active < 3);
     }
 
+    /**
+     * calculates the next active user in the game.
+     * @param user the currently playing user.
+     * @return the next active user in the turn.
+     */
     public String getNextActiveUser (String user){
         if (model.getUsernames().indexOf(user) + 1 >= model.getUsernames().size())
             return model.getUsernames().get(0);
@@ -54,6 +70,12 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
         return model.getUsernames().get(model.getUsernames().indexOf(user) + 1);
     }
 
+    /**
+     * checks whether power ups that cannot be used are present and, in case they are, it notifies the view in order to deactivate them
+     * @param currentPlayer the player playing.
+     * @param constraint the constraint of the power up (eg: during the turn, while being attacked, ...).
+     */
+
     protected void disablePowerUps(String currentPlayer, String constraint){
         for (PowerUp p : model.userToPlayer(currentPlayer).getPowerUps()) {
             if (p.getConstraint().equalsIgnoreCase(constraint))
@@ -61,6 +83,11 @@ public abstract class Controller implements Observer<VCEvent>, VCEventDispatcher
         }
     }
 
+    /**
+     * generates an ammo colour from the name string.
+     * @param ammoName the name of the colour of the ammo.
+     * @return the ammo colour.
+     */
     protected AmmoColour stringToAmmo (String ammoName){
         for (AmmoColour ammoColour: AmmoColour.values()){
             if (ammoColour.toString().equalsIgnoreCase(ammoName)){

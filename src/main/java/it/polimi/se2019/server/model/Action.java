@@ -2,8 +2,18 @@ package it.polimi.se2019.server.model;
 
 import java.io.Serializable;
 
+/**
+ * This class describes the single actions that can be done when using a weapon.
+ */
+
 public class Action implements Serializable {
+    /**
+     * Describes the action.
+     */
     private ActionType actionType;
+    /**
+     * Defines whether the action needs to be done more than once.
+     */
     private int value;
     private Direction direction;
     private boolean area;

@@ -3,6 +3,11 @@ package it.polimi.se2019.commons.mv_events;
 import it.polimi.se2019.commons.utility.MVEventDispatcher;
 import it.polimi.se2019.client.view.MVEvent;
 
+/**
+ * This event is sent to the user in order to deactivate a power up that cannot be used any longer.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class DisablePowerUpEvent extends MVEvent {
     private String powerUp;
 

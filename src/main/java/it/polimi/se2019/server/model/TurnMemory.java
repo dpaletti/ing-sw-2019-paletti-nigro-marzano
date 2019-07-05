@@ -3,7 +3,12 @@ package it.polimi.se2019.server.model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-//TODO: Use hit methods in controllers to update the turnMemory
+
+/**
+ * This class stores hit targets and tiles as some weapons have a memory and their targets vary depending on the
+ * targets or tiles hit during a specific effect.
+ */
+
 public class TurnMemory {
     private Map<String, List<Player>>  hitTargets= new HashMap<>();
     private  Map<String, List<Tile>> hitTiles= new HashMap<>();

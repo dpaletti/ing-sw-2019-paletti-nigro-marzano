@@ -5,6 +5,9 @@ import it.polimi.se2019.client.view.VCEvent;
 
 import java.util.List;
 
+/**
+ * Connection implementation that broadcasts a message to all the connections given to its constructor
+ */
 public class ConnectionBroadcast implements Connection{
     private List<Connection> connectionList;
 
@@ -38,8 +41,4 @@ public class ConnectionBroadcast implements Connection{
         throw new UnsupportedOperationException("Cannot reconnect a broadcast connection");
     }
 
-    @Override
-    public boolean isDisconnected() {
-        throw new UnsupportedOperationException("Broadcast connection cannot be disconnected");
-    }
 }

@@ -4,6 +4,11 @@ package it.polimi.se2019.commons.mv_events;
 import it.polimi.se2019.commons.utility.MVEventDispatcher;
 import it.polimi.se2019.client.view.MVEvent;
 
+/**
+ * This event communicates everyone whenever a user disconnects.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class UsernameDeletionEvent extends MVEvent {
     private String username;
     private int missingPlayers;

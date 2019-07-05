@@ -8,6 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * This class defines the combos that can be used by the player throughout the game, for instance Run Around, Grab Stuff, Shoot People,..
+ * Each combo is made up of a list of partial combos {@link it.polimi.se2019.server.model.PartialCombo}.
+ */
+
 public class Combo implements Jsonable{
     private String name;
     //RUNAROUND, GRABSTUFF, SHOOTPEOPLE, FRENZYMOVERELOADSHOOT, FRENZYMOVEFOURSQUARES, FRENZYMOVEGRAB, FRENZYMOVETWICEGRABSHOOT, FRENZYMOVETHRICESHOOT

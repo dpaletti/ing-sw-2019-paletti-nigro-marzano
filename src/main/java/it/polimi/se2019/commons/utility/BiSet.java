@@ -2,6 +2,12 @@ package it.polimi.se2019.commons.utility;
 
 import java.util.*;
 
+/**
+ * BiSet is a Set of pairs in which it is possible to retrieve each element of the pair given the other one.
+ * @param <T> the type first element of the set.
+ * @param <S> the type second element of the set.
+ */
+
 public class BiSet<T, S> extends AbstractSet<Pair<T, S>> {
     //A set of pairs in which given one value it is possible to retrieve the other one
     //there is no guarantee over the order of those pairs

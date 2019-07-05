@@ -6,7 +6,10 @@ import it.polimi.se2019.client.view.MVEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-//event sent to update ammos of a player
+/**
+ * This event notifies all users when the number of ammos owned by a player changes.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
 
 public class FinanceUpdateEvent extends MVEvent {
     private String username;

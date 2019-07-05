@@ -10,6 +10,12 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 
+/**
+ * This class communicates with the virtual view. It holds all of the main data of the current game as the chosen map configuration,
+ * the number of skulls of the match, whether final frenzy is activated, the killshot track on which all the deaths are stored,
+ * The current players, their colours and usernames and the turn memory.
+ */
+
 public class Game extends Observable<MVEvent> {
     private GameMap gameMap;
     private boolean finalFrenzy= true;
@@ -43,6 +49,10 @@ public class Game extends Observable<MVEvent> {
         observers = new ArrayList<>();
     }
 
+    /**
+     * notifies the virtual view
+     * @param event
+     */
     public void send (MVEvent event){
         notify(event);
     }
@@ -175,6 +185,10 @@ public class Game extends Observable<MVEvent> {
         return userToPlayer(username).getHp();
     }
 
+    /**
+     * handles the death of a player by notifying all the other users and adding them to a list of players waiting to respawn.
+     * @param deadPlayer the player that died.
+     */
     public void deathHandler (Player deadPlayer){
         updateKillshotTrack(deadPlayer.getHp().get(10).getColour(), deadPlayer.getHp().size()==12);
         notify(new MVDeathEvent("*",
@@ -187,6 +201,11 @@ public class Game extends Observable<MVEvent> {
 
     }
 
+    /**
+     * updates the killshot track whenever a user dies with the data about their killer and the overkill.
+     * @param killer the user that caused the death.
+     * @param overkill whether the killer overkilled.
+     */
      public void updateKillshotTrack (FigureColour killer, boolean overkill) {
          killshotTrack.addKillshot(killer, overkill);
          if (killshotTrack.getKillshot().size() == killshotTrack.getNumberOfSkulls()) {
@@ -197,12 +216,16 @@ public class Game extends Observable<MVEvent> {
          }
      }
 
-
-     //The getter does'nt return a copy but the object to let others update it
      public TurnMemory getTurnMemory (){
         return turnMemory;
      }
 
+    /**
+     * calculates the movements a player is allowed to perform.
+     * @param username the user deciding the moves.
+     * @param target the target moved, can be the first username as well.
+     * @param radius the maximum distance.
+     */
     public void allowedMovements (String username, String target, int radius){
         Player playing;
         if(target.equals(""))
@@ -216,8 +239,11 @@ public class Game extends Observable<MVEvent> {
             throw new NullPointerException("List of possible movements is empty");
     }
 
-    // all players without any damage change their boards to final frenzy boards
-    // final frenzy players get a different set of moves based on their position in the current
+    /**
+     * All players without any damage change their boards to final frenzy boards.
+     * final frenzy players get a different set of moves based on their position in the current.
+     * @param killer
+     */
     public void frenzyUpdatePlayerStatus (Player killer){
         List<Player> beforeFirst = new ArrayList<>();
         List<Player> afterFirst = new ArrayList<>();
@@ -242,6 +268,10 @@ public class Game extends Observable<MVEvent> {
 
     }
 
+    /**
+     * returns the map configurations generated through the JSON files.
+     * @return the list of names of the available map configurations.
+     */
     public List<String> getMapConfigs(){
         List<String> names=new ArrayList<>();
         Pattern pattern=Pattern.compile(".json");
@@ -251,6 +281,10 @@ public class Game extends Observable<MVEvent> {
         return names;
     }
 
+    /**
+     * returns the weapons owned that are not loaded in order to reload them.
+     * @param username the user whose weapons are to be reloaded.
+     */
     public void unloadedWeapons (String username){
         HashMap<String, ArrayList<String>> unloadedWeapons= new HashMap<>();
         ArrayList<String> ammos = new ArrayList<>();
@@ -284,6 +318,12 @@ public class Game extends Observable<MVEvent> {
         target.hit(partialWeaponEffect, hitTargets, turnMemory);
     }
 
+    /**
+     * Calculates which power ups can be used given their constraint.
+     * @param powerUpType the constraint that is being considered (eg: during the player's turn, while attacking, while beinng attacked).
+     * @param costs whether the usage would cost.
+     * @param currentPlayer the player whose power ups are being evaluated.
+     */
     public void usablePowerUps (String powerUpType, boolean costs, Player currentPlayer) {  //if player's turn, player owns a power up of this type
         if (!costs || !currentPlayer.getAmmo().isEmpty()) {
             for (PowerUp p : currentPlayer.getPowerUps()) {

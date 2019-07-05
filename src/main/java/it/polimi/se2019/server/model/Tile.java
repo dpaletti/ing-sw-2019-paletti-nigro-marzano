@@ -5,7 +5,11 @@ import it.polimi.se2019.commons.utility.Point;
 
 import java.util.*;
 
-//TODO: change protected to private and override getters
+/**
+ * This class implements the tiles of the game map. Each tile is defined by its colour and has a list of grabbables which can both
+ * be weapons or a loot card. Each tiles has a map that defines its doors, the value of the map is true only when the tile
+ * has a door in the specified direction.
+ */
 
 public class Tile implements Targetable{
     protected GameMap gameMap;

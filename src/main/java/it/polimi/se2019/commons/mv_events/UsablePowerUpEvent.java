@@ -3,6 +3,11 @@ package it.polimi.se2019.commons.mv_events;
 import it.polimi.se2019.commons.utility.MVEventDispatcher;
 import it.polimi.se2019.client.view.MVEvent;
 
+/**
+ * This event communicates a user that one of their power ups can be used and whether it costs.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class UsablePowerUpEvent extends MVEvent {
     private String usablePowerUp;
     private boolean costs;

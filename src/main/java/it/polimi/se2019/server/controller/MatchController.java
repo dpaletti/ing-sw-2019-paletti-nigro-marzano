@@ -12,6 +12,10 @@ import it.polimi.se2019.server.network.Server;
 
 import java.util.List;
 
+/**
+ * This class handles the disconnection and reconnection of a user from the match pausing and unpausing the players to
+ * allow the game to continue. See {@link it.polimi.se2019.server.controller.Controller}.
+ */
 
 public class MatchController extends Controller {
 
@@ -19,7 +23,10 @@ public class MatchController extends Controller {
         super(model, server, roomNumber);
     }
 
-
+    /**
+     * This method ignores the events that are not dispatched in this controller.
+     * @param message Any message arriving from the view.
+     */
     @Override
     public void update(VCEvent message) {
         if(disabled)
@@ -45,6 +52,10 @@ public class MatchController extends Controller {
             model.unpausePlayer(message.getUsername());
         }
 
+    /**
+     * This method dispatches a join event from the view and sends a new join event back.
+     * @param message
+     */
     @Override
     public void dispatch(VcJoinEvent message) {
         model.send(new MvJoinEvent("*", message.getUsername(), 0));

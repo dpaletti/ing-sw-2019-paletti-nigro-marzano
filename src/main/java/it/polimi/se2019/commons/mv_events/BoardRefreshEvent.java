@@ -7,6 +7,11 @@ import it.polimi.se2019.client.view.MVEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This event is sent to the user in order to substitute the grabbed cards at the end of each turn.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class BoardRefreshEvent extends MVEvent {
     private HashMap<String, String> weaponSpots;    //<weapon, room colour>
     private HashMap<Point, String> lootCards;       //<point, lootcard>

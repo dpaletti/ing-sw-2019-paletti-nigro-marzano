@@ -3,6 +3,11 @@ package it.polimi.se2019.commons.mv_events;
 import it.polimi.se2019.commons.utility.MVEventDispatcher;
 import it.polimi.se2019.client.view.MVEvent;
 
+/**
+ * This event notifies the user when a player is unpaused.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class UnpausedPlayerEvent extends MVEvent {
     private String unpausedPlayer;
 

@@ -4,6 +4,11 @@ import it.polimi.se2019.commons.utility.Point;
 import it.polimi.se2019.commons.utility.VCEventDispatcher;
 import it.polimi.se2019.client.view.VCEvent;
 
+/**
+ * This event is sent when a user is using a weapon or a power up effect and they choose who to apply the effect to.
+ * See {@link it.polimi.se2019.client.view.VCEvent}.
+ */
+
 public class VCPartialEffectEvent extends VCEvent {
     private boolean skip;
     private String targetPlayer;

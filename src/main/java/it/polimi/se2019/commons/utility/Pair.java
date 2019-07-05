@@ -2,6 +2,12 @@ package it.polimi.se2019.commons.utility;
 
 import java.util.Objects;
 
+/**
+ * This class pairs two related elements in a single object.
+ * @param <T> type of the first element.
+ * @param <S> type of the second element.
+ */
+
 public class Pair<T , S > {
     private T first;
     private S second;

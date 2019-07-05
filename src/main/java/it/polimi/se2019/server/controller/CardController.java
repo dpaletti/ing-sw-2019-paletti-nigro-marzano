@@ -12,6 +12,12 @@ import it.polimi.se2019.client.view.VCEvent;
 
 import java.util.*;
 
+/**
+ * This class handles the generic interaction with a Card that can both be a Weapon or a Power Up.
+ * It implements the methods that calculate all the possible targets of a certain action which are used by its subclasses
+ * {@link it.polimi.se2019.server.controller.PowerUpController} and {@link it.polimi.se2019.server.controller.WeaponController}.
+ */
+
 public class CardController extends Controller {
     protected Card current;
     protected int layersVisited = 0;
@@ -32,6 +38,10 @@ public class CardController extends Controller {
         this.model=model;
     }
 
+    /**
+     * This method ignores the events that are not dispatched in this controller.
+     * @param message Any message arriving from the view.
+     */
     @Override
     public void update(VCEvent message) {
         if(disabled)
@@ -44,6 +54,12 @@ public class CardController extends Controller {
         }
     }
 
+    /**
+     * Intersects the first and the second given sets.
+     * @param first first set to intersect.
+     * @param second second set to intersect.
+     * @return returns the common values between first and second.
+     */
     protected Set<Targetable> intersect (Set<Targetable> first, Set<Targetable> second){
         Set<Targetable> finalSet= new HashSet<>();
         for (Targetable t: first){
@@ -53,6 +69,10 @@ public class CardController extends Controller {
         return finalSet;
     }
 
+    /**
+     * This method sets to their initial value all of the indexes used.
+     * @param isWeapon a boolean that defines whether a card is a weapon or a power up.
+     */
     protected void endUsage(boolean isWeapon){
         model.send(new MVCardEndEvent(model.playerToUser(currentPlayer), isWeapon));
         layersVisited = 0;
@@ -65,6 +85,12 @@ public class CardController extends Controller {
         previousTargets.clear();
     }
 
+    /**
+     * Generates the potential targets of a weapon or power up given the desired partial weapon effect.
+     * @param effect the chosen effect to apply.
+     * @param player the player applying the effect.
+     * @return A list of potential targets.
+     */
     protected List<Targetable> generateTargetSet (PartialWeaponEffect effect, Player player){
         Targetable targetable;
         Set<Targetable> targetSet;
@@ -101,8 +127,13 @@ public class CardController extends Controller {
         return new ArrayList<>(targetSet);
     }
 
+    /**
+     * A method that calculates which targets can be seen by the player or from its position.
+      * @param t the player playing or the tile it is standing on.
+     * @return A Set of targets that are visible. The targets will be players if t is a player, tiles if t is a tile.
+     */
 
-    private Set<Targetable> getVisible(Targetable t){   //tested
+    private Set<Targetable> getVisible(Targetable t){
         try {
             Set<Targetable> visibleTarget = new HashSet<>();
             Set<RoomColour> visibleRooms = visibleRooms(t.getPosition());
@@ -122,7 +153,14 @@ public class CardController extends Controller {
 
     }
 
-    private Set<Targetable> handleVisible(int visible, Targetable source){  //tested
+    /**
+     * A method that, reading the visible value, generates the target set with the correct visibility.
+     * @param visible When visible is -1, the visibility property will be deactivated, when it is 0 the required targets are not visibile, when 1 they are visible and when 2 they are visible by a previous targe.
+     * @param source t the player playing or the tile it is standing on.
+     * @return the targets with the required visibility properties.
+     */
+
+    private Set<Targetable> handleVisible(int visible, Targetable source){
         List<Targetable> targetables;
         if (visible==0) {
             targetables= source.getAll();
@@ -142,7 +180,13 @@ public class CardController extends Controller {
 
     }
 
-    private Set<RoomColour> visibleRooms (Point point){     //tested
+    /**
+     * A method that calculates the rooms that are visible to the source.
+     * @param point The tile the player is standing on.
+     * @return A set of room colours that are visible to the source.
+     */
+
+    private Set<RoomColour> visibleRooms (Point point){
         Tile tile = model.getGameMap().getTile(point);
         Set<RoomColour> visibleRooms= new HashSet<>();
 
@@ -173,6 +217,15 @@ public class CardController extends Controller {
                                     tile.getPosition().getY())).getColour());
         return visibleRooms;
     }
+
+    /**
+     * Calculates the area at required distance from the source.
+     * @param source The point from which the distance is calculated.
+     * @param innerRadius The minimum distance.
+     * @param outerRadius The maximum distance.
+     * @param isTile Whether the effect is applied to tiles or to players.
+     * @return A set of targets at the correct distance from the source.
+     */
 
     private Set<Targetable> areaSelection (Targetable source, int innerRadius, int outerRadius, boolean isTile){       //tested
         Set<Targetable> targetables = new HashSet<>();
@@ -206,6 +259,13 @@ public class CardController extends Controller {
 
     }
 
+    /**
+     * This method calculates the tiles at a defined distance or less.
+     * @param distance the maximum distance.
+     * @param centre the centre from which the distance is calculated.
+     * @param isTile whether the targets are players or tiles.
+     * @return A set of tiles within a maximum distance.
+     */
     //distance -1 as radiusBetween includes both bounds
     private Set<Targetable> getTileCircle (int distance, Point centre, boolean isTile) {
         Set<Targetable> tiles = new HashSet<>();
@@ -218,6 +278,14 @@ public class CardController extends Controller {
         return handleTargetableTiles(isTile, tiles);
     }
 
+    /**
+     * Calculates the targetset based on the different property.
+     * @param source t the player playing or the tile it is standing on.
+     * @param different the different property: 0 when targets accepted are not different from certain effects, 1 when they need to be different from those effects.
+     * @param effects the effects whose targets ought to be different from the current ones.
+     * @return targets that fit the different properties.
+     */
+
     private Set<Targetable> handleDifferent(Targetable source, boolean different, List<String> effects) {   //tested
         if (different) {
             Set<Targetable> targetables = new HashSet<>(source.getAll());
@@ -227,6 +295,14 @@ public class CardController extends Controller {
         return new HashSet<>(source.getAll());
     }
 
+    /**
+     * Calculates the targetset based on the previous property.
+     * @param source t the player playing or the tile it is standing on.
+     * @param previous the previous property: 0 when targets accepted are not the same as those of certain effects, 1 when they need to be the same as those effects.
+     * @param effects the effects whose targets ought to be different from the current ones.
+     * @return targets that fit the previous properties.
+     */
+
     private Set<Targetable> handlePrevious(Targetable source, boolean previous, List<String> effects){      //tested
         if (previous)
             return new HashSet<>(model.getTurnMemory().getByEffect(effects, source));
@@ -234,9 +310,25 @@ public class CardController extends Controller {
             return new HashSet<>(source.getAll());
     }
 
+    /**
+     * This method calculates which targets comply to the given specifications.
+     * @param innerRadius the minimum distance of the targets.
+     * @param outerRadius the maximum distance of the targets.
+     * @param targetable the source from which the distance is calculated.
+     * @param isTile whether the hit targets are players or tiles.
+     * @return a set of targets that comply to the given specifications.
+     */
     private Set<Targetable> handleRadiusBetween (int innerRadius, int outerRadius, Targetable targetable, boolean isTile){      //tested
         return areaSelection(targetable, innerRadius, outerRadius, isTile);
     }
+
+    /**
+     * This method calculates which targets comply to the given specifications.
+     * @param enlarge When enlarge is -1, it selects the whole room, when -1 it selects a specific direction and when it is any other value it defines the distance the tiles to add need to be from the source.
+     * @param centre the source of the enlarge.
+     * @param isTile whether the hit targets are players or tiles.
+     * @return
+     */
 
     private Set<Targetable> handleEnlarge (int enlarge, Set<Targetable> centre, boolean isTile){   //tested
         Set<Targetable> targetables= new HashSet<>();
@@ -264,6 +356,12 @@ public class CardController extends Controller {
         return targetables;
     }
 
+    /**
+     * This method transforms targetables to tiles
+     * @param isTile
+     * @param targetables the targetables to transform
+     * @return the transformed tiles.
+     */
     private Set<Targetable> handleTargetableTiles (boolean isTile, Set<Targetable> targetables){
         Set<Targetable> finalSet = new HashSet<>();
         if (isTile)
@@ -275,9 +373,12 @@ public class CardController extends Controller {
         }
     }
 
-    // enoughPowerUps() uses missingAmmos() to calculate whether any ammos are missing.
-    // If ammos are missing, it calculates if those can be replaced by power ups and,
-    // in case player does not own enough power ups to pay, it returns false,
+    /**
+     * enoughPowerUps() uses missingAmmos() to calculate whether any ammos are missing.
+     * If ammos are missing, it calculates if those can be replaced by power ups.
+     * @param effect the chosen effect whose price has to be paid.
+     * @return In case player does not own enough power ups to pay, it returns false.
+     */
 
     protected boolean enoughPowerUps (GraphWeaponEffect effect){
         List<PowerUp> ownedPowerUps = new ArrayList<>(currentPlayer.getPowerUps());
@@ -298,8 +399,11 @@ public class CardController extends Controller {
         return true;
     }
 
-    // missingAmmos returns missing ammos to pay a price, therefore,
-    // when price can be fully payed with ammos, it returns an empty list.
+    /**
+     * missingAmmos returns missing ammos to pay a price.
+     * @param effect the effect that has to be paid.
+     * @return  when price can be fully payed with ammos, it returns an empty list, else the missing ammos.
+     */
 
     protected List<Ammo> missingAmmos(GraphWeaponEffect effect){
         List<Ammo> ownedAmmos = new ArrayList<>(currentPlayer.getAmmo());
@@ -311,6 +415,11 @@ public class CardController extends Controller {
         return toReturn;
     }
 
+    /**
+     * This method asks the user whether they would like to use a specific effect.
+     * @param partial the proposed partial effect.
+     * @param isWeapon whether the method handles a weapon or a power up.
+     */
 
     protected void handlePartial (PartialWeaponEffect partial,boolean isWeapon){
         List<Targetable> targets = generateTargetSet(partial, currentPlayer);
@@ -320,7 +429,11 @@ public class CardController extends Controller {
             model.send(new PartialSelectionEvent(model.playerToUser(currentPlayer), targetableToPlayer(targets), partial.isEndable(),isWeapon));
     }
 
-
+    /**
+     * Transforms targetables to tiles.
+     * @param targetables the targetables to transform.
+     * @return the points of the tiles transformed.
+     */
     private List<Point> targetableToTile (List<Targetable> targetables){
         List<Point> points = new ArrayList<>();
         for (Targetable t : targetables)
@@ -328,6 +441,11 @@ public class CardController extends Controller {
         return points;
     }
 
+    /**
+     * Transforms targetables to players.
+     * @param targetables the targetables to transform.
+     * @return the users of the players transformed.
+     */
     private List<String> targetableToPlayer (List<Targetable> targetables){
         List<String> players = new ArrayList<>();
         for (Targetable t : targetables){
@@ -336,6 +454,11 @@ public class CardController extends Controller {
         return players;
     }
 
+    /**
+     * It iterates on the graph of effects.
+     * @param isWeapon defines whether the current card is a weapon or a power up.
+     */
+
     protected void handleEffect (boolean isWeapon){
         currentPlayer.useAmmos(weaponEffect.getPrice());
         layersVisitedPartial = layersVisitedPartial + 1;
@@ -343,6 +466,11 @@ public class CardController extends Controller {
         partialGraphLayer++;
         handlePartial(currentLayer.get(partialGraphLayer).getKey(),isWeapon);
     }
+
+    /**
+     * Calculates the following effect in the graph.
+     * @param isWeapon defines whether the current card is a weapon or a power up.
+     */
 
     protected void nextWeaponEffect (boolean isWeapon){
         partialGraphLayer=-1;

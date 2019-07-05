@@ -9,6 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This event allows users to obtain all the missing information whenever they reconnect.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
 
 public class SyncEvent extends MVEvent {
     private HashMap<Point, String> pointColorSpawnMap;

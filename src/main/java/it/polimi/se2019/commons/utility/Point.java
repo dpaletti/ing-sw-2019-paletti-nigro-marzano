@@ -3,6 +3,11 @@ package it.polimi.se2019.commons.utility;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Point class consists of a pair of integers indicating the spacial coordinates of a certain element.
+ * It implements serializable in order to allow the usage of Point objects in the interaction through the network.
+ */
+
 public class Point implements Serializable {
     private int x;
     private int y;

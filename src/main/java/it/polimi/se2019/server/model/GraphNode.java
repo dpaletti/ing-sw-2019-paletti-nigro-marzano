@@ -2,6 +2,11 @@ package it.polimi.se2019.server.model;
 
 import java.util.*;
 
+/**
+ * This class implements a generic graph that contains a set of children and parents.
+ * @param <T> the type of the key of graph node.
+ */
+
 public class GraphNode<T> implements Iterable<GraphNode<T>> {
     private Set<GraphNode<T>> children= new HashSet<>();
     private T key;

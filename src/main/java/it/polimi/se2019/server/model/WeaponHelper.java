@@ -6,6 +6,10 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class generates all the available weapons fetching their JSONs from the defined folder of weapons.
+ */
+
 public class WeaponHelper extends JsonHelper{
 
     public WeaponHelper() {

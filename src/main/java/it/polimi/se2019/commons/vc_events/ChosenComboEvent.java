@@ -3,7 +3,10 @@ package it.polimi.se2019.commons.vc_events;
 import it.polimi.se2019.commons.utility.VCEventDispatcher;
 import it.polimi.se2019.client.view.VCEvent;
 
-// player sends combo they want to use
+/**
+ * This event is sent from the user in order to communicate the combo (eg: Run Around, Shoot People, Grab Stuff,...) they wish to use.
+ * See {@link it.polimi.se2019.client.view.VCEvent}.
+ */
 
 public class ChosenComboEvent extends VCEvent {
     private String chosenCombo;

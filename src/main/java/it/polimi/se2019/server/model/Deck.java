@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This class generalizes all the decks used in the game and it contains both a regular deck and one with all the discards
+ * as those can be used whenever the regular deck is over.
+ */
+
 public class Deck{
     private List<Drawable> deck =  new ArrayList<>();
     private List<Drawable> discards = new ArrayList<>();

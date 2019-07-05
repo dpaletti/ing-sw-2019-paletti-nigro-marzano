@@ -8,6 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * This class consists of a generalization of power up and weapon. Cards are generated from a JSON file and they contain a graph with their effects.
+ */
+
 public abstract class Card {
     protected Ammo cardColour;
     protected List<Ammo> price;
@@ -47,6 +51,9 @@ public abstract class Card {
 
     }
 
+    /**
+     * generates the graph of effects of a card.
+     */
     private void defineCard(){
         Set<GraphWeaponEffect> graphWeaponEffects= new HashSet<>();
         for (WeaponEffect weaponEffect: weaponEffects){
@@ -98,6 +105,15 @@ public abstract class Card {
         return toReturn;
     }
 
+    /**
+     * generates the graph of a weapon or power up.
+     * @param effectSet the set of effects a weapon has.
+     * @param root the first element of the graph.
+     * @param maxHeight the maximum height of the graph.
+     * @param constantMaxHeight
+     * @param <T>
+     */
+
     public  <T extends Effect> void generateGraph(Set<T> effectSet, GraphNode<T> root, int maxHeight, int constantMaxHeight){
         if (maxHeight==0)
             return;
@@ -120,6 +136,13 @@ public abstract class Card {
         }
     }
 
+    /**
+     * searches for a specific effect in the graph of the weapon.
+     * @param name the name of the effect that needs to be found.
+     * @param effectSet the set of effects of the weapon.
+     * @param <T>
+     * @return the effect found in the graph.
+     */
     private <T extends Effect> T getEffect(String name,Set<T> effectSet){
         for(T effect: effectSet){
             if (effect.getName().equals(name))

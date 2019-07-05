@@ -12,25 +12,45 @@ import it.polimi.se2019.commons.vc_events.VcJoinEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-
+/**
+ * Network manager for client, it is extended by all concrete handlers that take into account
+ * a specific protocol, see RMI or Socket implementation
+ */
 public abstract class NetworkHandler extends Observable<MVEvent> implements Observer<Event>, Serializable, VCEventDispatcher {
 
     protected transient String token;
     protected transient Client client;
     protected transient Thread listener;
 
+
+    /**
+     * Method for submitting a message to the other hand of the connection
+     * @param vcEvent message to be submitted
+     */
     public abstract void submit(VCEvent vcEvent);
+
+
+    /**
+     * Method for retrieving messages coming from the other end of the network
+     * @throws ClassNotFoundException could be thrown by message deserializers
+     */
     public abstract void retrieve() throws ClassNotFoundException;
+
+
+    /**
+     * Async listener on the connection, retrieves messages coming from the
+     * connection to retrieve
+     */
     protected abstract void listenToEvent();
 
     public void setToken(String token) {
         this.token = token;
     }
 
-    public void stopListening(){
-        listener.interrupt();
-    }
-
+    /**
+     * Method for communicating joining to the server
+      * @param username chosen username for current session
+     */
     public void chooseUsername(String username){
         update(new VcJoinEvent(token, username));
     }

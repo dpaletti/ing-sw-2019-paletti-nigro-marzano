@@ -1,5 +1,11 @@
 package it.polimi.se2019.commons.utility;
 
+/**
+ * This class implements the functions of a static logger with two different levels of severity: fine, which can be used
+ * in any regular situation whilst severe is used when exceptions are thrown, both levels print on the standard error.
+ * "info" level simply prints a string on the standard output.
+ */
+
 public class Log {
     /*how to use this logger:
       1. this logger is static, constructor has been disabled calls are like Log.fine("string")
@@ -11,8 +17,6 @@ public class Log {
       In the end FINE messages are the one that should not show up when the application is in production.
      */
 
-    //TODO make level configurable from configuration file
-    //TODO make Log file configurable from file
     private static String level = "fine";
 
     private Log(){}

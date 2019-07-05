@@ -2,6 +2,11 @@ package it.polimi.se2019.commons.utility;
 
 import it.polimi.se2019.commons.vc_events.*;
 
+/**
+ * This class dispatches all events arriving from the view and directed to the Controller to the correct Controller that
+ * is able to handle them. See {@link it.polimi.se2019.commons.utility.EventDispatcher}.
+ */
+
 public interface VCEventDispatcher extends EventDispatcher {
 
     default void dispatch(VcJoinEvent message){
@@ -42,10 +47,6 @@ public interface VCEventDispatcher extends EventDispatcher {
 
     default void dispatch (PowerUpUsageEvent message){
         throw new UnsupportedOperationException("PowerUp Usage Event not supported");
-    }
-
-    default void dispatch (ActionEvent message){
-        throw new UnsupportedOperationException("ActionEvent not supported");
     }
 
     default void dispatch (DiscardedPowerUpEvent message){

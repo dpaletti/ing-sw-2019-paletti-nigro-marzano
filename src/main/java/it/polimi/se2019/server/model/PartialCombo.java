@@ -1,10 +1,11 @@
 package it.polimi.se2019.server.model;
 
-import it.polimi.se2019.server.model.Card;
-import it.polimi.se2019.server.model.Game;
-import it.polimi.se2019.server.model.Grabbable;
 import it.polimi.se2019.commons.mv_events.AllowedWeaponsEvent;
 import it.polimi.se2019.commons.mv_events.GrabbablesEvent;
+
+/**
+ * This enum defines the atomic actions that can be used to build a combo {@link it.polimi.se2019.server.model.Combo} in any phase of the game and with any damage.
+ */
 
 public enum  PartialCombo {
     SHOOT {
@@ -31,6 +32,12 @@ public enum  PartialCombo {
             game.unloadedWeapons(username);
         }
     };
+
+    /**
+     * Each element of the enum implements this method and notifies the current player communicating the possibilities their chosen partial combo gives them.
+     * @param game This is the class that is observable of model-view Events communicates with the view.
+     * @param username This is the currently playing user.
+     */
 
     public abstract void use(Game game, String username);
 

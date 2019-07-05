@@ -6,6 +6,11 @@ import it.polimi.se2019.client.view.MVEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This event is sent to the user to ask them what they wish to grab.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class GrabbablesEvent extends MVEvent {
     private ArrayList<String> grabbables;
 

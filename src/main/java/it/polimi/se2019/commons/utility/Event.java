@@ -5,6 +5,10 @@ import it.polimi.se2019.client.view.UiDispatcher;
 
 import java.io.Serializable;
 
+/**
+ * This class is extended by all model-view and view-controller events and it implements methods needed to allow the dispatching of all events.
+ */
+
 public abstract class Event implements Serializable {
     @Override
     public String toString() {

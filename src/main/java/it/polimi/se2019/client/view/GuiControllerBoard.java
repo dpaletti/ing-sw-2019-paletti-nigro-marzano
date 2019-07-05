@@ -24,6 +24,9 @@ import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * GuiController implementation for Board ( map + skulls) management
+ */
 public class GuiControllerBoard extends GuiController {
 
     @FXML
@@ -53,6 +56,13 @@ public class GuiControllerBoard extends GuiController {
     private Map<Integer, Pane> skullMap = new HashMap<>();
 
     //--------------------------------------------Initialization---------------------------------------------//
+
+    /**
+     * Methods that manages initialization of everyting that has to be placed
+     * before the first turn starts
+     * @param message contains weaponSpots, map configs, skulls and lootCards
+     */
+
     @Override
     public void dispatch(UiBoardInitialization message) {
         scene = board.getScene();
@@ -188,6 +198,14 @@ public class GuiControllerBoard extends GuiController {
         place(message.getFigure(), message.getDestination());
     }
 
+    /**
+     * moving figures to a certain tile moving it out of the previous one and moving it to the new one,
+     * takes into account the black hole effect that two or more players have when entering the same tile. Black hole
+     * effect is a short hand for describing the creation of a placeholder image that can be explored to know which exact
+     * figures occupy a specific tile.
+     * @param figure
+     * @param position
+     */
     private void place(String figure, Point position){
         Point oldPosition = ViewGUI.getInstance().getPosition(figure);
         leaveTile(oldPosition, figure);
@@ -347,6 +365,10 @@ public class GuiControllerBoard extends GuiController {
 
 //---------------------------------------------------Grabbing------------------------------------------//
 
+    /**
+     * Grabbing and removing a loot from a spot
+     * @param message contains the loot to grab (through its coordinates)
+     */
     @Override
     public void dispatch(UiGrabLoot message) {
         ImageView loot = (ImageView) scene.lookup("#loot" +
@@ -449,6 +471,11 @@ public class GuiControllerBoard extends GuiController {
 
     //--------------------------------------------------Highlighting--------------------------------------------------//
 
+    /**
+     * Tile highlighting and darkening on click for showing available tiles in situations such as using a weapon
+     * or running around
+     * @param message contains tiles to highlight
+     */
     @Override
     public void dispatch(UiHighlightTileEvent message) {
         try {
@@ -485,6 +512,10 @@ public class GuiControllerBoard extends GuiController {
         }
     }
 
+    /**
+     * Highlighting a player for clearluy showing a targetSet content
+     * @param message contains figures to highlight
+     */
     public void dispatch(UiHighlightPlayer message){
         ViewGUI.getInstance().setIsWeapon(message.isWeapon());
         highlightedFigures.put(message.getToHighlight().toLowerCase(), null);
@@ -537,6 +568,10 @@ public class GuiControllerBoard extends GuiController {
 
     //-------------------------------------------------------------Skulls--------------------------------------------------//
 
+    /**
+     * Substitution of a skull with one ore two coloured drops for when someone scores a kill
+     * @param message contains killer's colour
+     */
     @Override
     public void dispatch(UiAddKillOnSkulls message) {
         try {

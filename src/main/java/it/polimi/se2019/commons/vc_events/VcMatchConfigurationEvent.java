@@ -3,6 +3,11 @@ package it.polimi.se2019.commons.vc_events;
 import it.polimi.se2019.commons.utility.VCEventDispatcher;
 import it.polimi.se2019.client.view.VCEvent;
 
+/**
+ * This event is sent when a user sends their preferred playing options in the set up phase.
+ * See {@link it.polimi.se2019.client.view.VCEvent}.
+ */
+
 public class VcMatchConfigurationEvent extends VCEvent {
     private int skulls;
     private boolean frenzy;

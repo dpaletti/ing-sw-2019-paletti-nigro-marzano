@@ -8,16 +8,15 @@ import it.polimi.se2019.commons.network.ServerInterface;
 import it.polimi.se2019.commons.utility.Event;
 import it.polimi.se2019.commons.utility.Log;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+/**
+ * NetworkHandler implementation for RMI connections
+ */
 public class NetworkHandlerRMI extends NetworkHandler implements CallbackInterface {
     private transient ServerInterface gameServer;
     private int roomNumber;

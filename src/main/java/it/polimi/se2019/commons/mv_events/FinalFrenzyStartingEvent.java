@@ -3,7 +3,12 @@ package it.polimi.se2019.commons.mv_events;
 import it.polimi.se2019.commons.utility.MVEventDispatcher;
 import it.polimi.se2019.client.view.MVEvent;
 
-public class FinalFrenzyStartingEvent extends MVEvent { //notifies all users that the last skull was removed from the track and that final frenzy is starting
+/**
+ * This event notifies all users when the last skull is removed from the killshot track and only in case final frenzy is activated.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
+public class FinalFrenzyStartingEvent extends MVEvent {
 
     public FinalFrenzyStartingEvent (String destination){
         super(destination);

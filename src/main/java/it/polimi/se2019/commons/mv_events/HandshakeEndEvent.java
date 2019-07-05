@@ -6,6 +6,12 @@ import it.polimi.se2019.client.view.MVEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This event communicates the users connected and playing and the map configurations available which were generated from the JSON
+ * files upon initialization of the game class.
+ * See {@link it.polimi.se2019.client.view.MVEvent}.
+ */
+
 public class HandshakeEndEvent extends MVEvent {
     private ArrayList<String> roomUsernames;
     private ArrayList<String> allUsernames;

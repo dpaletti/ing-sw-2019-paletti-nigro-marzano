@@ -8,24 +8,33 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for javaFX fxml files contained in files/fxml, every implementation manages one or more fxml all linked
+ * to a specific section of the GUI
+ */
 public abstract class GuiController implements Observer<Event>, Initializable, UiDispatcher {
 
+    /**
+     * Automatic registration to ViewGUI for javaFX controllers
+     * @param location  ignored
+     * @param resources ignored
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ViewGUI.getInstance().registerController(this);
     }
 
+    /**
+     * update methods that guarantees to always dispatch events in a javaFX thread
+     * @param message dispatched message
+     */
     @Override
     public void update(Event message) {
         ensureJavaFXThread(() -> {
@@ -41,13 +50,6 @@ public abstract class GuiController implements Observer<Event>, Initializable, U
         });
     }
 
-    public Node getGridNode(GridPane gridPane, int x, int y){
-        for(Node n: gridPane.getChildren()){
-            if(GridPane.getColumnIndex(n) == x && GridPane.getRowIndex(n) == y)
-                return n;
-        }
-        throw new NullPointerException("There is no node at specific coordinate");
-    }
 
     protected void ensureJavaFXThread(Runnable action){
         if(Platform.isFxApplicationThread())
@@ -85,15 +87,5 @@ public abstract class GuiController implements Observer<Event>, Initializable, U
         image.setOnMouseExited(null);
     }
 
-
-    protected String getUrl(Path path){
-        try {
-            return path.toUri().toURL().toString();
-        }catch (MalformedURLException e){
-            Log.severe("Could not find requested image: " + path.toString());
-        }
-        throw new IllegalStateException("Could not get Image from path");
-    }
-    
 
 }

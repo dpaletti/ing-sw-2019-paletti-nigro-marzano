@@ -18,6 +18,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * This class creates the match and groups players in a single room. Upon connection of each player, their username
+ * is registered and a room starts playing when at least three users are connected.
+ * See {@link it.polimi.se2019.server.controller.Controller}.
+ */
+
 public class MatchMakingController extends Controller {
     private AtomicInteger playerCount = new AtomicInteger(0);
     private AtomicBoolean matchMade = new AtomicBoolean(false);
@@ -30,6 +36,10 @@ public class MatchMakingController extends Controller {
         usernames.add("*"); //adding wildcard so that no player can choose that username
     }
 
+    /**
+     * This method ignores the events that are not dispatched in this controller.
+     * @param message Any message arriving from the view.
+     */
     @Override
     public void update(VCEvent message)
     {
@@ -44,6 +54,10 @@ public class MatchMakingController extends Controller {
         }
     }
 
+    /**
+     * Whenever a user joins the match, this method adds them to the currently forming room and starts the match if at least 3 players are connected.
+     * @param message
+     */
     @Override
     public void dispatch(VcJoinEvent message) {
         usernames.add(message.getUsername());
@@ -61,6 +75,11 @@ public class MatchMakingController extends Controller {
             matchMakingTimer.endTimer();
         }
     }
+
+    /**
+     * Handles disconnection of users. If less than 2 players are connected and active, they match is over.
+     * @param disconnectionEvent
+     */
 
     @Override
     public void dispatch(DisconnectionEvent disconnectionEvent) {
@@ -102,6 +121,10 @@ public class MatchMakingController extends Controller {
         return new ArrayList<>(usernames);
     }
 
+    /**
+     * This method is called when the timer is interrupted and it closes match making initializing the set up phase.
+     */
+
     protected void onTimerEnd() {
         Log.fine("closing match making");
         matchMade.set(true);
@@ -111,6 +134,11 @@ public class MatchMakingController extends Controller {
         this.disable();
         new SetUpController(model, server, getRoomNumber());
     }
+
+    /**
+     * closes match making.
+     * @param usernames all the users connected to the current room and playing.
+     */
 
     private void closeMatchMaking(List<String> usernames){
         model.setUsernames(new ArrayList<>(usernames));
