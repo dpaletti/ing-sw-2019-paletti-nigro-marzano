@@ -191,6 +191,7 @@ public class VirtualView extends Observable<VCEvent> implements Observer<MVEvent
             notify(vcEvent);
         }catch (NullPointerException e){
             Log.fine("NullPointer while retrieving on: " + connection );
+            e.printStackTrace();
         }
     }
 
