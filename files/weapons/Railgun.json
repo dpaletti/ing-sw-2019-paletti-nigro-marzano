@@ -29,12 +29,12 @@
                             "second": []
                         },
 						"previous":{
-							"first": true,
+							"first": false,
 							"second": []
 						},
                         "radiusBetween": {
-                            "first": -1,
-                            "second": -1
+                            "first": 0,
+                            "second": 0
                         },
                         "visible": -1,
                         "enlarge": -2
@@ -47,7 +47,7 @@
                         }
                     ],
                     "endable": false,
-                    "name": "B2",
+                    "name": "B1",
                     "invalidEffects": []
                 }
             ]
@@ -61,7 +61,7 @@
             "effectType":0,
             "effects": [
                 {
-                    "priority": 2,
+                    "priority": 3,
                     "targetSpecification":{
                         "tile":false,
                         "different": {
@@ -69,12 +69,12 @@
                             "second": []
                         },
                         "previous":{
-                            "first": true,
+                            "first": false,
                             "second": []
                         },
                         "radiusBetween": {
-                            "first": -1,
-                            "second": -1
+                            "first": 0,
+                            "second": 0
                         },
                         "visible": -1,
                         "enlarge": -2
@@ -91,7 +91,7 @@
                     "invalidEffects": []
                 },
                 {
-                    "priority": 1,
+                    "priority": 2,
                     "targetSpecification":{
                         "tile":false,
                         "different": {
