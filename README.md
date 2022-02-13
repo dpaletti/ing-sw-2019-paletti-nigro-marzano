@@ -1,5 +1,5 @@
-# A.Y. 19-20: Software Engineering Project
-Implementation of the Adrenaline table game (https://czechgames.com/en/adrenaline/).
+# Adrenaline: an Online Multiplayer Implementation
+Online multiplayer implementation of the [Adrenaline table game](https://czechgames.com/en/adrenaline/) for the Software Engineering Capstone Project (A.Y 19-20)
 
 # Dependencies
 JavaFX is mandatory to run the JARs.
